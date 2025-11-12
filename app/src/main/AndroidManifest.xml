@@ -17,7 +17,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="猫头枪"
             android:theme="@style/Theme.CatScanDemo">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

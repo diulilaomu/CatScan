@@ -19,20 +19,24 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import androidx.compose.foundation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -53,10 +57,17 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.material.icons.filled.FlashlightOn
 import androidx.compose.material.icons.filled.FlashlightOff
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ripple
+import androidx.compose.ui.draw.shadow
 import kotlinx.coroutines.launch
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -159,80 +170,125 @@ fun SplitScreen() {
     var camera by remember { mutableStateOf<Camera?>(null) }
     var todoList by remember { mutableStateOf(listOf("支持条形码、二维码！")) }
     val clipboardManager = LocalClipboardManager.current
-    Column(Modifier.fillMaxSize()) {
-        Box(
-            modifier = Modifier
-                .weight(6f)
-                .fillMaxWidth()
-                .background(Color(0xFF90CAF9)), contentAlignment = Alignment.Center
-        )
-        {
-            AutoRequestCameraPermission{
-                CameraPreview(lifecycleOwner
-                    ,onCameraReady = {cam -> camera = cam}
-                    ,onBarcodeDetected = {code ->
-                        if(code !in todoList){
-                            todoList = listOf(code)+todoList
-                            clipboardManager.setText(AnnotatedString(code))
-                            Toast.makeText(context, "已复制: $code", Toast.LENGTH_SHORT).show()
+
+    // 添加交互状态用于阴影效果
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val elevation = animateDpAsState(
+        targetValue = if (isPressed) 0.dp else 8.dp,
+        animationSpec = tween(durationMillis = 150)
+    )
+
+    Box(Modifier.fillMaxSize()) {
+        Column(Modifier.fillMaxSize()) {
+            // 摄像头区域
+            Box(
+                modifier = Modifier
+                    .weight(6f)
+                    .fillMaxWidth()
+                    .background(Color(0xFF90CAF9)),
+                contentAlignment = Alignment.Center
+            ) {
+                AutoRequestCameraPermission {
+                    CameraPreview(
+                        lifecycleOwner,
+                        onCameraReady = { cam -> camera = cam },
+                        onBarcodeDetected = { code ->
+                            if (code !in todoList) {
+                                todoList = listOf(code) + todoList
+                                clipboardManager.setText(AnnotatedString(code))
+                                Toast.makeText(context, "已复制: $code", Toast.LENGTH_SHORT).show()
+                            }
                         }
-                    })
+                    )
+                }
+            }
+
+            // 扫描结果列表
+            Column(
+                modifier = Modifier
+                    .weight(4f)
+                    .fillMaxWidth()
+                    .background(Color(0xFFF5F5F5))
+            ) {
+                // 添加列表标题
+                Text(
+                    text = "识别结果列表",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp, horizontal = 20.dp),
+                    style = MaterialTheme.typography.headlineSmall, // Material Design 3 的样式
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF333333)
+                )
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp)
+                ) {
+                    itemsIndexed(todoList) { index, item ->
+                        ResultToDoItem(
+                            text = item,
+                            onDelete = {
+                                todoList = todoList.toMutableList().apply { removeAt(index) }
+                            }
+                        )
+                        HorizontalDivider(Modifier, DividerDefaults.Thickness, color = Color.LightGray)
+                    }
+                }
             }
         }
-        // 下半部分：ToDo List
-        Column(
+
+        // 闪光灯按钮 - 使用绝对定位覆盖在两个区域之间
+        Box(
             modifier = Modifier
-                .weight(4f)
-                .fillMaxWidth()
-                .background(Color(0xFFF5F5F5))
-                .padding(12.dp)
+                .align(Alignment.TopCenter) // 顶部居中定位
+                .offset(y = with(LocalDensity.current) {
+                    // 计算按钮应该位于的位置：摄像头区域的底部
+                    // 假设摄像头区域占6/10，按钮应该在6/10的位置
+                    // 减去按钮高度的一半使其居中在两个区域之间
+                    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+                    (screenHeight * 0.6f) - 28.dp // 28.dp是按钮高度56.dp的一半
+                })
+                .fillMaxWidth(),
+            contentAlignment = Alignment.CenterEnd // 内容靠右对齐
         ) {
-            Row(
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "历史识别结果列表",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color(0xFF000000)
-                )
-                IconButton(
-                    onClick = {
+                    .padding(end = 24.dp)
+                    .shadow(
+                        elevation = elevation.value,
+                        shape = CircleShape,
+                        clip = false
+                    )
+                    .size(56.dp)
+                    .background(
+                        color = if (isFlashOn) Color(0xFFFFC107) else Color(0xFF9E9E9E),
+                        shape = CircleShape
+                    )
+                    .clickable(
+                        interactionSource = interactionSource,
+                        indication = null
+                    ) {
                         isFlashOn = !isFlashOn
                         coroutineScope.launch {
                             camera?.cameraControl?.enableTorch(isFlashOn)
                         }
-                    }
-                ) {
-                    Icon(
-                        imageVector = if (isFlashOn) Icons.Filled.FlashlightOn else Icons.Filled.FlashlightOff,
-                        contentDescription = if (isFlashOn) "关闭手电筒" else "开启手电筒",
-                        tint = if (isFlashOn) Color(0xFFFF0000) else Color(0xFF444343)
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // 可滚动列表
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
+                    },
+                contentAlignment = Alignment.Center
             ) {
-                itemsIndexed(todoList) { index, item ->
-                    ResultToDoItem(
-                        text = item,
-                        onDelete = {
-                            todoList = todoList.toMutableList().apply { removeAt(index) }
-                        }
-                    )
-                    HorizontalDivider(Modifier, DividerDefaults.Thickness, color = Color.LightGray)
-                }
+                Icon(
+                    imageVector = if (isFlashOn) Icons.Filled.FlashlightOn else Icons.Filled.FlashlightOff,
+                    contentDescription = if (isFlashOn) "关闭手电筒" else "开启手电筒",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
             }
         }
     }
 }
+
 //相机显示
 @Composable
 fun CameraPreview(lifecycleOwner: androidx.lifecycle.LifecycleOwner
