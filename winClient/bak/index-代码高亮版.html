@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
+    <script src="https://unpkg.com/element-plus"></script>
+
+    <!-- Prism.js for JSON highlighting -->
+    <link rel="stylesheet" href="https://unpkg.com/prismjs/themes/prism-tomorrow.css">
+    <script src="https://unpkg.com/prismjs/prism.js"></script>
+    <script src="https://unpkg.com/prismjs/components/prism-json.min.js"></script>
+
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #ddd;
+            font-family: Consolas, Monaco, 'Courier New', monospace;
+            margin: 20px;
+        }
+
+        .json-container {
+            background: #2d2d2d;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .json-line {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2px 6px;
+            border-bottom: 1px solid #333;
+        }
+
+        .json-line:last-child {
+            border-bottom: none;
+        }
+
+        .line-number {
+            color: #888;
+            width: 30px;
+            text-align: right;
+            margin-right: 8px;
+            user-select: none;
+        }
+
+        .line-content {
+            flex: 1;
+            color: #ddd;
+            white-space: pre;
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            color: #6cf;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .copy-btn:hover {
+            color: #9ef;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <el-card shadow="hover" style="background-color:#2d2d2d; color:#ddd; border: #333;">
+            <template #header>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <el-button type="primary" @click="readJsonlist" plain>读取 JSON 列表</el-button>
+                    <el-space wrap>
+                        <el-button v-for="(file, idx) in jsonFilesList" :key="idx" @click="sendConfigJson(file)"
+                            size="small" type="success" plain>{{ file }}</el-button>
+                    </el-space>
+                </div>
+            </template>
+
+            <el-scrollbar height="600px" v-if="formattedLines.length">
+                <div class="json-container">
+                    <div class="json-line" v-for="(line, idx) in formattedLines" :key="idx">
+                        <div class="line-number">{{ idx + 1 }}</div>
+                        <div class="line-content" v-html="highlightJson(line)"></div>
+                        <el-button link type="primary" size="small" @click="copyLineInfo(idx-1)">复制指令</el-button>
+                    </div>
+                </div>
+            </el-scrollbar>
+        </el-card>
+    </div>
+
+    <script src="/eel.js"></script>
+
+    <script>
+        const { createApp, ref } = Vue;
+
+        createApp({
+            setup() {
+                const jsonFilesList = ref([]);
+                const formattedLines = ref([]);
+                const jsonDdata = ref({});
+
+                // 封装一个打印并显示消息的方法
+                function showMessage(message, type = 'info') {
+                    console.log(message);
+                    ElementPlus.ElMessage({
+                        showClose: true,
+                        message: String(message),
+                        type: type,
+                    });
+                }
+
+                async function readJsonlist() {
+                    try {
+                        const res = await eel.readJsonlist('来自 Vue 的问候！')();
+                        jsonFilesList.value = res;
+                        formattedLines.value = formatJsonArray(res);
+                        showMessage("JSON 列表已读取");
+                    } catch (err) {
+                        showMessage("读取 JSON 列表失败：" + err, 'error');
+                    }
+                }
+
+                async function sendConfigJson(filename) {
+                    try {
+                        const res = await eel.sendConfigJson(filename)();
+                        console.log("文件内容：", res);
+                        jsonDdata.value = res;
+                        formattedLines.value = Array.isArray(res)
+                            ? formatJsonArray(res)
+                            : [JSON.stringify(res, null, 2)];
+                        showMessage(`已加载配置文件：${filename}`, 'success');
+                    } catch (err) {
+                        showMessage("加载配置失败：" + err, 'error');
+                    }
+                }
+
+                function formatJsonArray(arr) {
+                    if (!Array.isArray(arr)) return [];
+                    const lines = arr.map(item => JSON.stringify(item) + ',');
+                    lines.unshift('[');
+                    lines.push(']');
+                    return lines;
+                }
+
+                function highlightJson(line) {
+                    return Prism.highlight(line, Prism.languages.json, 'json');
+                }
+
+                async function copyLineInfo(idx) {
+                    try {
+                        const address = jsonDdata.value[idx]?.address ?? '无地址'
+                        const command = await createDlt6452007Command(jsonDdata.value[idx]?.address, '00010000') ?? '无';
+                        await navigator.clipboard.writeText(command);
+                        showMessage(`已复制${address}指令：${command}`, 'success');
+                    } catch (err) {
+                        showMessage("复制失败：" + err, 'error');
+                    }
+                }
+                async function createDlt6452007Command(address, data) {
+                    // 计算校验码：从第一个 68 到数据域最后一个字节的和取低 8 位
+                    function calculateChecksum(bytes) {
+                        const sum = bytes.reduce((acc, val) => acc + val, 0);
+                        return sum & 0xFF;
+                    }
+
+                    // 前导码（这里留空）
+                    const leadingCode = "";
+
+                    // 起始符
+                    const startCode = "68";
+
+                    // 地址域：电表地址，低字节在前，高字节在后
+                    const addressBytes = new Uint8Array(
+                        address.match(/.{1,2}/g).map((byte) => parseInt(byte, 16))
+                    );
+                    const addressField = Array.from(addressBytes)
+                        .reverse()
+                        .map((b) => b.toString(16).padStart(2, "0").toUpperCase())
+                        .join(" ");
+
+                    // 第二个起始符
+                    const startCode2 = "68";
+
+                    // 控制码：读取数据
+                    const controlCode = "11";
+
+                    // 数据标识符（DI0 DI1 DI2 DI3）
+                    const dataIdentifier = new Uint8Array(
+                        data.match(/.{1,2}/g).map((byte) => parseInt(byte, 16))
+                    );
+                    const encryptedDataIdentifier = Array.from(dataIdentifier)
+                        .reverse()
+                        .map((byte) => (byte + 0x33) & 0xFF);
+
+                    const encryptedDataField = encryptedDataIdentifier
+                        .map((b) => b.toString(16).padStart(2, "0").toUpperCase())
+                        .join(" ");
+
+                    // 数据长度
+                    const dataLength = encryptedDataIdentifier.length.toString(16).padStart(2, "0").toUpperCase();
+
+                    // 构建完整的报文（不包括前导码）
+                    const message = [
+                        startCode,
+                        addressField,
+                        startCode2,
+                        controlCode,
+                        dataLength,
+                        encryptedDataField
+                    ].join(" ");
+
+                    // 将报文字符串转为字节数组
+                    const messageBytes = new Uint8Array(
+                        message.replace(/\s+/g, "").match(/.{1,2}/g).map((byte) => parseInt(byte, 16))
+                    );
+
+                    // 计算校验码
+                    const checksum = calculateChecksum(messageBytes);
+                    const checksumHex = checksum.toString(16).padStart(2, "0").toUpperCase();
+
+                    // 结束符
+                    const endCode = "16";
+
+                    // 完整指令
+                    const command = [leadingCode, message, checksumHex, endCode]
+                        .filter(Boolean)
+                        .join(" ");
+
+                    return command;
+                }
+
+                readJsonlist()
+                return {
+                    readJsonlist,
+                    sendConfigJson,
+                    jsonFilesList,
+                    formattedLines,
+                    highlightJson,
+                    copyLineInfo,
+                    jsonDdata,
+                };
+            }
+        }).use(ElementPlus).mount('#app');
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,2669 @@
+2025-11-13 11:01:03-ERROR: 接收到的数据: {'data': {'name': 'test', 'postqrdata': 123}}
+2025-11-13 11:04:01-ERROR: 接收到的数据: {'data': {'name': 'test', 'postqrdata': 123}}
+2025-11-13 11:04:18-ERROR: 接收到的数据: {'data': {'name': 'test', 'qrdata': 123}}
+2025-11-13 14:11:28-DEBUG: Using proactor: IocpProactor
+2025-11-13 14:11:30-DEBUG: Initializing WebSocket
+2025-11-13 14:11:30-DEBUG: Validating WebSocket request
+2025-11-13 14:11:30-INFO: 127.0.0.1 - - [2025-11-13 14:11:30] "GET /index.html HTTP/1.1" 200 4869 0.001015
+2025-11-13 14:11:30-DEBUG: Initializing WebSocket
+2025-11-13 14:11:30-DEBUG: Validating WebSocket request
+2025-11-13 14:11:30-INFO: 127.0.0.1 - - [2025-11-13 14:11:30] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002558
+2025-11-13 14:11:30-DEBUG: Initializing WebSocket
+2025-11-13 14:11:30-DEBUG: Validating WebSocket request
+2025-11-13 14:11:30-DEBUG: Initializing WebSocket
+2025-11-13 14:11:30-DEBUG: Validating WebSocket request
+2025-11-13 14:11:30-INFO: 127.0.0.1 - - [2025-11-13 14:11:30] "GET /css/index.css HTTP/1.1" 200 341554 0.007105
+2025-11-13 14:11:30-INFO: 127.0.0.1 - - [2025-11-13 14:11:30] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004102
+2025-11-13 14:11:30-DEBUG: Initializing WebSocket
+2025-11-13 14:11:30-DEBUG: Validating WebSocket request
+2025-11-13 14:11:30-INFO: 127.0.0.1 - - [2025-11-13 14:11:30] "GET /eel.js HTTP/1.1" 200 6076 0.000505
+2025-11-13 14:11:31-DEBUG: Initializing WebSocket
+2025-11-13 14:11:31-DEBUG: Validating WebSocket request
+2025-11-13 14:11:31-DEBUG: Attempting to upgrade connection
+2025-11-13 14:11:31-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 14:13:19-DEBUG: Using proactor: IocpProactor
+2025-11-13 14:13:21-DEBUG: Initializing WebSocket
+2025-11-13 14:13:21-DEBUG: Validating WebSocket request
+2025-11-13 14:13:21-INFO: 127.0.0.1 - - [2025-11-13 14:13:21] "GET /index.html HTTP/1.1" 200 4867 0.001005
+2025-11-13 14:13:21-DEBUG: Initializing WebSocket
+2025-11-13 14:13:21-DEBUG: Validating WebSocket request
+2025-11-13 14:13:21-INFO: 127.0.0.1 - - [2025-11-13 14:13:21] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002270
+2025-11-13 14:13:21-DEBUG: Initializing WebSocket
+2025-11-13 14:13:21-DEBUG: Validating WebSocket request
+2025-11-13 14:13:21-INFO: 127.0.0.1 - - [2025-11-13 14:13:21] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004320
+2025-11-13 14:13:21-DEBUG: Initializing WebSocket
+2025-11-13 14:13:21-DEBUG: Validating WebSocket request
+2025-11-13 14:13:21-INFO: 127.0.0.1 - - [2025-11-13 14:13:21] "GET /css/index.css HTTP/1.1" 200 341554 0.001000
+2025-11-13 14:13:21-DEBUG: Initializing WebSocket
+2025-11-13 14:13:21-DEBUG: Validating WebSocket request
+2025-11-13 14:13:21-INFO: 127.0.0.1 - - [2025-11-13 14:13:21] "GET /eel.js HTTP/1.1" 200 6076 0.001004
+2025-11-13 14:13:22-DEBUG: Initializing WebSocket
+2025-11-13 14:13:22-DEBUG: Validating WebSocket request
+2025-11-13 14:13:22-DEBUG: Attempting to upgrade connection
+2025-11-13 14:13:22-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 14:13:59-DEBUG: Closed WebSocket
+2025-11-13 14:13:59-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 14:13:59-DEBUG: Closed WebSocket
+2025-11-13 14:14:02-DEBUG: Using proactor: IocpProactor
+2025-11-13 14:14:04-DEBUG: Initializing WebSocket
+2025-11-13 14:14:04-DEBUG: Validating WebSocket request
+2025-11-13 14:14:04-INFO: 127.0.0.1 - - [2025-11-13 14:14:04] "GET /index.html HTTP/1.1" 200 4876 0.001045
+2025-11-13 14:14:04-DEBUG: Initializing WebSocket
+2025-11-13 14:14:04-DEBUG: Validating WebSocket request
+2025-11-13 14:14:04-INFO: 127.0.0.1 - - [2025-11-13 14:14:04] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001444
+2025-11-13 14:14:04-DEBUG: Initializing WebSocket
+2025-11-13 14:14:04-DEBUG: Validating WebSocket request
+2025-11-13 14:14:04-DEBUG: Initializing WebSocket
+2025-11-13 14:14:04-DEBUG: Validating WebSocket request
+2025-11-13 14:14:04-INFO: 127.0.0.1 - - [2025-11-13 14:14:04] "GET /css/index.css HTTP/1.1" 200 341554 0.003276
+2025-11-13 14:14:04-INFO: 127.0.0.1 - - [2025-11-13 14:14:04] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004333
+2025-11-13 14:14:04-DEBUG: Initializing WebSocket
+2025-11-13 14:14:04-DEBUG: Validating WebSocket request
+2025-11-13 14:14:04-INFO: 127.0.0.1 - - [2025-11-13 14:14:04] "GET /eel.js HTTP/1.1" 200 6076 0.001236
+2025-11-13 14:14:05-DEBUG: Initializing WebSocket
+2025-11-13 14:14:05-DEBUG: Validating WebSocket request
+2025-11-13 14:14:05-DEBUG: Attempting to upgrade connection
+2025-11-13 14:14:05-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 14:14:53-DEBUG: Closed WebSocket
+2025-11-13 14:14:53-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 14:14:53-DEBUG: Closed WebSocket
+2025-11-13 14:14:57-DEBUG: Using proactor: IocpProactor
+2025-11-13 14:14:59-DEBUG: Initializing WebSocket
+2025-11-13 14:14:59-DEBUG: Validating WebSocket request
+2025-11-13 14:14:59-INFO: 127.0.0.1 - - [2025-11-13 14:14:59] "GET /index.html HTTP/1.1" 200 4881 0.002360
+2025-11-13 14:14:59-DEBUG: Initializing WebSocket
+2025-11-13 14:14:59-DEBUG: Validating WebSocket request
+2025-11-13 14:14:59-INFO: 127.0.0.1 - - [2025-11-13 14:14:59] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.003040
+2025-11-13 14:14:59-DEBUG: Initializing WebSocket
+2025-11-13 14:14:59-DEBUG: Validating WebSocket request
+2025-11-13 14:14:59-DEBUG: Initializing WebSocket
+2025-11-13 14:14:59-DEBUG: Validating WebSocket request
+2025-11-13 14:14:59-INFO: 127.0.0.1 - - [2025-11-13 14:14:59] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006552
+2025-11-13 14:14:59-INFO: 127.0.0.1 - - [2025-11-13 14:14:59] "GET /css/index.css HTTP/1.1" 200 341554 0.010077
+2025-11-13 14:14:59-DEBUG: Initializing WebSocket
+2025-11-13 14:14:59-DEBUG: Validating WebSocket request
+2025-11-13 14:14:59-INFO: 127.0.0.1 - - [2025-11-13 14:14:59] "GET /eel.js HTTP/1.1" 200 6076 0.001002
+2025-11-13 14:15:00-DEBUG: Initializing WebSocket
+2025-11-13 14:15:00-DEBUG: Validating WebSocket request
+2025-11-13 14:15:00-DEBUG: Attempting to upgrade connection
+2025-11-13 14:15:00-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 14:15:31-DEBUG: Using proactor: IocpProactor
+2025-11-13 14:15:33-DEBUG: Initializing WebSocket
+2025-11-13 14:15:33-DEBUG: Validating WebSocket request
+2025-11-13 14:15:33-INFO: 127.0.0.1 - - [2025-11-13 14:15:33] "GET /index.html HTTP/1.1" 200 4888 0.002079
+2025-11-13 14:15:33-DEBUG: Initializing WebSocket
+2025-11-13 14:15:33-DEBUG: Validating WebSocket request
+2025-11-13 14:15:33-INFO: 127.0.0.1 - - [2025-11-13 14:15:33] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002244
+2025-11-13 14:15:33-DEBUG: Initializing WebSocket
+2025-11-13 14:15:33-DEBUG: Validating WebSocket request
+2025-11-13 14:15:33-INFO: 127.0.0.1 - - [2025-11-13 14:15:33] "GET /css/index.css HTTP/1.1" 200 341554 0.002812
+2025-11-13 14:15:33-DEBUG: Initializing WebSocket
+2025-11-13 14:15:33-DEBUG: Validating WebSocket request
+2025-11-13 14:15:33-INFO: 127.0.0.1 - - [2025-11-13 14:15:33] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004624
+2025-11-13 14:15:33-DEBUG: Initializing WebSocket
+2025-11-13 14:15:33-DEBUG: Validating WebSocket request
+2025-11-13 14:15:33-INFO: 127.0.0.1 - - [2025-11-13 14:15:33] "GET /eel.js HTTP/1.1" 200 6076 0.001158
+2025-11-13 14:15:34-DEBUG: Initializing WebSocket
+2025-11-13 14:15:34-DEBUG: Validating WebSocket request
+2025-11-13 14:15:34-DEBUG: Attempting to upgrade connection
+2025-11-13 14:15:34-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 14:17:37-DEBUG: Using proactor: IocpProactor
+2025-11-13 14:17:39-DEBUG: Initializing WebSocket
+2025-11-13 14:17:39-DEBUG: Validating WebSocket request
+2025-11-13 14:17:39-INFO: 127.0.0.1 - - [2025-11-13 14:17:39] "GET /index.html HTTP/1.1" 200 4963 0.001193
+2025-11-13 14:17:39-DEBUG: Initializing WebSocket
+2025-11-13 14:17:39-DEBUG: Validating WebSocket request
+2025-11-13 14:17:39-INFO: 127.0.0.1 - - [2025-11-13 14:17:39] "GET /css/index.css HTTP/1.1" 200 341554 0.003090
+2025-11-13 14:17:39-DEBUG: Initializing WebSocket
+2025-11-13 14:17:39-DEBUG: Validating WebSocket request
+2025-11-13 14:17:39-INFO: 127.0.0.1 - - [2025-11-13 14:17:39] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001169
+2025-11-13 14:17:39-DEBUG: Initializing WebSocket
+2025-11-13 14:17:39-DEBUG: Validating WebSocket request
+2025-11-13 14:17:39-INFO: 127.0.0.1 - - [2025-11-13 14:17:39] "GET /eel.js HTTP/1.1" 200 6076 0.000000
+2025-11-13 14:17:39-DEBUG: Initializing WebSocket
+2025-11-13 14:17:39-DEBUG: Validating WebSocket request
+2025-11-13 14:17:39-INFO: 127.0.0.1 - - [2025-11-13 14:17:39] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006407
+2025-11-13 14:17:40-DEBUG: Initializing WebSocket
+2025-11-13 14:17:40-DEBUG: Validating WebSocket request
+2025-11-13 14:17:40-DEBUG: Attempting to upgrade connection
+2025-11-13 14:17:40-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 14:18:10-DEBUG: Closed WebSocket
+2025-11-13 14:18:10-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 14:18:10-DEBUG: Closed WebSocket
+2025-11-13 14:18:12-DEBUG: Using proactor: IocpProactor
+2025-11-13 14:18:14-DEBUG: Initializing WebSocket
+2025-11-13 14:18:14-DEBUG: Validating WebSocket request
+2025-11-13 14:18:14-INFO: 127.0.0.1 - - [2025-11-13 14:18:14] "GET /index.html HTTP/1.1" 200 4969 0.002028
+2025-11-13 14:18:14-DEBUG: Initializing WebSocket
+2025-11-13 14:18:14-DEBUG: Validating WebSocket request
+2025-11-13 14:18:14-INFO: 127.0.0.1 - - [2025-11-13 14:18:14] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002389
+2025-11-13 14:18:14-DEBUG: Initializing WebSocket
+2025-11-13 14:18:14-DEBUG: Validating WebSocket request
+2025-11-13 14:18:14-INFO: 127.0.0.1 - - [2025-11-13 14:18:14] "GET /css/index.css HTTP/1.1" 200 341554 0.002126
+2025-11-13 14:18:14-DEBUG: Initializing WebSocket
+2025-11-13 14:18:14-DEBUG: Validating WebSocket request
+2025-11-13 14:18:14-INFO: 127.0.0.1 - - [2025-11-13 14:18:14] "GET /eel.js HTTP/1.1" 200 6076 0.001329
+2025-11-13 14:18:14-DEBUG: Initializing WebSocket
+2025-11-13 14:18:14-DEBUG: Validating WebSocket request
+2025-11-13 14:18:14-INFO: 127.0.0.1 - - [2025-11-13 14:18:14] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.005973
+2025-11-13 14:18:15-DEBUG: Initializing WebSocket
+2025-11-13 14:18:15-DEBUG: Validating WebSocket request
+2025-11-13 14:18:15-DEBUG: Attempting to upgrade connection
+2025-11-13 14:18:15-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 14:19:11-DEBUG: Closed WebSocket
+2025-11-13 14:19:11-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 14:19:11-DEBUG: Closed WebSocket
+2025-11-13 14:34:10-DEBUG: Using proactor: IocpProactor
+2025-11-13 14:34:12-DEBUG: Initializing WebSocket
+2025-11-13 14:34:12-DEBUG: Validating WebSocket request
+2025-11-13 14:34:12-INFO: 127.0.0.1 - - [2025-11-13 14:34:12] "GET /index.html HTTP/1.1" 200 4974 0.002079
+2025-11-13 14:34:12-DEBUG: Initializing WebSocket
+2025-11-13 14:34:12-DEBUG: Validating WebSocket request
+2025-11-13 14:34:12-INFO: 127.0.0.1 - - [2025-11-13 14:34:12] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001347
+2025-11-13 14:34:12-DEBUG: Initializing WebSocket
+2025-11-13 14:34:12-DEBUG: Validating WebSocket request
+2025-11-13 14:34:12-INFO: 127.0.0.1 - - [2025-11-13 14:34:12] "GET /css/index.css HTTP/1.1" 200 341554 0.007076
+2025-11-13 14:34:12-DEBUG: Initializing WebSocket
+2025-11-13 14:34:12-DEBUG: Validating WebSocket request
+2025-11-13 14:34:12-INFO: 127.0.0.1 - - [2025-11-13 14:34:12] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006513
+2025-11-13 14:34:12-DEBUG: Initializing WebSocket
+2025-11-13 14:34:12-DEBUG: Validating WebSocket request
+2025-11-13 14:34:12-INFO: 127.0.0.1 - - [2025-11-13 14:34:12] "GET /eel.js HTTP/1.1" 200 6076 0.001347
+2025-11-13 14:34:13-DEBUG: Initializing WebSocket
+2025-11-13 14:34:13-DEBUG: Validating WebSocket request
+2025-11-13 14:34:13-DEBUG: Attempting to upgrade connection
+2025-11-13 14:34:13-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 14:44:27-DEBUG: Using proactor: IocpProactor
+2025-11-13 14:44:29-DEBUG: Initializing WebSocket
+2025-11-13 14:44:29-DEBUG: Validating WebSocket request
+2025-11-13 14:44:29-INFO: 127.0.0.1 - - [2025-11-13 14:44:29] "GET /index.html HTTP/1.1" 200 5259 0.001015
+2025-11-13 14:44:29-DEBUG: Initializing WebSocket
+2025-11-13 14:44:29-DEBUG: Validating WebSocket request
+2025-11-13 14:44:29-INFO: 127.0.0.1 - - [2025-11-13 14:44:29] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001998
+2025-11-13 14:44:29-DEBUG: Initializing WebSocket
+2025-11-13 14:44:29-DEBUG: Validating WebSocket request
+2025-11-13 14:44:29-INFO: 127.0.0.1 - - [2025-11-13 14:44:29] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004941
+2025-11-13 14:44:29-DEBUG: Initializing WebSocket
+2025-11-13 14:44:29-DEBUG: Validating WebSocket request
+2025-11-13 14:44:29-DEBUG: Initializing WebSocket
+2025-11-13 14:44:29-DEBUG: Validating WebSocket request
+2025-11-13 14:44:29-INFO: 127.0.0.1 - - [2025-11-13 14:44:29] "GET /eel.js HTTP/1.1" 200 6076 0.001014
+2025-11-13 14:44:29-INFO: 127.0.0.1 - - [2025-11-13 14:44:29] "GET /css/index.css HTTP/1.1" 200 341554 0.004589
+2025-11-13 14:44:29-DEBUG: Initializing WebSocket
+2025-11-13 14:44:29-DEBUG: Validating WebSocket request
+2025-11-13 14:44:29-DEBUG: Attempting to upgrade connection
+2025-11-13 14:44:29-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 14:51:37-DEBUG: Using proactor: IocpProactor
+2025-11-13 14:51:39-DEBUG: Initializing WebSocket
+2025-11-13 14:51:39-DEBUG: Validating WebSocket request
+2025-11-13 14:51:39-INFO: 127.0.0.1 - - [2025-11-13 14:51:39] "GET /index.html HTTP/1.1" 200 6249 0.001004
+2025-11-13 14:51:39-DEBUG: Initializing WebSocket
+2025-11-13 14:51:39-DEBUG: Validating WebSocket request
+2025-11-13 14:51:39-INFO: 127.0.0.1 - - [2025-11-13 14:51:39] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002306
+2025-11-13 14:51:39-DEBUG: Initializing WebSocket
+2025-11-13 14:51:39-DEBUG: Validating WebSocket request
+2025-11-13 14:51:39-DEBUG: Initializing WebSocket
+2025-11-13 14:51:39-DEBUG: Validating WebSocket request
+2025-11-13 14:51:39-INFO: 127.0.0.1 - - [2025-11-13 14:51:39] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006212
+2025-11-13 14:51:39-DEBUG: Initializing WebSocket
+2025-11-13 14:51:39-DEBUG: Validating WebSocket request
+2025-11-13 14:51:39-INFO: 127.0.0.1 - - [2025-11-13 14:51:39] "GET /eel.js HTTP/1.1" 200 6076 0.000000
+2025-11-13 14:51:39-INFO: 127.0.0.1 - - [2025-11-13 14:51:39] "GET /css/index.css HTTP/1.1" 200 341554 0.010665
+2025-11-13 14:51:39-DEBUG: Initializing WebSocket
+2025-11-13 14:51:39-DEBUG: Validating WebSocket request
+2025-11-13 14:51:39-DEBUG: Attempting to upgrade connection
+2025-11-13 14:51:39-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 14:51:55-DEBUG: Using proactor: IocpProactor
+2025-11-13 14:51:58-DEBUG: Initializing WebSocket
+2025-11-13 14:51:58-DEBUG: Validating WebSocket request
+2025-11-13 14:51:58-INFO: 127.0.0.1 - - [2025-11-13 14:51:58] "GET /index.html HTTP/1.1" 200 6340 0.001034
+2025-11-13 14:51:58-DEBUG: Initializing WebSocket
+2025-11-13 14:51:58-DEBUG: Validating WebSocket request
+2025-11-13 14:51:58-INFO: 127.0.0.1 - - [2025-11-13 14:51:58] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.003202
+2025-11-13 14:51:58-DEBUG: Initializing WebSocket
+2025-11-13 14:51:58-DEBUG: Validating WebSocket request
+2025-11-13 14:51:58-INFO: 127.0.0.1 - - [2025-11-13 14:51:58] "GET /css/index.css HTTP/1.1" 200 341554 0.002044
+2025-11-13 14:51:58-DEBUG: Initializing WebSocket
+2025-11-13 14:51:58-DEBUG: Validating WebSocket request
+2025-11-13 14:51:58-INFO: 127.0.0.1 - - [2025-11-13 14:51:58] "GET /eel.js HTTP/1.1" 200 6076 0.001041
+2025-11-13 14:51:58-DEBUG: Initializing WebSocket
+2025-11-13 14:51:58-DEBUG: Validating WebSocket request
+2025-11-13 14:51:58-INFO: 127.0.0.1 - - [2025-11-13 14:51:58] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004797
+2025-11-13 14:51:59-DEBUG: Initializing WebSocket
+2025-11-13 14:51:59-DEBUG: Validating WebSocket request
+2025-11-13 14:51:59-DEBUG: Attempting to upgrade connection
+2025-11-13 14:51:59-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 14:52:01-DEBUG: Closed WebSocket
+2025-11-13 14:52:01-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 14:52:01-DEBUG: Closed WebSocket
+2025-11-13 14:54:11-DEBUG: Using proactor: IocpProactor
+2025-11-13 14:54:13-DEBUG: Initializing WebSocket
+2025-11-13 14:54:13-DEBUG: Validating WebSocket request
+2025-11-13 14:54:13-INFO: 127.0.0.1 - - [2025-11-13 14:54:13] "GET /index.html HTTP/1.1" 200 6381 0.002157
+2025-11-13 14:54:13-DEBUG: Initializing WebSocket
+2025-11-13 14:54:13-DEBUG: Validating WebSocket request
+2025-11-13 14:54:13-INFO: 127.0.0.1 - - [2025-11-13 14:54:13] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002782
+2025-11-13 14:54:13-DEBUG: Initializing WebSocket
+2025-11-13 14:54:13-DEBUG: Validating WebSocket request
+2025-11-13 14:54:13-INFO: 127.0.0.1 - - [2025-11-13 14:54:13] "GET /css/index.css HTTP/1.1" 200 341554 0.003147
+2025-11-13 14:54:13-DEBUG: Initializing WebSocket
+2025-11-13 14:54:13-DEBUG: Validating WebSocket request
+2025-11-13 14:54:13-INFO: 127.0.0.1 - - [2025-11-13 14:54:13] "GET /eel.js HTTP/1.1" 200 6076 0.001159
+2025-11-13 14:54:13-DEBUG: Initializing WebSocket
+2025-11-13 14:54:13-DEBUG: Validating WebSocket request
+2025-11-13 14:54:13-INFO: 127.0.0.1 - - [2025-11-13 14:54:13] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006878
+2025-11-13 14:54:14-DEBUG: Initializing WebSocket
+2025-11-13 14:54:14-DEBUG: Validating WebSocket request
+2025-11-13 14:54:14-DEBUG: Attempting to upgrade connection
+2025-11-13 14:54:14-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 14:56:18-DEBUG: Using proactor: IocpProactor
+2025-11-13 14:56:20-DEBUG: Initializing WebSocket
+2025-11-13 14:56:20-DEBUG: Validating WebSocket request
+2025-11-13 14:56:20-INFO: 127.0.0.1 - - [2025-11-13 14:56:20] "GET /index.html HTTP/1.1" 200 5501 0.001038
+2025-11-13 14:56:20-DEBUG: Initializing WebSocket
+2025-11-13 14:56:20-DEBUG: Validating WebSocket request
+2025-11-13 14:56:20-INFO: 127.0.0.1 - - [2025-11-13 14:56:20] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.003538
+2025-11-13 14:56:20-DEBUG: Initializing WebSocket
+2025-11-13 14:56:20-DEBUG: Validating WebSocket request
+2025-11-13 14:56:20-DEBUG: Initializing WebSocket
+2025-11-13 14:56:20-DEBUG: Validating WebSocket request
+2025-11-13 14:56:20-INFO: 127.0.0.1 - - [2025-11-13 14:56:20] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.007181
+2025-11-13 14:56:20-INFO: 127.0.0.1 - - [2025-11-13 14:56:20] "GET /css/index.css HTTP/1.1" 200 341554 0.005181
+2025-11-13 14:56:20-DEBUG: Initializing WebSocket
+2025-11-13 14:56:20-DEBUG: Validating WebSocket request
+2025-11-13 14:56:20-INFO: 127.0.0.1 - - [2025-11-13 14:56:20] "GET /eel.js HTTP/1.1" 200 6076 0.001442
+2025-11-13 14:56:20-DEBUG: Initializing WebSocket
+2025-11-13 14:56:20-DEBUG: Validating WebSocket request
+2025-11-13 14:56:20-DEBUG: Attempting to upgrade connection
+2025-11-13 14:56:20-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 15:03:01-DEBUG: Closed WebSocket
+2025-11-13 15:03:01-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 15:03:01-DEBUG: Closed WebSocket
+2025-11-13 15:03:05-DEBUG: Using proactor: IocpProactor
+2025-11-13 15:03:07-DEBUG: Initializing WebSocket
+2025-11-13 15:03:07-DEBUG: Validating WebSocket request
+2025-11-13 15:03:07-INFO: 127.0.0.1 - - [2025-11-13 15:03:07] "GET /index.html HTTP/1.1" 200 5824 0.001006
+2025-11-13 15:03:07-DEBUG: Initializing WebSocket
+2025-11-13 15:03:07-DEBUG: Validating WebSocket request
+2025-11-13 15:03:07-INFO: 127.0.0.1 - - [2025-11-13 15:03:07] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002014
+2025-11-13 15:03:07-DEBUG: Initializing WebSocket
+2025-11-13 15:03:07-DEBUG: Validating WebSocket request
+2025-11-13 15:03:07-INFO: 127.0.0.1 - - [2025-11-13 15:03:07] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.005538
+2025-11-13 15:03:07-DEBUG: Initializing WebSocket
+2025-11-13 15:03:07-DEBUG: Validating WebSocket request
+2025-11-13 15:03:07-DEBUG: Initializing WebSocket
+2025-11-13 15:03:07-DEBUG: Validating WebSocket request
+2025-11-13 15:03:07-INFO: 127.0.0.1 - - [2025-11-13 15:03:07] "GET /eel.js HTTP/1.1" 200 6076 0.001149
+2025-11-13 15:03:07-INFO: 127.0.0.1 - - [2025-11-13 15:03:07] "GET /css/index.css HTTP/1.1" 200 341554 0.003148
+2025-11-13 15:03:07-DEBUG: Initializing WebSocket
+2025-11-13 15:03:07-DEBUG: Validating WebSocket request
+2025-11-13 15:03:07-DEBUG: Attempting to upgrade connection
+2025-11-13 15:03:07-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 15:03:17-DEBUG: Using proactor: IocpProactor
+2025-11-13 15:03:18-DEBUG: Initializing WebSocket
+2025-11-13 15:03:18-DEBUG: Validating WebSocket request
+2025-11-13 15:03:18-INFO: 127.0.0.1 - - [2025-11-13 15:03:18] "GET /index.html HTTP/1.1" 200 5659 0.001152
+2025-11-13 15:03:18-DEBUG: Initializing WebSocket
+2025-11-13 15:03:18-DEBUG: Validating WebSocket request
+2025-11-13 15:03:18-INFO: 127.0.0.1 - - [2025-11-13 15:03:18] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002000
+2025-11-13 15:03:18-DEBUG: Initializing WebSocket
+2025-11-13 15:03:18-DEBUG: Validating WebSocket request
+2025-11-13 15:03:18-DEBUG: Initializing WebSocket
+2025-11-13 15:03:18-DEBUG: Validating WebSocket request
+2025-11-13 15:03:18-INFO: 127.0.0.1 - - [2025-11-13 15:03:18] "GET /css/index.css HTTP/1.1" 200 341554 0.002132
+2025-11-13 15:03:18-DEBUG: Initializing WebSocket
+2025-11-13 15:03:18-DEBUG: Validating WebSocket request
+2025-11-13 15:03:18-INFO: 127.0.0.1 - - [2025-11-13 15:03:18] "GET /eel.js HTTP/1.1" 200 6076 0.000000
+2025-11-13 15:03:18-INFO: 127.0.0.1 - - [2025-11-13 15:03:18] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.008379
+2025-11-13 15:03:19-DEBUG: Initializing WebSocket
+2025-11-13 15:03:19-DEBUG: Validating WebSocket request
+2025-11-13 15:03:19-DEBUG: Attempting to upgrade connection
+2025-11-13 15:03:19-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 15:03:35-DEBUG: Using proactor: IocpProactor
+2025-11-13 15:03:37-DEBUG: Initializing WebSocket
+2025-11-13 15:03:37-DEBUG: Validating WebSocket request
+2025-11-13 15:03:37-INFO: 127.0.0.1 - - [2025-11-13 15:03:37] "GET /index.html HTTP/1.1" 200 5659 0.001539
+2025-11-13 15:03:37-DEBUG: Initializing WebSocket
+2025-11-13 15:03:37-DEBUG: Validating WebSocket request
+2025-11-13 15:03:37-INFO: 127.0.0.1 - - [2025-11-13 15:03:37] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002315
+2025-11-13 15:03:37-DEBUG: Initializing WebSocket
+2025-11-13 15:03:37-DEBUG: Validating WebSocket request
+2025-11-13 15:03:37-INFO: 127.0.0.1 - - [2025-11-13 15:03:37] "GET /css/index.css HTTP/1.1" 200 341554 0.002015
+2025-11-13 15:03:37-DEBUG: Initializing WebSocket
+2025-11-13 15:03:37-DEBUG: Validating WebSocket request
+2025-11-13 15:03:37-INFO: 127.0.0.1 - - [2025-11-13 15:03:37] "GET /eel.js HTTP/1.1" 200 6076 0.001038
+2025-11-13 15:03:37-DEBUG: Initializing WebSocket
+2025-11-13 15:03:37-DEBUG: Validating WebSocket request
+2025-11-13 15:03:37-INFO: 127.0.0.1 - - [2025-11-13 15:03:37] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006097
+2025-11-13 15:03:38-DEBUG: Initializing WebSocket
+2025-11-13 15:03:38-DEBUG: Validating WebSocket request
+2025-11-13 15:03:38-DEBUG: Attempting to upgrade connection
+2025-11-13 15:03:38-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 15:03:43-DEBUG: Initializing WebSocket
+2025-11-13 15:03:43-DEBUG: Validating WebSocket request
+2025-11-13 15:03:43-INFO: 127.0.0.1 - - [2025-11-13 15:03:43] "GET /css/index.css HTTP/1.1" 200 341554 0.002525
+2025-11-13 15:03:43-DEBUG: Initializing WebSocket
+2025-11-13 15:03:43-DEBUG: Validating WebSocket request
+2025-11-13 15:03:43-INFO: 127.0.0.1 - - [2025-11-13 15:03:43] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.004543
+2025-11-13 15:04:12-DEBUG: Initializing WebSocket
+2025-11-13 15:04:12-DEBUG: Validating WebSocket request
+2025-11-13 15:04:12-INFO: 127.0.0.1 - - [2025-11-13 15:04:12] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001008
+2025-11-13 15:07:11-DEBUG: Using proactor: IocpProactor
+2025-11-13 15:07:13-DEBUG: Initializing WebSocket
+2025-11-13 15:07:13-DEBUG: Validating WebSocket request
+2025-11-13 15:07:13-INFO: 127.0.0.1 - - [2025-11-13 15:07:13] "GET /index.html HTTP/1.1" 200 5501 0.001046
+2025-11-13 15:07:13-DEBUG: Initializing WebSocket
+2025-11-13 15:07:13-DEBUG: Validating WebSocket request
+2025-11-13 15:07:13-INFO: 127.0.0.1 - - [2025-11-13 15:07:13] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002252
+2025-11-13 15:07:13-DEBUG: Initializing WebSocket
+2025-11-13 15:07:13-DEBUG: Validating WebSocket request
+2025-11-13 15:07:13-INFO: 127.0.0.1 - - [2025-11-13 15:07:13] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006798
+2025-11-13 15:07:13-DEBUG: Initializing WebSocket
+2025-11-13 15:07:13-DEBUG: Validating WebSocket request
+2025-11-13 15:07:13-INFO: 127.0.0.1 - - [2025-11-13 15:07:13] "GET /css/index.css HTTP/1.1" 200 341554 0.003004
+2025-11-13 15:07:13-DEBUG: Initializing WebSocket
+2025-11-13 15:07:13-DEBUG: Validating WebSocket request
+2025-11-13 15:07:13-INFO: 127.0.0.1 - - [2025-11-13 15:07:13] "GET /eel.js HTTP/1.1" 200 6076 0.000000
+2025-11-13 15:07:13-DEBUG: Initializing WebSocket
+2025-11-13 15:07:13-DEBUG: Validating WebSocket request
+2025-11-13 15:07:13-DEBUG: Attempting to upgrade connection
+2025-11-13 15:07:13-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 15:15:20-DEBUG: Using proactor: IocpProactor
+2025-11-13 15:15:22-DEBUG: Initializing WebSocket
+2025-11-13 15:15:22-DEBUG: Validating WebSocket request
+2025-11-13 15:15:22-INFO: 127.0.0.1 - - [2025-11-13 15:15:22] "GET /index.html HTTP/1.1" 200 5532 0.002307
+2025-11-13 15:15:22-DEBUG: Initializing WebSocket
+2025-11-13 15:15:22-DEBUG: Validating WebSocket request
+2025-11-13 15:15:22-INFO: 127.0.0.1 - - [2025-11-13 15:15:22] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.003178
+2025-11-13 15:15:22-DEBUG: Initializing WebSocket
+2025-11-13 15:15:22-DEBUG: Validating WebSocket request
+2025-11-13 15:15:22-DEBUG: Initializing WebSocket
+2025-11-13 15:15:22-DEBUG: Validating WebSocket request
+2025-11-13 15:15:22-INFO: 127.0.0.1 - - [2025-11-13 15:15:22] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.009637
+2025-11-13 15:15:22-INFO: 127.0.0.1 - - [2025-11-13 15:15:22] "GET /css/index.css HTTP/1.1" 200 341554 0.007074
+2025-11-13 15:15:22-DEBUG: Initializing WebSocket
+2025-11-13 15:15:22-DEBUG: Validating WebSocket request
+2025-11-13 15:15:22-INFO: 127.0.0.1 - - [2025-11-13 15:15:22] "GET /eel.js HTTP/1.1" 200 6076 0.000999
+2025-11-13 15:15:23-DEBUG: Initializing WebSocket
+2025-11-13 15:15:23-DEBUG: Validating WebSocket request
+2025-11-13 15:15:23-DEBUG: Attempting to upgrade connection
+2025-11-13 15:15:23-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 15:15:25-DEBUG: Closed WebSocket
+2025-11-13 15:15:25-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 15:15:25-DEBUG: Closed WebSocket
+2025-11-13 15:15:51-DEBUG: Using proactor: IocpProactor
+2025-11-13 15:15:53-DEBUG: Initializing WebSocket
+2025-11-13 15:15:53-DEBUG: Validating WebSocket request
+2025-11-13 15:15:53-INFO: 127.0.0.1 - - [2025-11-13 15:15:53] "GET /index.html HTTP/1.1" 200 5645 0.001055
+2025-11-13 15:15:53-DEBUG: Initializing WebSocket
+2025-11-13 15:15:53-DEBUG: Validating WebSocket request
+2025-11-13 15:15:53-INFO: 127.0.0.1 - - [2025-11-13 15:15:53] "GET /css/index.css HTTP/1.1" 200 341554 0.003122
+2025-11-13 15:15:53-DEBUG: Initializing WebSocket
+2025-11-13 15:15:53-DEBUG: Validating WebSocket request
+2025-11-13 15:15:53-INFO: 127.0.0.1 - - [2025-11-13 15:15:53] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004505
+2025-11-13 15:15:53-DEBUG: Initializing WebSocket
+2025-11-13 15:15:53-DEBUG: Validating WebSocket request
+2025-11-13 15:15:53-INFO: 127.0.0.1 - - [2025-11-13 15:15:53] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001352
+2025-11-13 15:15:53-DEBUG: Initializing WebSocket
+2025-11-13 15:15:53-DEBUG: Validating WebSocket request
+2025-11-13 15:15:53-INFO: 127.0.0.1 - - [2025-11-13 15:15:53] "GET /eel.js HTTP/1.1" 200 6076 0.001034
+2025-11-13 15:15:54-DEBUG: Initializing WebSocket
+2025-11-13 15:15:54-DEBUG: Validating WebSocket request
+2025-11-13 15:15:54-DEBUG: Attempting to upgrade connection
+2025-11-13 15:15:54-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 15:16:45-DEBUG: Using proactor: IocpProactor
+2025-11-13 15:16:47-DEBUG: Initializing WebSocket
+2025-11-13 15:16:47-DEBUG: Validating WebSocket request
+2025-11-13 15:16:47-INFO: 127.0.0.1 - - [2025-11-13 15:16:47] "GET /index.html HTTP/1.1" 200 5617 0.002191
+2025-11-13 15:16:47-DEBUG: Initializing WebSocket
+2025-11-13 15:16:47-DEBUG: Validating WebSocket request
+2025-11-13 15:16:47-INFO: 127.0.0.1 - - [2025-11-13 15:16:47] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002500
+2025-11-13 15:16:47-DEBUG: Initializing WebSocket
+2025-11-13 15:16:47-DEBUG: Validating WebSocket request
+2025-11-13 15:16:47-DEBUG: Initializing WebSocket
+2025-11-13 15:16:47-DEBUG: Validating WebSocket request
+2025-11-13 15:16:47-INFO: 127.0.0.1 - - [2025-11-13 15:16:47] "GET /css/index.css HTTP/1.1" 200 341554 0.003592
+2025-11-13 15:16:47-DEBUG: Initializing WebSocket
+2025-11-13 15:16:47-DEBUG: Validating WebSocket request
+2025-11-13 15:16:47-INFO: 127.0.0.1 - - [2025-11-13 15:16:47] "GET /eel.js HTTP/1.1" 200 6076 0.001035
+2025-11-13 15:16:47-INFO: 127.0.0.1 - - [2025-11-13 15:16:47] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.009918
+2025-11-13 15:16:48-DEBUG: Initializing WebSocket
+2025-11-13 15:16:48-DEBUG: Validating WebSocket request
+2025-11-13 15:16:48-DEBUG: Attempting to upgrade connection
+2025-11-13 15:16:48-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 15:16:49-DEBUG: Closed WebSocket
+2025-11-13 15:16:49-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 15:16:49-DEBUG: Closed WebSocket
+2025-11-13 15:16:58-DEBUG: Using proactor: IocpProactor
+2025-11-13 15:17:00-DEBUG: Initializing WebSocket
+2025-11-13 15:17:00-DEBUG: Validating WebSocket request
+2025-11-13 15:17:00-INFO: 127.0.0.1 - - [2025-11-13 15:17:00] "GET /index.html HTTP/1.1" 200 5629 0.002340
+2025-11-13 15:17:00-DEBUG: Initializing WebSocket
+2025-11-13 15:17:00-DEBUG: Validating WebSocket request
+2025-11-13 15:17:00-INFO: 127.0.0.1 - - [2025-11-13 15:17:00] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002342
+2025-11-13 15:17:00-DEBUG: Initializing WebSocket
+2025-11-13 15:17:00-DEBUG: Validating WebSocket request
+2025-11-13 15:17:00-INFO: 127.0.0.1 - - [2025-11-13 15:17:00] "GET /css/index.css HTTP/1.1" 200 341554 0.001057
+2025-11-13 15:17:00-DEBUG: Initializing WebSocket
+2025-11-13 15:17:00-DEBUG: Validating WebSocket request
+2025-11-13 15:17:00-INFO: 127.0.0.1 - - [2025-11-13 15:17:00] "GET /eel.js HTTP/1.1" 200 6076 0.001030
+2025-11-13 15:17:00-DEBUG: Initializing WebSocket
+2025-11-13 15:17:00-DEBUG: Validating WebSocket request
+2025-11-13 15:17:00-INFO: 127.0.0.1 - - [2025-11-13 15:17:00] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.025107
+2025-11-13 15:17:01-DEBUG: Initializing WebSocket
+2025-11-13 15:17:01-DEBUG: Validating WebSocket request
+2025-11-13 15:17:01-DEBUG: Attempting to upgrade connection
+2025-11-13 15:17:01-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 15:17:20-DEBUG: Using proactor: IocpProactor
+2025-11-13 15:17:22-DEBUG: Initializing WebSocket
+2025-11-13 15:17:22-DEBUG: Validating WebSocket request
+2025-11-13 15:17:22-INFO: 127.0.0.1 - - [2025-11-13 15:17:22] "GET /index.html HTTP/1.1" 200 5599 0.001025
+2025-11-13 15:17:22-DEBUG: Initializing WebSocket
+2025-11-13 15:17:22-DEBUG: Validating WebSocket request
+2025-11-13 15:17:22-INFO: 127.0.0.1 - - [2025-11-13 15:17:22] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002386
+2025-11-13 15:17:22-DEBUG: Initializing WebSocket
+2025-11-13 15:17:22-DEBUG: Validating WebSocket request
+2025-11-13 15:17:22-DEBUG: Initializing WebSocket
+2025-11-13 15:17:22-DEBUG: Validating WebSocket request
+2025-11-13 15:17:22-INFO: 127.0.0.1 - - [2025-11-13 15:17:22] "GET /css/index.css HTTP/1.1" 200 341554 0.005057
+2025-11-13 15:17:22-INFO: 127.0.0.1 - - [2025-11-13 15:17:22] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004874
+2025-11-13 15:17:22-DEBUG: Initializing WebSocket
+2025-11-13 15:17:22-DEBUG: Validating WebSocket request
+2025-11-13 15:17:22-INFO: 127.0.0.1 - - [2025-11-13 15:17:22] "GET /eel.js HTTP/1.1" 200 6076 0.001003
+2025-11-13 15:17:23-DEBUG: Initializing WebSocket
+2025-11-13 15:17:23-DEBUG: Validating WebSocket request
+2025-11-13 15:17:23-DEBUG: Attempting to upgrade connection
+2025-11-13 15:17:23-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 15:18:13-DEBUG: Using proactor: IocpProactor
+2025-11-13 15:18:15-DEBUG: Initializing WebSocket
+2025-11-13 15:18:15-DEBUG: Validating WebSocket request
+2025-11-13 15:18:15-INFO: 127.0.0.1 - - [2025-11-13 15:18:15] "GET /index.html HTTP/1.1" 200 6240 0.002528
+2025-11-13 15:18:15-DEBUG: Initializing WebSocket
+2025-11-13 15:18:15-DEBUG: Validating WebSocket request
+2025-11-13 15:18:15-INFO: 127.0.0.1 - - [2025-11-13 15:18:15] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002580
+2025-11-13 15:18:15-DEBUG: Initializing WebSocket
+2025-11-13 15:18:15-DEBUG: Validating WebSocket request
+2025-11-13 15:18:15-INFO: 127.0.0.1 - - [2025-11-13 15:18:15] "GET /css/index.css HTTP/1.1" 200 341554 0.002313
+2025-11-13 15:18:15-DEBUG: Initializing WebSocket
+2025-11-13 15:18:15-DEBUG: Validating WebSocket request
+2025-11-13 15:18:15-INFO: 127.0.0.1 - - [2025-11-13 15:18:15] "GET /eel.js HTTP/1.1" 200 6076 0.001280
+2025-11-13 15:18:15-DEBUG: Initializing WebSocket
+2025-11-13 15:18:15-DEBUG: Validating WebSocket request
+2025-11-13 15:18:15-INFO: 127.0.0.1 - - [2025-11-13 15:18:15] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006562
+2025-11-13 15:18:18-DEBUG: Initializing WebSocket
+2025-11-13 15:18:18-DEBUG: Validating WebSocket request
+2025-11-13 15:18:18-DEBUG: Attempting to upgrade connection
+2025-11-13 15:18:18-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 15:47:18-DEBUG: Closed WebSocket
+2025-11-13 15:47:18-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 15:47:18-DEBUG: Closed WebSocket
+2025-11-13 17:09:35-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:09:38-DEBUG: Initializing WebSocket
+2025-11-13 17:09:38-DEBUG: Validating WebSocket request
+2025-11-13 17:09:38-INFO: 127.0.0.1 - - [2025-11-13 17:09:38] "GET /index.html HTTP/1.1" 200 6181 0.002094
+2025-11-13 17:09:38-DEBUG: Initializing WebSocket
+2025-11-13 17:09:38-DEBUG: Validating WebSocket request
+2025-11-13 17:09:38-INFO: 127.0.0.1 - - [2025-11-13 17:09:38] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002302
+2025-11-13 17:09:38-DEBUG: Initializing WebSocket
+2025-11-13 17:09:38-DEBUG: Validating WebSocket request
+2025-11-13 17:09:38-INFO: 127.0.0.1 - - [2025-11-13 17:09:38] "GET /css/index.css HTTP/1.1" 200 341554 0.003338
+2025-11-13 17:09:38-DEBUG: Initializing WebSocket
+2025-11-13 17:09:38-DEBUG: Validating WebSocket request
+2025-11-13 17:09:38-INFO: 127.0.0.1 - - [2025-11-13 17:09:38] "GET /eel.js HTTP/1.1" 200 6076 0.001000
+2025-11-13 17:09:38-DEBUG: Initializing WebSocket
+2025-11-13 17:09:38-DEBUG: Validating WebSocket request
+2025-11-13 17:09:38-INFO: 127.0.0.1 - - [2025-11-13 17:09:38] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.007747
+2025-11-13 17:09:39-DEBUG: Initializing WebSocket
+2025-11-13 17:09:39-DEBUG: Validating WebSocket request
+2025-11-13 17:09:39-DEBUG: Attempting to upgrade connection
+2025-11-13 17:09:39-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:09:42-DEBUG: Initializing WebSocket
+2025-11-13 17:09:42-DEBUG: Validating WebSocket request
+2025-11-13 17:09:42-INFO: 127.0.0.1 - - [2025-11-13 17:09:42] "GET /css/index.css HTTP/1.1" 200 341554 0.003836
+2025-11-13 17:09:42-DEBUG: Initializing WebSocket
+2025-11-13 17:09:42-DEBUG: Validating WebSocket request
+2025-11-13 17:09:42-INFO: 127.0.0.1 - - [2025-11-13 17:09:42] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.005034
+2025-11-13 17:10:11-DEBUG: Initializing WebSocket
+2025-11-13 17:10:11-DEBUG: Validating WebSocket request
+2025-11-13 17:10:11-INFO: 127.0.0.1 - - [2025-11-13 17:10:11] "GET /index.html HTTP/1.1" 200 6181 0.002159
+2025-11-13 17:10:11-DEBUG: Closed WebSocket
+2025-11-13 17:10:11-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:10:11-DEBUG: Closed WebSocket
+2025-11-13 17:10:11-DEBUG: Initializing WebSocket
+2025-11-13 17:10:11-DEBUG: Validating WebSocket request
+2025-11-13 17:10:11-INFO: 127.0.0.1 - - [2025-11-13 17:10:11] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.002308
+2025-11-13 17:10:11-DEBUG: Initializing WebSocket
+2025-11-13 17:10:11-DEBUG: Validating WebSocket request
+2025-11-13 17:10:11-INFO: 127.0.0.1 - - [2025-11-13 17:10:11] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001416
+2025-11-13 17:10:11-DEBUG: Initializing WebSocket
+2025-11-13 17:10:11-DEBUG: Validating WebSocket request
+2025-11-13 17:10:11-DEBUG: Initializing WebSocket
+2025-11-13 17:10:11-DEBUG: Validating WebSocket request
+2025-11-13 17:10:11-INFO: 127.0.0.1 - - [2025-11-13 17:10:11] "GET /css/index.css HTTP/1.1" 200 341554 0.006888
+2025-11-13 17:10:11-DEBUG: Initializing WebSocket
+2025-11-13 17:10:11-DEBUG: Validating WebSocket request
+2025-11-13 17:10:11-INFO: 127.0.0.1 - - [2025-11-13 17:10:11] "GET /eel.js HTTP/1.1" 200 6076 0.001781
+2025-11-13 17:10:11-INFO: 127.0.0.1 - - [2025-11-13 17:10:11] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.011002
+2025-11-13 17:10:12-DEBUG: Initializing WebSocket
+2025-11-13 17:10:12-DEBUG: Validating WebSocket request
+2025-11-13 17:10:12-INFO: 127.0.0.1 - - [2025-11-13 17:10:12] "GET /favicon.ico HTTP/1.1" 200 152543 0.003249
+2025-11-13 17:10:12-DEBUG: Initializing WebSocket
+2025-11-13 17:10:12-DEBUG: Validating WebSocket request
+2025-11-13 17:10:12-DEBUG: Attempting to upgrade connection
+2025-11-13 17:10:12-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:10:46-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:10:48-DEBUG: Initializing WebSocket
+2025-11-13 17:10:48-DEBUG: Validating WebSocket request
+2025-11-13 17:10:48-INFO: 127.0.0.1 - - [2025-11-13 17:10:48] "GET /index.html HTTP/1.1" 200 6181 0.001561
+2025-11-13 17:10:48-DEBUG: Initializing WebSocket
+2025-11-13 17:10:48-DEBUG: Validating WebSocket request
+2025-11-13 17:10:48-INFO: 127.0.0.1 - - [2025-11-13 17:10:48] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002838
+2025-11-13 17:10:48-DEBUG: Initializing WebSocket
+2025-11-13 17:10:48-DEBUG: Validating WebSocket request
+2025-11-13 17:10:48-DEBUG: Initializing WebSocket
+2025-11-13 17:10:48-DEBUG: Validating WebSocket request
+2025-11-13 17:10:48-INFO: 127.0.0.1 - - [2025-11-13 17:10:48] "GET /css/index.css HTTP/1.1" 200 341554 0.006310
+2025-11-13 17:10:48-DEBUG: Initializing WebSocket
+2025-11-13 17:10:48-DEBUG: Validating WebSocket request
+2025-11-13 17:10:48-INFO: 127.0.0.1 - - [2025-11-13 17:10:48] "GET /eel.js HTTP/1.1" 200 6076 0.001006
+2025-11-13 17:10:48-INFO: 127.0.0.1 - - [2025-11-13 17:10:48] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.008705
+2025-11-13 17:10:49-DEBUG: Initializing WebSocket
+2025-11-13 17:10:49-DEBUG: Validating WebSocket request
+2025-11-13 17:10:49-DEBUG: Attempting to upgrade connection
+2025-11-13 17:10:49-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:18:31-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:18:33-DEBUG: Initializing WebSocket
+2025-11-13 17:18:33-DEBUG: Validating WebSocket request
+2025-11-13 17:18:33-INFO: 127.0.0.1 - - [2025-11-13 17:18:33] "GET /index.html HTTP/1.1" 200 6887 0.002120
+2025-11-13 17:18:33-DEBUG: Initializing WebSocket
+2025-11-13 17:18:33-DEBUG: Validating WebSocket request
+2025-11-13 17:18:33-DEBUG: Initializing WebSocket
+2025-11-13 17:18:33-DEBUG: Validating WebSocket request
+2025-11-13 17:18:33-INFO: 127.0.0.1 - - [2025-11-13 17:18:33] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.003119
+2025-11-13 17:18:33-INFO: 127.0.0.1 - - [2025-11-13 17:18:33] "GET /css/index.css HTTP/1.1" 200 341554 0.006615
+2025-11-13 17:18:33-DEBUG: Initializing WebSocket
+2025-11-13 17:18:33-DEBUG: Validating WebSocket request
+2025-11-13 17:18:33-INFO: 127.0.0.1 - - [2025-11-13 17:18:33] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006402
+2025-11-13 17:18:33-DEBUG: Initializing WebSocket
+2025-11-13 17:18:33-DEBUG: Validating WebSocket request
+2025-11-13 17:18:33-INFO: 127.0.0.1 - - [2025-11-13 17:18:33] "GET /eel.js HTTP/1.1" 200 6076 0.001850
+2025-11-13 17:18:34-DEBUG: Initializing WebSocket
+2025-11-13 17:18:34-DEBUG: Validating WebSocket request
+2025-11-13 17:18:34-DEBUG: Attempting to upgrade connection
+2025-11-13 17:18:34-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:18:51-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:18:53-DEBUG: Initializing WebSocket
+2025-11-13 17:18:53-DEBUG: Validating WebSocket request
+2025-11-13 17:18:53-INFO: 127.0.0.1 - - [2025-11-13 17:18:53] "GET /index.html HTTP/1.1" 200 6837 0.001002
+2025-11-13 17:18:53-DEBUG: Initializing WebSocket
+2025-11-13 17:18:53-DEBUG: Validating WebSocket request
+2025-11-13 17:18:53-DEBUG: Initializing WebSocket
+2025-11-13 17:18:53-DEBUG: Validating WebSocket request
+2025-11-13 17:18:53-INFO: 127.0.0.1 - - [2025-11-13 17:18:53] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002034
+2025-11-13 17:18:53-DEBUG: Initializing WebSocket
+2025-11-13 17:18:53-DEBUG: Validating WebSocket request
+2025-11-13 17:18:53-INFO: 127.0.0.1 - - [2025-11-13 17:18:53] "GET /css/index.css HTTP/1.1" 200 341554 0.007533
+2025-11-13 17:18:53-INFO: 127.0.0.1 - - [2025-11-13 17:18:53] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004902
+2025-11-13 17:18:53-DEBUG: Initializing WebSocket
+2025-11-13 17:18:53-DEBUG: Validating WebSocket request
+2025-11-13 17:18:53-INFO: 127.0.0.1 - - [2025-11-13 17:18:53] "GET /eel.js HTTP/1.1" 200 6076 0.001506
+2025-11-13 17:18:54-DEBUG: Initializing WebSocket
+2025-11-13 17:18:54-DEBUG: Validating WebSocket request
+2025-11-13 17:18:54-DEBUG: Attempting to upgrade connection
+2025-11-13 17:18:54-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:22:13-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:22:15-DEBUG: Initializing WebSocket
+2025-11-13 17:22:15-DEBUG: Validating WebSocket request
+2025-11-13 17:22:15-INFO: 127.0.0.1 - - [2025-11-13 17:22:15] "GET /index.html HTTP/1.1" 200 6935 0.001021
+2025-11-13 17:22:15-DEBUG: Initializing WebSocket
+2025-11-13 17:22:15-DEBUG: Validating WebSocket request
+2025-11-13 17:22:15-INFO: 127.0.0.1 - - [2025-11-13 17:22:15] "GET /css/index.css HTTP/1.1" 200 341554 0.003099
+2025-11-13 17:22:15-DEBUG: Initializing WebSocket
+2025-11-13 17:22:15-DEBUG: Validating WebSocket request
+2025-11-13 17:22:15-INFO: 127.0.0.1 - - [2025-11-13 17:22:15] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.009793
+2025-11-13 17:22:15-DEBUG: Initializing WebSocket
+2025-11-13 17:22:15-DEBUG: Validating WebSocket request
+2025-11-13 17:22:15-INFO: 127.0.0.1 - - [2025-11-13 17:22:15] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002718
+2025-11-13 17:22:15-DEBUG: Initializing WebSocket
+2025-11-13 17:22:15-DEBUG: Validating WebSocket request
+2025-11-13 17:22:15-INFO: 127.0.0.1 - - [2025-11-13 17:22:15] "GET /eel.js HTTP/1.1" 200 6076 0.001002
+2025-11-13 17:22:16-DEBUG: Initializing WebSocket
+2025-11-13 17:22:16-DEBUG: Validating WebSocket request
+2025-11-13 17:22:16-DEBUG: Attempting to upgrade connection
+2025-11-13 17:22:16-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:22:59-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:23:01-DEBUG: Initializing WebSocket
+2025-11-13 17:23:01-DEBUG: Validating WebSocket request
+2025-11-13 17:23:01-INFO: 127.0.0.1 - - [2025-11-13 17:23:01] "GET /index.html HTTP/1.1" 200 6827 0.001042
+2025-11-13 17:23:01-DEBUG: Initializing WebSocket
+2025-11-13 17:23:01-DEBUG: Validating WebSocket request
+2025-11-13 17:23:01-INFO: 127.0.0.1 - - [2025-11-13 17:23:01] "GET /css/index.css HTTP/1.1" 200 341554 0.003858
+2025-11-13 17:23:01-DEBUG: Initializing WebSocket
+2025-11-13 17:23:01-DEBUG: Validating WebSocket request
+2025-11-13 17:23:01-INFO: 127.0.0.1 - - [2025-11-13 17:23:01] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002080
+2025-11-13 17:23:01-DEBUG: Initializing WebSocket
+2025-11-13 17:23:01-DEBUG: Validating WebSocket request
+2025-11-13 17:23:01-INFO: 127.0.0.1 - - [2025-11-13 17:23:01] "GET /eel.js HTTP/1.1" 200 6076 0.001104
+2025-11-13 17:23:01-DEBUG: Initializing WebSocket
+2025-11-13 17:23:01-DEBUG: Validating WebSocket request
+2025-11-13 17:23:01-INFO: 127.0.0.1 - - [2025-11-13 17:23:01] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.008242
+2025-11-13 17:23:01-DEBUG: Initializing WebSocket
+2025-11-13 17:23:01-DEBUG: Validating WebSocket request
+2025-11-13 17:23:01-DEBUG: Attempting to upgrade connection
+2025-11-13 17:23:01-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:23:13-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:23:15-DEBUG: Initializing WebSocket
+2025-11-13 17:23:15-DEBUG: Validating WebSocket request
+2025-11-13 17:23:15-INFO: 127.0.0.1 - - [2025-11-13 17:23:15] "GET /index.html HTTP/1.1" 200 6860 0.001075
+2025-11-13 17:23:15-DEBUG: Initializing WebSocket
+2025-11-13 17:23:15-DEBUG: Validating WebSocket request
+2025-11-13 17:23:15-INFO: 127.0.0.1 - - [2025-11-13 17:23:15] "GET /css/index.css HTTP/1.1" 200 341554 0.004099
+2025-11-13 17:23:15-DEBUG: Initializing WebSocket
+2025-11-13 17:23:15-DEBUG: Validating WebSocket request
+2025-11-13 17:23:15-INFO: 127.0.0.1 - - [2025-11-13 17:23:15] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.007442
+2025-11-13 17:23:15-DEBUG: Initializing WebSocket
+2025-11-13 17:23:15-DEBUG: Validating WebSocket request
+2025-11-13 17:23:15-INFO: 127.0.0.1 - - [2025-11-13 17:23:15] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002044
+2025-11-13 17:23:15-DEBUG: Initializing WebSocket
+2025-11-13 17:23:15-DEBUG: Validating WebSocket request
+2025-11-13 17:23:15-INFO: 127.0.0.1 - - [2025-11-13 17:23:15] "GET /eel.js HTTP/1.1" 200 6076 0.001047
+2025-11-13 17:23:15-DEBUG: Initializing WebSocket
+2025-11-13 17:23:15-DEBUG: Validating WebSocket request
+2025-11-13 17:23:15-DEBUG: Attempting to upgrade connection
+2025-11-13 17:23:15-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:24:21-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:24:23-DEBUG: Initializing WebSocket
+2025-11-13 17:24:23-DEBUG: Validating WebSocket request
+2025-11-13 17:24:23-INFO: 127.0.0.1 - - [2025-11-13 17:24:23] "GET /index.html HTTP/1.1" 200 6871 0.001144
+2025-11-13 17:24:23-DEBUG: Initializing WebSocket
+2025-11-13 17:24:23-DEBUG: Validating WebSocket request
+2025-11-13 17:24:23-DEBUG: Initializing WebSocket
+2025-11-13 17:24:23-DEBUG: Validating WebSocket request
+2025-11-13 17:24:23-INFO: 127.0.0.1 - - [2025-11-13 17:24:23] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002307
+2025-11-13 17:24:23-INFO: 127.0.0.1 - - [2025-11-13 17:24:23] "GET /css/index.css HTTP/1.1" 200 341554 0.004303
+2025-11-13 17:24:23-DEBUG: Initializing WebSocket
+2025-11-13 17:24:23-DEBUG: Validating WebSocket request
+2025-11-13 17:24:23-INFO: 127.0.0.1 - - [2025-11-13 17:24:23] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.005060
+2025-11-13 17:24:23-DEBUG: Initializing WebSocket
+2025-11-13 17:24:23-DEBUG: Validating WebSocket request
+2025-11-13 17:24:23-INFO: 127.0.0.1 - - [2025-11-13 17:24:23] "GET /eel.js HTTP/1.1" 200 6076 0.001096
+2025-11-13 17:24:24-DEBUG: Initializing WebSocket
+2025-11-13 17:24:24-DEBUG: Validating WebSocket request
+2025-11-13 17:24:24-DEBUG: Attempting to upgrade connection
+2025-11-13 17:24:24-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:29:38-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:29:40-DEBUG: Initializing WebSocket
+2025-11-13 17:29:40-DEBUG: Validating WebSocket request
+2025-11-13 17:29:40-INFO: 127.0.0.1 - - [2025-11-13 17:29:40] "GET /index.html HTTP/1.1" 200 6629 0.002585
+2025-11-13 17:29:40-DEBUG: Initializing WebSocket
+2025-11-13 17:29:40-DEBUG: Validating WebSocket request
+2025-11-13 17:29:40-INFO: 127.0.0.1 - - [2025-11-13 17:29:40] "GET /css/index.css HTTP/1.1" 200 341554 0.003125
+2025-11-13 17:29:40-DEBUG: Initializing WebSocket
+2025-11-13 17:29:40-DEBUG: Validating WebSocket request
+2025-11-13 17:29:40-INFO: 127.0.0.1 - - [2025-11-13 17:29:40] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001268
+2025-11-13 17:29:40-DEBUG: Initializing WebSocket
+2025-11-13 17:29:40-DEBUG: Validating WebSocket request
+2025-11-13 17:29:40-DEBUG: Initializing WebSocket
+2025-11-13 17:29:40-DEBUG: Validating WebSocket request
+2025-11-13 17:29:40-INFO: 127.0.0.1 - - [2025-11-13 17:29:40] "GET /eel.js HTTP/1.1" 200 6076 0.000000
+2025-11-13 17:29:40-INFO: 127.0.0.1 - - [2025-11-13 17:29:40] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.005975
+2025-11-13 17:29:41-DEBUG: Initializing WebSocket
+2025-11-13 17:29:41-DEBUG: Validating WebSocket request
+2025-11-13 17:29:41-DEBUG: Attempting to upgrade connection
+2025-11-13 17:29:41-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:30:16-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:30:18-DEBUG: Initializing WebSocket
+2025-11-13 17:30:18-DEBUG: Validating WebSocket request
+2025-11-13 17:30:18-INFO: 127.0.0.1 - - [2025-11-13 17:30:18] "GET /index.html HTTP/1.1" 200 6644 0.001036
+2025-11-13 17:30:18-DEBUG: Initializing WebSocket
+2025-11-13 17:30:18-DEBUG: Validating WebSocket request
+2025-11-13 17:30:18-INFO: 127.0.0.1 - - [2025-11-13 17:30:18] "GET /css/index.css HTTP/1.1" 200 341554 0.002325
+2025-11-13 17:30:18-DEBUG: Initializing WebSocket
+2025-11-13 17:30:18-DEBUG: Validating WebSocket request
+2025-11-13 17:30:18-DEBUG: Initializing WebSocket
+2025-11-13 17:30:18-DEBUG: Validating WebSocket request
+2025-11-13 17:30:18-INFO: 127.0.0.1 - - [2025-11-13 17:30:18] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002017
+2025-11-13 17:30:18-DEBUG: Initializing WebSocket
+2025-11-13 17:30:18-DEBUG: Validating WebSocket request
+2025-11-13 17:30:18-INFO: 127.0.0.1 - - [2025-11-13 17:30:18] "GET /eel.js HTTP/1.1" 200 6076 0.001426
+2025-11-13 17:30:18-INFO: 127.0.0.1 - - [2025-11-13 17:30:18] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.009418
+2025-11-13 17:30:18-DEBUG: Initializing WebSocket
+2025-11-13 17:30:18-DEBUG: Validating WebSocket request
+2025-11-13 17:30:18-DEBUG: Attempting to upgrade connection
+2025-11-13 17:30:18-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:30:42-DEBUG: Closed WebSocket
+2025-11-13 17:30:42-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:30:43-DEBUG: Closed WebSocket
+2025-11-13 17:30:47-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:30:49-DEBUG: Initializing WebSocket
+2025-11-13 17:30:49-DEBUG: Validating WebSocket request
+2025-11-13 17:30:49-INFO: 127.0.0.1 - - [2025-11-13 17:30:49] "GET /index.html HTTP/1.1" 200 6668 0.002131
+2025-11-13 17:30:49-DEBUG: Initializing WebSocket
+2025-11-13 17:30:49-DEBUG: Validating WebSocket request
+2025-11-13 17:30:49-DEBUG: Initializing WebSocket
+2025-11-13 17:30:49-DEBUG: Validating WebSocket request
+2025-11-13 17:30:49-INFO: 127.0.0.1 - - [2025-11-13 17:30:49] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002425
+2025-11-13 17:30:49-INFO: 127.0.0.1 - - [2025-11-13 17:30:49] "GET /css/index.css HTTP/1.1" 200 341554 0.006352
+2025-11-13 17:30:49-DEBUG: Initializing WebSocket
+2025-11-13 17:30:49-DEBUG: Validating WebSocket request
+2025-11-13 17:30:49-INFO: 127.0.0.1 - - [2025-11-13 17:30:49] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.007930
+2025-11-13 17:30:49-DEBUG: Initializing WebSocket
+2025-11-13 17:30:49-DEBUG: Validating WebSocket request
+2025-11-13 17:30:49-INFO: 127.0.0.1 - - [2025-11-13 17:30:49] "GET /eel.js HTTP/1.1" 200 6076 0.001003
+2025-11-13 17:30:49-DEBUG: Initializing WebSocket
+2025-11-13 17:30:49-DEBUG: Validating WebSocket request
+2025-11-13 17:30:49-DEBUG: Attempting to upgrade connection
+2025-11-13 17:30:49-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:38:31-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:38:33-DEBUG: Initializing WebSocket
+2025-11-13 17:38:33-DEBUG: Validating WebSocket request
+2025-11-13 17:38:33-INFO: 127.0.0.1 - - [2025-11-13 17:38:33] "GET /index.html HTTP/1.1" 200 6939 0.001312
+2025-11-13 17:38:33-DEBUG: Initializing WebSocket
+2025-11-13 17:38:33-DEBUG: Validating WebSocket request
+2025-11-13 17:38:33-DEBUG: Initializing WebSocket
+2025-11-13 17:38:33-DEBUG: Validating WebSocket request
+2025-11-13 17:38:33-INFO: 127.0.0.1 - - [2025-11-13 17:38:33] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001074
+2025-11-13 17:38:33-DEBUG: Initializing WebSocket
+2025-11-13 17:38:33-DEBUG: Validating WebSocket request
+2025-11-13 17:38:33-INFO: 127.0.0.1 - - [2025-11-13 17:38:33] "GET /css/index.css HTTP/1.1" 200 341554 0.007945
+2025-11-13 17:38:33-INFO: 127.0.0.1 - - [2025-11-13 17:38:33] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004947
+2025-11-13 17:38:33-DEBUG: Initializing WebSocket
+2025-11-13 17:38:33-DEBUG: Validating WebSocket request
+2025-11-13 17:38:33-INFO: 127.0.0.1 - - [2025-11-13 17:38:33] "GET /eel.js HTTP/1.1" 200 6076 0.001189
+2025-11-13 17:38:34-DEBUG: Initializing WebSocket
+2025-11-13 17:38:34-DEBUG: Validating WebSocket request
+2025-11-13 17:38:34-DEBUG: Attempting to upgrade connection
+2025-11-13 17:38:34-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:39:02-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:39:04-DEBUG: Initializing WebSocket
+2025-11-13 17:39:04-DEBUG: Validating WebSocket request
+2025-11-13 17:39:04-INFO: 127.0.0.1 - - [2025-11-13 17:39:04] "GET /index.html HTTP/1.1" 200 6517 0.001004
+2025-11-13 17:39:04-DEBUG: Initializing WebSocket
+2025-11-13 17:39:04-DEBUG: Validating WebSocket request
+2025-11-13 17:39:04-INFO: 127.0.0.1 - - [2025-11-13 17:39:04] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002542
+2025-11-13 17:39:04-DEBUG: Initializing WebSocket
+2025-11-13 17:39:04-DEBUG: Validating WebSocket request
+2025-11-13 17:39:04-INFO: 127.0.0.1 - - [2025-11-13 17:39:04] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006701
+2025-11-13 17:39:04-DEBUG: Initializing WebSocket
+2025-11-13 17:39:04-DEBUG: Validating WebSocket request
+2025-11-13 17:39:04-INFO: 127.0.0.1 - - [2025-11-13 17:39:04] "GET /eel.js HTTP/1.1" 200 6076 0.001107
+2025-11-13 17:39:04-DEBUG: Initializing WebSocket
+2025-11-13 17:39:04-DEBUG: Validating WebSocket request
+2025-11-13 17:39:04-INFO: 127.0.0.1 - - [2025-11-13 17:39:04] "GET /css/index.css HTTP/1.1" 200 341554 0.002361
+2025-11-13 17:39:05-DEBUG: Initializing WebSocket
+2025-11-13 17:39:05-DEBUG: Validating WebSocket request
+2025-11-13 17:39:05-DEBUG: Attempting to upgrade connection
+2025-11-13 17:39:05-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:39:46-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:39:47-DEBUG: Initializing WebSocket
+2025-11-13 17:39:47-DEBUG: Validating WebSocket request
+2025-11-13 17:39:47-INFO: 127.0.0.1 - - [2025-11-13 17:39:47] "GET /index.html HTTP/1.1" 200 6468 0.002137
+2025-11-13 17:39:47-DEBUG: Initializing WebSocket
+2025-11-13 17:39:47-DEBUG: Validating WebSocket request
+2025-11-13 17:39:47-DEBUG: Initializing WebSocket
+2025-11-13 17:39:47-DEBUG: Validating WebSocket request
+2025-11-13 17:39:47-INFO: 127.0.0.1 - - [2025-11-13 17:39:47] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002173
+2025-11-13 17:39:47-INFO: 127.0.0.1 - - [2025-11-13 17:39:47] "GET /css/index.css HTTP/1.1" 200 341554 0.005964
+2025-11-13 17:39:47-DEBUG: Initializing WebSocket
+2025-11-13 17:39:47-DEBUG: Validating WebSocket request
+2025-11-13 17:39:47-DEBUG: Initializing WebSocket
+2025-11-13 17:39:47-DEBUG: Validating WebSocket request
+2025-11-13 17:39:47-INFO: 127.0.0.1 - - [2025-11-13 17:39:47] "GET /eel.js HTTP/1.1" 200 6076 0.001074
+2025-11-13 17:39:47-INFO: 127.0.0.1 - - [2025-11-13 17:39:47] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.007650
+2025-11-13 17:39:48-DEBUG: Initializing WebSocket
+2025-11-13 17:39:48-DEBUG: Validating WebSocket request
+2025-11-13 17:39:48-DEBUG: Attempting to upgrade connection
+2025-11-13 17:39:48-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:40:13-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:40:15-DEBUG: Initializing WebSocket
+2025-11-13 17:40:15-DEBUG: Validating WebSocket request
+2025-11-13 17:40:15-INFO: 127.0.0.1 - - [2025-11-13 17:40:15] "GET /index.html HTTP/1.1" 200 6454 0.001006
+2025-11-13 17:40:15-DEBUG: Initializing WebSocket
+2025-11-13 17:40:15-DEBUG: Validating WebSocket request
+2025-11-13 17:40:15-DEBUG: Initializing WebSocket
+2025-11-13 17:40:15-DEBUG: Validating WebSocket request
+2025-11-13 17:40:15-INFO: 127.0.0.1 - - [2025-11-13 17:40:15] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002336
+2025-11-13 17:40:15-DEBUG: Initializing WebSocket
+2025-11-13 17:40:15-DEBUG: Validating WebSocket request
+2025-11-13 17:40:15-INFO: 127.0.0.1 - - [2025-11-13 17:40:15] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004770
+2025-11-13 17:40:15-DEBUG: Initializing WebSocket
+2025-11-13 17:40:15-DEBUG: Validating WebSocket request
+2025-11-13 17:40:15-INFO: 127.0.0.1 - - [2025-11-13 17:40:15] "GET /eel.js HTTP/1.1" 200 6076 0.001314
+2025-11-13 17:40:15-INFO: 127.0.0.1 - - [2025-11-13 17:40:15] "GET /css/index.css HTTP/1.1" 200 341554 0.015463
+2025-11-13 17:40:15-DEBUG: Initializing WebSocket
+2025-11-13 17:40:15-DEBUG: Validating WebSocket request
+2025-11-13 17:40:15-DEBUG: Attempting to upgrade connection
+2025-11-13 17:40:15-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:40:31-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:40:33-DEBUG: Initializing WebSocket
+2025-11-13 17:40:33-DEBUG: Validating WebSocket request
+2025-11-13 17:40:33-INFO: 127.0.0.1 - - [2025-11-13 17:40:33] "GET /index.html HTTP/1.1" 200 6518 0.001081
+2025-11-13 17:40:33-DEBUG: Initializing WebSocket
+2025-11-13 17:40:33-DEBUG: Validating WebSocket request
+2025-11-13 17:40:33-INFO: 127.0.0.1 - - [2025-11-13 17:40:33] "GET /css/index.css HTTP/1.1" 200 341554 0.003960
+2025-11-13 17:40:33-DEBUG: Initializing WebSocket
+2025-11-13 17:40:33-DEBUG: Validating WebSocket request
+2025-11-13 17:40:33-INFO: 127.0.0.1 - - [2025-11-13 17:40:33] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002085
+2025-11-13 17:40:33-DEBUG: Initializing WebSocket
+2025-11-13 17:40:33-DEBUG: Validating WebSocket request
+2025-11-13 17:40:33-DEBUG: Initializing WebSocket
+2025-11-13 17:40:33-DEBUG: Validating WebSocket request
+2025-11-13 17:40:33-INFO: 127.0.0.1 - - [2025-11-13 17:40:33] "GET /eel.js HTTP/1.1" 200 6076 0.001367
+2025-11-13 17:40:33-INFO: 127.0.0.1 - - [2025-11-13 17:40:33] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.009687
+2025-11-13 17:40:34-DEBUG: Initializing WebSocket
+2025-11-13 17:40:34-DEBUG: Validating WebSocket request
+2025-11-13 17:40:34-DEBUG: Attempting to upgrade connection
+2025-11-13 17:40:34-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:40:46-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:40:48-DEBUG: Initializing WebSocket
+2025-11-13 17:40:48-DEBUG: Validating WebSocket request
+2025-11-13 17:40:48-INFO: 127.0.0.1 - - [2025-11-13 17:40:48] "GET /index.html HTTP/1.1" 200 6514 0.001037
+2025-11-13 17:40:48-DEBUG: Initializing WebSocket
+2025-11-13 17:40:48-DEBUG: Validating WebSocket request
+2025-11-13 17:40:48-INFO: 127.0.0.1 - - [2025-11-13 17:40:48] "GET /css/index.css HTTP/1.1" 200 341554 0.002362
+2025-11-13 17:40:48-DEBUG: Initializing WebSocket
+2025-11-13 17:40:48-DEBUG: Validating WebSocket request
+2025-11-13 17:40:48-INFO: 127.0.0.1 - - [2025-11-13 17:40:48] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006979
+2025-11-13 17:40:48-DEBUG: Initializing WebSocket
+2025-11-13 17:40:48-DEBUG: Validating WebSocket request
+2025-11-13 17:40:48-INFO: 127.0.0.1 - - [2025-11-13 17:40:48] "GET /eel.js HTTP/1.1" 200 6076 0.001054
+2025-11-13 17:40:48-DEBUG: Initializing WebSocket
+2025-11-13 17:40:48-DEBUG: Validating WebSocket request
+2025-11-13 17:40:48-INFO: 127.0.0.1 - - [2025-11-13 17:40:48] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002878
+2025-11-13 17:40:48-DEBUG: Initializing WebSocket
+2025-11-13 17:40:48-DEBUG: Validating WebSocket request
+2025-11-13 17:40:48-DEBUG: Attempting to upgrade connection
+2025-11-13 17:40:48-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:41:06-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:41:08-DEBUG: Initializing WebSocket
+2025-11-13 17:41:08-DEBUG: Validating WebSocket request
+2025-11-13 17:41:08-INFO: 127.0.0.1 - - [2025-11-13 17:41:08] "GET /index.html HTTP/1.1" 200 6483 0.001019
+2025-11-13 17:41:08-DEBUG: Initializing WebSocket
+2025-11-13 17:41:08-DEBUG: Validating WebSocket request
+2025-11-13 17:41:08-DEBUG: Initializing WebSocket
+2025-11-13 17:41:08-DEBUG: Validating WebSocket request
+2025-11-13 17:41:08-INFO: 127.0.0.1 - - [2025-11-13 17:41:08] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002359
+2025-11-13 17:41:08-DEBUG: Initializing WebSocket
+2025-11-13 17:41:08-DEBUG: Validating WebSocket request
+2025-11-13 17:41:08-INFO: 127.0.0.1 - - [2025-11-13 17:41:08] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.007042
+2025-11-13 17:41:08-INFO: 127.0.0.1 - - [2025-11-13 17:41:08] "GET /css/index.css HTTP/1.1" 200 341554 0.011403
+2025-11-13 17:41:08-DEBUG: Initializing WebSocket
+2025-11-13 17:41:08-DEBUG: Validating WebSocket request
+2025-11-13 17:41:08-INFO: 127.0.0.1 - - [2025-11-13 17:41:08] "GET /eel.js HTTP/1.1" 200 6076 0.001013
+2025-11-13 17:41:08-DEBUG: Initializing WebSocket
+2025-11-13 17:41:08-DEBUG: Validating WebSocket request
+2025-11-13 17:41:08-DEBUG: Attempting to upgrade connection
+2025-11-13 17:41:08-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:42:10-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:42:12-DEBUG: Initializing WebSocket
+2025-11-13 17:42:12-DEBUG: Validating WebSocket request
+2025-11-13 17:42:12-INFO: 127.0.0.1 - - [2025-11-13 17:42:12] "GET /index.html HTTP/1.1" 200 6588 0.001599
+2025-11-13 17:42:12-DEBUG: Initializing WebSocket
+2025-11-13 17:42:12-DEBUG: Validating WebSocket request
+2025-11-13 17:42:12-DEBUG: Initializing WebSocket
+2025-11-13 17:42:12-DEBUG: Validating WebSocket request
+2025-11-13 17:42:12-INFO: 127.0.0.1 - - [2025-11-13 17:42:12] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.003351
+2025-11-13 17:42:12-DEBUG: Initializing WebSocket
+2025-11-13 17:42:12-DEBUG: Validating WebSocket request
+2025-11-13 17:42:12-INFO: 127.0.0.1 - - [2025-11-13 17:42:12] "GET /css/index.css HTTP/1.1" 200 341554 0.010211
+2025-11-13 17:42:12-DEBUG: Initializing WebSocket
+2025-11-13 17:42:12-DEBUG: Validating WebSocket request
+2025-11-13 17:42:12-INFO: 127.0.0.1 - - [2025-11-13 17:42:12] "GET /eel.js HTTP/1.1" 200 6076 0.001009
+2025-11-13 17:42:12-INFO: 127.0.0.1 - - [2025-11-13 17:42:12] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.008866
+2025-11-13 17:42:12-DEBUG: Initializing WebSocket
+2025-11-13 17:42:12-DEBUG: Validating WebSocket request
+2025-11-13 17:42:12-DEBUG: Attempting to upgrade connection
+2025-11-13 17:42:12-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:42:36-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:42:37-DEBUG: Initializing WebSocket
+2025-11-13 17:42:37-DEBUG: Validating WebSocket request
+2025-11-13 17:42:37-INFO: 127.0.0.1 - - [2025-11-13 17:42:37] "GET /index.html HTTP/1.1" 200 6512 0.001226
+2025-11-13 17:42:37-DEBUG: Initializing WebSocket
+2025-11-13 17:42:37-DEBUG: Validating WebSocket request
+2025-11-13 17:42:37-DEBUG: Initializing WebSocket
+2025-11-13 17:42:37-DEBUG: Validating WebSocket request
+2025-11-13 17:42:37-INFO: 127.0.0.1 - - [2025-11-13 17:42:37] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002133
+2025-11-13 17:42:37-DEBUG: Initializing WebSocket
+2025-11-13 17:42:37-DEBUG: Validating WebSocket request
+2025-11-13 17:42:37-INFO: 127.0.0.1 - - [2025-11-13 17:42:37] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.005290
+2025-11-13 17:42:37-INFO: 127.0.0.1 - - [2025-11-13 17:42:37] "GET /css/index.css HTTP/1.1" 200 341554 0.010913
+2025-11-13 17:42:37-DEBUG: Initializing WebSocket
+2025-11-13 17:42:37-DEBUG: Validating WebSocket request
+2025-11-13 17:42:37-INFO: 127.0.0.1 - - [2025-11-13 17:42:37] "GET /eel.js HTTP/1.1" 200 6076 0.000000
+2025-11-13 17:42:38-DEBUG: Initializing WebSocket
+2025-11-13 17:42:38-DEBUG: Validating WebSocket request
+2025-11-13 17:42:38-DEBUG: Attempting to upgrade connection
+2025-11-13 17:42:38-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:43:03-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:43:05-DEBUG: Initializing WebSocket
+2025-11-13 17:43:05-DEBUG: Validating WebSocket request
+2025-11-13 17:43:05-INFO: 127.0.0.1 - - [2025-11-13 17:43:05] "GET /index.html HTTP/1.1" 200 6603 0.001651
+2025-11-13 17:43:05-DEBUG: Initializing WebSocket
+2025-11-13 17:43:05-DEBUG: Validating WebSocket request
+2025-11-13 17:43:05-INFO: 127.0.0.1 - - [2025-11-13 17:43:05] "GET /css/index.css HTTP/1.1" 200 341554 0.002925
+2025-11-13 17:43:05-DEBUG: Initializing WebSocket
+2025-11-13 17:43:05-DEBUG: Validating WebSocket request
+2025-11-13 17:43:05-DEBUG: Initializing WebSocket
+2025-11-13 17:43:05-DEBUG: Validating WebSocket request
+2025-11-13 17:43:05-INFO: 127.0.0.1 - - [2025-11-13 17:43:05] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002151
+2025-11-13 17:43:05-DEBUG: Initializing WebSocket
+2025-11-13 17:43:05-DEBUG: Validating WebSocket request
+2025-11-13 17:43:05-INFO: 127.0.0.1 - - [2025-11-13 17:43:05] "GET /eel.js HTTP/1.1" 200 6076 0.001395
+2025-11-13 17:43:05-INFO: 127.0.0.1 - - [2025-11-13 17:43:05] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.009960
+2025-11-13 17:43:06-DEBUG: Initializing WebSocket
+2025-11-13 17:43:06-DEBUG: Validating WebSocket request
+2025-11-13 17:43:06-DEBUG: Attempting to upgrade connection
+2025-11-13 17:43:06-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:43:27-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:43:28-DEBUG: Initializing WebSocket
+2025-11-13 17:43:28-DEBUG: Validating WebSocket request
+2025-11-13 17:43:28-INFO: 127.0.0.1 - - [2025-11-13 17:43:28] "GET /index.html HTTP/1.1" 200 6527 0.001021
+2025-11-13 17:43:28-DEBUG: Initializing WebSocket
+2025-11-13 17:43:28-DEBUG: Validating WebSocket request
+2025-11-13 17:43:28-DEBUG: Initializing WebSocket
+2025-11-13 17:43:28-DEBUG: Validating WebSocket request
+2025-11-13 17:43:28-INFO: 127.0.0.1 - - [2025-11-13 17:43:28] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001059
+2025-11-13 17:43:28-DEBUG: Initializing WebSocket
+2025-11-13 17:43:28-DEBUG: Validating WebSocket request
+2025-11-13 17:43:28-INFO: 127.0.0.1 - - [2025-11-13 17:43:28] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.005445
+2025-11-13 17:43:28-INFO: 127.0.0.1 - - [2025-11-13 17:43:28] "GET /css/index.css HTTP/1.1" 200 341554 0.009858
+2025-11-13 17:43:28-DEBUG: Initializing WebSocket
+2025-11-13 17:43:28-DEBUG: Validating WebSocket request
+2025-11-13 17:43:28-INFO: 127.0.0.1 - - [2025-11-13 17:43:28] "GET /eel.js HTTP/1.1" 200 6076 0.001081
+2025-11-13 17:43:29-DEBUG: Initializing WebSocket
+2025-11-13 17:43:29-DEBUG: Validating WebSocket request
+2025-11-13 17:43:29-DEBUG: Attempting to upgrade connection
+2025-11-13 17:43:29-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:44:57-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:44:59-DEBUG: Initializing WebSocket
+2025-11-13 17:44:59-DEBUG: Validating WebSocket request
+2025-11-13 17:44:59-INFO: 127.0.0.1 - - [2025-11-13 17:44:59] "GET /index.html HTTP/1.1" 200 6491 0.001291
+2025-11-13 17:44:59-DEBUG: Initializing WebSocket
+2025-11-13 17:44:59-DEBUG: Validating WebSocket request
+2025-11-13 17:44:59-DEBUG: Initializing WebSocket
+2025-11-13 17:44:59-DEBUG: Validating WebSocket request
+2025-11-13 17:44:59-INFO: 127.0.0.1 - - [2025-11-13 17:44:59] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002337
+2025-11-13 17:44:59-DEBUG: Initializing WebSocket
+2025-11-13 17:44:59-DEBUG: Validating WebSocket request
+2025-11-13 17:44:59-INFO: 127.0.0.1 - - [2025-11-13 17:44:59] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006533
+2025-11-13 17:44:59-DEBUG: Initializing WebSocket
+2025-11-13 17:44:59-DEBUG: Validating WebSocket request
+2025-11-13 17:44:59-INFO: 127.0.0.1 - - [2025-11-13 17:44:59] "GET /eel.js HTTP/1.1" 200 6076 0.001190
+2025-11-13 17:44:59-INFO: 127.0.0.1 - - [2025-11-13 17:44:59] "GET /css/index.css HTTP/1.1" 200 341554 0.016075
+2025-11-13 17:44:59-DEBUG: Initializing WebSocket
+2025-11-13 17:44:59-DEBUG: Validating WebSocket request
+2025-11-13 17:44:59-DEBUG: Attempting to upgrade connection
+2025-11-13 17:44:59-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:45:13-DEBUG: Initializing WebSocket
+2025-11-13 17:45:13-DEBUG: Validating WebSocket request
+2025-11-13 17:45:13-INFO: 127.0.0.1 - - [2025-11-13 17:45:13] "GET /css/index.css HTTP/1.1" 200 341554 0.003503
+2025-11-13 17:45:13-DEBUG: Initializing WebSocket
+2025-11-13 17:45:13-DEBUG: Validating WebSocket request
+2025-11-13 17:45:13-INFO: 127.0.0.1 - - [2025-11-13 17:45:13] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.003000
+2025-11-13 17:47:05-DEBUG: Initializing WebSocket
+2025-11-13 17:47:05-DEBUG: Validating WebSocket request
+2025-11-13 17:47:05-INFO: 127.0.0.1 - - [2025-11-13 17:47:05] "GET /index.html HTTP/1.1" 200 6506 0.001200
+2025-11-13 17:47:05-DEBUG: Closed WebSocket
+2025-11-13 17:47:05-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:47:05-DEBUG: Closed WebSocket
+2025-11-13 17:47:05-DEBUG: Initializing WebSocket
+2025-11-13 17:47:05-DEBUG: Validating WebSocket request
+2025-11-13 17:47:05-INFO: 127.0.0.1 - - [2025-11-13 17:47:05] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001003
+2025-11-13 17:47:05-DEBUG: Initializing WebSocket
+2025-11-13 17:47:05-DEBUG: Validating WebSocket request
+2025-11-13 17:47:05-INFO: 127.0.0.1 - - [2025-11-13 17:47:05] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002519
+2025-11-13 17:47:05-DEBUG: Initializing WebSocket
+2025-11-13 17:47:05-DEBUG: Validating WebSocket request
+2025-11-13 17:47:05-DEBUG: Initializing WebSocket
+2025-11-13 17:47:05-DEBUG: Validating WebSocket request
+2025-11-13 17:47:05-INFO: 127.0.0.1 - - [2025-11-13 17:47:05] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006852
+2025-11-13 17:47:05-INFO: 127.0.0.1 - - [2025-11-13 17:47:05] "GET /css/index.css HTTP/1.1" 200 341554 0.009163
+2025-11-13 17:47:05-DEBUG: Initializing WebSocket
+2025-11-13 17:47:05-DEBUG: Validating WebSocket request
+2025-11-13 17:47:05-INFO: 127.0.0.1 - - [2025-11-13 17:47:05] "GET /eel.js HTTP/1.1" 200 6076 0.000847
+2025-11-13 17:47:05-DEBUG: Initializing WebSocket
+2025-11-13 17:47:05-DEBUG: Validating WebSocket request
+2025-11-13 17:47:05-INFO: 127.0.0.1 - - [2025-11-13 17:47:05] "GET /favicon.ico HTTP/1.1" 200 152543 0.003123
+2025-11-13 17:47:05-DEBUG: Initializing WebSocket
+2025-11-13 17:47:05-DEBUG: Validating WebSocket request
+2025-11-13 17:47:05-DEBUG: Attempting to upgrade connection
+2025-11-13 17:47:05-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:47:06-DEBUG: Initializing WebSocket
+2025-11-13 17:47:06-DEBUG: Validating WebSocket request
+2025-11-13 17:47:06-INFO: 127.0.0.1 - - [2025-11-13 17:47:06] "GET /index.html HTTP/1.1" 200 6506 0.001271
+2025-11-13 17:47:06-DEBUG: Closed WebSocket
+2025-11-13 17:47:06-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:47:06-DEBUG: Closed WebSocket
+2025-11-13 17:47:06-DEBUG: Initializing WebSocket
+2025-11-13 17:47:06-DEBUG: Validating WebSocket request
+2025-11-13 17:47:06-INFO: 127.0.0.1 - - [2025-11-13 17:47:06] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001419
+2025-11-13 17:47:06-DEBUG: Initializing WebSocket
+2025-11-13 17:47:06-DEBUG: Validating WebSocket request
+2025-11-13 17:47:06-INFO: 127.0.0.1 - - [2025-11-13 17:47:06] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001113
+2025-11-13 17:47:06-DEBUG: Initializing WebSocket
+2025-11-13 17:47:06-DEBUG: Validating WebSocket request
+2025-11-13 17:47:06-INFO: 127.0.0.1 - - [2025-11-13 17:47:06] "GET /css/index.css HTTP/1.1" 200 341554 0.002045
+2025-11-13 17:47:06-DEBUG: Initializing WebSocket
+2025-11-13 17:47:06-DEBUG: Validating WebSocket request
+2025-11-13 17:47:06-DEBUG: Initializing WebSocket
+2025-11-13 17:47:06-DEBUG: Validating WebSocket request
+2025-11-13 17:47:06-INFO: 127.0.0.1 - - [2025-11-13 17:47:06] "GET /eel.js HTTP/1.1" 200 6076 0.000993
+2025-11-13 17:47:06-INFO: 127.0.0.1 - - [2025-11-13 17:47:06] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004789
+2025-11-13 17:47:06-DEBUG: Initializing WebSocket
+2025-11-13 17:47:06-DEBUG: Validating WebSocket request
+2025-11-13 17:47:06-INFO: 127.0.0.1 - - [2025-11-13 17:47:06] "GET /favicon.ico HTTP/1.1" 200 152543 0.001029
+2025-11-13 17:47:07-DEBUG: Initializing WebSocket
+2025-11-13 17:47:07-DEBUG: Validating WebSocket request
+2025-11-13 17:47:07-DEBUG: Attempting to upgrade connection
+2025-11-13 17:47:07-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:47:07-DEBUG: Initializing WebSocket
+2025-11-13 17:47:07-DEBUG: Validating WebSocket request
+2025-11-13 17:47:07-INFO: 127.0.0.1 - - [2025-11-13 17:47:07] "GET /index.html HTTP/1.1" 200 6506 0.001000
+2025-11-13 17:47:07-DEBUG: Closed WebSocket
+2025-11-13 17:47:07-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:47:07-DEBUG: Closed WebSocket
+2025-11-13 17:47:07-DEBUG: Initializing WebSocket
+2025-11-13 17:47:07-DEBUG: Validating WebSocket request
+2025-11-13 17:47:07-INFO: 127.0.0.1 - - [2025-11-13 17:47:07] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001213
+2025-11-13 17:47:07-DEBUG: Initializing WebSocket
+2025-11-13 17:47:07-DEBUG: Validating WebSocket request
+2025-11-13 17:47:07-INFO: 127.0.0.1 - - [2025-11-13 17:47:07] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002073
+2025-11-13 17:47:07-DEBUG: Initializing WebSocket
+2025-11-13 17:47:07-DEBUG: Validating WebSocket request
+2025-11-13 17:47:07-DEBUG: Initializing WebSocket
+2025-11-13 17:47:07-DEBUG: Validating WebSocket request
+2025-11-13 17:47:07-INFO: 127.0.0.1 - - [2025-11-13 17:47:07] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004924
+2025-11-13 17:47:07-DEBUG: Initializing WebSocket
+2025-11-13 17:47:07-DEBUG: Validating WebSocket request
+2025-11-13 17:47:07-INFO: 127.0.0.1 - - [2025-11-13 17:47:07] "GET /eel.js HTTP/1.1" 200 6076 0.001212
+2025-11-13 17:47:07-INFO: 127.0.0.1 - - [2025-11-13 17:47:07] "GET /css/index.css HTTP/1.1" 200 341554 0.020145
+2025-11-13 17:47:07-DEBUG: Initializing WebSocket
+2025-11-13 17:47:07-DEBUG: Validating WebSocket request
+2025-11-13 17:47:07-INFO: 127.0.0.1 - - [2025-11-13 17:47:07] "GET /favicon.ico HTTP/1.1" 200 152543 0.002080
+2025-11-13 17:47:08-DEBUG: Initializing WebSocket
+2025-11-13 17:47:08-DEBUG: Validating WebSocket request
+2025-11-13 17:47:08-DEBUG: Attempting to upgrade connection
+2025-11-13 17:47:08-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:47:08-DEBUG: Initializing WebSocket
+2025-11-13 17:47:08-DEBUG: Validating WebSocket request
+2025-11-13 17:47:08-INFO: 127.0.0.1 - - [2025-11-13 17:47:08] "GET /index.html HTTP/1.1" 200 6506 0.000000
+2025-11-13 17:47:08-DEBUG: Closed WebSocket
+2025-11-13 17:47:08-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:47:08-DEBUG: Closed WebSocket
+2025-11-13 17:47:08-DEBUG: Initializing WebSocket
+2025-11-13 17:47:08-DEBUG: Validating WebSocket request
+2025-11-13 17:47:08-INFO: 127.0.0.1 - - [2025-11-13 17:47:08] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001649
+2025-11-13 17:47:08-DEBUG: Initializing WebSocket
+2025-11-13 17:47:08-DEBUG: Validating WebSocket request
+2025-11-13 17:47:08-INFO: 127.0.0.1 - - [2025-11-13 17:47:08] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002361
+2025-11-13 17:47:08-DEBUG: Initializing WebSocket
+2025-11-13 17:47:08-DEBUG: Validating WebSocket request
+2025-11-13 17:47:08-INFO: 127.0.0.1 - - [2025-11-13 17:47:08] "GET /css/index.css HTTP/1.1" 200 341554 0.001512
+2025-11-13 17:47:08-DEBUG: Initializing WebSocket
+2025-11-13 17:47:08-DEBUG: Validating WebSocket request
+2025-11-13 17:47:08-DEBUG: Initializing WebSocket
+2025-11-13 17:47:08-DEBUG: Validating WebSocket request
+2025-11-13 17:47:08-INFO: 127.0.0.1 - - [2025-11-13 17:47:08] "GET /eel.js HTTP/1.1" 200 6076 0.001000
+2025-11-13 17:47:08-INFO: 127.0.0.1 - - [2025-11-13 17:47:08] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.009537
+2025-11-13 17:47:08-DEBUG: Initializing WebSocket
+2025-11-13 17:47:08-DEBUG: Validating WebSocket request
+2025-11-13 17:47:08-INFO: 127.0.0.1 - - [2025-11-13 17:47:08] "GET /favicon.ico HTTP/1.1" 200 152543 0.001478
+2025-11-13 17:47:09-DEBUG: Initializing WebSocket
+2025-11-13 17:47:09-DEBUG: Validating WebSocket request
+2025-11-13 17:47:09-DEBUG: Attempting to upgrade connection
+2025-11-13 17:47:09-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:47:09-DEBUG: Initializing WebSocket
+2025-11-13 17:47:09-DEBUG: Validating WebSocket request
+2025-11-13 17:47:09-INFO: 127.0.0.1 - - [2025-11-13 17:47:09] "GET /index.html HTTP/1.1" 200 6506 0.002001
+2025-11-13 17:47:09-DEBUG: Closed WebSocket
+2025-11-13 17:47:09-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:47:09-DEBUG: Closed WebSocket
+2025-11-13 17:47:09-DEBUG: Initializing WebSocket
+2025-11-13 17:47:09-DEBUG: Validating WebSocket request
+2025-11-13 17:47:09-INFO: 127.0.0.1 - - [2025-11-13 17:47:09] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.002000
+2025-11-13 17:47:09-DEBUG: Initializing WebSocket
+2025-11-13 17:47:09-DEBUG: Validating WebSocket request
+2025-11-13 17:47:09-INFO: 127.0.0.1 - - [2025-11-13 17:47:09] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.005004
+2025-11-13 17:47:09-DEBUG: Initializing WebSocket
+2025-11-13 17:47:09-DEBUG: Validating WebSocket request
+2025-11-13 17:47:09-INFO: 127.0.0.1 - - [2025-11-13 17:47:09] "GET /css/index.css HTTP/1.1" 200 341554 0.002519
+2025-11-13 17:47:09-DEBUG: Initializing WebSocket
+2025-11-13 17:47:09-DEBUG: Validating WebSocket request
+2025-11-13 17:47:09-DEBUG: Initializing WebSocket
+2025-11-13 17:47:09-DEBUG: Validating WebSocket request
+2025-11-13 17:47:09-INFO: 127.0.0.1 - - [2025-11-13 17:47:09] "GET /eel.js HTTP/1.1" 200 6076 0.003236
+2025-11-13 17:47:09-INFO: 127.0.0.1 - - [2025-11-13 17:47:09] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.011826
+2025-11-13 17:47:09-DEBUG: Initializing WebSocket
+2025-11-13 17:47:09-DEBUG: Validating WebSocket request
+2025-11-13 17:47:09-INFO: 127.0.0.1 - - [2025-11-13 17:47:09] "GET /favicon.ico HTTP/1.1" 200 152543 0.001004
+2025-11-13 17:47:10-DEBUG: Initializing WebSocket
+2025-11-13 17:47:10-DEBUG: Validating WebSocket request
+2025-11-13 17:47:10-DEBUG: Attempting to upgrade connection
+2025-11-13 17:47:10-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:47:19-DEBUG: Initializing WebSocket
+2025-11-13 17:47:19-DEBUG: Validating WebSocket request
+2025-11-13 17:47:19-INFO: 127.0.0.1 - - [2025-11-13 17:47:19] "GET /index.html HTTP/1.1" 200 6505 0.001046
+2025-11-13 17:47:19-DEBUG: Closed WebSocket
+2025-11-13 17:47:19-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:47:19-DEBUG: Closed WebSocket
+2025-11-13 17:47:19-DEBUG: Initializing WebSocket
+2025-11-13 17:47:19-DEBUG: Validating WebSocket request
+2025-11-13 17:47:19-INFO: 127.0.0.1 - - [2025-11-13 17:47:19] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001000
+2025-11-13 17:47:19-DEBUG: Initializing WebSocket
+2025-11-13 17:47:19-DEBUG: Validating WebSocket request
+2025-11-13 17:47:19-INFO: 127.0.0.1 - - [2025-11-13 17:47:19] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002526
+2025-11-13 17:47:19-DEBUG: Initializing WebSocket
+2025-11-13 17:47:19-DEBUG: Validating WebSocket request
+2025-11-13 17:47:19-DEBUG: Initializing WebSocket
+2025-11-13 17:47:19-DEBUG: Validating WebSocket request
+2025-11-13 17:47:19-INFO: 127.0.0.1 - - [2025-11-13 17:47:19] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.005990
+2025-11-13 17:47:19-DEBUG: Initializing WebSocket
+2025-11-13 17:47:19-DEBUG: Validating WebSocket request
+2025-11-13 17:47:19-INFO: 127.0.0.1 - - [2025-11-13 17:47:19] "GET /eel.js HTTP/1.1" 200 6076 0.001010
+2025-11-13 17:47:19-INFO: 127.0.0.1 - - [2025-11-13 17:47:19] "GET /css/index.css HTTP/1.1" 200 341554 0.011731
+2025-11-13 17:47:20-DEBUG: Initializing WebSocket
+2025-11-13 17:47:20-DEBUG: Validating WebSocket request
+2025-11-13 17:47:20-INFO: 127.0.0.1 - - [2025-11-13 17:47:20] "GET /favicon.ico HTTP/1.1" 200 152543 0.002926
+2025-11-13 17:47:20-DEBUG: Initializing WebSocket
+2025-11-13 17:47:20-DEBUG: Validating WebSocket request
+2025-11-13 17:47:20-DEBUG: Attempting to upgrade connection
+2025-11-13 17:47:20-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:47:32-DEBUG: Closed WebSocket
+2025-11-13 17:47:32-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:47:32-DEBUG: Closed WebSocket
+2025-11-13 17:47:52-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:47:54-DEBUG: Initializing WebSocket
+2025-11-13 17:47:54-DEBUG: Validating WebSocket request
+2025-11-13 17:47:54-INFO: 127.0.0.1 - - [2025-11-13 17:47:54] "GET /index.html HTTP/1.1" 200 6506 0.001579
+2025-11-13 17:47:54-DEBUG: Initializing WebSocket
+2025-11-13 17:47:54-DEBUG: Validating WebSocket request
+2025-11-13 17:47:54-INFO: 127.0.0.1 - - [2025-11-13 17:47:54] "GET /css/index.css HTTP/1.1" 200 341554 0.002180
+2025-11-13 17:47:54-DEBUG: Initializing WebSocket
+2025-11-13 17:47:54-DEBUG: Validating WebSocket request
+2025-11-13 17:47:54-INFO: 127.0.0.1 - - [2025-11-13 17:47:54] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006472
+2025-11-13 17:47:54-DEBUG: Initializing WebSocket
+2025-11-13 17:47:54-DEBUG: Validating WebSocket request
+2025-11-13 17:47:54-INFO: 127.0.0.1 - - [2025-11-13 17:47:54] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002016
+2025-11-13 17:47:54-DEBUG: Initializing WebSocket
+2025-11-13 17:47:54-DEBUG: Validating WebSocket request
+2025-11-13 17:47:54-INFO: 127.0.0.1 - - [2025-11-13 17:47:54] "GET /eel.js HTTP/1.1" 200 6076 0.001013
+2025-11-13 17:47:55-DEBUG: Initializing WebSocket
+2025-11-13 17:47:55-DEBUG: Validating WebSocket request
+2025-11-13 17:47:55-INFO: 127.0.0.1 - - [2025-11-13 17:47:55] "GET /favicon.ico HTTP/1.1" 200 152543 0.002137
+2025-11-13 17:47:55-DEBUG: Initializing WebSocket
+2025-11-13 17:47:55-DEBUG: Validating WebSocket request
+2025-11-13 17:47:55-DEBUG: Attempting to upgrade connection
+2025-11-13 17:47:55-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:48:07-DEBUG: Initializing WebSocket
+2025-11-13 17:48:07-DEBUG: Validating WebSocket request
+2025-11-13 17:48:07-INFO: 127.0.0.1 - - [2025-11-13 17:48:07] "GET /css/index.css HTTP/1.1" 200 341554 0.003999
+2025-11-13 17:48:07-DEBUG: Initializing WebSocket
+2025-11-13 17:48:07-DEBUG: Validating WebSocket request
+2025-11-13 17:48:07-INFO: 127.0.0.1 - - [2025-11-13 17:48:07] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.004000
+2025-11-13 17:48:28-DEBUG: Initializing WebSocket
+2025-11-13 17:48:28-DEBUG: Validating WebSocket request
+2025-11-13 17:48:28-INFO: 127.0.0.1 - - [2025-11-13 17:48:28] "GET /index.html HTTP/1.1" 200 6507 0.001357
+2025-11-13 17:48:28-DEBUG: Closed WebSocket
+2025-11-13 17:48:28-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:48:28-DEBUG: Closed WebSocket
+2025-11-13 17:48:28-DEBUG: Initializing WebSocket
+2025-11-13 17:48:28-DEBUG: Validating WebSocket request
+2025-11-13 17:48:28-INFO: 127.0.0.1 - - [2025-11-13 17:48:28] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.000999
+2025-11-13 17:48:28-DEBUG: Initializing WebSocket
+2025-11-13 17:48:28-DEBUG: Validating WebSocket request
+2025-11-13 17:48:28-INFO: 127.0.0.1 - - [2025-11-13 17:48:28] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.003222
+2025-11-13 17:48:28-DEBUG: Initializing WebSocket
+2025-11-13 17:48:28-DEBUG: Validating WebSocket request
+2025-11-13 17:48:28-INFO: 127.0.0.1 - - [2025-11-13 17:48:28] "GET /css/index.css HTTP/1.1" 200 341554 0.003121
+2025-11-13 17:48:28-DEBUG: Initializing WebSocket
+2025-11-13 17:48:28-DEBUG: Validating WebSocket request
+2025-11-13 17:48:28-DEBUG: Initializing WebSocket
+2025-11-13 17:48:28-DEBUG: Validating WebSocket request
+2025-11-13 17:48:28-INFO: 127.0.0.1 - - [2025-11-13 17:48:28] "GET /eel.js HTTP/1.1" 200 6076 0.000000
+2025-11-13 17:48:28-INFO: 127.0.0.1 - - [2025-11-13 17:48:28] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006716
+2025-11-13 17:48:29-DEBUG: Initializing WebSocket
+2025-11-13 17:48:29-DEBUG: Validating WebSocket request
+2025-11-13 17:48:29-INFO: 127.0.0.1 - - [2025-11-13 17:48:29] "GET /favicon.ico HTTP/1.1" 200 152543 0.002377
+2025-11-13 17:48:29-DEBUG: Initializing WebSocket
+2025-11-13 17:48:29-DEBUG: Validating WebSocket request
+2025-11-13 17:48:29-DEBUG: Attempting to upgrade connection
+2025-11-13 17:48:29-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:48:51-DEBUG: Initializing WebSocket
+2025-11-13 17:48:51-DEBUG: Validating WebSocket request
+2025-11-13 17:48:51-INFO: 127.0.0.1 - - [2025-11-13 17:48:51] "GET /index.html HTTP/1.1" 200 6677 0.001027
+2025-11-13 17:48:51-DEBUG: Closed WebSocket
+2025-11-13 17:48:51-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:48:51-DEBUG: Closed WebSocket
+2025-11-13 17:48:51-DEBUG: Initializing WebSocket
+2025-11-13 17:48:51-DEBUG: Validating WebSocket request
+2025-11-13 17:48:51-INFO: 127.0.0.1 - - [2025-11-13 17:48:51] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002975
+2025-11-13 17:48:51-DEBUG: Initializing WebSocket
+2025-11-13 17:48:51-DEBUG: Validating WebSocket request
+2025-11-13 17:48:51-INFO: 127.0.0.1 - - [2025-11-13 17:48:51] "GET /css/index.css HTTP/1.1" 200 341554 0.002110
+2025-11-13 17:48:51-DEBUG: Initializing WebSocket
+2025-11-13 17:48:51-DEBUG: Validating WebSocket request
+2025-11-13 17:48:51-INFO: 127.0.0.1 - - [2025-11-13 17:48:51] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.005838
+2025-11-13 17:48:51-DEBUG: Initializing WebSocket
+2025-11-13 17:48:51-DEBUG: Validating WebSocket request
+2025-11-13 17:48:51-INFO: 127.0.0.1 - - [2025-11-13 17:48:51] "GET /eel.js HTTP/1.1" 200 6076 0.001015
+2025-11-13 17:48:51-DEBUG: Initializing WebSocket
+2025-11-13 17:48:51-DEBUG: Validating WebSocket request
+2025-11-13 17:48:51-INFO: 127.0.0.1 - - [2025-11-13 17:48:51] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001014
+2025-11-13 17:48:51-DEBUG: Initializing WebSocket
+2025-11-13 17:48:51-DEBUG: Validating WebSocket request
+2025-11-13 17:48:51-INFO: 127.0.0.1 - - [2025-11-13 17:48:51] "GET /favicon.ico HTTP/1.1" 200 152543 0.002019
+2025-11-13 17:48:51-DEBUG: Initializing WebSocket
+2025-11-13 17:48:51-DEBUG: Validating WebSocket request
+2025-11-13 17:48:51-DEBUG: Attempting to upgrade connection
+2025-11-13 17:48:51-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:48:52-DEBUG: Initializing WebSocket
+2025-11-13 17:48:52-DEBUG: Validating WebSocket request
+2025-11-13 17:48:52-INFO: 127.0.0.1 - - [2025-11-13 17:48:52] "GET /index.html HTTP/1.1" 200 6677 0.002012
+2025-11-13 17:48:52-DEBUG: Closed WebSocket
+2025-11-13 17:48:52-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:48:52-DEBUG: Closed WebSocket
+2025-11-13 17:48:52-DEBUG: Initializing WebSocket
+2025-11-13 17:48:52-DEBUG: Validating WebSocket request
+2025-11-13 17:48:52-INFO: 127.0.0.1 - - [2025-11-13 17:48:52] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.002654
+2025-11-13 17:48:52-DEBUG: Initializing WebSocket
+2025-11-13 17:48:52-DEBUG: Validating WebSocket request
+2025-11-13 17:48:52-INFO: 127.0.0.1 - - [2025-11-13 17:48:52] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002536
+2025-11-13 17:48:52-DEBUG: Initializing WebSocket
+2025-11-13 17:48:52-DEBUG: Validating WebSocket request
+2025-11-13 17:48:52-INFO: 127.0.0.1 - - [2025-11-13 17:48:52] "GET /css/index.css HTTP/1.1" 200 341554 0.002110
+2025-11-13 17:48:52-DEBUG: Initializing WebSocket
+2025-11-13 17:48:52-DEBUG: Validating WebSocket request
+2025-11-13 17:48:52-DEBUG: Initializing WebSocket
+2025-11-13 17:48:52-DEBUG: Validating WebSocket request
+2025-11-13 17:48:52-INFO: 127.0.0.1 - - [2025-11-13 17:48:52] "GET /eel.js HTTP/1.1" 200 6076 0.000998
+2025-11-13 17:48:52-INFO: 127.0.0.1 - - [2025-11-13 17:48:52] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.005640
+2025-11-13 17:48:52-DEBUG: Initializing WebSocket
+2025-11-13 17:48:52-DEBUG: Validating WebSocket request
+2025-11-13 17:48:52-INFO: 127.0.0.1 - - [2025-11-13 17:48:52] "GET /favicon.ico HTTP/1.1" 200 152543 0.002727
+2025-11-13 17:48:53-DEBUG: Initializing WebSocket
+2025-11-13 17:48:53-DEBUG: Validating WebSocket request
+2025-11-13 17:48:53-DEBUG: Attempting to upgrade connection
+2025-11-13 17:48:53-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:49:13-DEBUG: Initializing WebSocket
+2025-11-13 17:49:13-DEBUG: Validating WebSocket request
+2025-11-13 17:49:13-INFO: 127.0.0.1 - - [2025-11-13 17:49:13] "GET /index.html HTTP/1.1" 200 6677 0.001011
+2025-11-13 17:49:13-DEBUG: Closed WebSocket
+2025-11-13 17:49:13-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:49:13-DEBUG: Closed WebSocket
+2025-11-13 17:49:14-DEBUG: Initializing WebSocket
+2025-11-13 17:49:14-DEBUG: Validating WebSocket request
+2025-11-13 17:49:14-INFO: 127.0.0.1 - - [2025-11-13 17:49:14] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.000715
+2025-11-13 17:49:14-DEBUG: Initializing WebSocket
+2025-11-13 17:49:14-DEBUG: Validating WebSocket request
+2025-11-13 17:49:14-INFO: 127.0.0.1 - - [2025-11-13 17:49:14] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002757
+2025-11-13 17:49:14-DEBUG: Initializing WebSocket
+2025-11-13 17:49:14-DEBUG: Validating WebSocket request
+2025-11-13 17:49:14-INFO: 127.0.0.1 - - [2025-11-13 17:49:14] "GET /css/index.css HTTP/1.1" 200 341554 0.002572
+2025-11-13 17:49:14-DEBUG: Initializing WebSocket
+2025-11-13 17:49:14-DEBUG: Validating WebSocket request
+2025-11-13 17:49:14-INFO: 127.0.0.1 - - [2025-11-13 17:49:14] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006632
+2025-11-13 17:49:14-DEBUG: Initializing WebSocket
+2025-11-13 17:49:14-DEBUG: Validating WebSocket request
+2025-11-13 17:49:14-INFO: 127.0.0.1 - - [2025-11-13 17:49:14] "GET /eel.js HTTP/1.1" 200 6076 0.000507
+2025-11-13 17:49:14-DEBUG: Initializing WebSocket
+2025-11-13 17:49:14-DEBUG: Validating WebSocket request
+2025-11-13 17:49:14-INFO: 127.0.0.1 - - [2025-11-13 17:49:14] "GET /favicon.ico HTTP/1.1" 200 152543 0.002498
+2025-11-13 17:49:14-DEBUG: Initializing WebSocket
+2025-11-13 17:49:14-DEBUG: Validating WebSocket request
+2025-11-13 17:49:14-DEBUG: Attempting to upgrade connection
+2025-11-13 17:49:14-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:49:21-DEBUG: Initializing WebSocket
+2025-11-13 17:49:21-DEBUG: Validating WebSocket request
+2025-11-13 17:49:21-INFO: 127.0.0.1 - - [2025-11-13 17:49:21] "GET /index.html HTTP/1.1" 200 6677 0.001014
+2025-11-13 17:49:21-DEBUG: Closed WebSocket
+2025-11-13 17:49:21-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:49:21-DEBUG: Closed WebSocket
+2025-11-13 17:49:21-DEBUG: Initializing WebSocket
+2025-11-13 17:49:21-DEBUG: Validating WebSocket request
+2025-11-13 17:49:21-INFO: 127.0.0.1 - - [2025-11-13 17:49:21] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001107
+2025-11-13 17:49:21-DEBUG: Initializing WebSocket
+2025-11-13 17:49:21-DEBUG: Validating WebSocket request
+2025-11-13 17:49:21-INFO: 127.0.0.1 - - [2025-11-13 17:49:21] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001484
+2025-11-13 17:49:21-DEBUG: Initializing WebSocket
+2025-11-13 17:49:21-DEBUG: Validating WebSocket request
+2025-11-13 17:49:21-INFO: 127.0.0.1 - - [2025-11-13 17:49:21] "GET /css/index.css HTTP/1.1" 200 341554 0.003314
+2025-11-13 17:49:21-DEBUG: Initializing WebSocket
+2025-11-13 17:49:21-DEBUG: Validating WebSocket request
+2025-11-13 17:49:21-INFO: 127.0.0.1 - - [2025-11-13 17:49:21] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004863
+2025-11-13 17:49:21-DEBUG: Initializing WebSocket
+2025-11-13 17:49:21-DEBUG: Validating WebSocket request
+2025-11-13 17:49:21-INFO: 127.0.0.1 - - [2025-11-13 17:49:21] "GET /eel.js HTTP/1.1" 200 6076 0.001292
+2025-11-13 17:49:21-DEBUG: Initializing WebSocket
+2025-11-13 17:49:21-DEBUG: Validating WebSocket request
+2025-11-13 17:49:21-INFO: 127.0.0.1 - - [2025-11-13 17:49:21] "GET /favicon.ico HTTP/1.1" 200 152543 0.002504
+2025-11-13 17:49:21-DEBUG: Initializing WebSocket
+2025-11-13 17:49:21-DEBUG: Validating WebSocket request
+2025-11-13 17:49:21-DEBUG: Attempting to upgrade connection
+2025-11-13 17:49:21-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:49:29-DEBUG: Initializing WebSocket
+2025-11-13 17:49:29-DEBUG: Validating WebSocket request
+2025-11-13 17:49:29-INFO: 127.0.0.1 - - [2025-11-13 17:49:29] "GET /index.html HTTP/1.1" 200 6677 0.000000
+2025-11-13 17:49:29-DEBUG: Closed WebSocket
+2025-11-13 17:49:29-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:49:29-DEBUG: Closed WebSocket
+2025-11-13 17:49:29-DEBUG: Initializing WebSocket
+2025-11-13 17:49:29-DEBUG: Validating WebSocket request
+2025-11-13 17:49:29-INFO: 127.0.0.1 - - [2025-11-13 17:49:29] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001632
+2025-11-13 17:49:29-DEBUG: Initializing WebSocket
+2025-11-13 17:49:29-DEBUG: Validating WebSocket request
+2025-11-13 17:49:29-INFO: 127.0.0.1 - - [2025-11-13 17:49:29] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001998
+2025-11-13 17:49:29-DEBUG: Initializing WebSocket
+2025-11-13 17:49:29-DEBUG: Validating WebSocket request
+2025-11-13 17:49:29-INFO: 127.0.0.1 - - [2025-11-13 17:49:29] "GET /css/index.css HTTP/1.1" 200 341554 0.001374
+2025-11-13 17:49:29-DEBUG: Initializing WebSocket
+2025-11-13 17:49:29-DEBUG: Validating WebSocket request
+2025-11-13 17:49:29-DEBUG: Initializing WebSocket
+2025-11-13 17:49:29-DEBUG: Validating WebSocket request
+2025-11-13 17:49:29-INFO: 127.0.0.1 - - [2025-11-13 17:49:29] "GET /eel.js HTTP/1.1" 200 6076 0.001246
+2025-11-13 17:49:29-INFO: 127.0.0.1 - - [2025-11-13 17:49:29] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.008946
+2025-11-13 17:49:30-DEBUG: Initializing WebSocket
+2025-11-13 17:49:30-DEBUG: Validating WebSocket request
+2025-11-13 17:49:30-INFO: 127.0.0.1 - - [2025-11-13 17:49:30] "GET /favicon.ico HTTP/1.1" 200 152543 0.002288
+2025-11-13 17:49:30-DEBUG: Initializing WebSocket
+2025-11-13 17:49:30-DEBUG: Validating WebSocket request
+2025-11-13 17:49:30-DEBUG: Attempting to upgrade connection
+2025-11-13 17:49:30-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:49:48-DEBUG: Initializing WebSocket
+2025-11-13 17:49:48-DEBUG: Validating WebSocket request
+2025-11-13 17:49:48-INFO: 127.0.0.1 - - [2025-11-13 17:49:48] "GET /index.html HTTP/1.1" 200 6738 0.001220
+2025-11-13 17:49:48-DEBUG: Closed WebSocket
+2025-11-13 17:49:48-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:49:48-DEBUG: Closed WebSocket
+2025-11-13 17:49:48-DEBUG: Initializing WebSocket
+2025-11-13 17:49:48-DEBUG: Validating WebSocket request
+2025-11-13 17:49:48-INFO: 127.0.0.1 - - [2025-11-13 17:49:48] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001528
+2025-11-13 17:49:48-DEBUG: Initializing WebSocket
+2025-11-13 17:49:48-DEBUG: Validating WebSocket request
+2025-11-13 17:49:48-INFO: 127.0.0.1 - - [2025-11-13 17:49:48] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002357
+2025-11-13 17:49:48-DEBUG: Initializing WebSocket
+2025-11-13 17:49:48-DEBUG: Validating WebSocket request
+2025-11-13 17:49:48-INFO: 127.0.0.1 - - [2025-11-13 17:49:48] "GET /css/index.css HTTP/1.1" 200 341554 0.003649
+2025-11-13 17:49:48-DEBUG: Initializing WebSocket
+2025-11-13 17:49:48-DEBUG: Validating WebSocket request
+2025-11-13 17:49:48-INFO: 127.0.0.1 - - [2025-11-13 17:49:48] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004686
+2025-11-13 17:49:48-DEBUG: Initializing WebSocket
+2025-11-13 17:49:48-DEBUG: Validating WebSocket request
+2025-11-13 17:49:48-INFO: 127.0.0.1 - - [2025-11-13 17:49:48] "GET /eel.js HTTP/1.1" 200 6076 0.001324
+2025-11-13 17:49:49-DEBUG: Initializing WebSocket
+2025-11-13 17:49:49-DEBUG: Validating WebSocket request
+2025-11-13 17:49:49-INFO: 127.0.0.1 - - [2025-11-13 17:49:49] "GET /favicon.ico HTTP/1.1" 200 152543 0.003507
+2025-11-13 17:49:49-DEBUG: Initializing WebSocket
+2025-11-13 17:49:49-DEBUG: Validating WebSocket request
+2025-11-13 17:49:49-DEBUG: Attempting to upgrade connection
+2025-11-13 17:49:49-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:49:51-DEBUG: Initializing WebSocket
+2025-11-13 17:49:51-DEBUG: Validating WebSocket request
+2025-11-13 17:49:51-INFO: 127.0.0.1 - - [2025-11-13 17:49:51] "GET /index.html HTTP/1.1" 200 6738 0.002520
+2025-11-13 17:49:51-DEBUG: Closed WebSocket
+2025-11-13 17:49:51-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:49:51-DEBUG: Closed WebSocket
+2025-11-13 17:49:51-DEBUG: Initializing WebSocket
+2025-11-13 17:49:51-DEBUG: Validating WebSocket request
+2025-11-13 17:49:51-INFO: 127.0.0.1 - - [2025-11-13 17:49:51] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001329
+2025-11-13 17:49:51-DEBUG: Initializing WebSocket
+2025-11-13 17:49:51-DEBUG: Validating WebSocket request
+2025-11-13 17:49:51-INFO: 127.0.0.1 - - [2025-11-13 17:49:51] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002371
+2025-11-13 17:49:51-DEBUG: Initializing WebSocket
+2025-11-13 17:49:51-DEBUG: Validating WebSocket request
+2025-11-13 17:49:51-INFO: 127.0.0.1 - - [2025-11-13 17:49:51] "GET /css/index.css HTTP/1.1" 200 341554 0.002511
+2025-11-13 17:49:51-DEBUG: Initializing WebSocket
+2025-11-13 17:49:51-DEBUG: Validating WebSocket request
+2025-11-13 17:49:51-INFO: 127.0.0.1 - - [2025-11-13 17:49:51] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006276
+2025-11-13 17:49:51-DEBUG: Initializing WebSocket
+2025-11-13 17:49:51-DEBUG: Validating WebSocket request
+2025-11-13 17:49:51-INFO: 127.0.0.1 - - [2025-11-13 17:49:51] "GET /eel.js HTTP/1.1" 200 6076 0.001318
+2025-11-13 17:49:52-DEBUG: Initializing WebSocket
+2025-11-13 17:49:52-DEBUG: Validating WebSocket request
+2025-11-13 17:49:52-INFO: 127.0.0.1 - - [2025-11-13 17:49:52] "GET /favicon.ico HTTP/1.1" 200 152543 0.002000
+2025-11-13 17:49:52-DEBUG: Initializing WebSocket
+2025-11-13 17:49:52-DEBUG: Validating WebSocket request
+2025-11-13 17:49:52-DEBUG: Attempting to upgrade connection
+2025-11-13 17:49:52-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:49:52-DEBUG: Initializing WebSocket
+2025-11-13 17:49:52-DEBUG: Validating WebSocket request
+2025-11-13 17:49:52-INFO: 127.0.0.1 - - [2025-11-13 17:49:52] "GET /index.html HTTP/1.1" 200 6738 0.002277
+2025-11-13 17:49:52-DEBUG: Closed WebSocket
+2025-11-13 17:49:52-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:49:52-DEBUG: Closed WebSocket
+2025-11-13 17:49:52-DEBUG: Initializing WebSocket
+2025-11-13 17:49:52-DEBUG: Validating WebSocket request
+2025-11-13 17:49:52-INFO: 127.0.0.1 - - [2025-11-13 17:49:52] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001157
+2025-11-13 17:49:52-DEBUG: Initializing WebSocket
+2025-11-13 17:49:52-DEBUG: Validating WebSocket request
+2025-11-13 17:49:52-INFO: 127.0.0.1 - - [2025-11-13 17:49:52] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002270
+2025-11-13 17:49:52-DEBUG: Initializing WebSocket
+2025-11-13 17:49:52-DEBUG: Validating WebSocket request
+2025-11-13 17:49:52-DEBUG: Initializing WebSocket
+2025-11-13 17:49:52-DEBUG: Validating WebSocket request
+2025-11-13 17:49:52-INFO: 127.0.0.1 - - [2025-11-13 17:49:52] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.007127
+2025-11-13 17:49:52-DEBUG: Initializing WebSocket
+2025-11-13 17:49:52-DEBUG: Validating WebSocket request
+2025-11-13 17:49:52-INFO: 127.0.0.1 - - [2025-11-13 17:49:52] "GET /eel.js HTTP/1.1" 200 6076 0.001399
+2025-11-13 17:49:52-INFO: 127.0.0.1 - - [2025-11-13 17:49:52] "GET /css/index.css HTTP/1.1" 200 341554 0.011701
+2025-11-13 17:49:53-DEBUG: Initializing WebSocket
+2025-11-13 17:49:53-DEBUG: Validating WebSocket request
+2025-11-13 17:49:53-INFO: 127.0.0.1 - - [2025-11-13 17:49:53] "GET /favicon.ico HTTP/1.1" 200 152543 0.001514
+2025-11-13 17:49:53-DEBUG: Initializing WebSocket
+2025-11-13 17:49:53-DEBUG: Validating WebSocket request
+2025-11-13 17:49:53-DEBUG: Attempting to upgrade connection
+2025-11-13 17:49:53-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:50:09-DEBUG: Initializing WebSocket
+2025-11-13 17:50:09-DEBUG: Validating WebSocket request
+2025-11-13 17:50:09-INFO: 127.0.0.1 - - [2025-11-13 17:50:09] "GET /index.html HTTP/1.1" 200 6752 0.048370
+2025-11-13 17:50:09-DEBUG: Initializing WebSocket
+2025-11-13 17:50:09-DEBUG: Validating WebSocket request
+2025-11-13 17:50:09-INFO: 127.0.0.1 - - [2025-11-13 17:50:09] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.042568
+2025-11-13 17:50:09-DEBUG: Closed WebSocket
+2025-11-13 17:50:09-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:50:09-DEBUG: Closed WebSocket
+2025-11-13 17:50:09-DEBUG: Initializing WebSocket
+2025-11-13 17:50:09-DEBUG: Validating WebSocket request
+2025-11-13 17:50:09-INFO: 127.0.0.1 - - [2025-11-13 17:50:09] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001247
+2025-11-13 17:50:10-DEBUG: Initializing WebSocket
+2025-11-13 17:50:10-DEBUG: Validating WebSocket request
+2025-11-13 17:50:10-INFO: 127.0.0.1 - - [2025-11-13 17:50:10] "GET /css/index.css HTTP/1.1" 200 341554 0.025287
+2025-11-13 17:50:10-DEBUG: Initializing WebSocket
+2025-11-13 17:50:10-DEBUG: Validating WebSocket request
+2025-11-13 17:50:10-INFO: 127.0.0.1 - - [2025-11-13 17:50:10] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006878
+2025-11-13 17:50:10-DEBUG: Initializing WebSocket
+2025-11-13 17:50:10-DEBUG: Validating WebSocket request
+2025-11-13 17:50:10-INFO: 127.0.0.1 - - [2025-11-13 17:50:10] "GET /eel.js HTTP/1.1" 200 6076 0.001431
+2025-11-13 17:50:10-DEBUG: Initializing WebSocket
+2025-11-13 17:50:10-DEBUG: Validating WebSocket request
+2025-11-13 17:50:10-INFO: 127.0.0.1 - - [2025-11-13 17:50:10] "GET /favicon.ico HTTP/1.1" 200 152543 0.002368
+2025-11-13 17:50:10-DEBUG: Initializing WebSocket
+2025-11-13 17:50:10-DEBUG: Validating WebSocket request
+2025-11-13 17:50:10-DEBUG: Attempting to upgrade connection
+2025-11-13 17:50:10-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:50:26-DEBUG: Initializing WebSocket
+2025-11-13 17:50:26-DEBUG: Validating WebSocket request
+2025-11-13 17:50:26-INFO: 127.0.0.1 - - [2025-11-13 17:50:26] "GET /index.html HTTP/1.1" 200 6752 0.001031
+2025-11-13 17:50:26-DEBUG: Closed WebSocket
+2025-11-13 17:50:26-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:50:26-DEBUG: Closed WebSocket
+2025-11-13 17:50:26-DEBUG: Initializing WebSocket
+2025-11-13 17:50:26-DEBUG: Validating WebSocket request
+2025-11-13 17:50:26-INFO: 127.0.0.1 - - [2025-11-13 17:50:26] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001513
+2025-11-13 17:50:26-DEBUG: Initializing WebSocket
+2025-11-13 17:50:26-DEBUG: Validating WebSocket request
+2025-11-13 17:50:26-INFO: 127.0.0.1 - - [2025-11-13 17:50:26] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002051
+2025-11-13 17:50:26-DEBUG: Initializing WebSocket
+2025-11-13 17:50:26-DEBUG: Validating WebSocket request
+2025-11-13 17:50:26-INFO: 127.0.0.1 - - [2025-11-13 17:50:26] "GET /css/index.css HTTP/1.1" 200 341554 0.002788
+2025-11-13 17:50:26-DEBUG: Initializing WebSocket
+2025-11-13 17:50:26-DEBUG: Validating WebSocket request
+2025-11-13 17:50:26-DEBUG: Initializing WebSocket
+2025-11-13 17:50:26-DEBUG: Validating WebSocket request
+2025-11-13 17:50:26-INFO: 127.0.0.1 - - [2025-11-13 17:50:26] "GET /eel.js HTTP/1.1" 200 6076 0.001049
+2025-11-13 17:50:26-INFO: 127.0.0.1 - - [2025-11-13 17:50:26] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.007983
+2025-11-13 17:50:26-DEBUG: Initializing WebSocket
+2025-11-13 17:50:26-DEBUG: Validating WebSocket request
+2025-11-13 17:50:26-INFO: 127.0.0.1 - - [2025-11-13 17:50:26] "GET /favicon.ico HTTP/1.1" 200 152543 0.002597
+2025-11-13 17:50:26-DEBUG: Initializing WebSocket
+2025-11-13 17:50:26-DEBUG: Validating WebSocket request
+2025-11-13 17:50:26-DEBUG: Attempting to upgrade connection
+2025-11-13 17:50:26-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:50:36-DEBUG: Initializing WebSocket
+2025-11-13 17:50:36-DEBUG: Validating WebSocket request
+2025-11-13 17:50:36-INFO: 127.0.0.1 - - [2025-11-13 17:50:36] "GET /index.html HTTP/1.1" 200 6752 0.000524
+2025-11-13 17:50:36-DEBUG: Closed WebSocket
+2025-11-13 17:50:36-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:50:36-DEBUG: Closed WebSocket
+2025-11-13 17:50:36-DEBUG: Initializing WebSocket
+2025-11-13 17:50:36-DEBUG: Validating WebSocket request
+2025-11-13 17:50:36-INFO: 127.0.0.1 - - [2025-11-13 17:50:36] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001390
+2025-11-13 17:50:36-DEBUG: Initializing WebSocket
+2025-11-13 17:50:36-DEBUG: Validating WebSocket request
+2025-11-13 17:50:36-INFO: 127.0.0.1 - - [2025-11-13 17:50:36] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002013
+2025-11-13 17:50:36-DEBUG: Initializing WebSocket
+2025-11-13 17:50:36-DEBUG: Validating WebSocket request
+2025-11-13 17:50:36-INFO: 127.0.0.1 - - [2025-11-13 17:50:36] "GET /css/index.css HTTP/1.1" 200 341554 0.001734
+2025-11-13 17:50:36-DEBUG: Initializing WebSocket
+2025-11-13 17:50:36-DEBUG: Validating WebSocket request
+2025-11-13 17:50:36-INFO: 127.0.0.1 - - [2025-11-13 17:50:36] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004589
+2025-11-13 17:50:36-DEBUG: Initializing WebSocket
+2025-11-13 17:50:36-DEBUG: Validating WebSocket request
+2025-11-13 17:50:36-INFO: 127.0.0.1 - - [2025-11-13 17:50:36] "GET /eel.js HTTP/1.1" 200 6076 0.001245
+2025-11-13 17:50:36-DEBUG: Initializing WebSocket
+2025-11-13 17:50:36-DEBUG: Validating WebSocket request
+2025-11-13 17:50:36-INFO: 127.0.0.1 - - [2025-11-13 17:50:36] "GET /favicon.ico HTTP/1.1" 200 152543 0.002003
+2025-11-13 17:50:37-DEBUG: Initializing WebSocket
+2025-11-13 17:50:37-DEBUG: Validating WebSocket request
+2025-11-13 17:50:37-DEBUG: Attempting to upgrade connection
+2025-11-13 17:50:37-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:52:23-DEBUG: Initializing WebSocket
+2025-11-13 17:52:23-DEBUG: Validating WebSocket request
+2025-11-13 17:52:23-INFO: 127.0.0.1 - - [2025-11-13 17:52:23] "GET /index.html HTTP/1.1" 200 6758 0.001378
+2025-11-13 17:52:23-DEBUG: Closed WebSocket
+2025-11-13 17:52:23-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:52:23-DEBUG: Closed WebSocket
+2025-11-13 17:52:23-DEBUG: Initializing WebSocket
+2025-11-13 17:52:23-DEBUG: Validating WebSocket request
+2025-11-13 17:52:23-INFO: 127.0.0.1 - - [2025-11-13 17:52:23] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.000999
+2025-11-13 17:52:23-DEBUG: Initializing WebSocket
+2025-11-13 17:52:23-DEBUG: Validating WebSocket request
+2025-11-13 17:52:23-INFO: 127.0.0.1 - - [2025-11-13 17:52:23] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001003
+2025-11-13 17:52:23-DEBUG: Initializing WebSocket
+2025-11-13 17:52:23-DEBUG: Validating WebSocket request
+2025-11-13 17:52:23-INFO: 127.0.0.1 - - [2025-11-13 17:52:23] "GET /css/index.css HTTP/1.1" 200 341554 0.003180
+2025-11-13 17:52:23-DEBUG: Initializing WebSocket
+2025-11-13 17:52:23-DEBUG: Validating WebSocket request
+2025-11-13 17:52:23-DEBUG: Initializing WebSocket
+2025-11-13 17:52:23-DEBUG: Validating WebSocket request
+2025-11-13 17:52:23-INFO: 127.0.0.1 - - [2025-11-13 17:52:23] "GET /eel.js HTTP/1.1" 200 6076 0.001004
+2025-11-13 17:52:23-INFO: 127.0.0.1 - - [2025-11-13 17:52:23] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006357
+2025-11-13 17:52:23-DEBUG: Initializing WebSocket
+2025-11-13 17:52:23-DEBUG: Validating WebSocket request
+2025-11-13 17:52:23-INFO: 127.0.0.1 - - [2025-11-13 17:52:23] "GET /favicon.ico HTTP/1.1" 200 152543 0.001382
+2025-11-13 17:52:23-DEBUG: Initializing WebSocket
+2025-11-13 17:52:23-DEBUG: Validating WebSocket request
+2025-11-13 17:52:23-DEBUG: Attempting to upgrade connection
+2025-11-13 17:52:23-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:53:10-DEBUG: Initializing WebSocket
+2025-11-13 17:53:10-DEBUG: Validating WebSocket request
+2025-11-13 17:53:10-INFO: 127.0.0.1 - - [2025-11-13 17:53:10] "GET /index.html HTTP/1.1" 200 6758 0.001046
+2025-11-13 17:53:10-DEBUG: Closed WebSocket
+2025-11-13 17:53:10-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:53:10-DEBUG: Closed WebSocket
+2025-11-13 17:53:10-DEBUG: Initializing WebSocket
+2025-11-13 17:53:10-DEBUG: Validating WebSocket request
+2025-11-13 17:53:10-INFO: 127.0.0.1 - - [2025-11-13 17:53:10] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001305
+2025-11-13 17:53:10-DEBUG: Initializing WebSocket
+2025-11-13 17:53:10-DEBUG: Validating WebSocket request
+2025-11-13 17:53:10-INFO: 127.0.0.1 - - [2025-11-13 17:53:10] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001505
+2025-11-13 17:53:10-DEBUG: Initializing WebSocket
+2025-11-13 17:53:10-DEBUG: Validating WebSocket request
+2025-11-13 17:53:10-INFO: 127.0.0.1 - - [2025-11-13 17:53:10] "GET /css/index.css HTTP/1.1" 200 341554 0.002562
+2025-11-13 17:53:10-DEBUG: Initializing WebSocket
+2025-11-13 17:53:10-DEBUG: Validating WebSocket request
+2025-11-13 17:53:10-DEBUG: Initializing WebSocket
+2025-11-13 17:53:10-DEBUG: Validating WebSocket request
+2025-11-13 17:53:10-INFO: 127.0.0.1 - - [2025-11-13 17:53:10] "GET /eel.js HTTP/1.1" 200 6076 0.001237
+2025-11-13 17:53:10-INFO: 127.0.0.1 - - [2025-11-13 17:53:10] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.017146
+2025-11-13 17:53:11-DEBUG: Initializing WebSocket
+2025-11-13 17:53:11-DEBUG: Validating WebSocket request
+2025-11-13 17:53:11-INFO: 127.0.0.1 - - [2025-11-13 17:53:11] "GET /favicon.ico HTTP/1.1" 200 152543 0.002143
+2025-11-13 17:53:11-DEBUG: Initializing WebSocket
+2025-11-13 17:53:11-DEBUG: Validating WebSocket request
+2025-11-13 17:53:11-DEBUG: Attempting to upgrade connection
+2025-11-13 17:53:11-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:53:12-DEBUG: Initializing WebSocket
+2025-11-13 17:53:12-DEBUG: Validating WebSocket request
+2025-11-13 17:53:12-INFO: 127.0.0.1 - - [2025-11-13 17:53:12] "GET /index.html HTTP/1.1" 200 6758 0.002276
+2025-11-13 17:53:12-DEBUG: Closed WebSocket
+2025-11-13 17:53:12-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:53:12-DEBUG: Closed WebSocket
+2025-11-13 17:53:12-DEBUG: Initializing WebSocket
+2025-11-13 17:53:12-DEBUG: Validating WebSocket request
+2025-11-13 17:53:12-INFO: 127.0.0.1 - - [2025-11-13 17:53:12] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001371
+2025-11-13 17:53:12-DEBUG: Initializing WebSocket
+2025-11-13 17:53:12-DEBUG: Validating WebSocket request
+2025-11-13 17:53:12-INFO: 127.0.0.1 - - [2025-11-13 17:53:12] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002095
+2025-11-13 17:53:12-DEBUG: Initializing WebSocket
+2025-11-13 17:53:12-DEBUG: Validating WebSocket request
+2025-11-13 17:53:12-INFO: 127.0.0.1 - - [2025-11-13 17:53:12] "GET /css/index.css HTTP/1.1" 200 341554 0.003332
+2025-11-13 17:53:12-DEBUG: Initializing WebSocket
+2025-11-13 17:53:12-DEBUG: Validating WebSocket request
+2025-11-13 17:53:12-INFO: 127.0.0.1 - - [2025-11-13 17:53:12] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006705
+2025-11-13 17:53:12-DEBUG: Initializing WebSocket
+2025-11-13 17:53:12-DEBUG: Validating WebSocket request
+2025-11-13 17:53:12-INFO: 127.0.0.1 - - [2025-11-13 17:53:12] "GET /eel.js HTTP/1.1" 200 6076 0.000000
+2025-11-13 17:53:12-DEBUG: Initializing WebSocket
+2025-11-13 17:53:12-DEBUG: Validating WebSocket request
+2025-11-13 17:53:12-INFO: 127.0.0.1 - - [2025-11-13 17:53:12] "GET /favicon.ico HTTP/1.1" 200 152543 0.001338
+2025-11-13 17:53:12-DEBUG: Initializing WebSocket
+2025-11-13 17:53:12-DEBUG: Validating WebSocket request
+2025-11-13 17:53:12-DEBUG: Attempting to upgrade connection
+2025-11-13 17:53:12-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:53:13-DEBUG: Closed WebSocket
+2025-11-13 17:53:13-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:53:13-DEBUG: Closed WebSocket
+2025-11-13 17:55:08-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:55:10-DEBUG: Initializing WebSocket
+2025-11-13 17:55:10-DEBUG: Validating WebSocket request
+2025-11-13 17:55:10-INFO: 127.0.0.1 - - [2025-11-13 17:55:10] "GET /index.html HTTP/1.1" 200 7039 0.001188
+2025-11-13 17:55:10-DEBUG: Initializing WebSocket
+2025-11-13 17:55:10-DEBUG: Validating WebSocket request
+2025-11-13 17:55:10-DEBUG: Initializing WebSocket
+2025-11-13 17:55:10-DEBUG: Validating WebSocket request
+2025-11-13 17:55:10-INFO: 127.0.0.1 - - [2025-11-13 17:55:10] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002533
+2025-11-13 17:55:10-DEBUG: Initializing WebSocket
+2025-11-13 17:55:10-DEBUG: Validating WebSocket request
+2025-11-13 17:55:10-INFO: 127.0.0.1 - - [2025-11-13 17:55:10] "GET /css/index.css HTTP/1.1" 200 341554 0.010370
+2025-11-13 17:55:10-INFO: 127.0.0.1 - - [2025-11-13 17:55:10] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.007055
+2025-11-13 17:55:10-DEBUG: Initializing WebSocket
+2025-11-13 17:55:10-DEBUG: Validating WebSocket request
+2025-11-13 17:55:10-INFO: 127.0.0.1 - - [2025-11-13 17:55:10] "GET /eel.js HTTP/1.1" 200 6076 0.001141
+2025-11-13 17:55:11-DEBUG: Initializing WebSocket
+2025-11-13 17:55:11-DEBUG: Validating WebSocket request
+2025-11-13 17:55:11-DEBUG: Attempting to upgrade connection
+2025-11-13 17:55:11-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:55:56-DEBUG: Initializing WebSocket
+2025-11-13 17:55:56-DEBUG: Validating WebSocket request
+2025-11-13 17:55:56-INFO: 127.0.0.1 - - [2025-11-13 17:55:56] "GET /index.html HTTP/1.1" 200 6491 0.002301
+2025-11-13 17:55:56-DEBUG: Closed WebSocket
+2025-11-13 17:55:56-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:55:56-DEBUG: Closed WebSocket
+2025-11-13 17:55:56-DEBUG: Initializing WebSocket
+2025-11-13 17:55:56-DEBUG: Validating WebSocket request
+2025-11-13 17:55:56-INFO: 127.0.0.1 - - [2025-11-13 17:55:56] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002006
+2025-11-13 17:55:56-DEBUG: Initializing WebSocket
+2025-11-13 17:55:56-DEBUG: Validating WebSocket request
+2025-11-13 17:55:56-DEBUG: Initializing WebSocket
+2025-11-13 17:55:56-DEBUG: Validating WebSocket request
+2025-11-13 17:55:56-DEBUG: Initializing WebSocket
+2025-11-13 17:55:56-DEBUG: Validating WebSocket request
+2025-11-13 17:55:56-INFO: 127.0.0.1 - - [2025-11-13 17:55:56] "GET /eel.js HTTP/1.1" 200 6076 0.001000
+2025-11-13 17:55:56-INFO: 127.0.0.1 - - [2025-11-13 17:55:56] "GET /css/index.css HTTP/1.1" 200 341554 0.004235
+2025-11-13 17:55:56-INFO: 127.0.0.1 - - [2025-11-13 17:55:56] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.005673
+2025-11-13 17:55:56-DEBUG: Initializing WebSocket
+2025-11-13 17:55:56-DEBUG: Validating WebSocket request
+2025-11-13 17:55:56-INFO: 127.0.0.1 - - [2025-11-13 17:55:56] "GET /favicon.ico HTTP/1.1" 200 152543 0.003139
+2025-11-13 17:55:56-DEBUG: Initializing WebSocket
+2025-11-13 17:55:56-DEBUG: Validating WebSocket request
+2025-11-13 17:55:56-DEBUG: Attempting to upgrade connection
+2025-11-13 17:55:56-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:56:06-DEBUG: Initializing WebSocket
+2025-11-13 17:56:06-DEBUG: Validating WebSocket request
+2025-11-13 17:56:06-INFO: 127.0.0.1 - - [2025-11-13 17:56:06] "GET /index.html HTTP/1.1" 200 6603 0.001450
+2025-11-13 17:56:06-DEBUG: Closed WebSocket
+2025-11-13 17:56:06-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:56:06-DEBUG: Closed WebSocket
+2025-11-13 17:56:06-DEBUG: Initializing WebSocket
+2025-11-13 17:56:06-DEBUG: Validating WebSocket request
+2025-11-13 17:56:06-INFO: 127.0.0.1 - - [2025-11-13 17:56:06] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002015
+2025-11-13 17:56:06-DEBUG: Initializing WebSocket
+2025-11-13 17:56:06-DEBUG: Validating WebSocket request
+2025-11-13 17:56:06-INFO: 127.0.0.1 - - [2025-11-13 17:56:06] "GET /css/index.css HTTP/1.1" 200 341554 0.002753
+2025-11-13 17:56:06-DEBUG: Initializing WebSocket
+2025-11-13 17:56:06-DEBUG: Validating WebSocket request
+2025-11-13 17:56:06-INFO: 127.0.0.1 - - [2025-11-13 17:56:06] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006120
+2025-11-13 17:56:06-DEBUG: Initializing WebSocket
+2025-11-13 17:56:06-DEBUG: Validating WebSocket request
+2025-11-13 17:56:06-INFO: 127.0.0.1 - - [2025-11-13 17:56:06] "GET /eel.js HTTP/1.1" 200 6076 0.001307
+2025-11-13 17:56:06-DEBUG: Initializing WebSocket
+2025-11-13 17:56:06-DEBUG: Validating WebSocket request
+2025-11-13 17:56:06-INFO: 127.0.0.1 - - [2025-11-13 17:56:06] "GET /favicon.ico HTTP/1.1" 200 152543 0.003311
+2025-11-13 17:56:07-DEBUG: Initializing WebSocket
+2025-11-13 17:56:07-DEBUG: Validating WebSocket request
+2025-11-13 17:56:07-DEBUG: Attempting to upgrade connection
+2025-11-13 17:56:07-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:56:38-DEBUG: Using proactor: IocpProactor
+2025-11-13 17:56:41-DEBUG: Initializing WebSocket
+2025-11-13 17:56:41-DEBUG: Validating WebSocket request
+2025-11-13 17:56:41-INFO: 127.0.0.1 - - [2025-11-13 17:56:41] "GET /index.html HTTP/1.1" 200 6933 0.001197
+2025-11-13 17:56:41-DEBUG: Initializing WebSocket
+2025-11-13 17:56:41-DEBUG: Validating WebSocket request
+2025-11-13 17:56:41-INFO: 127.0.0.1 - - [2025-11-13 17:56:41] "GET /css/index.css HTTP/1.1" 200 341554 0.003379
+2025-11-13 17:56:41-DEBUG: Initializing WebSocket
+2025-11-13 17:56:41-DEBUG: Validating WebSocket request
+2025-11-13 17:56:41-DEBUG: Initializing WebSocket
+2025-11-13 17:56:41-DEBUG: Validating WebSocket request
+2025-11-13 17:56:41-INFO: 127.0.0.1 - - [2025-11-13 17:56:41] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001660
+2025-11-13 17:56:41-DEBUG: Initializing WebSocket
+2025-11-13 17:56:41-DEBUG: Validating WebSocket request
+2025-11-13 17:56:41-INFO: 127.0.0.1 - - [2025-11-13 17:56:41] "GET /eel.js HTTP/1.1" 200 6076 0.000000
+2025-11-13 17:56:41-INFO: 127.0.0.1 - - [2025-11-13 17:56:41] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.009683
+2025-11-13 17:56:41-DEBUG: Initializing WebSocket
+2025-11-13 17:56:41-DEBUG: Validating WebSocket request
+2025-11-13 17:56:41-DEBUG: Attempting to upgrade connection
+2025-11-13 17:56:41-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:58:17-DEBUG: Initializing WebSocket
+2025-11-13 17:58:17-DEBUG: Validating WebSocket request
+2025-11-13 17:58:17-INFO: 127.0.0.1 - - [2025-11-13 17:58:17] "GET /index.html HTTP/1.1" 200 6918 0.000530
+2025-11-13 17:58:17-DEBUG: Closed WebSocket
+2025-11-13 17:58:17-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:58:17-DEBUG: Closed WebSocket
+2025-11-13 17:58:17-DEBUG: Initializing WebSocket
+2025-11-13 17:58:17-DEBUG: Validating WebSocket request
+2025-11-13 17:58:17-DEBUG: Initializing WebSocket
+2025-11-13 17:58:17-DEBUG: Validating WebSocket request
+2025-11-13 17:58:17-INFO: 127.0.0.1 - - [2025-11-13 17:58:17] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001000
+2025-11-13 17:58:17-DEBUG: Initializing WebSocket
+2025-11-13 17:58:17-DEBUG: Validating WebSocket request
+2025-11-13 17:58:17-INFO: 127.0.0.1 - - [2025-11-13 17:58:17] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006283
+2025-11-13 17:58:17-DEBUG: Initializing WebSocket
+2025-11-13 17:58:17-DEBUG: Validating WebSocket request
+2025-11-13 17:58:17-INFO: 127.0.0.1 - - [2025-11-13 17:58:17] "GET /eel.js HTTP/1.1" 200 6076 0.000000
+2025-11-13 17:58:17-INFO: 127.0.0.1 - - [2025-11-13 17:58:17] "GET /css/index.css HTTP/1.1" 200 341554 0.013713
+2025-11-13 17:58:17-DEBUG: Initializing WebSocket
+2025-11-13 17:58:17-DEBUG: Validating WebSocket request
+2025-11-13 17:58:17-INFO: 127.0.0.1 - - [2025-11-13 17:58:17] "GET /favicon.ico HTTP/1.1" 200 152543 0.002886
+2025-11-13 17:58:17-DEBUG: Initializing WebSocket
+2025-11-13 17:58:17-DEBUG: Validating WebSocket request
+2025-11-13 17:58:17-DEBUG: Attempting to upgrade connection
+2025-11-13 17:58:17-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:59:18-DEBUG: Initializing WebSocket
+2025-11-13 17:59:18-DEBUG: Validating WebSocket request
+2025-11-13 17:59:18-INFO: 127.0.0.1 - - [2025-11-13 17:59:18] "GET /index.html HTTP/1.1" 200 6930 0.001975
+2025-11-13 17:59:18-DEBUG: Closed WebSocket
+2025-11-13 17:59:18-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:59:18-DEBUG: Closed WebSocket
+2025-11-13 17:59:18-DEBUG: Initializing WebSocket
+2025-11-13 17:59:18-DEBUG: Validating WebSocket request
+2025-11-13 17:59:18-INFO: 127.0.0.1 - - [2025-11-13 17:59:18] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001534
+2025-11-13 17:59:18-DEBUG: Initializing WebSocket
+2025-11-13 17:59:18-DEBUG: Validating WebSocket request
+2025-11-13 17:59:18-INFO: 127.0.0.1 - - [2025-11-13 17:59:18] "GET /css/index.css HTTP/1.1" 200 341554 0.002526
+2025-11-13 17:59:18-DEBUG: Initializing WebSocket
+2025-11-13 17:59:18-DEBUG: Validating WebSocket request
+2025-11-13 17:59:18-INFO: 127.0.0.1 - - [2025-11-13 17:59:18] "GET /eel.js HTTP/1.1" 200 6076 0.001511
+2025-11-13 17:59:18-DEBUG: Initializing WebSocket
+2025-11-13 17:59:18-DEBUG: Validating WebSocket request
+2025-11-13 17:59:18-INFO: 127.0.0.1 - - [2025-11-13 17:59:18] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006654
+2025-11-13 17:59:18-DEBUG: Initializing WebSocket
+2025-11-13 17:59:18-DEBUG: Validating WebSocket request
+2025-11-13 17:59:18-INFO: 127.0.0.1 - - [2025-11-13 17:59:18] "GET /favicon.ico HTTP/1.1" 200 152543 0.001486
+2025-11-13 17:59:18-DEBUG: Initializing WebSocket
+2025-11-13 17:59:18-DEBUG: Validating WebSocket request
+2025-11-13 17:59:18-DEBUG: Attempting to upgrade connection
+2025-11-13 17:59:18-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:59:30-DEBUG: Initializing WebSocket
+2025-11-13 17:59:30-DEBUG: Validating WebSocket request
+2025-11-13 17:59:30-INFO: 127.0.0.1 - - [2025-11-13 17:59:30] "GET /index.html HTTP/1.1" 200 6930 0.001215
+2025-11-13 17:59:30-DEBUG: Closed WebSocket
+2025-11-13 17:59:30-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:59:30-DEBUG: Closed WebSocket
+2025-11-13 17:59:30-DEBUG: Initializing WebSocket
+2025-11-13 17:59:30-DEBUG: Validating WebSocket request
+2025-11-13 17:59:30-INFO: 127.0.0.1 - - [2025-11-13 17:59:30] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002119
+2025-11-13 17:59:30-DEBUG: Initializing WebSocket
+2025-11-13 17:59:30-DEBUG: Validating WebSocket request
+2025-11-13 17:59:30-INFO: 127.0.0.1 - - [2025-11-13 17:59:30] "GET /css/index.css HTTP/1.1" 200 341554 0.002425
+2025-11-13 17:59:30-DEBUG: Initializing WebSocket
+2025-11-13 17:59:30-DEBUG: Validating WebSocket request
+2025-11-13 17:59:30-DEBUG: Initializing WebSocket
+2025-11-13 17:59:30-DEBUG: Validating WebSocket request
+2025-11-13 17:59:30-INFO: 127.0.0.1 - - [2025-11-13 17:59:30] "GET /eel.js HTTP/1.1" 200 6076 0.001480
+2025-11-13 17:59:30-INFO: 127.0.0.1 - - [2025-11-13 17:59:30] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.013836
+2025-11-13 17:59:30-DEBUG: Initializing WebSocket
+2025-11-13 17:59:30-DEBUG: Validating WebSocket request
+2025-11-13 17:59:30-INFO: 127.0.0.1 - - [2025-11-13 17:59:30] "GET /favicon.ico HTTP/1.1" 200 152543 0.001444
+2025-11-13 17:59:30-DEBUG: Initializing WebSocket
+2025-11-13 17:59:30-DEBUG: Validating WebSocket request
+2025-11-13 17:59:30-DEBUG: Attempting to upgrade connection
+2025-11-13 17:59:30-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 17:59:32-DEBUG: Closed WebSocket
+2025-11-13 17:59:32-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 17:59:32-DEBUG: Closed WebSocket
+2025-11-13 18:00:01-DEBUG: Using proactor: IocpProactor
+2025-11-13 18:00:03-DEBUG: Initializing WebSocket
+2025-11-13 18:00:03-DEBUG: Validating WebSocket request
+2025-11-13 18:00:03-INFO: 127.0.0.1 - - [2025-11-13 18:00:03] "GET /index.html HTTP/1.1" 200 6934 0.001039
+2025-11-13 18:00:03-DEBUG: Initializing WebSocket
+2025-11-13 18:00:03-DEBUG: Validating WebSocket request
+2025-11-13 18:00:03-DEBUG: Initializing WebSocket
+2025-11-13 18:00:03-DEBUG: Validating WebSocket request
+2025-11-13 18:00:03-INFO: 127.0.0.1 - - [2025-11-13 18:00:03] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001388
+2025-11-13 18:00:03-INFO: 127.0.0.1 - - [2025-11-13 18:00:03] "GET /css/index.css HTTP/1.1" 200 341554 0.006063
+2025-11-13 18:00:03-DEBUG: Initializing WebSocket
+2025-11-13 18:00:03-DEBUG: Validating WebSocket request
+2025-11-13 18:00:03-INFO: 127.0.0.1 - - [2025-11-13 18:00:03] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.005732
+2025-11-13 18:00:03-DEBUG: Initializing WebSocket
+2025-11-13 18:00:03-DEBUG: Validating WebSocket request
+2025-11-13 18:00:03-INFO: 127.0.0.1 - - [2025-11-13 18:00:03] "GET /eel.js HTTP/1.1" 200 6076 0.002323
+2025-11-13 18:00:04-DEBUG: Initializing WebSocket
+2025-11-13 18:00:04-DEBUG: Validating WebSocket request
+2025-11-13 18:00:04-DEBUG: Attempting to upgrade connection
+2025-11-13 18:00:04-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 18:00:18-DEBUG: Using proactor: IocpProactor
+2025-11-13 18:00:20-DEBUG: Initializing WebSocket
+2025-11-13 18:00:20-DEBUG: Validating WebSocket request
+2025-11-13 18:00:20-INFO: 127.0.0.1 - - [2025-11-13 18:00:20] "GET /index.html HTTP/1.1" 200 6676 0.000999
+2025-11-13 18:00:20-DEBUG: Initializing WebSocket
+2025-11-13 18:00:20-DEBUG: Validating WebSocket request
+2025-11-13 18:00:20-DEBUG: Initializing WebSocket
+2025-11-13 18:00:20-DEBUG: Validating WebSocket request
+2025-11-13 18:00:20-INFO: 127.0.0.1 - - [2025-11-13 18:00:20] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002416
+2025-11-13 18:00:20-DEBUG: Initializing WebSocket
+2025-11-13 18:00:20-DEBUG: Validating WebSocket request
+2025-11-13 18:00:20-INFO: 127.0.0.1 - - [2025-11-13 18:00:20] "GET /css/index.css HTTP/1.1" 200 341554 0.007783
+2025-11-13 18:00:20-DEBUG: Initializing WebSocket
+2025-11-13 18:00:20-DEBUG: Validating WebSocket request
+2025-11-13 18:00:20-INFO: 127.0.0.1 - - [2025-11-13 18:00:20] "GET /eel.js HTTP/1.1" 200 6076 0.001267
+2025-11-13 18:00:20-INFO: 127.0.0.1 - - [2025-11-13 18:00:20] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.007823
+2025-11-13 18:00:20-DEBUG: Initializing WebSocket
+2025-11-13 18:00:20-DEBUG: Validating WebSocket request
+2025-11-13 18:00:20-DEBUG: Attempting to upgrade connection
+2025-11-13 18:00:20-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:15:34-DEBUG: Initializing WebSocket
+2025-11-13 20:15:34-DEBUG: Validating WebSocket request
+2025-11-13 20:15:34-INFO: 127.0.0.1 - - [2025-11-13 20:15:34] "GET /index.html HTTP/1.1" 200 6676 0.004342
+2025-11-13 20:15:34-DEBUG: Closed WebSocket
+2025-11-13 20:15:34-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:15:34-DEBUG: Closed WebSocket
+2025-11-13 20:15:34-DEBUG: Initializing WebSocket
+2025-11-13 20:15:34-DEBUG: Validating WebSocket request
+2025-11-13 20:15:34-INFO: 127.0.0.1 - - [2025-11-13 20:15:34] "GET /css/index.css HTTP/1.1" 200 341554 0.006221
+2025-11-13 20:15:34-DEBUG: Initializing WebSocket
+2025-11-13 20:15:34-DEBUG: Validating WebSocket request
+2025-11-13 20:15:34-INFO: 127.0.0.1 - - [2025-11-13 20:15:34] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.018196
+2025-11-13 20:15:34-DEBUG: Initializing WebSocket
+2025-11-13 20:15:34-DEBUG: Validating WebSocket request
+2025-11-13 20:15:34-INFO: 127.0.0.1 - - [2025-11-13 20:15:34] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002328
+2025-11-13 20:15:34-DEBUG: Initializing WebSocket
+2025-11-13 20:15:34-DEBUG: Validating WebSocket request
+2025-11-13 20:15:34-INFO: 127.0.0.1 - - [2025-11-13 20:15:34] "GET /eel.js HTTP/1.1" 200 6076 0.001507
+2025-11-13 20:15:34-DEBUG: Initializing WebSocket
+2025-11-13 20:15:34-DEBUG: Validating WebSocket request
+2025-11-13 20:15:34-INFO: 127.0.0.1 - - [2025-11-13 20:15:34] "GET /favicon.ico HTTP/1.1" 200 152543 0.002402
+2025-11-13 20:15:35-DEBUG: Initializing WebSocket
+2025-11-13 20:15:35-DEBUG: Validating WebSocket request
+2025-11-13 20:15:35-DEBUG: Attempting to upgrade connection
+2025-11-13 20:15:35-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:15:36-DEBUG: Initializing WebSocket
+2025-11-13 20:15:36-DEBUG: Validating WebSocket request
+2025-11-13 20:15:36-INFO: 127.0.0.1 - - [2025-11-13 20:15:36] "GET /index.html HTTP/1.1" 200 6676 0.002083
+2025-11-13 20:15:36-DEBUG: Closed WebSocket
+2025-11-13 20:15:36-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:15:36-DEBUG: Closed WebSocket
+2025-11-13 20:15:36-DEBUG: Initializing WebSocket
+2025-11-13 20:15:36-DEBUG: Validating WebSocket request
+2025-11-13 20:15:36-INFO: 127.0.0.1 - - [2025-11-13 20:15:36] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.003548
+2025-11-13 20:15:36-DEBUG: Initializing WebSocket
+2025-11-13 20:15:36-DEBUG: Validating WebSocket request
+2025-11-13 20:15:36-INFO: 127.0.0.1 - - [2025-11-13 20:15:36] "GET /css/index.css HTTP/1.1" 200 341554 0.003148
+2025-11-13 20:15:36-DEBUG: Initializing WebSocket
+2025-11-13 20:15:36-DEBUG: Validating WebSocket request
+2025-11-13 20:15:36-INFO: 127.0.0.1 - - [2025-11-13 20:15:36] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004805
+2025-11-13 20:15:36-DEBUG: Initializing WebSocket
+2025-11-13 20:15:36-DEBUG: Validating WebSocket request
+2025-11-13 20:15:36-INFO: 127.0.0.1 - - [2025-11-13 20:15:36] "GET /eel.js HTTP/1.1" 200 6076 0.001993
+2025-11-13 20:15:36-DEBUG: Initializing WebSocket
+2025-11-13 20:15:36-DEBUG: Validating WebSocket request
+2025-11-13 20:15:36-INFO: 127.0.0.1 - - [2025-11-13 20:15:36] "GET /favicon.ico HTTP/1.1" 200 152543 0.002823
+2025-11-13 20:15:37-DEBUG: Initializing WebSocket
+2025-11-13 20:15:37-DEBUG: Validating WebSocket request
+2025-11-13 20:15:37-DEBUG: Attempting to upgrade connection
+2025-11-13 20:15:37-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:15:37-DEBUG: Initializing WebSocket
+2025-11-13 20:15:37-DEBUG: Validating WebSocket request
+2025-11-13 20:15:37-INFO: 127.0.0.1 - - [2025-11-13 20:15:37] "GET /index.html HTTP/1.1" 200 6676 0.001340
+2025-11-13 20:15:37-DEBUG: Closed WebSocket
+2025-11-13 20:15:37-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:15:37-DEBUG: Closed WebSocket
+2025-11-13 20:15:37-DEBUG: Initializing WebSocket
+2025-11-13 20:15:37-DEBUG: Validating WebSocket request
+2025-11-13 20:15:37-INFO: 127.0.0.1 - - [2025-11-13 20:15:37] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002509
+2025-11-13 20:15:37-DEBUG: Initializing WebSocket
+2025-11-13 20:15:37-DEBUG: Validating WebSocket request
+2025-11-13 20:15:37-INFO: 127.0.0.1 - - [2025-11-13 20:15:37] "GET /css/index.css HTTP/1.1" 200 341554 0.002666
+2025-11-13 20:15:37-DEBUG: Initializing WebSocket
+2025-11-13 20:15:37-DEBUG: Validating WebSocket request
+2025-11-13 20:15:37-INFO: 127.0.0.1 - - [2025-11-13 20:15:37] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.005869
+2025-11-13 20:15:37-DEBUG: Initializing WebSocket
+2025-11-13 20:15:37-DEBUG: Validating WebSocket request
+2025-11-13 20:15:37-INFO: 127.0.0.1 - - [2025-11-13 20:15:37] "GET /eel.js HTTP/1.1" 200 6076 0.001130
+2025-11-13 20:15:37-DEBUG: Initializing WebSocket
+2025-11-13 20:15:37-DEBUG: Validating WebSocket request
+2025-11-13 20:15:37-INFO: 127.0.0.1 - - [2025-11-13 20:15:37] "GET /favicon.ico HTTP/1.1" 200 152543 0.002457
+2025-11-13 20:15:38-DEBUG: Initializing WebSocket
+2025-11-13 20:15:38-DEBUG: Validating WebSocket request
+2025-11-13 20:15:38-DEBUG: Attempting to upgrade connection
+2025-11-13 20:15:38-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:15:40-DEBUG: Closed WebSocket
+2025-11-13 20:15:40-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:15:40-DEBUG: Closed WebSocket
+2025-11-13 20:15:50-DEBUG: Using proactor: IocpProactor
+2025-11-13 20:15:52-DEBUG: Initializing WebSocket
+2025-11-13 20:15:52-DEBUG: Validating WebSocket request
+2025-11-13 20:15:52-INFO: 127.0.0.1 - - [2025-11-13 20:15:52] "GET /index.html HTTP/1.1" 200 6934 0.001022
+2025-11-13 20:15:52-DEBUG: Initializing WebSocket
+2025-11-13 20:15:52-DEBUG: Validating WebSocket request
+2025-11-13 20:15:52-INFO: 127.0.0.1 - - [2025-11-13 20:15:52] "GET /css/index.css HTTP/1.1" 200 341554 0.002285
+2025-11-13 20:15:52-DEBUG: Initializing WebSocket
+2025-11-13 20:15:52-DEBUG: Validating WebSocket request
+2025-11-13 20:15:52-INFO: 127.0.0.1 - - [2025-11-13 20:15:52] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002155
+2025-11-13 20:15:52-DEBUG: Initializing WebSocket
+2025-11-13 20:15:52-DEBUG: Validating WebSocket request
+2025-11-13 20:15:52-INFO: 127.0.0.1 - - [2025-11-13 20:15:52] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004573
+2025-11-13 20:15:52-DEBUG: Initializing WebSocket
+2025-11-13 20:15:52-DEBUG: Validating WebSocket request
+2025-11-13 20:15:52-INFO: 127.0.0.1 - - [2025-11-13 20:15:52] "GET /eel.js HTTP/1.1" 200 6076 0.000999
+2025-11-13 20:15:53-DEBUG: Initializing WebSocket
+2025-11-13 20:15:53-DEBUG: Validating WebSocket request
+2025-11-13 20:15:53-DEBUG: Attempting to upgrade connection
+2025-11-13 20:15:53-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:16:18-DEBUG: Closed WebSocket
+2025-11-13 20:16:18-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:16:18-DEBUG: Closed WebSocket
+2025-11-13 20:16:21-DEBUG: Using proactor: IocpProactor
+2025-11-13 20:16:23-DEBUG: Initializing WebSocket
+2025-11-13 20:16:23-DEBUG: Validating WebSocket request
+2025-11-13 20:16:23-INFO: 127.0.0.1 - - [2025-11-13 20:16:23] "GET /index.html HTTP/1.1" 200 6587 0.001483
+2025-11-13 20:16:23-DEBUG: Initializing WebSocket
+2025-11-13 20:16:23-DEBUG: Validating WebSocket request
+2025-11-13 20:16:23-INFO: 127.0.0.1 - - [2025-11-13 20:16:23] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.003478
+2025-11-13 20:16:23-DEBUG: Initializing WebSocket
+2025-11-13 20:16:23-DEBUG: Validating WebSocket request
+2025-11-13 20:16:23-DEBUG: Initializing WebSocket
+2025-11-13 20:16:23-DEBUG: Validating WebSocket request
+2025-11-13 20:16:23-INFO: 127.0.0.1 - - [2025-11-13 20:16:23] "GET /css/index.css HTTP/1.1" 200 341554 0.004000
+2025-11-13 20:16:23-INFO: 127.0.0.1 - - [2025-11-13 20:16:23] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.011051
+2025-11-13 20:16:23-DEBUG: Initializing WebSocket
+2025-11-13 20:16:23-DEBUG: Validating WebSocket request
+2025-11-13 20:16:23-INFO: 127.0.0.1 - - [2025-11-13 20:16:23] "GET /eel.js HTTP/1.1" 200 6076 0.001361
+2025-11-13 20:16:24-DEBUG: Initializing WebSocket
+2025-11-13 20:16:24-DEBUG: Validating WebSocket request
+2025-11-13 20:16:24-DEBUG: Attempting to upgrade connection
+2025-11-13 20:16:24-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:16:55-DEBUG: Using proactor: IocpProactor
+2025-11-13 20:16:57-DEBUG: Initializing WebSocket
+2025-11-13 20:16:57-DEBUG: Validating WebSocket request
+2025-11-13 20:16:57-INFO: 127.0.0.1 - - [2025-11-13 20:16:57] "GET /index.html HTTP/1.1" 200 6676 0.000000
+2025-11-13 20:16:57-DEBUG: Initializing WebSocket
+2025-11-13 20:16:57-DEBUG: Validating WebSocket request
+2025-11-13 20:16:57-DEBUG: Initializing WebSocket
+2025-11-13 20:16:57-DEBUG: Validating WebSocket request
+2025-11-13 20:16:57-INFO: 127.0.0.1 - - [2025-11-13 20:16:57] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002273
+2025-11-13 20:16:57-INFO: 127.0.0.1 - - [2025-11-13 20:16:57] "GET /css/index.css HTTP/1.1" 200 341554 0.005541
+2025-11-13 20:16:57-DEBUG: Initializing WebSocket
+2025-11-13 20:16:57-DEBUG: Validating WebSocket request
+2025-11-13 20:16:57-INFO: 127.0.0.1 - - [2025-11-13 20:16:57] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.007805
+2025-11-13 20:16:57-DEBUG: Initializing WebSocket
+2025-11-13 20:16:57-DEBUG: Validating WebSocket request
+2025-11-13 20:16:57-INFO: 127.0.0.1 - - [2025-11-13 20:16:57] "GET /eel.js HTTP/1.1" 200 6076 0.001412
+2025-11-13 20:16:57-DEBUG: Initializing WebSocket
+2025-11-13 20:16:57-DEBUG: Validating WebSocket request
+2025-11-13 20:16:57-DEBUG: Attempting to upgrade connection
+2025-11-13 20:16:57-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:17:08-DEBUG: Initializing WebSocket
+2025-11-13 20:17:08-DEBUG: Validating WebSocket request
+2025-11-13 20:17:08-INFO: 127.0.0.1 - - [2025-11-13 20:17:08] "GET /index.html HTTP/1.1" 200 6934 0.001050
+2025-11-13 20:17:08-DEBUG: Closed WebSocket
+2025-11-13 20:17:08-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:17:08-DEBUG: Closed WebSocket
+2025-11-13 20:17:08-DEBUG: Initializing WebSocket
+2025-11-13 20:17:08-DEBUG: Validating WebSocket request
+2025-11-13 20:17:08-INFO: 127.0.0.1 - - [2025-11-13 20:17:08] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002632
+2025-11-13 20:17:08-DEBUG: Initializing WebSocket
+2025-11-13 20:17:08-DEBUG: Validating WebSocket request
+2025-11-13 20:17:08-DEBUG: Initializing WebSocket
+2025-11-13 20:17:08-DEBUG: Validating WebSocket request
+2025-11-13 20:17:08-INFO: 127.0.0.1 - - [2025-11-13 20:17:08] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004370
+2025-11-13 20:17:08-DEBUG: Initializing WebSocket
+2025-11-13 20:17:08-DEBUG: Validating WebSocket request
+2025-11-13 20:17:08-INFO: 127.0.0.1 - - [2025-11-13 20:17:08] "GET /eel.js HTTP/1.1" 200 6076 0.000000
+2025-11-13 20:17:08-INFO: 127.0.0.1 - - [2025-11-13 20:17:08] "GET /css/index.css HTTP/1.1" 200 341554 0.008752
+2025-11-13 20:17:08-DEBUG: Initializing WebSocket
+2025-11-13 20:17:08-DEBUG: Validating WebSocket request
+2025-11-13 20:17:08-INFO: 127.0.0.1 - - [2025-11-13 20:17:08] "GET /favicon.ico HTTP/1.1" 200 152543 0.003592
+2025-11-13 20:17:09-DEBUG: Initializing WebSocket
+2025-11-13 20:17:09-DEBUG: Validating WebSocket request
+2025-11-13 20:17:09-DEBUG: Attempting to upgrade connection
+2025-11-13 20:17:09-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:17:09-DEBUG: Initializing WebSocket
+2025-11-13 20:17:09-DEBUG: Validating WebSocket request
+2025-11-13 20:17:09-INFO: 127.0.0.1 - - [2025-11-13 20:17:09] "GET /index.html HTTP/1.1" 200 6934 0.001475
+2025-11-13 20:17:09-DEBUG: Closed WebSocket
+2025-11-13 20:17:09-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:17:09-DEBUG: Closed WebSocket
+2025-11-13 20:17:09-DEBUG: Initializing WebSocket
+2025-11-13 20:17:09-DEBUG: Validating WebSocket request
+2025-11-13 20:17:09-INFO: 127.0.0.1 - - [2025-11-13 20:17:09] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001385
+2025-11-13 20:17:09-DEBUG: Initializing WebSocket
+2025-11-13 20:17:09-DEBUG: Validating WebSocket request
+2025-11-13 20:17:09-INFO: 127.0.0.1 - - [2025-11-13 20:17:09] "GET /css/index.css HTTP/1.1" 200 341554 0.002877
+2025-11-13 20:17:09-DEBUG: Initializing WebSocket
+2025-11-13 20:17:09-DEBUG: Validating WebSocket request
+2025-11-13 20:17:09-INFO: 127.0.0.1 - - [2025-11-13 20:17:09] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006172
+2025-11-13 20:17:09-DEBUG: Initializing WebSocket
+2025-11-13 20:17:09-DEBUG: Validating WebSocket request
+2025-11-13 20:17:09-INFO: 127.0.0.1 - - [2025-11-13 20:17:09] "GET /eel.js HTTP/1.1" 200 6076 0.001230
+2025-11-13 20:17:09-DEBUG: Initializing WebSocket
+2025-11-13 20:17:09-DEBUG: Validating WebSocket request
+2025-11-13 20:17:09-INFO: 127.0.0.1 - - [2025-11-13 20:17:09] "GET /favicon.ico HTTP/1.1" 200 152543 0.001016
+2025-11-13 20:17:10-DEBUG: Initializing WebSocket
+2025-11-13 20:17:10-DEBUG: Validating WebSocket request
+2025-11-13 20:17:10-DEBUG: Attempting to upgrade connection
+2025-11-13 20:17:10-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:17:10-DEBUG: Initializing WebSocket
+2025-11-13 20:17:10-DEBUG: Validating WebSocket request
+2025-11-13 20:17:10-INFO: 127.0.0.1 - - [2025-11-13 20:17:10] "GET /index.html HTTP/1.1" 200 6934 0.001049
+2025-11-13 20:17:10-DEBUG: Closed WebSocket
+2025-11-13 20:17:10-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:17:10-DEBUG: Closed WebSocket
+2025-11-13 20:17:10-DEBUG: Initializing WebSocket
+2025-11-13 20:17:10-DEBUG: Validating WebSocket request
+2025-11-13 20:17:10-INFO: 127.0.0.1 - - [2025-11-13 20:17:10] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002461
+2025-11-13 20:17:10-DEBUG: Initializing WebSocket
+2025-11-13 20:17:10-DEBUG: Validating WebSocket request
+2025-11-13 20:17:10-INFO: 127.0.0.1 - - [2025-11-13 20:17:10] "GET /css/index.css HTTP/1.1" 200 341554 0.002402
+2025-11-13 20:17:10-DEBUG: Initializing WebSocket
+2025-11-13 20:17:10-DEBUG: Validating WebSocket request
+2025-11-13 20:17:10-DEBUG: Initializing WebSocket
+2025-11-13 20:17:10-DEBUG: Validating WebSocket request
+2025-11-13 20:17:10-INFO: 127.0.0.1 - - [2025-11-13 20:17:10] "GET /eel.js HTTP/1.1" 200 6076 0.001156
+2025-11-13 20:17:10-INFO: 127.0.0.1 - - [2025-11-13 20:17:10] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004373
+2025-11-13 20:17:10-DEBUG: Initializing WebSocket
+2025-11-13 20:17:10-DEBUG: Validating WebSocket request
+2025-11-13 20:17:10-INFO: 127.0.0.1 - - [2025-11-13 20:17:10] "GET /favicon.ico HTTP/1.1" 200 152543 0.002600
+2025-11-13 20:17:10-DEBUG: Initializing WebSocket
+2025-11-13 20:17:10-DEBUG: Validating WebSocket request
+2025-11-13 20:17:10-DEBUG: Attempting to upgrade connection
+2025-11-13 20:17:10-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:17:40-DEBUG: Initializing WebSocket
+2025-11-13 20:17:40-DEBUG: Validating WebSocket request
+2025-11-13 20:17:40-INFO: 127.0.0.1 - - [2025-11-13 20:17:40] "GET /index.html HTTP/1.1" 200 6758 0.000506
+2025-11-13 20:17:40-DEBUG: Closed WebSocket
+2025-11-13 20:17:40-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:17:40-DEBUG: Closed WebSocket
+2025-11-13 20:17:40-DEBUG: Initializing WebSocket
+2025-11-13 20:17:40-DEBUG: Validating WebSocket request
+2025-11-13 20:17:40-INFO: 127.0.0.1 - - [2025-11-13 20:17:40] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002151
+2025-11-13 20:17:40-DEBUG: Initializing WebSocket
+2025-11-13 20:17:40-DEBUG: Validating WebSocket request
+2025-11-13 20:17:40-DEBUG: Initializing WebSocket
+2025-11-13 20:17:40-DEBUG: Validating WebSocket request
+2025-11-13 20:17:40-INFO: 127.0.0.1 - - [2025-11-13 20:17:40] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004620
+2025-11-13 20:17:40-DEBUG: Initializing WebSocket
+2025-11-13 20:17:40-DEBUG: Validating WebSocket request
+2025-11-13 20:17:40-INFO: 127.0.0.1 - - [2025-11-13 20:17:40] "GET /eel.js HTTP/1.1" 200 6076 0.001478
+2025-11-13 20:17:40-INFO: 127.0.0.1 - - [2025-11-13 20:17:40] "GET /css/index.css HTTP/1.1" 200 341554 0.009365
+2025-11-13 20:17:40-DEBUG: Initializing WebSocket
+2025-11-13 20:17:40-DEBUG: Validating WebSocket request
+2025-11-13 20:17:40-INFO: 127.0.0.1 - - [2025-11-13 20:17:40] "GET /favicon.ico HTTP/1.1" 200 152543 0.001156
+2025-11-13 20:17:40-DEBUG: Initializing WebSocket
+2025-11-13 20:17:40-DEBUG: Validating WebSocket request
+2025-11-13 20:17:40-DEBUG: Attempting to upgrade connection
+2025-11-13 20:17:40-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:17:41-DEBUG: Initializing WebSocket
+2025-11-13 20:17:41-DEBUG: Validating WebSocket request
+2025-11-13 20:17:41-INFO: 127.0.0.1 - - [2025-11-13 20:17:41] "GET /index.html HTTP/1.1" 200 6758 0.000000
+2025-11-13 20:17:41-DEBUG: Closed WebSocket
+2025-11-13 20:17:41-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:17:41-DEBUG: Closed WebSocket
+2025-11-13 20:17:41-DEBUG: Initializing WebSocket
+2025-11-13 20:17:41-DEBUG: Validating WebSocket request
+2025-11-13 20:17:41-INFO: 127.0.0.1 - - [2025-11-13 20:17:41] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002253
+2025-11-13 20:17:41-DEBUG: Initializing WebSocket
+2025-11-13 20:17:41-DEBUG: Validating WebSocket request
+2025-11-13 20:17:41-INFO: 127.0.0.1 - - [2025-11-13 20:17:41] "GET /css/index.css HTTP/1.1" 200 341554 0.002509
+2025-11-13 20:17:41-DEBUG: Initializing WebSocket
+2025-11-13 20:17:41-DEBUG: Validating WebSocket request
+2025-11-13 20:17:41-INFO: 127.0.0.1 - - [2025-11-13 20:17:41] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006423
+2025-11-13 20:17:41-DEBUG: Initializing WebSocket
+2025-11-13 20:17:41-DEBUG: Validating WebSocket request
+2025-11-13 20:17:41-INFO: 127.0.0.1 - - [2025-11-13 20:17:41] "GET /eel.js HTTP/1.1" 200 6076 0.001399
+2025-11-13 20:17:41-DEBUG: Initializing WebSocket
+2025-11-13 20:17:41-DEBUG: Validating WebSocket request
+2025-11-13 20:17:41-INFO: 127.0.0.1 - - [2025-11-13 20:17:41] "GET /favicon.ico HTTP/1.1" 200 152543 0.002841
+2025-11-13 20:17:41-DEBUG: Initializing WebSocket
+2025-11-13 20:17:41-DEBUG: Validating WebSocket request
+2025-11-13 20:17:41-DEBUG: Attempting to upgrade connection
+2025-11-13 20:17:41-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:18:10-DEBUG: Initializing WebSocket
+2025-11-13 20:18:10-DEBUG: Validating WebSocket request
+2025-11-13 20:18:10-INFO: 127.0.0.1 - - [2025-11-13 20:18:10] "GET /index.html HTTP/1.1" 200 7039 0.000514
+2025-11-13 20:18:10-DEBUG: Closed WebSocket
+2025-11-13 20:18:10-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:18:10-DEBUG: Closed WebSocket
+2025-11-13 20:18:10-DEBUG: Initializing WebSocket
+2025-11-13 20:18:10-DEBUG: Validating WebSocket request
+2025-11-13 20:18:10-INFO: 127.0.0.1 - - [2025-11-13 20:18:10] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002746
+2025-11-13 20:18:10-DEBUG: Initializing WebSocket
+2025-11-13 20:18:10-DEBUG: Validating WebSocket request
+2025-11-13 20:18:10-INFO: 127.0.0.1 - - [2025-11-13 20:18:10] "GET /css/index.css HTTP/1.1" 200 341554 0.002341
+2025-11-13 20:18:10-DEBUG: Initializing WebSocket
+2025-11-13 20:18:10-DEBUG: Validating WebSocket request
+2025-11-13 20:18:10-INFO: 127.0.0.1 - - [2025-11-13 20:18:10] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.003898
+2025-11-13 20:18:10-DEBUG: Initializing WebSocket
+2025-11-13 20:18:10-DEBUG: Validating WebSocket request
+2025-11-13 20:18:10-INFO: 127.0.0.1 - - [2025-11-13 20:18:10] "GET /eel.js HTTP/1.1" 200 6076 0.001001
+2025-11-13 20:18:10-DEBUG: Initializing WebSocket
+2025-11-13 20:18:10-DEBUG: Validating WebSocket request
+2025-11-13 20:18:10-INFO: 127.0.0.1 - - [2025-11-13 20:18:10] "GET /favicon.ico HTTP/1.1" 200 152543 0.001507
+2025-11-13 20:18:10-DEBUG: Initializing WebSocket
+2025-11-13 20:18:10-DEBUG: Validating WebSocket request
+2025-11-13 20:18:10-DEBUG: Attempting to upgrade connection
+2025-11-13 20:18:10-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:18:11-DEBUG: Initializing WebSocket
+2025-11-13 20:18:11-DEBUG: Validating WebSocket request
+2025-11-13 20:18:11-INFO: 127.0.0.1 - - [2025-11-13 20:18:11] "GET /index.html HTTP/1.1" 200 7039 0.001359
+2025-11-13 20:18:11-DEBUG: Closed WebSocket
+2025-11-13 20:18:11-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:18:11-DEBUG: Closed WebSocket
+2025-11-13 20:18:11-DEBUG: Initializing WebSocket
+2025-11-13 20:18:11-DEBUG: Validating WebSocket request
+2025-11-13 20:18:11-INFO: 127.0.0.1 - - [2025-11-13 20:18:11] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.003067
+2025-11-13 20:18:11-DEBUG: Initializing WebSocket
+2025-11-13 20:18:11-DEBUG: Validating WebSocket request
+2025-11-13 20:18:11-INFO: 127.0.0.1 - - [2025-11-13 20:18:11] "GET /css/index.css HTTP/1.1" 200 341554 0.003553
+2025-11-13 20:18:11-DEBUG: Initializing WebSocket
+2025-11-13 20:18:11-DEBUG: Validating WebSocket request
+2025-11-13 20:18:11-INFO: 127.0.0.1 - - [2025-11-13 20:18:11] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.008365
+2025-11-13 20:18:11-DEBUG: Initializing WebSocket
+2025-11-13 20:18:11-DEBUG: Validating WebSocket request
+2025-11-13 20:18:11-INFO: 127.0.0.1 - - [2025-11-13 20:18:11] "GET /eel.js HTTP/1.1" 200 6076 0.001028
+2025-11-13 20:18:11-DEBUG: Initializing WebSocket
+2025-11-13 20:18:11-DEBUG: Validating WebSocket request
+2025-11-13 20:18:11-INFO: 127.0.0.1 - - [2025-11-13 20:18:11] "GET /favicon.ico HTTP/1.1" 200 152543 0.003398
+2025-11-13 20:18:11-DEBUG: Initializing WebSocket
+2025-11-13 20:18:11-DEBUG: Validating WebSocket request
+2025-11-13 20:18:11-DEBUG: Attempting to upgrade connection
+2025-11-13 20:18:11-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:18:19-DEBUG: Using proactor: IocpProactor
+2025-11-13 20:18:21-DEBUG: Initializing WebSocket
+2025-11-13 20:18:21-DEBUG: Validating WebSocket request
+2025-11-13 20:18:21-INFO: 127.0.0.1 - - [2025-11-13 20:18:21] "GET /index.html HTTP/1.1" 200 6969 0.002146
+2025-11-13 20:18:21-DEBUG: Initializing WebSocket
+2025-11-13 20:18:21-DEBUG: Validating WebSocket request
+2025-11-13 20:18:21-DEBUG: Initializing WebSocket
+2025-11-13 20:18:21-DEBUG: Validating WebSocket request
+2025-11-13 20:18:21-INFO: 127.0.0.1 - - [2025-11-13 20:18:21] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002126
+2025-11-13 20:18:21-INFO: 127.0.0.1 - - [2025-11-13 20:18:21] "GET /css/index.css HTTP/1.1" 200 341554 0.004720
+2025-11-13 20:18:21-DEBUG: Initializing WebSocket
+2025-11-13 20:18:21-DEBUG: Validating WebSocket request
+2025-11-13 20:18:21-INFO: 127.0.0.1 - - [2025-11-13 20:18:21] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.007039
+2025-11-13 20:18:21-DEBUG: Initializing WebSocket
+2025-11-13 20:18:21-DEBUG: Validating WebSocket request
+2025-11-13 20:18:21-INFO: 127.0.0.1 - - [2025-11-13 20:18:21] "GET /eel.js HTTP/1.1" 200 6076 0.001192
+2025-11-13 20:18:22-DEBUG: Initializing WebSocket
+2025-11-13 20:18:22-DEBUG: Validating WebSocket request
+2025-11-13 20:18:22-DEBUG: Attempting to upgrade connection
+2025-11-13 20:18:22-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:19:01-DEBUG: Using proactor: IocpProactor
+2025-11-13 20:19:03-DEBUG: Initializing WebSocket
+2025-11-13 20:19:03-DEBUG: Validating WebSocket request
+2025-11-13 20:19:03-INFO: 127.0.0.1 - - [2025-11-13 20:19:03] "GET /index.html HTTP/1.1" 200 7045 0.001120
+2025-11-13 20:19:03-DEBUG: Initializing WebSocket
+2025-11-13 20:19:03-DEBUG: Validating WebSocket request
+2025-11-13 20:19:03-INFO: 127.0.0.1 - - [2025-11-13 20:19:03] "GET /css/index.css HTTP/1.1" 200 341554 0.003437
+2025-11-13 20:19:03-DEBUG: Initializing WebSocket
+2025-11-13 20:19:03-DEBUG: Validating WebSocket request
+2025-11-13 20:19:03-INFO: 127.0.0.1 - - [2025-11-13 20:19:03] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.003476
+2025-11-13 20:19:03-DEBUG: Initializing WebSocket
+2025-11-13 20:19:03-DEBUG: Validating WebSocket request
+2025-11-13 20:19:03-INFO: 127.0.0.1 - - [2025-11-13 20:19:03] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.003350
+2025-11-13 20:19:03-DEBUG: Initializing WebSocket
+2025-11-13 20:19:03-DEBUG: Validating WebSocket request
+2025-11-13 20:19:03-INFO: 127.0.0.1 - - [2025-11-13 20:19:03] "GET /eel.js HTTP/1.1" 200 6076 0.001311
+2025-11-13 20:19:04-DEBUG: Initializing WebSocket
+2025-11-13 20:19:04-DEBUG: Validating WebSocket request
+2025-11-13 20:19:04-DEBUG: Attempting to upgrade connection
+2025-11-13 20:19:04-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:21:12-DEBUG: Using proactor: IocpProactor
+2025-11-13 20:21:14-DEBUG: Initializing WebSocket
+2025-11-13 20:21:14-DEBUG: Validating WebSocket request
+2025-11-13 20:21:14-INFO: 127.0.0.1 - - [2025-11-13 20:21:14] "GET /index.html HTTP/1.1" 200 7104 0.002350
+2025-11-13 20:21:14-DEBUG: Initializing WebSocket
+2025-11-13 20:21:14-DEBUG: Validating WebSocket request
+2025-11-13 20:21:14-INFO: 127.0.0.1 - - [2025-11-13 20:21:14] "GET /css/index.css HTTP/1.1" 200 341554 0.007680
+2025-11-13 20:21:14-DEBUG: Initializing WebSocket
+2025-11-13 20:21:14-DEBUG: Validating WebSocket request
+2025-11-13 20:21:14-INFO: 127.0.0.1 - - [2025-11-13 20:21:14] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.005566
+2025-11-13 20:21:14-DEBUG: Initializing WebSocket
+2025-11-13 20:21:14-DEBUG: Validating WebSocket request
+2025-11-13 20:21:14-INFO: 127.0.0.1 - - [2025-11-13 20:21:14] "GET /eel.js HTTP/1.1" 200 6076 0.001319
+2025-11-13 20:21:14-DEBUG: Initializing WebSocket
+2025-11-13 20:21:14-DEBUG: Validating WebSocket request
+2025-11-13 20:21:14-INFO: 127.0.0.1 - - [2025-11-13 20:21:14] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.003696
+2025-11-13 20:21:15-DEBUG: Initializing WebSocket
+2025-11-13 20:21:15-DEBUG: Validating WebSocket request
+2025-11-13 20:21:15-DEBUG: Attempting to upgrade connection
+2025-11-13 20:21:15-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:21:53-DEBUG: Closed WebSocket
+2025-11-13 20:21:53-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:21:53-DEBUG: Closed WebSocket
+2025-11-13 20:21:56-DEBUG: Using proactor: IocpProactor
+2025-11-13 20:21:58-DEBUG: Initializing WebSocket
+2025-11-13 20:21:58-DEBUG: Validating WebSocket request
+2025-11-13 20:21:58-INFO: 127.0.0.1 - - [2025-11-13 20:21:58] "GET /index.html HTTP/1.1" 200 7123 0.002799
+2025-11-13 20:21:58-DEBUG: Initializing WebSocket
+2025-11-13 20:21:58-DEBUG: Validating WebSocket request
+2025-11-13 20:21:58-INFO: 127.0.0.1 - - [2025-11-13 20:21:58] "GET /css/index.css HTTP/1.1" 200 341554 0.003091
+2025-11-13 20:21:58-DEBUG: Initializing WebSocket
+2025-11-13 20:21:58-DEBUG: Validating WebSocket request
+2025-11-13 20:21:58-INFO: 127.0.0.1 - - [2025-11-13 20:21:58] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001433
+2025-11-13 20:21:58-DEBUG: Initializing WebSocket
+2025-11-13 20:21:58-DEBUG: Validating WebSocket request
+2025-11-13 20:21:58-DEBUG: Initializing WebSocket
+2025-11-13 20:21:58-DEBUG: Validating WebSocket request
+2025-11-13 20:21:58-INFO: 127.0.0.1 - - [2025-11-13 20:21:58] "GET /eel.js HTTP/1.1" 200 6076 0.000000
+2025-11-13 20:21:58-INFO: 127.0.0.1 - - [2025-11-13 20:21:58] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.007916
+2025-11-13 20:21:58-DEBUG: Initializing WebSocket
+2025-11-13 20:21:58-DEBUG: Validating WebSocket request
+2025-11-13 20:21:58-DEBUG: Attempting to upgrade connection
+2025-11-13 20:21:58-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:22:04-DEBUG: Initializing WebSocket
+2025-11-13 20:22:04-DEBUG: Validating WebSocket request
+2025-11-13 20:22:04-INFO: 127.0.0.1 - - [2025-11-13 20:22:04] "GET /index.html HTTP/1.1" 200 7123 0.001078
+2025-11-13 20:22:04-DEBUG: Closed WebSocket
+2025-11-13 20:22:04-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:22:04-DEBUG: Closed WebSocket
+2025-11-13 20:22:04-DEBUG: Initializing WebSocket
+2025-11-13 20:22:04-DEBUG: Validating WebSocket request
+2025-11-13 20:22:04-INFO: 127.0.0.1 - - [2025-11-13 20:22:04] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002474
+2025-11-13 20:22:04-DEBUG: Initializing WebSocket
+2025-11-13 20:22:04-DEBUG: Validating WebSocket request
+2025-11-13 20:22:04-DEBUG: Initializing WebSocket
+2025-11-13 20:22:04-DEBUG: Validating WebSocket request
+2025-11-13 20:22:04-INFO: 127.0.0.1 - - [2025-11-13 20:22:04] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.005660
+2025-11-13 20:22:04-DEBUG: Initializing WebSocket
+2025-11-13 20:22:04-DEBUG: Validating WebSocket request
+2025-11-13 20:22:04-INFO: 127.0.0.1 - - [2025-11-13 20:22:04] "GET /eel.js HTTP/1.1" 200 6076 0.001000
+2025-11-13 20:22:04-INFO: 127.0.0.1 - - [2025-11-13 20:22:04] "GET /css/index.css HTTP/1.1" 200 341554 0.011279
+2025-11-13 20:22:04-DEBUG: Initializing WebSocket
+2025-11-13 20:22:04-DEBUG: Validating WebSocket request
+2025-11-13 20:22:04-INFO: 127.0.0.1 - - [2025-11-13 20:22:04] "GET /favicon.ico HTTP/1.1" 200 152543 0.002815
+2025-11-13 20:22:04-DEBUG: Initializing WebSocket
+2025-11-13 20:22:04-DEBUG: Validating WebSocket request
+2025-11-13 20:22:04-DEBUG: Attempting to upgrade connection
+2025-11-13 20:22:04-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:23:03-DEBUG: Initializing WebSocket
+2025-11-13 20:23:03-DEBUG: Validating WebSocket request
+2025-11-13 20:23:03-INFO: 127.0.0.1 - - [2025-11-13 20:23:03] "GET /index.html HTTP/1.1" 200 7123 0.001537
+2025-11-13 20:23:03-DEBUG: Closed WebSocket
+2025-11-13 20:23:03-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:23:03-DEBUG: Closed WebSocket
+2025-11-13 20:23:03-DEBUG: Initializing WebSocket
+2025-11-13 20:23:03-DEBUG: Validating WebSocket request
+2025-11-13 20:23:03-INFO: 127.0.0.1 - - [2025-11-13 20:23:03] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002986
+2025-11-13 20:23:03-DEBUG: Initializing WebSocket
+2025-11-13 20:23:03-DEBUG: Validating WebSocket request
+2025-11-13 20:23:03-INFO: 127.0.0.1 - - [2025-11-13 20:23:03] "GET /css/index.css HTTP/1.1" 200 341554 0.004414
+2025-11-13 20:23:03-DEBUG: Initializing WebSocket
+2025-11-13 20:23:03-DEBUG: Validating WebSocket request
+2025-11-13 20:23:03-DEBUG: Initializing WebSocket
+2025-11-13 20:23:03-DEBUG: Validating WebSocket request
+2025-11-13 20:23:03-INFO: 127.0.0.1 - - [2025-11-13 20:23:03] "GET /eel.js HTTP/1.1" 200 6076 0.001000
+2025-11-13 20:23:03-INFO: 127.0.0.1 - - [2025-11-13 20:23:03] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006352
+2025-11-13 20:23:03-DEBUG: Initializing WebSocket
+2025-11-13 20:23:03-DEBUG: Validating WebSocket request
+2025-11-13 20:23:03-INFO: 127.0.0.1 - - [2025-11-13 20:23:03] "GET /favicon.ico HTTP/1.1" 200 152543 0.003197
+2025-11-13 20:23:03-DEBUG: Initializing WebSocket
+2025-11-13 20:23:03-DEBUG: Validating WebSocket request
+2025-11-13 20:23:03-DEBUG: Attempting to upgrade connection
+2025-11-13 20:23:03-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:23:38-DEBUG: Initializing WebSocket
+2025-11-13 20:23:38-DEBUG: Validating WebSocket request
+2025-11-13 20:23:38-INFO: 127.0.0.1 - - [2025-11-13 20:23:38] "GET /index.html HTTP/1.1" 200 7125 0.001344
+2025-11-13 20:23:38-DEBUG: Closed WebSocket
+2025-11-13 20:23:38-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:23:38-DEBUG: Closed WebSocket
+2025-11-13 20:23:38-DEBUG: Initializing WebSocket
+2025-11-13 20:23:38-DEBUG: Validating WebSocket request
+2025-11-13 20:23:38-INFO: 127.0.0.1 - - [2025-11-13 20:23:38] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001154
+2025-11-13 20:23:38-DEBUG: Initializing WebSocket
+2025-11-13 20:23:38-DEBUG: Validating WebSocket request
+2025-11-13 20:23:38-INFO: 127.0.0.1 - - [2025-11-13 20:23:38] "GET /css/index.css HTTP/1.1" 200 341554 0.002258
+2025-11-13 20:23:38-DEBUG: Initializing WebSocket
+2025-11-13 20:23:38-DEBUG: Validating WebSocket request
+2025-11-13 20:23:38-DEBUG: Initializing WebSocket
+2025-11-13 20:23:38-DEBUG: Validating WebSocket request
+2025-11-13 20:23:38-INFO: 127.0.0.1 - - [2025-11-13 20:23:38] "GET /eel.js HTTP/1.1" 200 6076 0.001327
+2025-11-13 20:23:38-INFO: 127.0.0.1 - - [2025-11-13 20:23:38] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.008511
+2025-11-13 20:23:38-DEBUG: Initializing WebSocket
+2025-11-13 20:23:38-DEBUG: Validating WebSocket request
+2025-11-13 20:23:38-INFO: 127.0.0.1 - - [2025-11-13 20:23:38] "GET /favicon.ico HTTP/1.1" 200 152543 0.002260
+2025-11-13 20:23:38-DEBUG: Initializing WebSocket
+2025-11-13 20:23:38-DEBUG: Validating WebSocket request
+2025-11-13 20:23:38-DEBUG: Attempting to upgrade connection
+2025-11-13 20:23:38-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:24:27-DEBUG: Using proactor: IocpProactor
+2025-11-13 20:24:29-DEBUG: Initializing WebSocket
+2025-11-13 20:24:29-DEBUG: Validating WebSocket request
+2025-11-13 20:24:29-INFO: 127.0.0.1 - - [2025-11-13 20:24:29] "GET /index.html HTTP/1.1" 200 7126 0.002043
+2025-11-13 20:24:29-DEBUG: Initializing WebSocket
+2025-11-13 20:24:29-DEBUG: Validating WebSocket request
+2025-11-13 20:24:29-INFO: 127.0.0.1 - - [2025-11-13 20:24:29] "GET /css/index.css HTTP/1.1" 200 341554 0.003745
+2025-11-13 20:24:29-DEBUG: Initializing WebSocket
+2025-11-13 20:24:29-DEBUG: Validating WebSocket request
+2025-11-13 20:24:29-INFO: 127.0.0.1 - - [2025-11-13 20:24:29] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006802
+2025-11-13 20:24:29-DEBUG: Initializing WebSocket
+2025-11-13 20:24:29-DEBUG: Validating WebSocket request
+2025-11-13 20:24:29-INFO: 127.0.0.1 - - [2025-11-13 20:24:29] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002105
+2025-11-13 20:24:29-DEBUG: Initializing WebSocket
+2025-11-13 20:24:29-DEBUG: Validating WebSocket request
+2025-11-13 20:24:29-INFO: 127.0.0.1 - - [2025-11-13 20:24:29] "GET /eel.js HTTP/1.1" 200 6076 0.001508
+2025-11-13 20:24:30-DEBUG: Initializing WebSocket
+2025-11-13 20:24:30-DEBUG: Validating WebSocket request
+2025-11-13 20:24:30-DEBUG: Attempting to upgrade connection
+2025-11-13 20:24:30-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:26:38-DEBUG: Initializing WebSocket
+2025-11-13 20:26:38-DEBUG: Validating WebSocket request
+2025-11-13 20:26:38-INFO: 127.0.0.1 - - [2025-11-13 20:26:38] "GET /index.html HTTP/1.1" 200 7135 0.001062
+2025-11-13 20:26:38-DEBUG: Closed WebSocket
+2025-11-13 20:26:38-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:26:38-DEBUG: Closed WebSocket
+2025-11-13 20:26:38-DEBUG: Initializing WebSocket
+2025-11-13 20:26:38-DEBUG: Validating WebSocket request
+2025-11-13 20:26:38-DEBUG: Initializing WebSocket
+2025-11-13 20:26:38-DEBUG: Validating WebSocket request
+2025-11-13 20:26:38-INFO: 127.0.0.1 - - [2025-11-13 20:26:38] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001872
+2025-11-13 20:26:38-DEBUG: Initializing WebSocket
+2025-11-13 20:26:38-DEBUG: Validating WebSocket request
+2025-11-13 20:26:38-INFO: 127.0.0.1 - - [2025-11-13 20:26:38] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006475
+2025-11-13 20:26:38-INFO: 127.0.0.1 - - [2025-11-13 20:26:38] "GET /css/index.css HTTP/1.1" 200 341554 0.013317
+2025-11-13 20:26:38-DEBUG: Initializing WebSocket
+2025-11-13 20:26:38-DEBUG: Validating WebSocket request
+2025-11-13 20:26:38-INFO: 127.0.0.1 - - [2025-11-13 20:26:38] "GET /eel.js HTTP/1.1" 200 6076 0.001120
+2025-11-13 20:26:38-DEBUG: Initializing WebSocket
+2025-11-13 20:26:38-DEBUG: Validating WebSocket request
+2025-11-13 20:26:38-INFO: 127.0.0.1 - - [2025-11-13 20:26:38] "GET /favicon.ico HTTP/1.1" 200 152543 0.001500
+2025-11-13 20:26:39-DEBUG: Initializing WebSocket
+2025-11-13 20:26:39-DEBUG: Validating WebSocket request
+2025-11-13 20:26:39-DEBUG: Attempting to upgrade connection
+2025-11-13 20:26:39-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:26:39-DEBUG: Initializing WebSocket
+2025-11-13 20:26:39-DEBUG: Validating WebSocket request
+2025-11-13 20:26:39-INFO: 127.0.0.1 - - [2025-11-13 20:26:39] "GET /index.html HTTP/1.1" 200 7135 0.001081
+2025-11-13 20:26:39-DEBUG: Closed WebSocket
+2025-11-13 20:26:39-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:26:39-DEBUG: Closed WebSocket
+2025-11-13 20:26:39-DEBUG: Initializing WebSocket
+2025-11-13 20:26:39-DEBUG: Validating WebSocket request
+2025-11-13 20:26:39-INFO: 127.0.0.1 - - [2025-11-13 20:26:39] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002486
+2025-11-13 20:26:39-DEBUG: Initializing WebSocket
+2025-11-13 20:26:39-DEBUG: Validating WebSocket request
+2025-11-13 20:26:39-DEBUG: Initializing WebSocket
+2025-11-13 20:26:39-DEBUG: Validating WebSocket request
+2025-11-13 20:26:39-INFO: 127.0.0.1 - - [2025-11-13 20:26:39] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.008598
+2025-11-13 20:26:39-DEBUG: Initializing WebSocket
+2025-11-13 20:26:39-DEBUG: Validating WebSocket request
+2025-11-13 20:26:39-INFO: 127.0.0.1 - - [2025-11-13 20:26:39] "GET /eel.js HTTP/1.1" 200 6076 0.001048
+2025-11-13 20:26:39-INFO: 127.0.0.1 - - [2025-11-13 20:26:39] "GET /css/index.css HTTP/1.1" 200 341554 0.012646
+2025-11-13 20:26:39-DEBUG: Initializing WebSocket
+2025-11-13 20:26:39-DEBUG: Validating WebSocket request
+2025-11-13 20:26:39-INFO: 127.0.0.1 - - [2025-11-13 20:26:39] "GET /favicon.ico HTTP/1.1" 200 152543 0.002015
+2025-11-13 20:26:40-DEBUG: Initializing WebSocket
+2025-11-13 20:26:40-DEBUG: Validating WebSocket request
+2025-11-13 20:26:40-DEBUG: Attempting to upgrade connection
+2025-11-13 20:26:40-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:26:40-DEBUG: Initializing WebSocket
+2025-11-13 20:26:40-DEBUG: Validating WebSocket request
+2025-11-13 20:26:40-INFO: 127.0.0.1 - - [2025-11-13 20:26:40] "GET /index.html HTTP/1.1" 200 7135 0.002164
+2025-11-13 20:26:40-DEBUG: Closed WebSocket
+2025-11-13 20:26:40-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:26:40-DEBUG: Closed WebSocket
+2025-11-13 20:26:40-DEBUG: Initializing WebSocket
+2025-11-13 20:26:40-DEBUG: Validating WebSocket request
+2025-11-13 20:26:40-INFO: 127.0.0.1 - - [2025-11-13 20:26:40] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.000998
+2025-11-13 20:26:40-DEBUG: Initializing WebSocket
+2025-11-13 20:26:40-DEBUG: Validating WebSocket request
+2025-11-13 20:26:40-DEBUG: Initializing WebSocket
+2025-11-13 20:26:40-DEBUG: Validating WebSocket request
+2025-11-13 20:26:40-DEBUG: Initializing WebSocket
+2025-11-13 20:26:40-DEBUG: Validating WebSocket request
+2025-11-13 20:26:40-INFO: 127.0.0.1 - - [2025-11-13 20:26:40] "GET /eel.js HTTP/1.1" 200 6076 0.001003
+2025-11-13 20:26:40-INFO: 127.0.0.1 - - [2025-11-13 20:26:40] "GET /css/index.css HTTP/1.1" 200 341554 0.005397
+2025-11-13 20:26:40-INFO: 127.0.0.1 - - [2025-11-13 20:26:40] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.007746
+2025-11-13 20:26:40-DEBUG: Initializing WebSocket
+2025-11-13 20:26:40-DEBUG: Validating WebSocket request
+2025-11-13 20:26:40-INFO: 127.0.0.1 - - [2025-11-13 20:26:40] "GET /favicon.ico HTTP/1.1" 200 152543 0.002352
+2025-11-13 20:26:41-DEBUG: Initializing WebSocket
+2025-11-13 20:26:41-DEBUG: Validating WebSocket request
+2025-11-13 20:26:41-DEBUG: Attempting to upgrade connection
+2025-11-13 20:26:41-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:26:41-DEBUG: Initializing WebSocket
+2025-11-13 20:26:41-DEBUG: Validating WebSocket request
+2025-11-13 20:26:41-INFO: 127.0.0.1 - - [2025-11-13 20:26:41] "GET /index.html HTTP/1.1" 200 7135 0.001178
+2025-11-13 20:26:41-DEBUG: Closed WebSocket
+2025-11-13 20:26:41-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:26:41-DEBUG: Closed WebSocket
+2025-11-13 20:26:41-DEBUG: Initializing WebSocket
+2025-11-13 20:26:41-DEBUG: Validating WebSocket request
+2025-11-13 20:26:41-DEBUG: Initializing WebSocket
+2025-11-13 20:26:41-DEBUG: Validating WebSocket request
+2025-11-13 20:26:41-INFO: 127.0.0.1 - - [2025-11-13 20:26:41] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.003706
+2025-11-13 20:26:41-DEBUG: Initializing WebSocket
+2025-11-13 20:26:41-DEBUG: Validating WebSocket request
+2025-11-13 20:26:41-INFO: 127.0.0.1 - - [2025-11-13 20:26:41] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006835
+2025-11-13 20:26:41-DEBUG: Initializing WebSocket
+2025-11-13 20:26:41-DEBUG: Validating WebSocket request
+2025-11-13 20:26:41-INFO: 127.0.0.1 - - [2025-11-13 20:26:41] "GET /eel.js HTTP/1.1" 200 6076 0.000999
+2025-11-13 20:26:41-INFO: 127.0.0.1 - - [2025-11-13 20:26:41] "GET /css/index.css HTTP/1.1" 200 341554 0.017390
+2025-11-13 20:26:41-DEBUG: Initializing WebSocket
+2025-11-13 20:26:41-DEBUG: Validating WebSocket request
+2025-11-13 20:26:41-INFO: 127.0.0.1 - - [2025-11-13 20:26:41] "GET /favicon.ico HTTP/1.1" 200 152543 0.001013
+2025-11-13 20:26:42-DEBUG: Initializing WebSocket
+2025-11-13 20:26:42-DEBUG: Validating WebSocket request
+2025-11-13 20:26:42-DEBUG: Attempting to upgrade connection
+2025-11-13 20:26:42-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:26:58-DEBUG: Initializing WebSocket
+2025-11-13 20:26:58-DEBUG: Validating WebSocket request
+2025-11-13 20:26:58-INFO: 127.0.0.1 - - [2025-11-13 20:26:58] "GET /index.html HTTP/1.1" 200 7041 0.001226
+2025-11-13 20:26:58-DEBUG: Closed WebSocket
+2025-11-13 20:26:58-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:26:58-DEBUG: Closed WebSocket
+2025-11-13 20:26:58-DEBUG: Initializing WebSocket
+2025-11-13 20:26:58-DEBUG: Validating WebSocket request
+2025-11-13 20:26:58-INFO: 127.0.0.1 - - [2025-11-13 20:26:58] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.003665
+2025-11-13 20:26:58-DEBUG: Initializing WebSocket
+2025-11-13 20:26:58-DEBUG: Validating WebSocket request
+2025-11-13 20:26:58-DEBUG: Initializing WebSocket
+2025-11-13 20:26:58-DEBUG: Validating WebSocket request
+2025-11-13 20:26:58-INFO: 127.0.0.1 - - [2025-11-13 20:26:58] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004021
+2025-11-13 20:26:58-DEBUG: Initializing WebSocket
+2025-11-13 20:26:58-DEBUG: Validating WebSocket request
+2025-11-13 20:26:58-INFO: 127.0.0.1 - - [2025-11-13 20:26:58] "GET /eel.js HTTP/1.1" 200 6076 0.001028
+2025-11-13 20:26:58-INFO: 127.0.0.1 - - [2025-11-13 20:26:58] "GET /css/index.css HTTP/1.1" 200 341554 0.010267
+2025-11-13 20:26:58-DEBUG: Initializing WebSocket
+2025-11-13 20:26:58-DEBUG: Validating WebSocket request
+2025-11-13 20:26:58-INFO: 127.0.0.1 - - [2025-11-13 20:26:58] "GET /favicon.ico HTTP/1.1" 200 152543 0.002625
+2025-11-13 20:26:58-DEBUG: Initializing WebSocket
+2025-11-13 20:26:58-DEBUG: Validating WebSocket request
+2025-11-13 20:26:58-DEBUG: Attempting to upgrade connection
+2025-11-13 20:26:58-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:27:05-DEBUG: Initializing WebSocket
+2025-11-13 20:27:05-DEBUG: Validating WebSocket request
+2025-11-13 20:27:05-INFO: 127.0.0.1 - - [2025-11-13 20:27:05] "GET /index.html HTTP/1.1" 200 7041 0.000000
+2025-11-13 20:27:05-DEBUG: Closed WebSocket
+2025-11-13 20:27:05-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:27:05-DEBUG: Closed WebSocket
+2025-11-13 20:27:05-DEBUG: Initializing WebSocket
+2025-11-13 20:27:05-DEBUG: Validating WebSocket request
+2025-11-13 20:27:05-INFO: 127.0.0.1 - - [2025-11-13 20:27:05] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.003216
+2025-11-13 20:27:05-DEBUG: Initializing WebSocket
+2025-11-13 20:27:05-DEBUG: Validating WebSocket request
+2025-11-13 20:27:05-INFO: 127.0.0.1 - - [2025-11-13 20:27:05] "GET /css/index.css HTTP/1.1" 200 341554 0.003034
+2025-11-13 20:27:05-DEBUG: Initializing WebSocket
+2025-11-13 20:27:05-DEBUG: Validating WebSocket request
+2025-11-13 20:27:05-INFO: 127.0.0.1 - - [2025-11-13 20:27:05] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.007470
+2025-11-13 20:27:05-DEBUG: Initializing WebSocket
+2025-11-13 20:27:05-DEBUG: Validating WebSocket request
+2025-11-13 20:27:05-INFO: 127.0.0.1 - - [2025-11-13 20:27:05] "GET /eel.js HTTP/1.1" 200 6076 0.001000
+2025-11-13 20:27:05-DEBUG: Initializing WebSocket
+2025-11-13 20:27:05-DEBUG: Validating WebSocket request
+2025-11-13 20:27:05-INFO: 127.0.0.1 - - [2025-11-13 20:27:05] "GET /favicon.ico HTTP/1.1" 200 152543 0.002175
+2025-11-13 20:27:05-DEBUG: Initializing WebSocket
+2025-11-13 20:27:05-DEBUG: Validating WebSocket request
+2025-11-13 20:27:05-DEBUG: Attempting to upgrade connection
+2025-11-13 20:27:05-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:28:30-DEBUG: Initializing WebSocket
+2025-11-13 20:28:30-DEBUG: Validating WebSocket request
+2025-11-13 20:28:30-INFO: 127.0.0.1 - - [2025-11-13 20:28:30] "GET /index.html HTTP/1.1" 200 6960 0.000594
+2025-11-13 20:28:30-DEBUG: Closed WebSocket
+2025-11-13 20:28:30-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:28:30-DEBUG: Closed WebSocket
+2025-11-13 20:28:30-DEBUG: Initializing WebSocket
+2025-11-13 20:28:30-DEBUG: Validating WebSocket request
+2025-11-13 20:28:30-INFO: 127.0.0.1 - - [2025-11-13 20:28:30] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002064
+2025-11-13 20:28:30-DEBUG: Initializing WebSocket
+2025-11-13 20:28:30-DEBUG: Validating WebSocket request
+2025-11-13 20:28:30-INFO: 127.0.0.1 - - [2025-11-13 20:28:30] "GET /css/index.css HTTP/1.1" 200 341554 0.002784
+2025-11-13 20:28:30-DEBUG: Initializing WebSocket
+2025-11-13 20:28:30-DEBUG: Validating WebSocket request
+2025-11-13 20:28:30-INFO: 127.0.0.1 - - [2025-11-13 20:28:30] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.008795
+2025-11-13 20:28:30-DEBUG: Initializing WebSocket
+2025-11-13 20:28:30-DEBUG: Validating WebSocket request
+2025-11-13 20:28:30-INFO: 127.0.0.1 - - [2025-11-13 20:28:30] "GET /eel.js HTTP/1.1" 200 6076 0.001049
+2025-11-13 20:28:30-DEBUG: Initializing WebSocket
+2025-11-13 20:28:30-DEBUG: Validating WebSocket request
+2025-11-13 20:28:30-INFO: 127.0.0.1 - - [2025-11-13 20:28:30] "GET /favicon.ico HTTP/1.1" 200 152543 0.002035
+2025-11-13 20:28:30-DEBUG: Initializing WebSocket
+2025-11-13 20:28:30-DEBUG: Validating WebSocket request
+2025-11-13 20:28:30-DEBUG: Attempting to upgrade connection
+2025-11-13 20:28:30-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:30:49-DEBUG: Using proactor: IocpProactor
+2025-11-13 20:30:50-DEBUG: Initializing WebSocket
+2025-11-13 20:30:50-DEBUG: Validating WebSocket request
+2025-11-13 20:30:50-INFO: 127.0.0.1 - - [2025-11-13 20:30:50] "GET /index.html HTTP/1.1" 200 7056 0.002182
+2025-11-13 20:30:50-DEBUG: Initializing WebSocket
+2025-11-13 20:30:50-DEBUG: Validating WebSocket request
+2025-11-13 20:30:50-DEBUG: Initializing WebSocket
+2025-11-13 20:30:50-DEBUG: Validating WebSocket request
+2025-11-13 20:30:50-INFO: 127.0.0.1 - - [2025-11-13 20:30:50] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002459
+2025-11-13 20:30:50-DEBUG: Initializing WebSocket
+2025-11-13 20:30:50-DEBUG: Validating WebSocket request
+2025-11-13 20:30:50-INFO: 127.0.0.1 - - [2025-11-13 20:30:50] "GET /css/index.css HTTP/1.1" 200 341554 0.011122
+2025-11-13 20:30:50-DEBUG: Initializing WebSocket
+2025-11-13 20:30:50-DEBUG: Validating WebSocket request
+2025-11-13 20:30:50-INFO: 127.0.0.1 - - [2025-11-13 20:30:50] "GET /eel.js HTTP/1.1" 200 6076 0.000998
+2025-11-13 20:30:50-INFO: 127.0.0.1 - - [2025-11-13 20:30:50] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.008991
+2025-11-13 20:30:51-DEBUG: Initializing WebSocket
+2025-11-13 20:30:51-DEBUG: Validating WebSocket request
+2025-11-13 20:30:51-DEBUG: Attempting to upgrade connection
+2025-11-13 20:30:51-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:32:27-DEBUG: Initializing WebSocket
+2025-11-13 20:32:27-DEBUG: Validating WebSocket request
+2025-11-13 20:32:27-INFO: 127.0.0.1 - - [2025-11-13 20:32:27] "GET /index.html HTTP/1.1" 200 7062 0.001049
+2025-11-13 20:32:27-DEBUG: Closed WebSocket
+2025-11-13 20:32:27-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:32:27-DEBUG: Closed WebSocket
+2025-11-13 20:32:27-DEBUG: Initializing WebSocket
+2025-11-13 20:32:27-DEBUG: Validating WebSocket request
+2025-11-13 20:32:27-DEBUG: Initializing WebSocket
+2025-11-13 20:32:27-DEBUG: Validating WebSocket request
+2025-11-13 20:32:27-INFO: 127.0.0.1 - - [2025-11-13 20:32:27] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.003205
+2025-11-13 20:32:27-DEBUG: Initializing WebSocket
+2025-11-13 20:32:27-DEBUG: Validating WebSocket request
+2025-11-13 20:32:27-INFO: 127.0.0.1 - - [2025-11-13 20:32:27] "GET /css/index.css HTTP/1.1" 200 341554 0.008850
+2025-11-13 20:32:27-INFO: 127.0.0.1 - - [2025-11-13 20:32:27] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004347
+2025-11-13 20:32:27-DEBUG: Initializing WebSocket
+2025-11-13 20:32:27-DEBUG: Validating WebSocket request
+2025-11-13 20:32:27-INFO: 127.0.0.1 - - [2025-11-13 20:32:27] "GET /eel.js HTTP/1.1" 200 6076 0.000000
+2025-11-13 20:32:27-DEBUG: Initializing WebSocket
+2025-11-13 20:32:27-DEBUG: Validating WebSocket request
+2025-11-13 20:32:27-INFO: 127.0.0.1 - - [2025-11-13 20:32:27] "GET /favicon.ico HTTP/1.1" 200 152543 0.002457
+2025-11-13 20:32:27-DEBUG: Initializing WebSocket
+2025-11-13 20:32:27-DEBUG: Validating WebSocket request
+2025-11-13 20:32:27-DEBUG: Attempting to upgrade connection
+2025-11-13 20:32:27-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:32:40-DEBUG: Closed WebSocket
+2025-11-13 20:32:40-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:32:40-DEBUG: Closed WebSocket
+2025-11-13 20:34:05-DEBUG: Using proactor: IocpProactor
+2025-11-13 20:34:07-DEBUG: Initializing WebSocket
+2025-11-13 20:34:07-DEBUG: Validating WebSocket request
+2025-11-13 20:34:07-INFO: 127.0.0.1 - - [2025-11-13 20:34:07] "GET /index.html HTTP/1.1" 200 6802 0.001041
+2025-11-13 20:34:07-DEBUG: Initializing WebSocket
+2025-11-13 20:34:07-DEBUG: Validating WebSocket request
+2025-11-13 20:34:07-DEBUG: Initializing WebSocket
+2025-11-13 20:34:07-DEBUG: Validating WebSocket request
+2025-11-13 20:34:07-INFO: 127.0.0.1 - - [2025-11-13 20:34:07] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002486
+2025-11-13 20:34:07-INFO: 127.0.0.1 - - [2025-11-13 20:34:07] "GET /css/index.css HTTP/1.1" 200 341554 0.006053
+2025-11-13 20:34:07-DEBUG: Initializing WebSocket
+2025-11-13 20:34:07-DEBUG: Validating WebSocket request
+2025-11-13 20:34:07-INFO: 127.0.0.1 - - [2025-11-13 20:34:07] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.007959
+2025-11-13 20:34:07-DEBUG: Initializing WebSocket
+2025-11-13 20:34:07-DEBUG: Validating WebSocket request
+2025-11-13 20:34:07-INFO: 127.0.0.1 - - [2025-11-13 20:34:07] "GET /eel.js HTTP/1.1" 200 6076 0.001509
+2025-11-13 20:34:07-DEBUG: Initializing WebSocket
+2025-11-13 20:34:07-DEBUG: Validating WebSocket request
+2025-11-13 20:34:07-INFO: 127.0.0.1 - - [2025-11-13 20:34:07] "GET /favicon.ico HTTP/1.1" 200 152543 0.003339
+2025-11-13 20:34:08-DEBUG: Initializing WebSocket
+2025-11-13 20:34:08-DEBUG: Validating WebSocket request
+2025-11-13 20:34:08-DEBUG: Attempting to upgrade connection
+2025-11-13 20:34:08-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:34:09-DEBUG: Initializing WebSocket
+2025-11-13 20:34:09-DEBUG: Validating WebSocket request
+2025-11-13 20:34:09-INFO: 127.0.0.1 - - [2025-11-13 20:34:09] "GET /index.html HTTP/1.1" 200 6802 0.001687
+2025-11-13 20:34:09-DEBUG: Closed WebSocket
+2025-11-13 20:34:09-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:34:09-DEBUG: Closed WebSocket
+2025-11-13 20:34:09-DEBUG: Initializing WebSocket
+2025-11-13 20:34:09-DEBUG: Validating WebSocket request
+2025-11-13 20:34:09-INFO: 127.0.0.1 - - [2025-11-13 20:34:09] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001000
+2025-11-13 20:34:09-DEBUG: Initializing WebSocket
+2025-11-13 20:34:09-DEBUG: Validating WebSocket request
+2025-11-13 20:34:09-INFO: 127.0.0.1 - - [2025-11-13 20:34:09] "GET /css/index.css HTTP/1.1" 200 341554 0.002483
+2025-11-13 20:34:09-DEBUG: Initializing WebSocket
+2025-11-13 20:34:09-DEBUG: Validating WebSocket request
+2025-11-13 20:34:09-INFO: 127.0.0.1 - - [2025-11-13 20:34:09] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006909
+2025-11-13 20:34:09-DEBUG: Initializing WebSocket
+2025-11-13 20:34:09-DEBUG: Validating WebSocket request
+2025-11-13 20:34:09-INFO: 127.0.0.1 - - [2025-11-13 20:34:09] "GET /eel.js HTTP/1.1" 200 6076 0.001271
+2025-11-13 20:34:09-DEBUG: Initializing WebSocket
+2025-11-13 20:34:09-DEBUG: Validating WebSocket request
+2025-11-13 20:34:09-INFO: 127.0.0.1 - - [2025-11-13 20:34:09] "GET /favicon.ico HTTP/1.1" 200 152543 0.002270
+2025-11-13 20:34:09-DEBUG: Initializing WebSocket
+2025-11-13 20:34:09-DEBUG: Validating WebSocket request
+2025-11-13 20:34:09-DEBUG: Attempting to upgrade connection
+2025-11-13 20:34:09-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:34:19-DEBUG: Initializing WebSocket
+2025-11-13 20:34:19-DEBUG: Validating WebSocket request
+2025-11-13 20:34:19-INFO: 127.0.0.1 - - [2025-11-13 20:34:19] "GET /index.html HTTP/1.1" 200 6802 0.001209
+2025-11-13 20:34:19-DEBUG: Closed WebSocket
+2025-11-13 20:34:19-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:34:19-DEBUG: Closed WebSocket
+2025-11-13 20:34:19-DEBUG: Initializing WebSocket
+2025-11-13 20:34:19-DEBUG: Validating WebSocket request
+2025-11-13 20:34:19-INFO: 127.0.0.1 - - [2025-11-13 20:34:19] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.003589
+2025-11-13 20:34:19-DEBUG: Initializing WebSocket
+2025-11-13 20:34:19-DEBUG: Validating WebSocket request
+2025-11-13 20:34:19-INFO: 127.0.0.1 - - [2025-11-13 20:34:19] "GET /css/index.css HTTP/1.1" 200 341554 0.003407
+2025-11-13 20:34:19-DEBUG: Initializing WebSocket
+2025-11-13 20:34:19-DEBUG: Validating WebSocket request
+2025-11-13 20:34:19-INFO: 127.0.0.1 - - [2025-11-13 20:34:19] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.006680
+2025-11-13 20:34:19-DEBUG: Initializing WebSocket
+2025-11-13 20:34:19-DEBUG: Validating WebSocket request
+2025-11-13 20:34:19-INFO: 127.0.0.1 - - [2025-11-13 20:34:19] "GET /eel.js HTTP/1.1" 200 6076 0.001136
+2025-11-13 20:34:19-DEBUG: Initializing WebSocket
+2025-11-13 20:34:19-DEBUG: Validating WebSocket request
+2025-11-13 20:34:19-INFO: 127.0.0.1 - - [2025-11-13 20:34:19] "GET /favicon.ico HTTP/1.1" 200 152543 0.002259
+2025-11-13 20:34:20-DEBUG: Initializing WebSocket
+2025-11-13 20:34:20-DEBUG: Validating WebSocket request
+2025-11-13 20:34:20-DEBUG: Attempting to upgrade connection
+2025-11-13 20:34:20-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:34:48-DEBUG: Closed WebSocket
+2025-11-13 20:34:48-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:34:48-DEBUG: Closed WebSocket
+2025-11-13 20:34:54-DEBUG: Using proactor: IocpProactor
+2025-11-13 20:34:55-DEBUG: Initializing WebSocket
+2025-11-13 20:34:55-DEBUG: Validating WebSocket request
+2025-11-13 20:34:55-INFO: 127.0.0.1 - - [2025-11-13 20:34:55] "GET /index.html HTTP/1.1" 200 6802 0.001074
+2025-11-13 20:34:55-DEBUG: Initializing WebSocket
+2025-11-13 20:34:55-DEBUG: Validating WebSocket request
+2025-11-13 20:34:55-INFO: 127.0.0.1 - - [2025-11-13 20:34:55] "GET /css/index.css HTTP/1.1" 200 341554 0.002462
+2025-11-13 20:34:55-DEBUG: Initializing WebSocket
+2025-11-13 20:34:55-DEBUG: Validating WebSocket request
+2025-11-13 20:34:55-DEBUG: Initializing WebSocket
+2025-11-13 20:34:55-DEBUG: Validating WebSocket request
+2025-11-13 20:34:55-INFO: 127.0.0.1 - - [2025-11-13 20:34:55] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001001
+2025-11-13 20:34:55-DEBUG: Initializing WebSocket
+2025-11-13 20:34:55-DEBUG: Validating WebSocket request
+2025-11-13 20:34:55-INFO: 127.0.0.1 - - [2025-11-13 20:34:55] "GET /eel.js HTTP/1.1" 200 6076 0.000000
+2025-11-13 20:34:55-INFO: 127.0.0.1 - - [2025-11-13 20:34:55] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.010177
+2025-11-13 20:34:56-DEBUG: Initializing WebSocket
+2025-11-13 20:34:56-DEBUG: Validating WebSocket request
+2025-11-13 20:34:56-DEBUG: Attempting to upgrade connection
+2025-11-13 20:34:56-DEBUG: WebSocket request accepted, switching protocols
+2025-11-13 20:35:26-DEBUG: Closed WebSocket
+2025-11-13 20:35:26-DEBUG: Failed to write closing frame -> closing socket
+2025-11-13 20:35:26-DEBUG: Closed WebSocket
+2025-11-13 20:36:19-DEBUG: Using proactor: IocpProactor
+2025-11-13 20:36:21-DEBUG: Initializing WebSocket
+2025-11-13 20:36:21-DEBUG: Validating WebSocket request
+2025-11-13 20:36:21-INFO: 127.0.0.1 - - [2025-11-13 20:36:21] "GET /index.html HTTP/1.1" 200 6802 0.001359
+2025-11-13 20:36:21-DEBUG: Initializing WebSocket
+2025-11-13 20:36:21-DEBUG: Validating WebSocket request
+2025-11-13 20:36:21-DEBUG: Initializing WebSocket
+2025-11-13 20:36:21-DEBUG: Validating WebSocket request
+2025-11-13 20:36:21-INFO: 127.0.0.1 - - [2025-11-13 20:36:21] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.001420
+2025-11-13 20:36:21-INFO: 127.0.0.1 - - [2025-11-13 20:36:21] "GET /css/index.css HTTP/1.1" 200 341554 0.005576
+2025-11-13 20:36:21-DEBUG: Initializing WebSocket
+2025-11-13 20:36:21-DEBUG: Validating WebSocket request
+2025-11-13 20:36:21-DEBUG: Initializing WebSocket
+2025-11-13 20:36:21-DEBUG: Validating WebSocket request
+2025-11-13 20:36:21-INFO: 127.0.0.1 - - [2025-11-13 20:36:21] "GET /eel.js HTTP/1.1" 200 6076 0.001235
+2025-11-13 20:36:21-INFO: 127.0.0.1 - - [2025-11-13 20:36:21] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.008078
+2025-11-13 20:36:22-DEBUG: Initializing WebSocket
+2025-11-13 20:36:22-DEBUG: Validating WebSocket request
+2025-11-13 20:36:22-DEBUG: Attempting to upgrade connection
+2025-11-13 20:36:22-DEBUG: WebSocket request accepted, switching protocols

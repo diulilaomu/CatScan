@@ -1,0 +1,1 @@
+pyinstaller --onefile --noconsole --add-data "web;web" main.py --icon=web/favicon.ico

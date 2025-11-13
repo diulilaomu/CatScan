@@ -1,0 +1,2652 @@
+2025-10-25 14:24:16-DEBUG: Initializing WebSocket
+2025-10-25 14:24:16-DEBUG: Validating WebSocket request
+2025-10-25 14:24:16-INFO: 127.0.0.1 - - [2025-10-25 14:24:16] "GET /index.html HTTP/1.1" 200 1041 0.001053
+2025-10-25 14:24:16-DEBUG: Initializing WebSocket
+2025-10-25 14:24:16-DEBUG: Validating WebSocket request
+2025-10-25 14:24:16-INFO: 127.0.0.1 - - [2025-10-25 14:24:16] "GET /style.css HTTP/1.1" 404 880 0.004365
+2025-10-25 14:24:16-DEBUG: Initializing WebSocket
+2025-10-25 14:24:16-DEBUG: Validating WebSocket request
+2025-10-25 14:24:16-INFO: 127.0.0.1 - - [2025-10-25 14:24:16] "GET /eel.js HTTP/1.1" 200 6055 0.000000
+2025-10-25 14:24:16-DEBUG: Initializing WebSocket
+2025-10-25 14:24:16-DEBUG: Validating WebSocket request
+2025-10-25 14:24:16-DEBUG: Attempting to upgrade connection
+2025-10-25 14:24:16-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 14:24:25-DEBUG: Closed WebSocket
+2025-10-25 14:24:25-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 14:24:25-DEBUG: Closed WebSocket
+2025-10-25 14:24:30-DEBUG: Initializing WebSocket
+2025-10-25 14:24:30-DEBUG: Validating WebSocket request
+2025-10-25 14:24:30-INFO: 127.0.0.1 - - [2025-10-25 14:24:30] "GET /index.html HTTP/1.1" 200 1041 0.001061
+2025-10-25 14:24:30-DEBUG: Initializing WebSocket
+2025-10-25 14:24:30-DEBUG: Validating WebSocket request
+2025-10-25 14:24:30-INFO: 127.0.0.1 - - [2025-10-25 14:24:30] "GET /style.css HTTP/1.1" 404 880 0.003052
+2025-10-25 14:24:30-DEBUG: Initializing WebSocket
+2025-10-25 14:24:30-DEBUG: Validating WebSocket request
+2025-10-25 14:24:30-INFO: 127.0.0.1 - - [2025-10-25 14:24:30] "GET /eel.js HTTP/1.1" 200 6055 0.001243
+2025-10-25 14:24:30-DEBUG: Initializing WebSocket
+2025-10-25 14:24:30-DEBUG: Validating WebSocket request
+2025-10-25 14:24:30-DEBUG: Attempting to upgrade connection
+2025-10-25 14:24:30-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 14:24:32-DEBUG: Closed WebSocket
+2025-10-25 14:24:32-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 14:24:32-DEBUG: Closed WebSocket
+2025-10-25 14:26:14-DEBUG: Initializing WebSocket
+2025-10-25 14:26:14-DEBUG: Validating WebSocket request
+2025-10-25 14:26:14-INFO: 127.0.0.1 - - [2025-10-25 14:26:14] "GET /index.html HTTP/1.1" 200 1076 0.001109
+2025-10-25 14:26:14-DEBUG: Initializing WebSocket
+2025-10-25 14:26:14-DEBUG: Validating WebSocket request
+2025-10-25 14:26:14-INFO: 127.0.0.1 - - [2025-10-25 14:26:14] "GET /style.css HTTP/1.1" 404 880 0.004374
+2025-10-25 14:26:14-DEBUG: Initializing WebSocket
+2025-10-25 14:26:14-DEBUG: Validating WebSocket request
+2025-10-25 14:26:14-INFO: 127.0.0.1 - - [2025-10-25 14:26:14] "GET /eel.js HTTP/1.1" 200 6055 0.001284
+2025-10-25 14:26:14-DEBUG: Initializing WebSocket
+2025-10-25 14:26:14-DEBUG: Validating WebSocket request
+2025-10-25 14:26:14-DEBUG: Attempting to upgrade connection
+2025-10-25 14:26:14-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 14:26:17-DEBUG: Initializing WebSocket
+2025-10-25 14:26:17-DEBUG: Validating WebSocket request
+2025-10-25 14:26:17-INFO: 127.0.0.1 - - [2025-10-25 14:26:17] "GET /style.css HTTP/1.1" 404 880 0.001030
+2025-10-25 14:26:17-DEBUG: Initializing WebSocket
+2025-10-25 14:26:17-DEBUG: Validating WebSocket request
+2025-10-25 14:26:17-INFO: 127.0.0.1 - - [2025-10-25 14:26:17] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001208
+2025-10-25 14:26:38-DEBUG: Closed WebSocket
+2025-10-25 14:26:38-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 14:26:38-DEBUG: Closed WebSocket
+2025-10-25 14:26:40-DEBUG: Initializing WebSocket
+2025-10-25 14:26:40-DEBUG: Validating WebSocket request
+2025-10-25 14:26:40-INFO: 127.0.0.1 - - [2025-10-25 14:26:40] "GET /index.html HTTP/1.1" 200 1076 0.001034
+2025-10-25 14:26:40-DEBUG: Initializing WebSocket
+2025-10-25 14:26:40-DEBUG: Validating WebSocket request
+2025-10-25 14:26:40-INFO: 127.0.0.1 - - [2025-10-25 14:26:40] "GET /style.css HTTP/1.1" 404 880 0.003141
+2025-10-25 14:26:40-DEBUG: Initializing WebSocket
+2025-10-25 14:26:40-DEBUG: Validating WebSocket request
+2025-10-25 14:26:40-INFO: 127.0.0.1 - - [2025-10-25 14:26:40] "GET /eel.js HTTP/1.1" 200 6055 0.001138
+2025-10-25 14:26:41-DEBUG: Initializing WebSocket
+2025-10-25 14:26:41-DEBUG: Validating WebSocket request
+2025-10-25 14:26:41-DEBUG: Attempting to upgrade connection
+2025-10-25 14:26:41-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 14:26:46-DEBUG: Initializing WebSocket
+2025-10-25 14:26:46-DEBUG: Validating WebSocket request
+2025-10-25 14:26:46-INFO: 127.0.0.1 - - [2025-10-25 14:26:46] "GET /style.css HTTP/1.1" 404 880 0.000000
+2025-10-25 14:26:46-DEBUG: Initializing WebSocket
+2025-10-25 14:26:46-DEBUG: Validating WebSocket request
+2025-10-25 14:26:46-INFO: 127.0.0.1 - - [2025-10-25 14:26:46] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001027
+2025-10-25 14:31:19-DEBUG: Closed WebSocket
+2025-10-25 14:31:19-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 14:31:19-DEBUG: Closed WebSocket
+2025-10-25 14:31:21-DEBUG: Initializing WebSocket
+2025-10-25 14:31:21-DEBUG: Validating WebSocket request
+2025-10-25 14:31:21-INFO: 127.0.0.1 - - [2025-10-25 14:31:21] "GET /index.html HTTP/1.1" 200 1092 0.000996
+2025-10-25 14:31:21-DEBUG: Initializing WebSocket
+2025-10-25 14:31:21-DEBUG: Validating WebSocket request
+2025-10-25 14:31:21-INFO: 127.0.0.1 - - [2025-10-25 14:31:21] "GET /style.css HTTP/1.1" 404 880 0.002333
+2025-10-25 14:31:21-DEBUG: Initializing WebSocket
+2025-10-25 14:31:21-DEBUG: Validating WebSocket request
+2025-10-25 14:31:21-INFO: 127.0.0.1 - - [2025-10-25 14:31:21] "GET /eel.js HTTP/1.1" 200 6055 0.001420
+2025-10-25 14:31:22-DEBUG: Initializing WebSocket
+2025-10-25 14:31:22-DEBUG: Validating WebSocket request
+2025-10-25 14:31:22-DEBUG: Attempting to upgrade connection
+2025-10-25 14:31:22-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 14:34:47-DEBUG: Initializing WebSocket
+2025-10-25 14:34:47-DEBUG: Validating WebSocket request
+2025-10-25 14:34:47-INFO: 127.0.0.1 - - [2025-10-25 14:34:47] "GET /index.html HTTP/1.1" 200 1616 0.001993
+2025-10-25 14:34:47-DEBUG: Initializing WebSocket
+2025-10-25 14:34:47-DEBUG: Validating WebSocket request
+2025-10-25 14:34:47-INFO: 127.0.0.1 - - [2025-10-25 14:34:47] "GET /style.css HTTP/1.1" 404 880 0.005773
+2025-10-25 14:34:47-DEBUG: Initializing WebSocket
+2025-10-25 14:34:47-DEBUG: Validating WebSocket request
+2025-10-25 14:34:47-INFO: 127.0.0.1 - - [2025-10-25 14:34:47] "GET /eel.js HTTP/1.1" 200 6055 0.000997
+2025-10-25 14:34:49-DEBUG: Initializing WebSocket
+2025-10-25 14:34:49-DEBUG: Validating WebSocket request
+2025-10-25 14:34:49-DEBUG: Attempting to upgrade connection
+2025-10-25 14:34:49-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 14:42:01-DEBUG: Closed WebSocket
+2025-10-25 14:42:01-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 14:42:01-DEBUG: Closed WebSocket
+2025-10-25 14:42:04-DEBUG: Initializing WebSocket
+2025-10-25 14:42:04-DEBUG: Validating WebSocket request
+2025-10-25 14:42:04-INFO: 127.0.0.1 - - [2025-10-25 14:42:04] "GET /index.html HTTP/1.1" 200 2112 0.002093
+2025-10-25 14:42:04-DEBUG: Initializing WebSocket
+2025-10-25 14:42:04-DEBUG: Validating WebSocket request
+2025-10-25 14:42:04-INFO: 127.0.0.1 - - [2025-10-25 14:42:04] "GET /style.css HTTP/1.1" 404 880 0.003855
+2025-10-25 14:42:04-DEBUG: Initializing WebSocket
+2025-10-25 14:42:04-DEBUG: Validating WebSocket request
+2025-10-25 14:42:04-INFO: 127.0.0.1 - - [2025-10-25 14:42:04] "GET /eel.js HTTP/1.1" 200 6055 0.001065
+2025-10-25 14:42:04-DEBUG: Initializing WebSocket
+2025-10-25 14:42:04-DEBUG: Validating WebSocket request
+2025-10-25 14:42:04-DEBUG: Attempting to upgrade connection
+2025-10-25 14:42:04-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 14:42:25-DEBUG: Closed WebSocket
+2025-10-25 14:42:25-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 14:42:25-DEBUG: Closed WebSocket
+2025-10-25 14:42:27-DEBUG: Initializing WebSocket
+2025-10-25 14:42:27-DEBUG: Validating WebSocket request
+2025-10-25 14:42:27-INFO: 127.0.0.1 - - [2025-10-25 14:42:27] "GET /index.html HTTP/1.1" 200 2112 0.001436
+2025-10-25 14:42:27-DEBUG: Initializing WebSocket
+2025-10-25 14:42:27-DEBUG: Validating WebSocket request
+2025-10-25 14:42:27-INFO: 127.0.0.1 - - [2025-10-25 14:42:27] "GET /style.css HTTP/1.1" 404 880 0.005898
+2025-10-25 14:42:27-DEBUG: Initializing WebSocket
+2025-10-25 14:42:27-DEBUG: Validating WebSocket request
+2025-10-25 14:42:27-INFO: 127.0.0.1 - - [2025-10-25 14:42:27] "GET /eel.js HTTP/1.1" 200 6055 0.000000
+2025-10-25 14:42:28-DEBUG: Initializing WebSocket
+2025-10-25 14:42:28-DEBUG: Validating WebSocket request
+2025-10-25 14:42:28-DEBUG: Attempting to upgrade connection
+2025-10-25 14:42:28-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 14:46:09-DEBUG: Closed WebSocket
+2025-10-25 14:46:09-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 14:46:09-DEBUG: Closed WebSocket
+2025-10-25 14:47:09-DEBUG: Initializing WebSocket
+2025-10-25 14:47:09-DEBUG: Validating WebSocket request
+2025-10-25 14:47:09-INFO: 127.0.0.1 - - [2025-10-25 14:47:09] "GET /index.html HTTP/1.1" 200 2112 0.001477
+2025-10-25 14:47:09-DEBUG: Initializing WebSocket
+2025-10-25 14:47:09-DEBUG: Validating WebSocket request
+2025-10-25 14:47:09-INFO: 127.0.0.1 - - [2025-10-25 14:47:09] "GET /style.css HTTP/1.1" 404 880 0.005044
+2025-10-25 14:47:09-DEBUG: Initializing WebSocket
+2025-10-25 14:47:09-DEBUG: Validating WebSocket request
+2025-10-25 14:47:09-INFO: 127.0.0.1 - - [2025-10-25 14:47:09] "GET /eel.js HTTP/1.1" 200 6055 0.001431
+2025-10-25 14:47:10-DEBUG: Initializing WebSocket
+2025-10-25 14:47:10-DEBUG: Validating WebSocket request
+2025-10-25 14:47:10-DEBUG: Attempting to upgrade connection
+2025-10-25 14:47:10-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 14:47:13-DEBUG: Closed WebSocket
+2025-10-25 14:47:13-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 14:47:13-DEBUG: Closed WebSocket
+2025-10-25 14:47:22-DEBUG: Initializing WebSocket
+2025-10-25 14:47:22-DEBUG: Validating WebSocket request
+2025-10-25 14:47:22-INFO: 127.0.0.1 - - [2025-10-25 14:47:22] "GET /index.html HTTP/1.1" 200 2115 0.001155
+2025-10-25 14:47:22-DEBUG: Initializing WebSocket
+2025-10-25 14:47:22-DEBUG: Validating WebSocket request
+2025-10-25 14:47:22-INFO: 127.0.0.1 - - [2025-10-25 14:47:22] "GET /style.css HTTP/1.1" 404 880 0.005632
+2025-10-25 14:47:22-DEBUG: Initializing WebSocket
+2025-10-25 14:47:22-DEBUG: Validating WebSocket request
+2025-10-25 14:47:22-INFO: 127.0.0.1 - - [2025-10-25 14:47:22] "GET /eel.js HTTP/1.1" 200 6055 0.000000
+2025-10-25 14:47:23-DEBUG: Initializing WebSocket
+2025-10-25 14:47:23-DEBUG: Validating WebSocket request
+2025-10-25 14:47:23-DEBUG: Attempting to upgrade connection
+2025-10-25 14:47:23-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 14:47:34-DEBUG: Closed WebSocket
+2025-10-25 14:47:34-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 14:47:34-DEBUG: Closed WebSocket
+2025-10-25 14:47:39-DEBUG: Initializing WebSocket
+2025-10-25 14:47:39-DEBUG: Validating WebSocket request
+2025-10-25 14:47:39-INFO: 127.0.0.1 - - [2025-10-25 14:47:39] "GET /index.html HTTP/1.1" 200 2115 0.001012
+2025-10-25 14:47:39-DEBUG: Initializing WebSocket
+2025-10-25 14:47:39-DEBUG: Validating WebSocket request
+2025-10-25 14:47:39-INFO: 127.0.0.1 - - [2025-10-25 14:47:39] "GET /style.css HTTP/1.1" 404 880 0.004407
+2025-10-25 14:47:39-DEBUG: Initializing WebSocket
+2025-10-25 14:47:39-DEBUG: Validating WebSocket request
+2025-10-25 14:47:39-INFO: 127.0.0.1 - - [2025-10-25 14:47:39] "GET /eel.js HTTP/1.1" 200 6055 0.001042
+2025-10-25 14:47:39-DEBUG: Initializing WebSocket
+2025-10-25 14:47:39-DEBUG: Validating WebSocket request
+2025-10-25 14:47:39-DEBUG: Attempting to upgrade connection
+2025-10-25 14:47:39-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 14:48:34-DEBUG: Initializing WebSocket
+2025-10-25 14:48:34-DEBUG: Validating WebSocket request
+2025-10-25 14:48:34-INFO: 127.0.0.1 - - [2025-10-25 14:48:34] "GET /style.css HTTP/1.1" 404 880 0.001484
+2025-10-25 14:48:34-DEBUG: Initializing WebSocket
+2025-10-25 14:48:34-DEBUG: Validating WebSocket request
+2025-10-25 14:48:34-INFO: 127.0.0.1 - - [2025-10-25 14:48:34] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001041
+2025-10-25 14:48:56-DEBUG: Initializing WebSocket
+2025-10-25 14:48:56-DEBUG: Validating WebSocket request
+2025-10-25 14:48:56-INFO: 127.0.0.1 - - [2025-10-25 14:48:56] "GET /index.html HTTP/1.1" 200 2121 0.001075
+2025-10-25 14:48:56-DEBUG: Initializing WebSocket
+2025-10-25 14:48:56-DEBUG: Validating WebSocket request
+2025-10-25 14:48:56-INFO: 127.0.0.1 - - [2025-10-25 14:48:56] "GET /style.css HTTP/1.1" 404 880 0.005205
+2025-10-25 14:48:56-DEBUG: Initializing WebSocket
+2025-10-25 14:48:56-DEBUG: Validating WebSocket request
+2025-10-25 14:48:56-INFO: 127.0.0.1 - - [2025-10-25 14:48:56] "GET /eel.js HTTP/1.1" 200 6055 0.001395
+2025-10-25 14:48:57-DEBUG: Initializing WebSocket
+2025-10-25 14:48:57-DEBUG: Validating WebSocket request
+2025-10-25 14:48:57-DEBUG: Attempting to upgrade connection
+2025-10-25 14:48:57-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 14:48:58-DEBUG: Initializing WebSocket
+2025-10-25 14:48:58-DEBUG: Validating WebSocket request
+2025-10-25 14:48:58-INFO: 127.0.0.1 - - [2025-10-25 14:48:58] "GET /style.css HTTP/1.1" 404 880 0.001024
+2025-10-25 14:48:58-DEBUG: Initializing WebSocket
+2025-10-25 14:48:58-DEBUG: Validating WebSocket request
+2025-10-25 14:48:58-INFO: 127.0.0.1 - - [2025-10-25 14:48:58] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.000996
+2025-10-25 14:49:37-DEBUG: Closed WebSocket
+2025-10-25 14:49:37-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 14:49:37-DEBUG: Closed WebSocket
+2025-10-25 14:49:39-DEBUG: Initializing WebSocket
+2025-10-25 14:49:39-DEBUG: Validating WebSocket request
+2025-10-25 14:49:39-INFO: 127.0.0.1 - - [2025-10-25 14:49:39] "GET /index.html HTTP/1.1" 200 2127 0.001993
+2025-10-25 14:49:39-DEBUG: Initializing WebSocket
+2025-10-25 14:49:39-DEBUG: Validating WebSocket request
+2025-10-25 14:49:39-INFO: 127.0.0.1 - - [2025-10-25 14:49:39] "GET /style.css HTTP/1.1" 404 880 0.004986
+2025-10-25 14:49:39-DEBUG: Initializing WebSocket
+2025-10-25 14:49:39-DEBUG: Validating WebSocket request
+2025-10-25 14:49:39-INFO: 127.0.0.1 - - [2025-10-25 14:49:39] "GET /eel.js HTTP/1.1" 200 6055 0.000998
+2025-10-25 14:49:39-DEBUG: Initializing WebSocket
+2025-10-25 14:49:39-DEBUG: Validating WebSocket request
+2025-10-25 14:49:39-DEBUG: Attempting to upgrade connection
+2025-10-25 14:49:39-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 14:51:08-DEBUG: Closed WebSocket
+2025-10-25 14:51:08-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 14:51:08-DEBUG: Closed WebSocket
+2025-10-25 14:51:10-DEBUG: Initializing WebSocket
+2025-10-25 14:51:10-DEBUG: Validating WebSocket request
+2025-10-25 14:51:10-INFO: 127.0.0.1 - - [2025-10-25 14:51:10] "GET /index.html HTTP/1.1" 200 2124 0.000998
+2025-10-25 14:51:10-DEBUG: Initializing WebSocket
+2025-10-25 14:51:10-DEBUG: Validating WebSocket request
+2025-10-25 14:51:10-INFO: 127.0.0.1 - - [2025-10-25 14:51:10] "GET /style.css HTTP/1.1" 404 880 0.005337
+2025-10-25 14:51:10-DEBUG: Initializing WebSocket
+2025-10-25 14:51:10-DEBUG: Validating WebSocket request
+2025-10-25 14:51:10-INFO: 127.0.0.1 - - [2025-10-25 14:51:10] "GET /eel.js HTTP/1.1" 200 6055 0.001301
+2025-10-25 14:51:11-DEBUG: Initializing WebSocket
+2025-10-25 14:51:11-DEBUG: Validating WebSocket request
+2025-10-25 14:51:11-DEBUG: Attempting to upgrade connection
+2025-10-25 14:51:11-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 14:52:56-DEBUG: Closed WebSocket
+2025-10-25 14:52:56-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 14:52:56-DEBUG: Closed WebSocket
+2025-10-25 14:53:58-DEBUG: Initializing WebSocket
+2025-10-25 14:53:58-DEBUG: Validating WebSocket request
+2025-10-25 14:53:58-INFO: 127.0.0.1 - - [2025-10-25 14:53:58] "GET /index.html HTTP/1.1" 200 1485 0.002014
+2025-10-25 14:53:58-DEBUG: Initializing WebSocket
+2025-10-25 14:53:58-DEBUG: Validating WebSocket request
+2025-10-25 14:53:58-INFO: 127.0.0.1 - - [2025-10-25 14:53:58] "GET /style.css HTTP/1.1" 404 880 0.005035
+2025-10-25 14:53:58-DEBUG: Initializing WebSocket
+2025-10-25 14:53:58-DEBUG: Validating WebSocket request
+2025-10-25 14:53:58-INFO: 127.0.0.1 - - [2025-10-25 14:53:58] "GET /eel.js HTTP/1.1" 200 6055 0.001000
+2025-10-25 14:53:59-DEBUG: Initializing WebSocket
+2025-10-25 14:53:59-DEBUG: Validating WebSocket request
+2025-10-25 14:53:59-DEBUG: Attempting to upgrade connection
+2025-10-25 14:53:59-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 14:54:25-DEBUG: Closed WebSocket
+2025-10-25 14:54:25-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 14:54:25-DEBUG: Closed WebSocket
+2025-10-25 14:54:27-DEBUG: Initializing WebSocket
+2025-10-25 14:54:27-DEBUG: Validating WebSocket request
+2025-10-25 14:54:27-INFO: 127.0.0.1 - - [2025-10-25 14:54:27] "GET /index.html HTTP/1.1" 200 1308 0.001993
+2025-10-25 14:55:33-DEBUG: Initializing WebSocket
+2025-10-25 14:55:33-DEBUG: Validating WebSocket request
+2025-10-25 14:55:33-INFO: 127.0.0.1 - - [2025-10-25 14:55:33] "GET /index.html HTTP/1.1" 200 1477 0.001005
+2025-10-25 14:55:33-DEBUG: Initializing WebSocket
+2025-10-25 14:55:33-DEBUG: Validating WebSocket request
+2025-10-25 14:55:33-INFO: 127.0.0.1 - - [2025-10-25 14:55:33] "GET /style.css HTTP/1.1" 404 880 0.003985
+2025-10-25 14:55:33-DEBUG: Initializing WebSocket
+2025-10-25 14:55:33-DEBUG: Validating WebSocket request
+2025-10-25 14:55:33-INFO: 127.0.0.1 - - [2025-10-25 14:55:33] "GET /eel.js HTTP/1.1" 200 6055 0.001031
+2025-10-25 14:55:34-DEBUG: Initializing WebSocket
+2025-10-25 14:55:34-DEBUG: Validating WebSocket request
+2025-10-25 14:55:34-DEBUG: Attempting to upgrade connection
+2025-10-25 14:55:34-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 14:56:13-DEBUG: Initializing WebSocket
+2025-10-25 14:56:13-DEBUG: Validating WebSocket request
+2025-10-25 14:56:13-INFO: 127.0.0.1 - - [2025-10-25 14:56:13] "GET /style.css HTTP/1.1" 404 880 0.002141
+2025-10-25 14:56:13-DEBUG: Initializing WebSocket
+2025-10-25 14:56:13-DEBUG: Validating WebSocket request
+2025-10-25 14:56:13-INFO: 127.0.0.1 - - [2025-10-25 14:56:13] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.000997
+2025-10-25 15:00:59-DEBUG: Closed WebSocket
+2025-10-25 15:00:59-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 15:00:59-DEBUG: Closed WebSocket
+2025-10-25 15:01:01-DEBUG: Initializing WebSocket
+2025-10-25 15:01:01-DEBUG: Validating WebSocket request
+2025-10-25 15:01:01-INFO: 127.0.0.1 - - [2025-10-25 15:01:01] "GET /index.html HTTP/1.1" 200 1708 0.001121
+2025-10-25 15:01:01-DEBUG: Initializing WebSocket
+2025-10-25 15:01:01-DEBUG: Validating WebSocket request
+2025-10-25 15:01:01-INFO: 127.0.0.1 - - [2025-10-25 15:01:01] "GET /style.css HTTP/1.1" 404 880 0.004347
+2025-10-25 15:01:01-DEBUG: Initializing WebSocket
+2025-10-25 15:01:01-DEBUG: Validating WebSocket request
+2025-10-25 15:01:01-INFO: 127.0.0.1 - - [2025-10-25 15:01:01] "GET /eel.js HTTP/1.1" 200 6071 0.001257
+2025-10-25 15:01:02-DEBUG: Initializing WebSocket
+2025-10-25 15:01:02-DEBUG: Validating WebSocket request
+2025-10-25 15:01:02-DEBUG: Attempting to upgrade connection
+2025-10-25 15:01:02-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:01:06-DEBUG: Initializing WebSocket
+2025-10-25 15:01:06-DEBUG: Validating WebSocket request
+2025-10-25 15:01:06-INFO: 127.0.0.1 - - [2025-10-25 15:01:06] "GET /style.css HTTP/1.1" 404 880 0.002228
+2025-10-25 15:01:06-DEBUG: Initializing WebSocket
+2025-10-25 15:01:06-DEBUG: Validating WebSocket request
+2025-10-25 15:01:06-INFO: 127.0.0.1 - - [2025-10-25 15:01:06] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.000997
+2025-10-25 15:01:46-DEBUG: Closed WebSocket
+2025-10-25 15:01:46-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 15:01:46-DEBUG: Closed WebSocket
+2025-10-25 15:01:48-DEBUG: Initializing WebSocket
+2025-10-25 15:01:48-DEBUG: Validating WebSocket request
+2025-10-25 15:01:48-INFO: 127.0.0.1 - - [2025-10-25 15:01:48] "GET /index.html HTTP/1.1" 200 1720 0.001083
+2025-10-25 15:01:48-DEBUG: Initializing WebSocket
+2025-10-25 15:01:48-DEBUG: Validating WebSocket request
+2025-10-25 15:01:48-INFO: 127.0.0.1 - - [2025-10-25 15:01:48] "GET /style.css HTTP/1.1" 404 880 0.004983
+2025-10-25 15:01:48-DEBUG: Initializing WebSocket
+2025-10-25 15:01:48-DEBUG: Validating WebSocket request
+2025-10-25 15:01:48-INFO: 127.0.0.1 - - [2025-10-25 15:01:48] "GET /eel.js HTTP/1.1" 200 6071 0.000998
+2025-10-25 15:01:48-DEBUG: Initializing WebSocket
+2025-10-25 15:01:48-DEBUG: Validating WebSocket request
+2025-10-25 15:01:48-DEBUG: Attempting to upgrade connection
+2025-10-25 15:01:48-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:02:41-DEBUG: Closed WebSocket
+2025-10-25 15:02:41-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 15:02:41-DEBUG: Closed WebSocket
+2025-10-25 15:02:44-DEBUG: Initializing WebSocket
+2025-10-25 15:02:44-DEBUG: Validating WebSocket request
+2025-10-25 15:02:44-INFO: 127.0.0.1 - - [2025-10-25 15:02:44] "GET /index.html HTTP/1.1" 200 1726 0.001993
+2025-10-25 15:02:44-DEBUG: Initializing WebSocket
+2025-10-25 15:02:44-DEBUG: Validating WebSocket request
+2025-10-25 15:02:44-INFO: 127.0.0.1 - - [2025-10-25 15:02:44] "GET /style.css HTTP/1.1" 404 880 0.005309
+2025-10-25 15:02:44-DEBUG: Initializing WebSocket
+2025-10-25 15:02:44-DEBUG: Validating WebSocket request
+2025-10-25 15:02:44-INFO: 127.0.0.1 - - [2025-10-25 15:02:44] "GET /eel.js HTTP/1.1" 200 6071 0.000998
+2025-10-25 15:02:45-DEBUG: Initializing WebSocket
+2025-10-25 15:02:45-DEBUG: Validating WebSocket request
+2025-10-25 15:02:45-DEBUG: Attempting to upgrade connection
+2025-10-25 15:02:45-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:02:57-DEBUG: Initializing WebSocket
+2025-10-25 15:02:57-DEBUG: Validating WebSocket request
+2025-10-25 15:02:57-INFO: 127.0.0.1 - - [2025-10-25 15:02:57] "GET /index.html HTTP/1.1" 200 1726 0.001229
+2025-10-25 15:03:01-DEBUG: Initializing WebSocket
+2025-10-25 15:03:01-DEBUG: Validating WebSocket request
+2025-10-25 15:03:01-INFO: 127.0.0.1 - - [2025-10-25 15:03:01] "GET /style.css HTTP/1.1" 404 880 0.001248
+2025-10-25 15:03:01-DEBUG: Initializing WebSocket
+2025-10-25 15:03:01-DEBUG: Validating WebSocket request
+2025-10-25 15:03:01-INFO: 127.0.0.1 - - [2025-10-25 15:03:01] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001054
+2025-10-25 15:03:53-DEBUG: Initializing WebSocket
+2025-10-25 15:03:53-DEBUG: Validating WebSocket request
+2025-10-25 15:03:53-INFO: 127.0.0.1 - - [2025-10-25 15:03:53] "GET /index.html HTTP/1.1" 200 1475 0.002283
+2025-10-25 15:03:53-DEBUG: Initializing WebSocket
+2025-10-25 15:03:53-DEBUG: Validating WebSocket request
+2025-10-25 15:03:53-INFO: 127.0.0.1 - - [2025-10-25 15:03:53] "GET /style.css HTTP/1.1" 404 880 0.003582
+2025-10-25 15:03:53-DEBUG: Initializing WebSocket
+2025-10-25 15:03:53-DEBUG: Validating WebSocket request
+2025-10-25 15:03:53-INFO: 127.0.0.1 - - [2025-10-25 15:03:53] "GET /eel.js HTTP/1.1" 200 6071 0.001006
+2025-10-25 15:03:54-DEBUG: Initializing WebSocket
+2025-10-25 15:03:54-DEBUG: Validating WebSocket request
+2025-10-25 15:03:54-DEBUG: Attempting to upgrade connection
+2025-10-25 15:03:54-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:04:04-DEBUG: Initializing WebSocket
+2025-10-25 15:04:04-DEBUG: Validating WebSocket request
+2025-10-25 15:04:04-INFO: 127.0.0.1 - - [2025-10-25 15:04:04] "GET /index.html HTTP/1.1" 200 1483 0.001285
+2025-10-25 15:04:04-DEBUG: Initializing WebSocket
+2025-10-25 15:04:04-DEBUG: Validating WebSocket request
+2025-10-25 15:04:04-INFO: 127.0.0.1 - - [2025-10-25 15:04:04] "GET /style.css HTTP/1.1" 404 880 0.003079
+2025-10-25 15:04:04-DEBUG: Initializing WebSocket
+2025-10-25 15:04:04-DEBUG: Validating WebSocket request
+2025-10-25 15:04:04-INFO: 127.0.0.1 - - [2025-10-25 15:04:04] "GET /eel.js HTTP/1.1" 200 6071 0.001340
+2025-10-25 15:04:04-DEBUG: Initializing WebSocket
+2025-10-25 15:04:04-DEBUG: Validating WebSocket request
+2025-10-25 15:04:04-DEBUG: Attempting to upgrade connection
+2025-10-25 15:04:04-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:04:26-DEBUG: Initializing WebSocket
+2025-10-25 15:04:26-DEBUG: Validating WebSocket request
+2025-10-25 15:04:26-INFO: 127.0.0.1 - - [2025-10-25 15:04:26] "GET /index.html HTTP/1.1" 200 1483 0.001496
+2025-10-25 15:04:26-DEBUG: Initializing WebSocket
+2025-10-25 15:04:26-DEBUG: Validating WebSocket request
+2025-10-25 15:04:26-INFO: 127.0.0.1 - - [2025-10-25 15:04:26] "GET /style.css HTTP/1.1" 404 880 0.005295
+2025-10-25 15:04:26-DEBUG: Initializing WebSocket
+2025-10-25 15:04:26-DEBUG: Validating WebSocket request
+2025-10-25 15:04:26-INFO: 127.0.0.1 - - [2025-10-25 15:04:26] "GET /eel.js HTTP/1.1" 200 6071 0.000000
+2025-10-25 15:04:26-DEBUG: Initializing WebSocket
+2025-10-25 15:04:26-DEBUG: Validating WebSocket request
+2025-10-25 15:04:26-DEBUG: Attempting to upgrade connection
+2025-10-25 15:04:26-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:04:45-DEBUG: Initializing WebSocket
+2025-10-25 15:04:45-DEBUG: Validating WebSocket request
+2025-10-25 15:04:45-INFO: 127.0.0.1 - - [2025-10-25 15:04:45] "GET /index.html HTTP/1.1" 200 1487 0.000997
+2025-10-25 15:04:45-DEBUG: Initializing WebSocket
+2025-10-25 15:04:45-DEBUG: Validating WebSocket request
+2025-10-25 15:04:45-INFO: 127.0.0.1 - - [2025-10-25 15:04:45] "GET /style.css HTTP/1.1" 404 880 0.003987
+2025-10-25 15:04:45-DEBUG: Initializing WebSocket
+2025-10-25 15:04:45-DEBUG: Validating WebSocket request
+2025-10-25 15:04:45-INFO: 127.0.0.1 - - [2025-10-25 15:04:45] "GET /eel.js HTTP/1.1" 200 6071 0.000996
+2025-10-25 15:04:45-DEBUG: Initializing WebSocket
+2025-10-25 15:04:45-DEBUG: Validating WebSocket request
+2025-10-25 15:04:45-DEBUG: Attempting to upgrade connection
+2025-10-25 15:04:45-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:05:04-DEBUG: Initializing WebSocket
+2025-10-25 15:05:04-DEBUG: Validating WebSocket request
+2025-10-25 15:05:04-INFO: 127.0.0.1 - - [2025-10-25 15:05:04] "GET /index.html HTTP/1.1" 200 1487 0.001399
+2025-10-25 15:05:04-DEBUG: Initializing WebSocket
+2025-10-25 15:05:04-DEBUG: Validating WebSocket request
+2025-10-25 15:05:04-INFO: 127.0.0.1 - - [2025-10-25 15:05:04] "GET /style.css HTTP/1.1" 404 880 0.006129
+2025-10-25 15:05:04-DEBUG: Initializing WebSocket
+2025-10-25 15:05:04-DEBUG: Validating WebSocket request
+2025-10-25 15:05:04-INFO: 127.0.0.1 - - [2025-10-25 15:05:04] "GET /eel.js HTTP/1.1" 200 6071 0.001078
+2025-10-25 15:05:05-DEBUG: Initializing WebSocket
+2025-10-25 15:05:05-DEBUG: Validating WebSocket request
+2025-10-25 15:05:05-DEBUG: Attempting to upgrade connection
+2025-10-25 15:05:05-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:05:16-DEBUG: Initializing WebSocket
+2025-10-25 15:05:16-DEBUG: Validating WebSocket request
+2025-10-25 15:05:16-INFO: 127.0.0.1 - - [2025-10-25 15:05:16] "GET /index.html HTTP/1.1" 200 1475 0.001013
+2025-10-25 15:05:16-DEBUG: Initializing WebSocket
+2025-10-25 15:05:16-DEBUG: Validating WebSocket request
+2025-10-25 15:05:16-INFO: 127.0.0.1 - - [2025-10-25 15:05:16] "GET /style.css HTTP/1.1" 404 880 0.003474
+2025-10-25 15:05:16-DEBUG: Initializing WebSocket
+2025-10-25 15:05:16-DEBUG: Validating WebSocket request
+2025-10-25 15:05:16-INFO: 127.0.0.1 - - [2025-10-25 15:05:16] "GET /eel.js HTTP/1.1" 200 6071 0.000998
+2025-10-25 15:05:17-DEBUG: Initializing WebSocket
+2025-10-25 15:05:17-DEBUG: Validating WebSocket request
+2025-10-25 15:05:17-DEBUG: Attempting to upgrade connection
+2025-10-25 15:05:17-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:05:45-DEBUG: Initializing WebSocket
+2025-10-25 15:05:45-DEBUG: Validating WebSocket request
+2025-10-25 15:05:45-INFO: 127.0.0.1 - - [2025-10-25 15:05:45] "GET /index.html HTTP/1.1" 200 1495 0.002010
+2025-10-25 15:05:45-DEBUG: Initializing WebSocket
+2025-10-25 15:05:45-DEBUG: Validating WebSocket request
+2025-10-25 15:05:45-INFO: 127.0.0.1 - - [2025-10-25 15:05:45] "GET /style.css HTTP/1.1" 404 880 0.003987
+2025-10-25 15:05:45-DEBUG: Initializing WebSocket
+2025-10-25 15:05:45-DEBUG: Validating WebSocket request
+2025-10-25 15:05:45-INFO: 127.0.0.1 - - [2025-10-25 15:05:45] "GET /eel.js HTTP/1.1" 200 6071 0.001147
+2025-10-25 15:05:46-DEBUG: Initializing WebSocket
+2025-10-25 15:05:46-DEBUG: Validating WebSocket request
+2025-10-25 15:05:46-DEBUG: Attempting to upgrade connection
+2025-10-25 15:05:46-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:06:14-DEBUG: Initializing WebSocket
+2025-10-25 15:06:14-DEBUG: Validating WebSocket request
+2025-10-25 15:06:14-INFO: 127.0.0.1 - - [2025-10-25 15:06:14] "GET /index.html HTTP/1.1" 200 1748 0.001062
+2025-10-25 15:06:14-DEBUG: Initializing WebSocket
+2025-10-25 15:06:14-DEBUG: Validating WebSocket request
+2025-10-25 15:06:14-INFO: 127.0.0.1 - - [2025-10-25 15:06:14] "GET /style.css HTTP/1.1" 404 880 0.005899
+2025-10-25 15:06:14-DEBUG: Initializing WebSocket
+2025-10-25 15:06:14-DEBUG: Validating WebSocket request
+2025-10-25 15:06:14-INFO: 127.0.0.1 - - [2025-10-25 15:06:14] "GET /eel.js HTTP/1.1" 200 6071 0.001271
+2025-10-25 15:06:15-DEBUG: Initializing WebSocket
+2025-10-25 15:06:15-DEBUG: Validating WebSocket request
+2025-10-25 15:06:15-DEBUG: Attempting to upgrade connection
+2025-10-25 15:06:15-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:06:41-DEBUG: Initializing WebSocket
+2025-10-25 15:06:41-DEBUG: Validating WebSocket request
+2025-10-25 15:06:41-INFO: 127.0.0.1 - - [2025-10-25 15:06:41] "GET /index.html HTTP/1.1" 200 1748 0.001002
+2025-10-25 15:06:41-DEBUG: Initializing WebSocket
+2025-10-25 15:06:41-DEBUG: Validating WebSocket request
+2025-10-25 15:06:41-INFO: 127.0.0.1 - - [2025-10-25 15:06:41] "GET /style.css HTTP/1.1" 404 880 0.004501
+2025-10-25 15:06:41-DEBUG: Initializing WebSocket
+2025-10-25 15:06:41-DEBUG: Validating WebSocket request
+2025-10-25 15:06:41-INFO: 127.0.0.1 - - [2025-10-25 15:06:41] "GET /eel.js HTTP/1.1" 200 6071 0.000997
+2025-10-25 15:06:42-DEBUG: Initializing WebSocket
+2025-10-25 15:06:42-DEBUG: Validating WebSocket request
+2025-10-25 15:06:42-DEBUG: Attempting to upgrade connection
+2025-10-25 15:06:42-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:06:58-DEBUG: Closed WebSocket
+2025-10-25 15:06:58-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 15:06:58-DEBUG: Closed WebSocket
+2025-10-25 15:07:17-DEBUG: Initializing WebSocket
+2025-10-25 15:07:17-DEBUG: Validating WebSocket request
+2025-10-25 15:07:17-INFO: 127.0.0.1 - - [2025-10-25 15:07:17] "GET /index.html HTTP/1.1" 200 1748 0.001043
+2025-10-25 15:07:17-DEBUG: Initializing WebSocket
+2025-10-25 15:07:17-DEBUG: Validating WebSocket request
+2025-10-25 15:07:17-INFO: 127.0.0.1 - - [2025-10-25 15:07:17] "GET /style.css HTTP/1.1" 404 880 0.004592
+2025-10-25 15:07:17-DEBUG: Initializing WebSocket
+2025-10-25 15:07:17-DEBUG: Validating WebSocket request
+2025-10-25 15:07:17-INFO: 127.0.0.1 - - [2025-10-25 15:07:17] "GET /eel.js HTTP/1.1" 200 6071 0.000000
+2025-10-25 15:07:18-DEBUG: Initializing WebSocket
+2025-10-25 15:07:18-DEBUG: Validating WebSocket request
+2025-10-25 15:07:18-DEBUG: Attempting to upgrade connection
+2025-10-25 15:07:18-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:11:08-DEBUG: Closed WebSocket
+2025-10-25 15:11:08-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 15:11:08-DEBUG: Closed WebSocket
+2025-10-25 15:11:10-DEBUG: Initializing WebSocket
+2025-10-25 15:11:10-DEBUG: Validating WebSocket request
+2025-10-25 15:11:10-INFO: 127.0.0.1 - - [2025-10-25 15:11:10] "GET /index.html HTTP/1.1" 200 2301 0.001995
+2025-10-25 15:11:10-DEBUG: Initializing WebSocket
+2025-10-25 15:11:10-DEBUG: Validating WebSocket request
+2025-10-25 15:11:10-INFO: 127.0.0.1 - - [2025-10-25 15:11:10] "GET /style.css HTTP/1.1" 404 880 0.004771
+2025-10-25 15:11:10-DEBUG: Initializing WebSocket
+2025-10-25 15:11:10-DEBUG: Validating WebSocket request
+2025-10-25 15:11:10-INFO: 127.0.0.1 - - [2025-10-25 15:11:10] "GET /eel.js HTTP/1.1" 200 6071 0.001391
+2025-10-25 15:11:11-DEBUG: Initializing WebSocket
+2025-10-25 15:11:11-DEBUG: Validating WebSocket request
+2025-10-25 15:11:11-DEBUG: Attempting to upgrade connection
+2025-10-25 15:11:11-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:11:47-DEBUG: Closed WebSocket
+2025-10-25 15:11:47-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 15:11:47-DEBUG: Closed WebSocket
+2025-10-25 15:11:49-DEBUG: Initializing WebSocket
+2025-10-25 15:11:49-DEBUG: Validating WebSocket request
+2025-10-25 15:11:49-INFO: 127.0.0.1 - - [2025-10-25 15:11:49] "GET /index.html HTTP/1.1" 200 2844 0.001036
+2025-10-25 15:11:49-DEBUG: Initializing WebSocket
+2025-10-25 15:11:49-DEBUG: Validating WebSocket request
+2025-10-25 15:11:49-INFO: 127.0.0.1 - - [2025-10-25 15:11:49] "GET /style.css HTTP/1.1" 404 880 0.004492
+2025-10-25 15:11:49-DEBUG: Initializing WebSocket
+2025-10-25 15:11:49-DEBUG: Validating WebSocket request
+2025-10-25 15:11:49-INFO: 127.0.0.1 - - [2025-10-25 15:11:49] "GET /eel.js HTTP/1.1" 200 6071 0.001123
+2025-10-25 15:11:50-DEBUG: Initializing WebSocket
+2025-10-25 15:11:50-DEBUG: Validating WebSocket request
+2025-10-25 15:11:50-DEBUG: Attempting to upgrade connection
+2025-10-25 15:11:50-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:12:10-DEBUG: Initializing WebSocket
+2025-10-25 15:12:10-DEBUG: Validating WebSocket request
+2025-10-25 15:12:10-INFO: 127.0.0.1 - - [2025-10-25 15:12:10] "GET /index.html HTTP/1.1" 200 2317 0.002125
+2025-10-25 15:12:10-DEBUG: Initializing WebSocket
+2025-10-25 15:12:10-DEBUG: Validating WebSocket request
+2025-10-25 15:12:10-INFO: 127.0.0.1 - - [2025-10-25 15:12:10] "GET /style.css HTTP/1.1" 404 880 0.006019
+2025-10-25 15:12:10-DEBUG: Initializing WebSocket
+2025-10-25 15:12:10-DEBUG: Validating WebSocket request
+2025-10-25 15:12:10-INFO: 127.0.0.1 - - [2025-10-25 15:12:10] "GET /eel.js HTTP/1.1" 200 6071 0.001477
+2025-10-25 15:12:10-DEBUG: Initializing WebSocket
+2025-10-25 15:12:10-DEBUG: Validating WebSocket request
+2025-10-25 15:12:10-DEBUG: Attempting to upgrade connection
+2025-10-25 15:12:10-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:12:36-DEBUG: Initializing WebSocket
+2025-10-25 15:12:36-DEBUG: Validating WebSocket request
+2025-10-25 15:12:36-INFO: 127.0.0.1 - - [2025-10-25 15:12:36] "GET /index.html HTTP/1.1" 200 2810 0.001046
+2025-10-25 15:12:36-DEBUG: Initializing WebSocket
+2025-10-25 15:12:36-DEBUG: Validating WebSocket request
+2025-10-25 15:12:36-INFO: 127.0.0.1 - - [2025-10-25 15:12:36] "GET /style.css HTTP/1.1" 404 880 0.005966
+2025-10-25 15:12:36-DEBUG: Initializing WebSocket
+2025-10-25 15:12:36-DEBUG: Validating WebSocket request
+2025-10-25 15:12:36-INFO: 127.0.0.1 - - [2025-10-25 15:12:36] "GET /eel.js HTTP/1.1" 200 6071 0.000000
+2025-10-25 15:12:36-DEBUG: Initializing WebSocket
+2025-10-25 15:12:36-DEBUG: Validating WebSocket request
+2025-10-25 15:12:36-DEBUG: Attempting to upgrade connection
+2025-10-25 15:12:36-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:12:40-DEBUG: Initializing WebSocket
+2025-10-25 15:12:40-DEBUG: Validating WebSocket request
+2025-10-25 15:12:40-INFO: 127.0.0.1 - - [2025-10-25 15:12:40] "GET /style.css HTTP/1.1" 404 880 0.000997
+2025-10-25 15:12:40-DEBUG: Initializing WebSocket
+2025-10-25 15:12:40-DEBUG: Validating WebSocket request
+2025-10-25 15:12:40-INFO: 127.0.0.1 - - [2025-10-25 15:12:40] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.000997
+2025-10-25 15:14:33-DEBUG: Closed WebSocket
+2025-10-25 15:14:33-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 15:14:33-DEBUG: Closed WebSocket
+2025-10-25 15:14:36-DEBUG: Initializing WebSocket
+2025-10-25 15:14:36-DEBUG: Validating WebSocket request
+2025-10-25 15:14:36-INFO: 127.0.0.1 - - [2025-10-25 15:14:36] "GET /index.html HTTP/1.1" 200 2843 0.001127
+2025-10-25 15:14:36-DEBUG: Initializing WebSocket
+2025-10-25 15:14:36-DEBUG: Validating WebSocket request
+2025-10-25 15:14:36-INFO: 127.0.0.1 - - [2025-10-25 15:14:36] "GET /style.css HTTP/1.1" 404 880 0.005713
+2025-10-25 15:14:36-DEBUG: Initializing WebSocket
+2025-10-25 15:14:36-DEBUG: Validating WebSocket request
+2025-10-25 15:14:36-INFO: 127.0.0.1 - - [2025-10-25 15:14:36] "GET /eel.js HTTP/1.1" 200 6071 0.001112
+2025-10-25 15:14:37-DEBUG: Initializing WebSocket
+2025-10-25 15:14:37-DEBUG: Validating WebSocket request
+2025-10-25 15:14:37-DEBUG: Attempting to upgrade connection
+2025-10-25 15:14:37-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:14:39-DEBUG: Closed WebSocket
+2025-10-25 15:14:39-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 15:14:39-DEBUG: Closed WebSocket
+2025-10-25 15:16:40-DEBUG: Initializing WebSocket
+2025-10-25 15:16:40-DEBUG: Validating WebSocket request
+2025-10-25 15:16:40-INFO: 127.0.0.1 - - [2025-10-25 15:16:40] "GET /index.html HTTP/1.1" 200 2860 0.002042
+2025-10-25 15:16:40-DEBUG: Initializing WebSocket
+2025-10-25 15:16:40-DEBUG: Validating WebSocket request
+2025-10-25 15:16:40-INFO: 127.0.0.1 - - [2025-10-25 15:16:40] "GET /style.css HTTP/1.1" 404 880 0.006766
+2025-10-25 15:16:40-DEBUG: Initializing WebSocket
+2025-10-25 15:16:40-DEBUG: Validating WebSocket request
+2025-10-25 15:16:40-INFO: 127.0.0.1 - - [2025-10-25 15:16:40] "GET /eel.js HTTP/1.1" 200 6071 0.001024
+2025-10-25 15:16:41-DEBUG: Initializing WebSocket
+2025-10-25 15:16:41-DEBUG: Validating WebSocket request
+2025-10-25 15:16:41-DEBUG: Attempting to upgrade connection
+2025-10-25 15:16:41-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:18:39-DEBUG: Initializing WebSocket
+2025-10-25 15:18:39-DEBUG: Validating WebSocket request
+2025-10-25 15:18:39-INFO: 127.0.0.1 - - [2025-10-25 15:18:39] "GET /index.html HTTP/1.1" 200 2837 0.002023
+2025-10-25 15:18:39-DEBUG: Initializing WebSocket
+2025-10-25 15:18:39-DEBUG: Validating WebSocket request
+2025-10-25 15:18:39-INFO: 127.0.0.1 - - [2025-10-25 15:18:39] "GET /style.css HTTP/1.1" 404 880 0.007265
+2025-10-25 15:18:39-DEBUG: Initializing WebSocket
+2025-10-25 15:18:39-DEBUG: Validating WebSocket request
+2025-10-25 15:18:39-INFO: 127.0.0.1 - - [2025-10-25 15:18:39] "GET /eel.js HTTP/1.1" 200 6071 0.000997
+2025-10-25 15:18:40-DEBUG: Initializing WebSocket
+2025-10-25 15:18:40-DEBUG: Validating WebSocket request
+2025-10-25 15:18:40-DEBUG: Attempting to upgrade connection
+2025-10-25 15:18:40-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:19:07-DEBUG: Initializing WebSocket
+2025-10-25 15:19:07-DEBUG: Validating WebSocket request
+2025-10-25 15:19:07-INFO: 127.0.0.1 - - [2025-10-25 15:19:07] "GET /index.html HTTP/1.1" 200 2854 0.001021
+2025-10-25 15:19:07-DEBUG: Initializing WebSocket
+2025-10-25 15:19:07-DEBUG: Validating WebSocket request
+2025-10-25 15:19:07-INFO: 127.0.0.1 - - [2025-10-25 15:19:07] "GET /style.css HTTP/1.1" 404 880 0.005988
+2025-10-25 15:19:07-DEBUG: Initializing WebSocket
+2025-10-25 15:19:07-DEBUG: Validating WebSocket request
+2025-10-25 15:19:07-INFO: 127.0.0.1 - - [2025-10-25 15:19:07] "GET /eel.js HTTP/1.1" 200 6071 0.002161
+2025-10-25 15:19:08-DEBUG: Initializing WebSocket
+2025-10-25 15:19:08-DEBUG: Validating WebSocket request
+2025-10-25 15:19:08-DEBUG: Attempting to upgrade connection
+2025-10-25 15:19:08-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:19:20-DEBUG: Initializing WebSocket
+2025-10-25 15:19:20-DEBUG: Validating WebSocket request
+2025-10-25 15:19:20-INFO: 127.0.0.1 - - [2025-10-25 15:19:20] "GET /index.html HTTP/1.1" 200 2854 0.001998
+2025-10-25 15:19:20-DEBUG: Initializing WebSocket
+2025-10-25 15:19:20-DEBUG: Validating WebSocket request
+2025-10-25 15:19:20-INFO: 127.0.0.1 - - [2025-10-25 15:19:20] "GET /style.css HTTP/1.1" 404 880 0.007437
+2025-10-25 15:19:20-DEBUG: Initializing WebSocket
+2025-10-25 15:19:20-DEBUG: Validating WebSocket request
+2025-10-25 15:19:20-INFO: 127.0.0.1 - - [2025-10-25 15:19:20] "GET /eel.js HTTP/1.1" 200 6071 0.001290
+2025-10-25 15:19:20-DEBUG: Initializing WebSocket
+2025-10-25 15:19:20-DEBUG: Validating WebSocket request
+2025-10-25 15:19:20-DEBUG: Attempting to upgrade connection
+2025-10-25 15:19:20-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:19:56-DEBUG: Initializing WebSocket
+2025-10-25 15:19:56-DEBUG: Validating WebSocket request
+2025-10-25 15:19:56-INFO: 127.0.0.1 - - [2025-10-25 15:19:56] "GET /index.html HTTP/1.1" 200 3211 0.002136
+2025-10-25 15:19:56-DEBUG: Initializing WebSocket
+2025-10-25 15:19:56-DEBUG: Validating WebSocket request
+2025-10-25 15:19:56-INFO: 127.0.0.1 - - [2025-10-25 15:19:56] "GET /style.css HTTP/1.1" 404 880 0.005322
+2025-10-25 15:19:56-DEBUG: Initializing WebSocket
+2025-10-25 15:19:56-DEBUG: Validating WebSocket request
+2025-10-25 15:19:56-INFO: 127.0.0.1 - - [2025-10-25 15:19:56] "GET /eel.js HTTP/1.1" 200 6071 0.000997
+2025-10-25 15:19:57-DEBUG: Initializing WebSocket
+2025-10-25 15:19:57-DEBUG: Validating WebSocket request
+2025-10-25 15:19:57-DEBUG: Attempting to upgrade connection
+2025-10-25 15:19:57-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:21:18-DEBUG: Closed WebSocket
+2025-10-25 15:21:18-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 15:21:18-DEBUG: Closed WebSocket
+2025-10-25 15:21:21-DEBUG: Initializing WebSocket
+2025-10-25 15:21:21-DEBUG: Validating WebSocket request
+2025-10-25 15:21:21-INFO: 127.0.0.1 - - [2025-10-25 15:21:21] "GET /index.html HTTP/1.1" 200 3211 0.001418
+2025-10-25 15:21:21-DEBUG: Initializing WebSocket
+2025-10-25 15:21:21-DEBUG: Validating WebSocket request
+2025-10-25 15:21:21-INFO: 127.0.0.1 - - [2025-10-25 15:21:21] "GET /style.css HTTP/1.1" 404 880 0.004849
+2025-10-25 15:21:21-DEBUG: Initializing WebSocket
+2025-10-25 15:21:21-DEBUG: Validating WebSocket request
+2025-10-25 15:21:21-INFO: 127.0.0.1 - - [2025-10-25 15:21:21] "GET /eel.js HTTP/1.1" 200 6071 0.001002
+2025-10-25 15:21:21-DEBUG: Initializing WebSocket
+2025-10-25 15:21:21-DEBUG: Validating WebSocket request
+2025-10-25 15:21:21-DEBUG: Attempting to upgrade connection
+2025-10-25 15:21:21-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:22:07-DEBUG: Initializing WebSocket
+2025-10-25 15:22:07-DEBUG: Validating WebSocket request
+2025-10-25 15:22:07-INFO: 127.0.0.1 - - [2025-10-25 15:22:07] "GET /index.html HTTP/1.1" 200 3250 0.001995
+2025-10-25 15:22:07-DEBUG: Initializing WebSocket
+2025-10-25 15:22:07-DEBUG: Validating WebSocket request
+2025-10-25 15:22:07-INFO: 127.0.0.1 - - [2025-10-25 15:22:07] "GET /style.css HTTP/1.1" 404 880 0.005981
+2025-10-25 15:22:07-DEBUG: Initializing WebSocket
+2025-10-25 15:22:07-DEBUG: Validating WebSocket request
+2025-10-25 15:22:07-INFO: 127.0.0.1 - - [2025-10-25 15:22:07] "GET /eel.js HTTP/1.1" 200 6071 0.000995
+2025-10-25 15:22:08-DEBUG: Initializing WebSocket
+2025-10-25 15:22:08-DEBUG: Validating WebSocket request
+2025-10-25 15:22:08-DEBUG: Attempting to upgrade connection
+2025-10-25 15:22:08-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:22:09-DEBUG: Initializing WebSocket
+2025-10-25 15:22:09-DEBUG: Validating WebSocket request
+2025-10-25 15:22:09-INFO: 127.0.0.1 - - [2025-10-25 15:22:09] "GET /style.css HTTP/1.1" 404 880 0.000000
+2025-10-25 15:22:09-DEBUG: Initializing WebSocket
+2025-10-25 15:22:09-DEBUG: Validating WebSocket request
+2025-10-25 15:22:09-INFO: 127.0.0.1 - - [2025-10-25 15:22:09] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.001012
+2025-10-25 15:22:47-DEBUG: Initializing WebSocket
+2025-10-25 15:22:47-DEBUG: Validating WebSocket request
+2025-10-25 15:22:47-INFO: 127.0.0.1 - - [2025-10-25 15:22:47] "GET /index.html HTTP/1.1" 200 2854 0.002248
+2025-10-25 15:22:47-DEBUG: Initializing WebSocket
+2025-10-25 15:22:47-DEBUG: Validating WebSocket request
+2025-10-25 15:22:47-INFO: 127.0.0.1 - - [2025-10-25 15:22:47] "GET /style.css HTTP/1.1" 404 880 0.004834
+2025-10-25 15:22:47-DEBUG: Initializing WebSocket
+2025-10-25 15:22:47-DEBUG: Validating WebSocket request
+2025-10-25 15:22:47-INFO: 127.0.0.1 - - [2025-10-25 15:22:47] "GET /eel.js HTTP/1.1" 200 6071 0.000998
+2025-10-25 15:22:47-DEBUG: Initializing WebSocket
+2025-10-25 15:22:47-DEBUG: Validating WebSocket request
+2025-10-25 15:22:47-DEBUG: Attempting to upgrade connection
+2025-10-25 15:22:47-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:24:28-DEBUG: Initializing WebSocket
+2025-10-25 15:24:28-DEBUG: Validating WebSocket request
+2025-10-25 15:24:28-INFO: 127.0.0.1 - - [2025-10-25 15:24:28] "GET /index.html HTTP/1.1" 200 2917 0.001995
+2025-10-25 15:24:28-DEBUG: Initializing WebSocket
+2025-10-25 15:24:28-DEBUG: Validating WebSocket request
+2025-10-25 15:24:28-INFO: 127.0.0.1 - - [2025-10-25 15:24:28] "GET /style.css HTTP/1.1" 404 880 0.005251
+2025-10-25 15:24:28-DEBUG: Initializing WebSocket
+2025-10-25 15:24:28-DEBUG: Validating WebSocket request
+2025-10-25 15:24:28-INFO: 127.0.0.1 - - [2025-10-25 15:24:28] "GET /eel.js HTTP/1.1" 200 6071 0.001185
+2025-10-25 15:24:29-DEBUG: Initializing WebSocket
+2025-10-25 15:24:29-DEBUG: Validating WebSocket request
+2025-10-25 15:24:29-DEBUG: Attempting to upgrade connection
+2025-10-25 15:24:29-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:25:17-DEBUG: Initializing WebSocket
+2025-10-25 15:25:17-DEBUG: Validating WebSocket request
+2025-10-25 15:25:17-INFO: 127.0.0.1 - - [2025-10-25 15:25:17] "GET /index.html HTTP/1.1" 200 2917 0.002324
+2025-10-25 15:25:17-DEBUG: Initializing WebSocket
+2025-10-25 15:25:17-DEBUG: Validating WebSocket request
+2025-10-25 15:25:17-INFO: 127.0.0.1 - - [2025-10-25 15:25:17] "GET /style.css HTTP/1.1" 404 880 0.005231
+2025-10-25 15:25:17-DEBUG: Initializing WebSocket
+2025-10-25 15:25:17-DEBUG: Validating WebSocket request
+2025-10-25 15:25:17-INFO: 127.0.0.1 - - [2025-10-25 15:25:17] "GET /eel.js HTTP/1.1" 200 6071 0.001003
+2025-10-25 15:25:17-DEBUG: Initializing WebSocket
+2025-10-25 15:25:17-DEBUG: Validating WebSocket request
+2025-10-25 15:25:17-DEBUG: Attempting to upgrade connection
+2025-10-25 15:25:17-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:26:47-DEBUG: Initializing WebSocket
+2025-10-25 15:26:47-DEBUG: Validating WebSocket request
+2025-10-25 15:26:47-INFO: 127.0.0.1 - - [2025-10-25 15:26:47] "GET /index.html HTTP/1.1" 200 2859 0.001499
+2025-10-25 15:26:47-DEBUG: Initializing WebSocket
+2025-10-25 15:26:47-DEBUG: Validating WebSocket request
+2025-10-25 15:26:47-INFO: 127.0.0.1 - - [2025-10-25 15:26:47] "GET /style.css HTTP/1.1" 404 880 0.005874
+2025-10-25 15:26:47-DEBUG: Initializing WebSocket
+2025-10-25 15:26:47-DEBUG: Validating WebSocket request
+2025-10-25 15:26:47-INFO: 127.0.0.1 - - [2025-10-25 15:26:47] "GET /eel.js HTTP/1.1" 200 6071 0.001486
+2025-10-25 15:26:47-DEBUG: Initializing WebSocket
+2025-10-25 15:26:47-DEBUG: Validating WebSocket request
+2025-10-25 15:26:47-DEBUG: Attempting to upgrade connection
+2025-10-25 15:26:47-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:28:48-DEBUG: Initializing WebSocket
+2025-10-25 15:28:48-DEBUG: Validating WebSocket request
+2025-10-25 15:28:48-INFO: 127.0.0.1 - - [2025-10-25 15:28:48] "GET /index.html HTTP/1.1" 200 2941 0.001011
+2025-10-25 15:28:48-DEBUG: Initializing WebSocket
+2025-10-25 15:28:48-DEBUG: Validating WebSocket request
+2025-10-25 15:28:48-INFO: 127.0.0.1 - - [2025-10-25 15:28:48] "GET /style.css HTTP/1.1" 404 880 0.005118
+2025-10-25 15:28:48-DEBUG: Initializing WebSocket
+2025-10-25 15:28:48-DEBUG: Validating WebSocket request
+2025-10-25 15:28:48-INFO: 127.0.0.1 - - [2025-10-25 15:28:48] "GET /eel.js HTTP/1.1" 200 6071 0.001025
+2025-10-25 15:28:49-DEBUG: Initializing WebSocket
+2025-10-25 15:28:49-DEBUG: Validating WebSocket request
+2025-10-25 15:28:49-DEBUG: Attempting to upgrade connection
+2025-10-25 15:28:49-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:31:08-DEBUG: Initializing WebSocket
+2025-10-25 15:31:08-DEBUG: Validating WebSocket request
+2025-10-25 15:31:08-INFO: 127.0.0.1 - - [2025-10-25 15:31:08] "GET /index.html HTTP/1.1" 200 3115 0.002367
+2025-10-25 15:31:08-DEBUG: Initializing WebSocket
+2025-10-25 15:31:08-DEBUG: Validating WebSocket request
+2025-10-25 15:31:08-INFO: 127.0.0.1 - - [2025-10-25 15:31:08] "GET /style.css HTTP/1.1" 404 880 0.005284
+2025-10-25 15:31:08-DEBUG: Initializing WebSocket
+2025-10-25 15:31:08-DEBUG: Validating WebSocket request
+2025-10-25 15:31:08-INFO: 127.0.0.1 - - [2025-10-25 15:31:08] "GET /eel.js HTTP/1.1" 200 6071 0.001443
+2025-10-25 15:31:09-DEBUG: Initializing WebSocket
+2025-10-25 15:31:09-DEBUG: Validating WebSocket request
+2025-10-25 15:31:09-DEBUG: Attempting to upgrade connection
+2025-10-25 15:31:09-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:31:48-DEBUG: Initializing WebSocket
+2025-10-25 15:31:48-DEBUG: Validating WebSocket request
+2025-10-25 15:31:48-INFO: 127.0.0.1 - - [2025-10-25 15:31:48] "GET /index.html HTTP/1.1" 200 2317 0.000998
+2025-10-25 15:31:48-DEBUG: Initializing WebSocket
+2025-10-25 15:31:48-DEBUG: Validating WebSocket request
+2025-10-25 15:31:48-INFO: 127.0.0.1 - - [2025-10-25 15:31:48] "GET /style.css HTTP/1.1" 404 880 0.004986
+2025-10-25 15:31:48-DEBUG: Initializing WebSocket
+2025-10-25 15:31:48-DEBUG: Validating WebSocket request
+2025-10-25 15:31:48-INFO: 127.0.0.1 - - [2025-10-25 15:31:48] "GET /eel.js HTTP/1.1" 200 6071 0.000000
+2025-10-25 15:31:48-DEBUG: Initializing WebSocket
+2025-10-25 15:31:48-DEBUG: Validating WebSocket request
+2025-10-25 15:31:48-DEBUG: Attempting to upgrade connection
+2025-10-25 15:31:48-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:32:00-DEBUG: Initializing WebSocket
+2025-10-25 15:32:00-DEBUG: Validating WebSocket request
+2025-10-25 15:32:00-INFO: 127.0.0.1 - - [2025-10-25 15:32:00] "GET /index.html HTTP/1.1" 200 2099 0.004430
+2025-10-25 15:32:00-DEBUG: Initializing WebSocket
+2025-10-25 15:32:00-DEBUG: Validating WebSocket request
+2025-10-25 15:32:00-INFO: 127.0.0.1 - - [2025-10-25 15:32:00] "GET /style.css HTTP/1.1" 404 880 0.004899
+2025-10-25 15:32:00-DEBUG: Initializing WebSocket
+2025-10-25 15:32:00-DEBUG: Validating WebSocket request
+2025-10-25 15:32:00-INFO: 127.0.0.1 - - [2025-10-25 15:32:00] "GET /eel.js HTTP/1.1" 200 6071 0.000997
+2025-10-25 15:32:00-DEBUG: Initializing WebSocket
+2025-10-25 15:32:00-DEBUG: Validating WebSocket request
+2025-10-25 15:32:00-DEBUG: Attempting to upgrade connection
+2025-10-25 15:32:00-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:32:19-DEBUG: Closed WebSocket
+2025-10-25 15:32:19-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 15:32:19-DEBUG: Closed WebSocket
+2025-10-25 15:34:35-DEBUG: Initializing WebSocket
+2025-10-25 15:34:35-DEBUG: Validating WebSocket request
+2025-10-25 15:34:35-INFO: 127.0.0.1 - - [2025-10-25 15:34:35] "GET /index.html HTTP/1.1" 200 2969 0.002503
+2025-10-25 15:34:35-DEBUG: Initializing WebSocket
+2025-10-25 15:34:35-DEBUG: Validating WebSocket request
+2025-10-25 15:34:35-INFO: 127.0.0.1 - - [2025-10-25 15:34:35] "GET /eel.js HTTP/1.1" 200 6071 0.000505
+2025-10-25 15:34:36-DEBUG: Initializing WebSocket
+2025-10-25 15:34:36-DEBUG: Validating WebSocket request
+2025-10-25 15:34:36-DEBUG: Attempting to upgrade connection
+2025-10-25 15:34:36-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:41:33-DEBUG: Initializing WebSocket
+2025-10-25 15:41:33-DEBUG: Validating WebSocket request
+2025-10-25 15:41:33-INFO: 127.0.0.1 - - [2025-10-25 15:41:33] "GET /index.html HTTP/1.1" 200 3453 0.002056
+2025-10-25 15:41:33-DEBUG: Initializing WebSocket
+2025-10-25 15:41:33-DEBUG: Validating WebSocket request
+2025-10-25 15:41:33-INFO: 127.0.0.1 - - [2025-10-25 15:41:33] "GET /eel.js HTTP/1.1" 200 6071 0.001114
+2025-10-25 15:41:34-DEBUG: Initializing WebSocket
+2025-10-25 15:41:34-DEBUG: Validating WebSocket request
+2025-10-25 15:41:34-DEBUG: Attempting to upgrade connection
+2025-10-25 15:41:34-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:43:13-DEBUG: Closed WebSocket
+2025-10-25 15:43:13-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 15:43:13-DEBUG: Closed WebSocket
+2025-10-25 15:43:30-DEBUG: Initializing WebSocket
+2025-10-25 15:43:30-DEBUG: Validating WebSocket request
+2025-10-25 15:43:30-INFO: 127.0.0.1 - - [2025-10-25 15:43:30] "GET /index.html HTTP/1.1" 200 3715 0.001994
+2025-10-25 15:43:30-DEBUG: Initializing WebSocket
+2025-10-25 15:43:30-DEBUG: Validating WebSocket request
+2025-10-25 15:43:30-INFO: 127.0.0.1 - - [2025-10-25 15:43:30] "GET /eel.js HTTP/1.1" 200 6071 0.000997
+2025-10-25 15:43:31-DEBUG: Initializing WebSocket
+2025-10-25 15:43:31-DEBUG: Validating WebSocket request
+2025-10-25 15:43:31-DEBUG: Attempting to upgrade connection
+2025-10-25 15:43:31-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:45:37-DEBUG: Initializing WebSocket
+2025-10-25 15:45:37-DEBUG: Validating WebSocket request
+2025-10-25 15:45:37-INFO: 127.0.0.1 - - [2025-10-25 15:45:37] "GET /index.html HTTP/1.1" 200 3813 0.002138
+2025-10-25 15:45:37-DEBUG: Initializing WebSocket
+2025-10-25 15:45:37-DEBUG: Validating WebSocket request
+2025-10-25 15:45:37-INFO: 127.0.0.1 - - [2025-10-25 15:45:37] "GET /eel.js HTTP/1.1" 200 6071 0.001011
+2025-10-25 15:45:39-DEBUG: Initializing WebSocket
+2025-10-25 15:45:39-DEBUG: Validating WebSocket request
+2025-10-25 15:45:39-DEBUG: Attempting to upgrade connection
+2025-10-25 15:45:39-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:46:44-DEBUG: Initializing WebSocket
+2025-10-25 15:46:44-DEBUG: Validating WebSocket request
+2025-10-25 15:46:44-INFO: 127.0.0.1 - - [2025-10-25 15:46:44] "GET /index.html HTTP/1.1" 200 4918 0.002064
+2025-10-25 15:46:44-DEBUG: Initializing WebSocket
+2025-10-25 15:46:44-DEBUG: Validating WebSocket request
+2025-10-25 15:46:44-INFO: 127.0.0.1 - - [2025-10-25 15:46:44] "GET /eel.js HTTP/1.1" 200 6071 0.000503
+2025-10-25 15:46:45-DEBUG: Initializing WebSocket
+2025-10-25 15:46:45-DEBUG: Validating WebSocket request
+2025-10-25 15:46:45-DEBUG: Attempting to upgrade connection
+2025-10-25 15:46:45-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:48:00-DEBUG: Initializing WebSocket
+2025-10-25 15:48:00-DEBUG: Validating WebSocket request
+2025-10-25 15:48:00-INFO: 127.0.0.1 - - [2025-10-25 15:48:00] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.002990
+2025-10-25 15:48:02-DEBUG: Closed WebSocket
+2025-10-25 15:48:02-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 15:48:02-DEBUG: Closed WebSocket
+2025-10-25 15:48:06-DEBUG: Initializing WebSocket
+2025-10-25 15:48:06-DEBUG: Validating WebSocket request
+2025-10-25 15:48:06-INFO: 127.0.0.1 - - [2025-10-25 15:48:06] "GET /index.html HTTP/1.1" 200 4959 0.001993
+2025-10-25 15:48:06-DEBUG: Initializing WebSocket
+2025-10-25 15:48:06-DEBUG: Validating WebSocket request
+2025-10-25 15:48:06-INFO: 127.0.0.1 - - [2025-10-25 15:48:06] "GET /eel.js HTTP/1.1" 200 6071 0.001006
+2025-10-25 15:48:07-DEBUG: Initializing WebSocket
+2025-10-25 15:48:07-DEBUG: Validating WebSocket request
+2025-10-25 15:48:07-DEBUG: Attempting to upgrade connection
+2025-10-25 15:48:07-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:48:18-DEBUG: Initializing WebSocket
+2025-10-25 15:48:18-DEBUG: Validating WebSocket request
+2025-10-25 15:48:18-INFO: 127.0.0.1 - - [2025-10-25 15:48:18] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.002989
+2025-10-25 15:48:36-DEBUG: Closed WebSocket
+2025-10-25 15:48:36-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 15:48:36-DEBUG: Closed WebSocket
+2025-10-25 15:48:48-DEBUG: Initializing WebSocket
+2025-10-25 15:48:48-DEBUG: Validating WebSocket request
+2025-10-25 15:48:48-INFO: 127.0.0.1 - - [2025-10-25 15:48:48] "GET /index.html HTTP/1.1" 200 4959 0.001369
+2025-10-25 15:48:48-DEBUG: Initializing WebSocket
+2025-10-25 15:48:48-DEBUG: Validating WebSocket request
+2025-10-25 15:48:48-INFO: 127.0.0.1 - - [2025-10-25 15:48:48] "GET /eel.js HTTP/1.1" 200 6072 0.001994
+2025-10-25 15:48:49-DEBUG: Initializing WebSocket
+2025-10-25 15:48:49-DEBUG: Validating WebSocket request
+2025-10-25 15:48:49-DEBUG: Attempting to upgrade connection
+2025-10-25 15:48:49-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:48:53-DEBUG: Initializing WebSocket
+2025-10-25 15:48:53-DEBUG: Validating WebSocket request
+2025-10-25 15:48:53-INFO: 127.0.0.1 - - [2025-10-25 15:48:53] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.002374
+2025-10-25 15:51:31-DEBUG: Closed WebSocket
+2025-10-25 15:51:31-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 15:51:31-DEBUG: Closed WebSocket
+2025-10-25 15:51:34-DEBUG: Initializing WebSocket
+2025-10-25 15:51:34-DEBUG: Validating WebSocket request
+2025-10-25 15:51:34-INFO: 127.0.0.1 - - [2025-10-25 15:51:34] "GET /index.html HTTP/1.1" 200 5041 0.002507
+2025-10-25 15:51:34-DEBUG: Initializing WebSocket
+2025-10-25 15:51:34-DEBUG: Validating WebSocket request
+2025-10-25 15:51:34-INFO: 127.0.0.1 - - [2025-10-25 15:51:34] "GET /eel.js HTTP/1.1" 200 6072 0.001100
+2025-10-25 15:51:35-DEBUG: Initializing WebSocket
+2025-10-25 15:51:35-DEBUG: Validating WebSocket request
+2025-10-25 15:51:35-DEBUG: Attempting to upgrade connection
+2025-10-25 15:51:35-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:51:42-DEBUG: Initializing WebSocket
+2025-10-25 15:51:42-DEBUG: Validating WebSocket request
+2025-10-25 15:51:42-INFO: 127.0.0.1 - - [2025-10-25 15:51:42] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.003028
+2025-10-25 15:52:29-DEBUG: Initializing WebSocket
+2025-10-25 15:52:29-DEBUG: Validating WebSocket request
+2025-10-25 15:52:29-INFO: 127.0.0.1 - - [2025-10-25 15:52:29] "GET /index.html HTTP/1.1" 200 5096 0.001016
+2025-10-25 15:52:29-DEBUG: Initializing WebSocket
+2025-10-25 15:52:29-DEBUG: Validating WebSocket request
+2025-10-25 15:52:29-INFO: 127.0.0.1 - - [2025-10-25 15:52:29] "GET /eel.js HTTP/1.1" 200 6072 0.000997
+2025-10-25 15:52:30-DEBUG: Initializing WebSocket
+2025-10-25 15:52:30-DEBUG: Validating WebSocket request
+2025-10-25 15:52:30-DEBUG: Attempting to upgrade connection
+2025-10-25 15:52:30-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:52:31-DEBUG: Initializing WebSocket
+2025-10-25 15:52:31-DEBUG: Validating WebSocket request
+2025-10-25 15:52:31-INFO: 127.0.0.1 - - [2025-10-25 15:52:31] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.002112
+2025-10-25 15:52:53-DEBUG: Closed WebSocket
+2025-10-25 15:52:53-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 15:52:53-DEBUG: Closed WebSocket
+2025-10-25 15:52:55-DEBUG: Initializing WebSocket
+2025-10-25 15:52:55-DEBUG: Validating WebSocket request
+2025-10-25 15:52:55-INFO: 127.0.0.1 - - [2025-10-25 15:52:55] "GET /index.html HTTP/1.1" 200 5102 0.002426
+2025-10-25 15:52:55-DEBUG: Initializing WebSocket
+2025-10-25 15:52:55-DEBUG: Validating WebSocket request
+2025-10-25 15:52:55-INFO: 127.0.0.1 - - [2025-10-25 15:52:55] "GET /eel.js HTTP/1.1" 200 6072 0.001900
+2025-10-25 15:52:56-DEBUG: Initializing WebSocket
+2025-10-25 15:52:56-DEBUG: Validating WebSocket request
+2025-10-25 15:52:56-DEBUG: Attempting to upgrade connection
+2025-10-25 15:52:56-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 15:52:59-DEBUG: Initializing WebSocket
+2025-10-25 15:52:59-DEBUG: Validating WebSocket request
+2025-10-25 15:52:59-INFO: 127.0.0.1 - - [2025-10-25 15:52:59] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.003356
+2025-10-25 15:54:04-DEBUG: Initializing WebSocket
+2025-10-25 15:54:04-DEBUG: Validating WebSocket request
+2025-10-25 15:54:04-INFO: 127.0.0.1 - - [2025-10-25 15:54:04] "GET /index.html HTTP/1.1" 200 5122 0.002007
+2025-10-25 15:54:04-DEBUG: Initializing WebSocket
+2025-10-25 15:54:04-DEBUG: Validating WebSocket request
+2025-10-25 15:54:04-INFO: 127.0.0.1 - - [2025-10-25 15:54:04] "GET /eel.js HTTP/1.1" 200 6072 0.001011
+2025-10-25 15:54:05-DEBUG: Initializing WebSocket
+2025-10-25 15:54:05-DEBUG: Validating WebSocket request
+2025-10-25 15:54:05-DEBUG: Attempting to upgrade connection
+2025-10-25 15:54:05-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:00:29-DEBUG: Initializing WebSocket
+2025-10-25 16:00:29-DEBUG: Validating WebSocket request
+2025-10-25 16:00:29-INFO: 127.0.0.1 - - [2025-10-25 16:00:29] "GET /index.html HTTP/1.1" 200 5065 0.001258
+2025-10-25 16:00:29-DEBUG: Initializing WebSocket
+2025-10-25 16:00:29-DEBUG: Validating WebSocket request
+2025-10-25 16:00:29-INFO: 127.0.0.1 - - [2025-10-25 16:00:29] "GET /eel.js HTTP/1.1" 200 6072 0.000996
+2025-10-25 16:00:30-DEBUG: Initializing WebSocket
+2025-10-25 16:00:30-DEBUG: Validating WebSocket request
+2025-10-25 16:00:30-DEBUG: Attempting to upgrade connection
+2025-10-25 16:00:30-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:03:34-DEBUG: Closed WebSocket
+2025-10-25 16:03:34-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 16:03:34-DEBUG: Closed WebSocket
+2025-10-25 16:03:36-DEBUG: Initializing WebSocket
+2025-10-25 16:03:36-DEBUG: Validating WebSocket request
+2025-10-25 16:03:36-INFO: 127.0.0.1 - - [2025-10-25 16:03:36] "GET /index.html HTTP/1.1" 200 5161 0.002014
+2025-10-25 16:03:36-DEBUG: Initializing WebSocket
+2025-10-25 16:03:36-DEBUG: Validating WebSocket request
+2025-10-25 16:03:36-INFO: 127.0.0.1 - - [2025-10-25 16:03:36] "GET /eel.js HTTP/1.1" 200 6072 0.001411
+2025-10-25 16:03:37-DEBUG: Initializing WebSocket
+2025-10-25 16:03:37-DEBUG: Validating WebSocket request
+2025-10-25 16:03:37-DEBUG: Attempting to upgrade connection
+2025-10-25 16:03:37-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:03:37-DEBUG: Initializing WebSocket
+2025-10-25 16:03:37-DEBUG: Validating WebSocket request
+2025-10-25 16:03:37-INFO: 127.0.0.1 - - [2025-10-25 16:03:37] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.003098
+2025-10-25 16:04:00-DEBUG: Closed WebSocket
+2025-10-25 16:04:00-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 16:04:00-DEBUG: Closed WebSocket
+2025-10-25 16:04:02-DEBUG: Initializing WebSocket
+2025-10-25 16:04:02-DEBUG: Validating WebSocket request
+2025-10-25 16:04:02-INFO: 127.0.0.1 - - [2025-10-25 16:04:02] "GET /index.html HTTP/1.1" 200 5167 0.002458
+2025-10-25 16:04:02-DEBUG: Initializing WebSocket
+2025-10-25 16:04:02-DEBUG: Validating WebSocket request
+2025-10-25 16:04:02-INFO: 127.0.0.1 - - [2025-10-25 16:04:02] "GET /eel.js HTTP/1.1" 200 6072 0.000000
+2025-10-25 16:04:02-DEBUG: Initializing WebSocket
+2025-10-25 16:04:02-DEBUG: Validating WebSocket request
+2025-10-25 16:04:02-DEBUG: Attempting to upgrade connection
+2025-10-25 16:04:02-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:04:04-DEBUG: Initializing WebSocket
+2025-10-25 16:04:04-DEBUG: Validating WebSocket request
+2025-10-25 16:04:04-INFO: 127.0.0.1 - - [2025-10-25 16:04:04] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.002586
+2025-10-25 16:04:23-DEBUG: Initializing WebSocket
+2025-10-25 16:04:23-DEBUG: Validating WebSocket request
+2025-10-25 16:04:23-INFO: 127.0.0.1 - - [2025-10-25 16:04:23] "GET /index.html HTTP/1.1" 200 5170 0.000998
+2025-10-25 16:04:23-DEBUG: Initializing WebSocket
+2025-10-25 16:04:23-DEBUG: Validating WebSocket request
+2025-10-25 16:04:23-INFO: 127.0.0.1 - - [2025-10-25 16:04:23] "GET /eel.js HTTP/1.1" 200 6072 0.000997
+2025-10-25 16:04:24-DEBUG: Initializing WebSocket
+2025-10-25 16:04:24-DEBUG: Validating WebSocket request
+2025-10-25 16:04:24-DEBUG: Attempting to upgrade connection
+2025-10-25 16:04:24-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:04:27-DEBUG: Initializing WebSocket
+2025-10-25 16:04:27-DEBUG: Validating WebSocket request
+2025-10-25 16:04:27-INFO: 127.0.0.1 - - [2025-10-25 16:04:27] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.002990
+2025-10-25 16:05:21-DEBUG: Initializing WebSocket
+2025-10-25 16:05:21-DEBUG: Validating WebSocket request
+2025-10-25 16:05:21-INFO: 127.0.0.1 - - [2025-10-25 16:05:21] "GET /index.html HTTP/1.1" 200 5169 0.001229
+2025-10-25 16:05:21-DEBUG: Initializing WebSocket
+2025-10-25 16:05:21-DEBUG: Validating WebSocket request
+2025-10-25 16:05:21-INFO: 127.0.0.1 - - [2025-10-25 16:05:21] "GET /eel.js HTTP/1.1" 200 6072 0.000997
+2025-10-25 16:05:22-DEBUG: Initializing WebSocket
+2025-10-25 16:05:22-DEBUG: Validating WebSocket request
+2025-10-25 16:05:22-DEBUG: Attempting to upgrade connection
+2025-10-25 16:05:22-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:05:47-DEBUG: Initializing WebSocket
+2025-10-25 16:05:47-DEBUG: Validating WebSocket request
+2025-10-25 16:05:47-INFO: 127.0.0.1 - - [2025-10-25 16:05:47] "GET /index.html HTTP/1.1" 200 5171 0.002135
+2025-10-25 16:05:47-DEBUG: Initializing WebSocket
+2025-10-25 16:05:47-DEBUG: Validating WebSocket request
+2025-10-25 16:05:47-INFO: 127.0.0.1 - - [2025-10-25 16:05:47] "GET /eel.js HTTP/1.1" 200 6072 0.001407
+2025-10-25 16:05:47-DEBUG: Initializing WebSocket
+2025-10-25 16:05:47-DEBUG: Validating WebSocket request
+2025-10-25 16:05:47-DEBUG: Attempting to upgrade connection
+2025-10-25 16:05:47-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:06:04-DEBUG: Initializing WebSocket
+2025-10-25 16:06:04-DEBUG: Validating WebSocket request
+2025-10-25 16:06:04-INFO: 127.0.0.1 - - [2025-10-25 16:06:04] "GET /index.html HTTP/1.1" 200 5159 0.001050
+2025-10-25 16:06:04-DEBUG: Initializing WebSocket
+2025-10-25 16:06:04-DEBUG: Validating WebSocket request
+2025-10-25 16:06:04-INFO: 127.0.0.1 - - [2025-10-25 16:06:04] "GET /eel.js HTTP/1.1" 200 6072 0.001004
+2025-10-25 16:06:04-DEBUG: Initializing WebSocket
+2025-10-25 16:06:04-DEBUG: Validating WebSocket request
+2025-10-25 16:06:04-DEBUG: Attempting to upgrade connection
+2025-10-25 16:06:04-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:06:18-DEBUG: Closed WebSocket
+2025-10-25 16:06:18-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 16:06:18-DEBUG: Closed WebSocket
+2025-10-25 16:06:21-DEBUG: Initializing WebSocket
+2025-10-25 16:06:21-DEBUG: Validating WebSocket request
+2025-10-25 16:06:21-INFO: 127.0.0.1 - - [2025-10-25 16:06:21] "GET /index.html HTTP/1.1" 200 5158 0.001117
+2025-10-25 16:06:21-DEBUG: Initializing WebSocket
+2025-10-25 16:06:21-DEBUG: Validating WebSocket request
+2025-10-25 16:06:21-INFO: 127.0.0.1 - - [2025-10-25 16:06:21] "GET /eel.js HTTP/1.1" 200 6072 0.000996
+2025-10-25 16:06:21-DEBUG: Initializing WebSocket
+2025-10-25 16:06:21-DEBUG: Validating WebSocket request
+2025-10-25 16:06:21-DEBUG: Attempting to upgrade connection
+2025-10-25 16:06:21-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:08:14-DEBUG: Initializing WebSocket
+2025-10-25 16:08:14-DEBUG: Validating WebSocket request
+2025-10-25 16:08:14-INFO: 127.0.0.1 - - [2025-10-25 16:08:14] "GET /index.html HTTP/1.1" 200 5148 0.002045
+2025-10-25 16:08:14-DEBUG: Initializing WebSocket
+2025-10-25 16:08:14-DEBUG: Validating WebSocket request
+2025-10-25 16:08:14-INFO: 127.0.0.1 - - [2025-10-25 16:08:14] "GET /eel.js HTTP/1.1" 200 6072 0.000530
+2025-10-25 16:08:15-DEBUG: Initializing WebSocket
+2025-10-25 16:08:15-DEBUG: Validating WebSocket request
+2025-10-25 16:08:15-DEBUG: Attempting to upgrade connection
+2025-10-25 16:08:15-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:08:25-DEBUG: Initializing WebSocket
+2025-10-25 16:08:25-DEBUG: Validating WebSocket request
+2025-10-25 16:08:25-INFO: 127.0.0.1 - - [2025-10-25 16:08:25] "GET /index.html HTTP/1.1" 200 5147 0.001995
+2025-10-25 16:08:25-DEBUG: Initializing WebSocket
+2025-10-25 16:08:25-DEBUG: Validating WebSocket request
+2025-10-25 16:08:25-INFO: 127.0.0.1 - - [2025-10-25 16:08:25] "GET /eel.js HTTP/1.1" 200 6072 0.001995
+2025-10-25 16:08:26-DEBUG: Initializing WebSocket
+2025-10-25 16:08:26-DEBUG: Validating WebSocket request
+2025-10-25 16:08:26-DEBUG: Attempting to upgrade connection
+2025-10-25 16:08:26-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:13:45-DEBUG: Initializing WebSocket
+2025-10-25 16:13:45-DEBUG: Validating WebSocket request
+2025-10-25 16:13:45-INFO: 127.0.0.1 - - [2025-10-25 16:13:45] "GET /index.html HTTP/1.1" 200 6646 0.002877
+2025-10-25 16:13:45-DEBUG: Initializing WebSocket
+2025-10-25 16:13:45-DEBUG: Validating WebSocket request
+2025-10-25 16:13:45-INFO: 127.0.0.1 - - [2025-10-25 16:13:45] "GET /eel.js HTTP/1.1" 200 6072 0.001502
+2025-10-25 16:13:47-DEBUG: Initializing WebSocket
+2025-10-25 16:13:47-DEBUG: Validating WebSocket request
+2025-10-25 16:13:47-DEBUG: Attempting to upgrade connection
+2025-10-25 16:13:47-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:15:06-DEBUG: Closed WebSocket
+2025-10-25 16:15:06-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 16:15:06-DEBUG: Closed WebSocket
+2025-10-25 16:18:09-DEBUG: Initializing WebSocket
+2025-10-25 16:18:09-DEBUG: Validating WebSocket request
+2025-10-25 16:18:09-INFO: 127.0.0.1 - - [2025-10-25 16:18:09] "GET /index.html HTTP/1.1" 200 7005 0.001500
+2025-10-25 16:18:09-DEBUG: Initializing WebSocket
+2025-10-25 16:18:09-DEBUG: Validating WebSocket request
+2025-10-25 16:18:09-INFO: 127.0.0.1 - - [2025-10-25 16:18:09] "GET /eel.js HTTP/1.1" 200 6072 0.000502
+2025-10-25 16:18:10-DEBUG: Initializing WebSocket
+2025-10-25 16:18:10-DEBUG: Validating WebSocket request
+2025-10-25 16:18:10-DEBUG: Attempting to upgrade connection
+2025-10-25 16:18:10-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:18:42-DEBUG: Initializing WebSocket
+2025-10-25 16:18:42-DEBUG: Validating WebSocket request
+2025-10-25 16:18:42-INFO: 127.0.0.1 - - [2025-10-25 16:18:42] "GET /index.html HTTP/1.1" 200 5531 0.001006
+2025-10-25 16:18:42-DEBUG: Initializing WebSocket
+2025-10-25 16:18:42-DEBUG: Validating WebSocket request
+2025-10-25 16:18:42-INFO: 127.0.0.1 - - [2025-10-25 16:18:42] "GET /eel.js HTTP/1.1" 200 6072 0.000996
+2025-10-25 16:18:43-DEBUG: Initializing WebSocket
+2025-10-25 16:18:43-DEBUG: Validating WebSocket request
+2025-10-25 16:18:43-DEBUG: Attempting to upgrade connection
+2025-10-25 16:18:43-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:18:47-DEBUG: Initializing WebSocket
+2025-10-25 16:18:47-DEBUG: Validating WebSocket request
+2025-10-25 16:18:47-INFO: 127.0.0.1 - - [2025-10-25 16:18:47] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.003085
+2025-10-25 16:19:15-DEBUG: Closed WebSocket
+2025-10-25 16:19:15-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 16:19:15-DEBUG: Closed WebSocket
+2025-10-25 16:19:51-DEBUG: Initializing WebSocket
+2025-10-25 16:19:51-DEBUG: Validating WebSocket request
+2025-10-25 16:19:51-INFO: 127.0.0.1 - - [2025-10-25 16:19:51] "GET /index.html HTTP/1.1" 200 5574 0.001014
+2025-10-25 16:19:51-DEBUG: Initializing WebSocket
+2025-10-25 16:19:51-DEBUG: Validating WebSocket request
+2025-10-25 16:19:51-INFO: 127.0.0.1 - - [2025-10-25 16:19:51] "GET /eel.js HTTP/1.1" 200 6072 0.000504
+2025-10-25 16:19:52-DEBUG: Initializing WebSocket
+2025-10-25 16:19:52-DEBUG: Validating WebSocket request
+2025-10-25 16:19:52-DEBUG: Attempting to upgrade connection
+2025-10-25 16:19:52-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:20:01-DEBUG: Closed WebSocket
+2025-10-25 16:20:01-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 16:20:01-DEBUG: Closed WebSocket
+2025-10-25 16:20:03-DEBUG: Initializing WebSocket
+2025-10-25 16:20:03-DEBUG: Validating WebSocket request
+2025-10-25 16:20:03-INFO: 127.0.0.1 - - [2025-10-25 16:20:03] "GET /index.html HTTP/1.1" 200 5577 0.001022
+2025-10-25 16:20:03-DEBUG: Initializing WebSocket
+2025-10-25 16:20:03-DEBUG: Validating WebSocket request
+2025-10-25 16:20:03-INFO: 127.0.0.1 - - [2025-10-25 16:20:03] "GET /eel.js HTTP/1.1" 200 6072 0.000000
+2025-10-25 16:20:04-DEBUG: Initializing WebSocket
+2025-10-25 16:20:04-DEBUG: Validating WebSocket request
+2025-10-25 16:20:04-DEBUG: Attempting to upgrade connection
+2025-10-25 16:20:04-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:22:04-DEBUG: Initializing WebSocket
+2025-10-25 16:22:04-DEBUG: Validating WebSocket request
+2025-10-25 16:22:04-INFO: 127.0.0.1 - - [2025-10-25 16:22:04] "GET /index.html HTTP/1.1" 200 5604 0.001003
+2025-10-25 16:22:04-DEBUG: Initializing WebSocket
+2025-10-25 16:22:04-DEBUG: Validating WebSocket request
+2025-10-25 16:22:04-INFO: 127.0.0.1 - - [2025-10-25 16:22:04] "GET /eel.js HTTP/1.1" 200 6072 0.000506
+2025-10-25 16:22:06-DEBUG: Initializing WebSocket
+2025-10-25 16:22:06-DEBUG: Validating WebSocket request
+2025-10-25 16:22:06-DEBUG: Attempting to upgrade connection
+2025-10-25 16:22:06-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:22:12-DEBUG: Initializing WebSocket
+2025-10-25 16:22:12-DEBUG: Validating WebSocket request
+2025-10-25 16:22:12-INFO: 127.0.0.1 - - [2025-10-25 16:22:12] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.002014
+2025-10-25 16:26:56-DEBUG: Initializing WebSocket
+2025-10-25 16:26:56-DEBUG: Validating WebSocket request
+2025-10-25 16:26:56-INFO: 127.0.0.1 - - [2025-10-25 16:26:56] "GET /index.html HTTP/1.1" 200 5196 0.000997
+2025-10-25 16:26:56-DEBUG: Initializing WebSocket
+2025-10-25 16:26:56-DEBUG: Validating WebSocket request
+2025-10-25 16:26:56-INFO: 127.0.0.1 - - [2025-10-25 16:26:56] "GET /eel.js HTTP/1.1" 200 6072 0.001203
+2025-10-25 16:26:57-DEBUG: Initializing WebSocket
+2025-10-25 16:26:57-DEBUG: Validating WebSocket request
+2025-10-25 16:26:57-DEBUG: Attempting to upgrade connection
+2025-10-25 16:26:57-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:27:28-DEBUG: Closed WebSocket
+2025-10-25 16:27:28-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 16:27:28-DEBUG: Closed WebSocket
+2025-10-25 16:29:46-DEBUG: Initializing WebSocket
+2025-10-25 16:29:46-DEBUG: Validating WebSocket request
+2025-10-25 16:29:46-INFO: 127.0.0.1 - - [2025-10-25 16:29:46] "GET /index.html HTTP/1.1" 200 6567 0.001563
+2025-10-25 16:29:46-DEBUG: Initializing WebSocket
+2025-10-25 16:29:46-DEBUG: Validating WebSocket request
+2025-10-25 16:29:46-INFO: 127.0.0.1 - - [2025-10-25 16:29:46] "GET /eel.js HTTP/1.1" 200 6072 0.000506
+2025-10-25 16:29:47-DEBUG: Initializing WebSocket
+2025-10-25 16:29:47-DEBUG: Validating WebSocket request
+2025-10-25 16:29:47-DEBUG: Attempting to upgrade connection
+2025-10-25 16:29:47-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:30:27-DEBUG: Initializing WebSocket
+2025-10-25 16:30:27-DEBUG: Validating WebSocket request
+2025-10-25 16:30:27-INFO: 127.0.0.1 - - [2025-10-25 16:30:27] "GET /index.html HTTP/1.1" 200 6569 0.001025
+2025-10-25 16:30:27-DEBUG: Initializing WebSocket
+2025-10-25 16:30:27-DEBUG: Validating WebSocket request
+2025-10-25 16:30:27-INFO: 127.0.0.1 - - [2025-10-25 16:30:27] "GET /eel.js HTTP/1.1" 200 6072 0.001037
+2025-10-25 16:30:28-DEBUG: Initializing WebSocket
+2025-10-25 16:30:28-DEBUG: Validating WebSocket request
+2025-10-25 16:30:28-DEBUG: Attempting to upgrade connection
+2025-10-25 16:30:28-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:31:35-DEBUG: Closed WebSocket
+2025-10-25 16:31:35-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 16:31:35-DEBUG: Closed WebSocket
+2025-10-25 16:31:38-DEBUG: Initializing WebSocket
+2025-10-25 16:31:38-DEBUG: Validating WebSocket request
+2025-10-25 16:31:38-INFO: 127.0.0.1 - - [2025-10-25 16:31:38] "GET /index.html HTTP/1.1" 200 6576 0.002151
+2025-10-25 16:31:38-DEBUG: Initializing WebSocket
+2025-10-25 16:31:38-DEBUG: Validating WebSocket request
+2025-10-25 16:31:38-INFO: 127.0.0.1 - - [2025-10-25 16:31:38] "GET /eel.js HTTP/1.1" 200 6072 0.001725
+2025-10-25 16:31:38-DEBUG: Initializing WebSocket
+2025-10-25 16:31:38-DEBUG: Validating WebSocket request
+2025-10-25 16:31:38-DEBUG: Attempting to upgrade connection
+2025-10-25 16:31:38-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:32:16-DEBUG: Initializing WebSocket
+2025-10-25 16:32:16-DEBUG: Validating WebSocket request
+2025-10-25 16:32:16-INFO: 127.0.0.1 - - [2025-10-25 16:32:16] "GET /index.html HTTP/1.1" 200 6574 0.001040
+2025-10-25 16:32:16-DEBUG: Initializing WebSocket
+2025-10-25 16:32:16-DEBUG: Validating WebSocket request
+2025-10-25 16:32:16-INFO: 127.0.0.1 - - [2025-10-25 16:32:16] "GET /eel.js HTTP/1.1" 200 6072 0.001489
+2025-10-25 16:32:17-DEBUG: Initializing WebSocket
+2025-10-25 16:32:17-DEBUG: Validating WebSocket request
+2025-10-25 16:32:17-DEBUG: Attempting to upgrade connection
+2025-10-25 16:32:17-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:32:46-DEBUG: Initializing WebSocket
+2025-10-25 16:32:46-DEBUG: Validating WebSocket request
+2025-10-25 16:32:46-INFO: 127.0.0.1 - - [2025-10-25 16:32:46] "GET /index.html HTTP/1.1" 200 6576 0.001065
+2025-10-25 16:32:46-DEBUG: Initializing WebSocket
+2025-10-25 16:32:46-DEBUG: Validating WebSocket request
+2025-10-25 16:32:46-INFO: 127.0.0.1 - - [2025-10-25 16:32:46] "GET /eel.js HTTP/1.1" 200 6072 0.000613
+2025-10-25 16:32:47-DEBUG: Initializing WebSocket
+2025-10-25 16:32:47-DEBUG: Validating WebSocket request
+2025-10-25 16:32:47-DEBUG: Attempting to upgrade connection
+2025-10-25 16:32:47-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:36:50-DEBUG: Closed WebSocket
+2025-10-25 16:36:50-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 16:36:50-DEBUG: Closed WebSocket
+2025-10-25 16:44:26-DEBUG: Initializing WebSocket
+2025-10-25 16:44:26-DEBUG: Validating WebSocket request
+2025-10-25 16:44:26-INFO: 127.0.0.1 - - [2025-10-25 16:44:26] "GET /index.html HTTP/1.1" 200 9773 0.002326
+2025-10-25 16:44:26-DEBUG: Initializing WebSocket
+2025-10-25 16:44:26-DEBUG: Validating WebSocket request
+2025-10-25 16:44:26-INFO: 127.0.0.1 - - [2025-10-25 16:44:26] "GET /eel.js HTTP/1.1" 200 6072 0.000813
+2025-10-25 16:44:26-DEBUG: Initializing WebSocket
+2025-10-25 16:44:26-DEBUG: Validating WebSocket request
+2025-10-25 16:44:26-DEBUG: Attempting to upgrade connection
+2025-10-25 16:44:26-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:45:16-DEBUG: Closed WebSocket
+2025-10-25 16:45:16-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 16:45:16-DEBUG: Closed WebSocket
+2025-10-25 16:45:18-DEBUG: Initializing WebSocket
+2025-10-25 16:45:18-DEBUG: Validating WebSocket request
+2025-10-25 16:45:18-INFO: 127.0.0.1 - - [2025-10-25 16:45:18] "GET /index.html HTTP/1.1" 200 9766 0.001031
+2025-10-25 16:45:18-DEBUG: Initializing WebSocket
+2025-10-25 16:45:18-DEBUG: Validating WebSocket request
+2025-10-25 16:45:18-INFO: 127.0.0.1 - - [2025-10-25 16:45:18] "GET /eel.js HTTP/1.1" 200 6072 0.000503
+2025-10-25 16:45:19-DEBUG: Initializing WebSocket
+2025-10-25 16:45:19-DEBUG: Validating WebSocket request
+2025-10-25 16:45:19-DEBUG: Attempting to upgrade connection
+2025-10-25 16:45:19-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:47:12-DEBUG: Closed WebSocket
+2025-10-25 16:47:12-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 16:47:12-DEBUG: Closed WebSocket
+2025-10-25 16:47:15-DEBUG: Initializing WebSocket
+2025-10-25 16:47:15-DEBUG: Validating WebSocket request
+2025-10-25 16:47:15-INFO: 127.0.0.1 - - [2025-10-25 16:47:15] "GET /index.html HTTP/1.1" 200 9865 0.001029
+2025-10-25 16:47:15-DEBUG: Initializing WebSocket
+2025-10-25 16:47:15-DEBUG: Validating WebSocket request
+2025-10-25 16:47:15-INFO: 127.0.0.1 - - [2025-10-25 16:47:15] "GET /eel.js HTTP/1.1" 200 6072 0.001346
+2025-10-25 16:47:15-DEBUG: Initializing WebSocket
+2025-10-25 16:47:15-DEBUG: Validating WebSocket request
+2025-10-25 16:47:15-DEBUG: Attempting to upgrade connection
+2025-10-25 16:47:15-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:48:49-DEBUG: Closed WebSocket
+2025-10-25 16:48:49-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 16:48:49-DEBUG: Closed WebSocket
+2025-10-25 16:48:52-DEBUG: Initializing WebSocket
+2025-10-25 16:48:52-DEBUG: Validating WebSocket request
+2025-10-25 16:48:52-INFO: 127.0.0.1 - - [2025-10-25 16:48:52] "GET /index.html HTTP/1.1" 200 9913 0.002275
+2025-10-25 16:48:52-DEBUG: Initializing WebSocket
+2025-10-25 16:48:52-DEBUG: Validating WebSocket request
+2025-10-25 16:48:52-INFO: 127.0.0.1 - - [2025-10-25 16:48:52] "GET /eel.js HTTP/1.1" 200 6072 0.001025
+2025-10-25 16:48:53-DEBUG: Initializing WebSocket
+2025-10-25 16:48:53-DEBUG: Validating WebSocket request
+2025-10-25 16:48:53-DEBUG: Attempting to upgrade connection
+2025-10-25 16:48:53-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:50:34-DEBUG: Closed WebSocket
+2025-10-25 16:50:34-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 16:50:34-DEBUG: Closed WebSocket
+2025-10-25 16:50:36-DEBUG: Initializing WebSocket
+2025-10-25 16:50:36-DEBUG: Validating WebSocket request
+2025-10-25 16:50:36-INFO: 127.0.0.1 - - [2025-10-25 16:50:36] "GET /index.html HTTP/1.1" 200 9900 0.000998
+2025-10-25 16:50:36-DEBUG: Initializing WebSocket
+2025-10-25 16:50:36-DEBUG: Validating WebSocket request
+2025-10-25 16:50:36-INFO: 127.0.0.1 - - [2025-10-25 16:50:36] "GET /eel.js HTTP/1.1" 200 6072 0.000534
+2025-10-25 16:50:37-DEBUG: Initializing WebSocket
+2025-10-25 16:50:37-DEBUG: Validating WebSocket request
+2025-10-25 16:50:37-DEBUG: Attempting to upgrade connection
+2025-10-25 16:50:37-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:51:41-DEBUG: Closed WebSocket
+2025-10-25 16:51:41-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 16:51:41-DEBUG: Closed WebSocket
+2025-10-25 16:51:43-DEBUG: Initializing WebSocket
+2025-10-25 16:51:43-DEBUG: Validating WebSocket request
+2025-10-25 16:51:43-INFO: 127.0.0.1 - - [2025-10-25 16:51:43] "GET /index.html HTTP/1.1" 200 9879 0.002012
+2025-10-25 16:51:43-DEBUG: Initializing WebSocket
+2025-10-25 16:51:43-DEBUG: Validating WebSocket request
+2025-10-25 16:51:43-INFO: 127.0.0.1 - - [2025-10-25 16:51:43] "GET /eel.js HTTP/1.1" 200 6072 0.001199
+2025-10-25 16:51:44-DEBUG: Initializing WebSocket
+2025-10-25 16:51:44-DEBUG: Validating WebSocket request
+2025-10-25 16:51:44-DEBUG: Attempting to upgrade connection
+2025-10-25 16:51:44-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:51:54-DEBUG: Closed WebSocket
+2025-10-25 16:51:54-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 16:51:54-DEBUG: Closed WebSocket
+2025-10-25 16:51:56-DEBUG: Initializing WebSocket
+2025-10-25 16:51:56-DEBUG: Validating WebSocket request
+2025-10-25 16:51:56-INFO: 127.0.0.1 - - [2025-10-25 16:51:56] "GET /index.html HTTP/1.1" 200 9879 0.001002
+2025-10-25 16:51:56-DEBUG: Initializing WebSocket
+2025-10-25 16:51:56-DEBUG: Validating WebSocket request
+2025-10-25 16:51:56-INFO: 127.0.0.1 - - [2025-10-25 16:51:56] "GET /eel.js HTTP/1.1" 200 6072 0.001024
+2025-10-25 16:51:57-DEBUG: Initializing WebSocket
+2025-10-25 16:51:57-DEBUG: Validating WebSocket request
+2025-10-25 16:51:57-DEBUG: Attempting to upgrade connection
+2025-10-25 16:51:57-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:52:29-DEBUG: Initializing WebSocket
+2025-10-25 16:52:29-DEBUG: Validating WebSocket request
+2025-10-25 16:52:29-INFO: 127.0.0.1 - - [2025-10-25 16:52:29] "GET /index.html HTTP/1.1" 200 9909 0.000997
+2025-10-25 16:52:29-DEBUG: Initializing WebSocket
+2025-10-25 16:52:29-DEBUG: Validating WebSocket request
+2025-10-25 16:52:29-INFO: 127.0.0.1 - - [2025-10-25 16:52:29] "GET /eel.js HTTP/1.1" 200 6072 0.000998
+2025-10-25 16:52:30-DEBUG: Initializing WebSocket
+2025-10-25 16:52:30-DEBUG: Validating WebSocket request
+2025-10-25 16:52:30-DEBUG: Attempting to upgrade connection
+2025-10-25 16:52:30-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:52:52-DEBUG: Initializing WebSocket
+2025-10-25 16:52:52-DEBUG: Validating WebSocket request
+2025-10-25 16:52:52-INFO: 127.0.0.1 - - [2025-10-25 16:52:52] "GET /index.html HTTP/1.1" 200 9902 0.000996
+2025-10-25 16:52:52-DEBUG: Initializing WebSocket
+2025-10-25 16:52:52-DEBUG: Validating WebSocket request
+2025-10-25 16:52:52-INFO: 127.0.0.1 - - [2025-10-25 16:52:52] "GET /eel.js HTTP/1.1" 200 6072 0.000521
+2025-10-25 16:52:53-DEBUG: Initializing WebSocket
+2025-10-25 16:52:53-DEBUG: Validating WebSocket request
+2025-10-25 16:52:53-DEBUG: Attempting to upgrade connection
+2025-10-25 16:52:53-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:53:39-DEBUG: Initializing WebSocket
+2025-10-25 16:53:39-DEBUG: Validating WebSocket request
+2025-10-25 16:53:39-INFO: 127.0.0.1 - - [2025-10-25 16:53:39] "GET /index.html HTTP/1.1" 200 9865 0.001026
+2025-10-25 16:53:39-DEBUG: Initializing WebSocket
+2025-10-25 16:53:39-DEBUG: Validating WebSocket request
+2025-10-25 16:53:39-INFO: 127.0.0.1 - - [2025-10-25 16:53:39] "GET /eel.js HTTP/1.1" 200 6072 0.001368
+2025-10-25 16:53:40-DEBUG: Initializing WebSocket
+2025-10-25 16:53:40-DEBUG: Validating WebSocket request
+2025-10-25 16:53:40-DEBUG: Attempting to upgrade connection
+2025-10-25 16:53:40-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:54:11-DEBUG: Initializing WebSocket
+2025-10-25 16:54:11-DEBUG: Validating WebSocket request
+2025-10-25 16:54:11-INFO: 127.0.0.1 - - [2025-10-25 16:54:11] "GET /index.html HTTP/1.1" 200 9895 0.002008
+2025-10-25 16:54:11-DEBUG: Initializing WebSocket
+2025-10-25 16:54:11-DEBUG: Validating WebSocket request
+2025-10-25 16:54:11-INFO: 127.0.0.1 - - [2025-10-25 16:54:11] "GET /eel.js HTTP/1.1" 200 6072 0.000503
+2025-10-25 16:54:11-DEBUG: Initializing WebSocket
+2025-10-25 16:54:11-DEBUG: Validating WebSocket request
+2025-10-25 16:54:11-DEBUG: Attempting to upgrade connection
+2025-10-25 16:54:11-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:54:22-DEBUG: Initializing WebSocket
+2025-10-25 16:54:22-DEBUG: Validating WebSocket request
+2025-10-25 16:54:22-INFO: 127.0.0.1 - - [2025-10-25 16:54:22] "GET /index.html HTTP/1.1" 200 9865 0.001227
+2025-10-25 16:54:22-DEBUG: Initializing WebSocket
+2025-10-25 16:54:22-DEBUG: Validating WebSocket request
+2025-10-25 16:54:22-INFO: 127.0.0.1 - - [2025-10-25 16:54:22] "GET /eel.js HTTP/1.1" 200 6072 0.000997
+2025-10-25 16:54:23-DEBUG: Initializing WebSocket
+2025-10-25 16:54:23-DEBUG: Validating WebSocket request
+2025-10-25 16:54:23-DEBUG: Attempting to upgrade connection
+2025-10-25 16:54:23-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:54:55-DEBUG: Closed WebSocket
+2025-10-25 16:54:55-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 16:54:55-DEBUG: Closed WebSocket
+2025-10-25 16:54:58-DEBUG: Initializing WebSocket
+2025-10-25 16:54:58-DEBUG: Validating WebSocket request
+2025-10-25 16:54:58-INFO: 127.0.0.1 - - [2025-10-25 16:54:58] "GET /index.html HTTP/1.1" 200 9897 0.001011
+2025-10-25 16:54:58-DEBUG: Initializing WebSocket
+2025-10-25 16:54:58-DEBUG: Validating WebSocket request
+2025-10-25 16:54:58-INFO: 127.0.0.1 - - [2025-10-25 16:54:58] "GET /eel.js HTTP/1.1" 200 6072 0.001009
+2025-10-25 16:54:59-DEBUG: Initializing WebSocket
+2025-10-25 16:54:59-DEBUG: Validating WebSocket request
+2025-10-25 16:54:59-DEBUG: Attempting to upgrade connection
+2025-10-25 16:54:59-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:55:19-DEBUG: Initializing WebSocket
+2025-10-25 16:55:19-DEBUG: Validating WebSocket request
+2025-10-25 16:55:19-INFO: 127.0.0.1 - - [2025-10-25 16:55:19] "GET /index.html HTTP/1.1" 200 9917 0.001995
+2025-10-25 16:55:19-DEBUG: Initializing WebSocket
+2025-10-25 16:55:19-DEBUG: Validating WebSocket request
+2025-10-25 16:55:19-INFO: 127.0.0.1 - - [2025-10-25 16:55:19] "GET /eel.js HTTP/1.1" 200 6072 0.001050
+2025-10-25 16:55:20-DEBUG: Initializing WebSocket
+2025-10-25 16:55:20-DEBUG: Validating WebSocket request
+2025-10-25 16:55:20-DEBUG: Attempting to upgrade connection
+2025-10-25 16:55:20-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:55:29-DEBUG: Initializing WebSocket
+2025-10-25 16:55:29-DEBUG: Validating WebSocket request
+2025-10-25 16:55:29-INFO: 127.0.0.1 - - [2025-10-25 16:55:29] "GET /index.html HTTP/1.1" 200 9916 0.002508
+2025-10-25 16:55:29-DEBUG: Initializing WebSocket
+2025-10-25 16:55:29-DEBUG: Validating WebSocket request
+2025-10-25 16:55:29-INFO: 127.0.0.1 - - [2025-10-25 16:55:29] "GET /eel.js HTTP/1.1" 200 6072 0.000995
+2025-10-25 16:55:30-DEBUG: Initializing WebSocket
+2025-10-25 16:55:30-DEBUG: Validating WebSocket request
+2025-10-25 16:55:30-DEBUG: Attempting to upgrade connection
+2025-10-25 16:55:30-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:55:42-DEBUG: Closed WebSocket
+2025-10-25 16:55:42-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 16:55:42-DEBUG: Closed WebSocket
+2025-10-25 16:55:44-DEBUG: Initializing WebSocket
+2025-10-25 16:55:44-DEBUG: Validating WebSocket request
+2025-10-25 16:55:44-INFO: 127.0.0.1 - - [2025-10-25 16:55:44] "GET /index.html HTTP/1.1" 200 9898 0.000997
+2025-10-25 16:55:44-DEBUG: Initializing WebSocket
+2025-10-25 16:55:44-DEBUG: Validating WebSocket request
+2025-10-25 16:55:44-INFO: 127.0.0.1 - - [2025-10-25 16:55:44] "GET /eel.js HTTP/1.1" 200 6072 0.001084
+2025-10-25 16:55:45-DEBUG: Initializing WebSocket
+2025-10-25 16:55:45-DEBUG: Validating WebSocket request
+2025-10-25 16:55:45-DEBUG: Attempting to upgrade connection
+2025-10-25 16:55:45-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:56:02-DEBUG: Initializing WebSocket
+2025-10-25 16:56:02-DEBUG: Validating WebSocket request
+2025-10-25 16:56:02-INFO: 127.0.0.1 - - [2025-10-25 16:56:02] "GET /index.html HTTP/1.1" 200 9904 0.002098
+2025-10-25 16:56:02-DEBUG: Initializing WebSocket
+2025-10-25 16:56:02-DEBUG: Validating WebSocket request
+2025-10-25 16:56:02-INFO: 127.0.0.1 - - [2025-10-25 16:56:02] "GET /eel.js HTTP/1.1" 200 6072 0.001991
+2025-10-25 16:56:02-DEBUG: Initializing WebSocket
+2025-10-25 16:56:02-DEBUG: Validating WebSocket request
+2025-10-25 16:56:02-DEBUG: Attempting to upgrade connection
+2025-10-25 16:56:02-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:57:17-DEBUG: Initializing WebSocket
+2025-10-25 16:57:17-DEBUG: Validating WebSocket request
+2025-10-25 16:57:17-INFO: 127.0.0.1 - - [2025-10-25 16:57:17] "GET /index.html HTTP/1.1" 200 9903 0.002009
+2025-10-25 16:57:17-DEBUG: Initializing WebSocket
+2025-10-25 16:57:17-DEBUG: Validating WebSocket request
+2025-10-25 16:57:17-INFO: 127.0.0.1 - - [2025-10-25 16:57:17] "GET /eel.js HTTP/1.1" 200 6072 0.001508
+2025-10-25 16:57:18-DEBUG: Initializing WebSocket
+2025-10-25 16:57:18-DEBUG: Validating WebSocket request
+2025-10-25 16:57:18-DEBUG: Attempting to upgrade connection
+2025-10-25 16:57:18-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:57:56-DEBUG: Initializing WebSocket
+2025-10-25 16:57:56-DEBUG: Validating WebSocket request
+2025-10-25 16:57:56-INFO: 127.0.0.1 - - [2025-10-25 16:57:56] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.003424
+2025-10-25 16:58:55-DEBUG: Initializing WebSocket
+2025-10-25 16:58:55-DEBUG: Validating WebSocket request
+2025-10-25 16:58:55-INFO: 127.0.0.1 - - [2025-10-25 16:58:55] "GET /index.html HTTP/1.1" 200 9898 0.002385
+2025-10-25 16:58:55-DEBUG: Initializing WebSocket
+2025-10-25 16:58:55-DEBUG: Validating WebSocket request
+2025-10-25 16:58:55-INFO: 127.0.0.1 - - [2025-10-25 16:58:55] "GET /eel.js HTTP/1.1" 200 6072 0.000523
+2025-10-25 16:58:56-DEBUG: Initializing WebSocket
+2025-10-25 16:58:56-DEBUG: Validating WebSocket request
+2025-10-25 16:58:56-DEBUG: Attempting to upgrade connection
+2025-10-25 16:58:56-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:59:07-DEBUG: Initializing WebSocket
+2025-10-25 16:59:07-DEBUG: Validating WebSocket request
+2025-10-25 16:59:07-INFO: 127.0.0.1 - - [2025-10-25 16:59:07] "GET /index.html HTTP/1.1" 200 9898 0.000997
+2025-10-25 16:59:07-DEBUG: Initializing WebSocket
+2025-10-25 16:59:07-DEBUG: Validating WebSocket request
+2025-10-25 16:59:07-INFO: 127.0.0.1 - - [2025-10-25 16:59:07] "GET /eel.js HTTP/1.1" 200 6072 0.000000
+2025-10-25 16:59:08-DEBUG: Initializing WebSocket
+2025-10-25 16:59:08-DEBUG: Validating WebSocket request
+2025-10-25 16:59:08-DEBUG: Attempting to upgrade connection
+2025-10-25 16:59:08-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:59:18-DEBUG: Initializing WebSocket
+2025-10-25 16:59:18-DEBUG: Validating WebSocket request
+2025-10-25 16:59:18-INFO: 127.0.0.1 - - [2025-10-25 16:59:18] "GET /index.html HTTP/1.1" 200 9897 0.002435
+2025-10-25 16:59:18-DEBUG: Initializing WebSocket
+2025-10-25 16:59:18-DEBUG: Validating WebSocket request
+2025-10-25 16:59:18-INFO: 127.0.0.1 - - [2025-10-25 16:59:18] "GET /eel.js HTTP/1.1" 200 6072 0.000998
+2025-10-25 16:59:18-DEBUG: Initializing WebSocket
+2025-10-25 16:59:18-DEBUG: Validating WebSocket request
+2025-10-25 16:59:18-DEBUG: Attempting to upgrade connection
+2025-10-25 16:59:18-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 16:59:36-DEBUG: Initializing WebSocket
+2025-10-25 16:59:36-DEBUG: Validating WebSocket request
+2025-10-25 16:59:36-INFO: 127.0.0.1 - - [2025-10-25 16:59:36] "GET /index.html HTTP/1.1" 200 9897 0.002032
+2025-10-25 16:59:36-DEBUG: Initializing WebSocket
+2025-10-25 16:59:36-DEBUG: Validating WebSocket request
+2025-10-25 16:59:36-INFO: 127.0.0.1 - - [2025-10-25 16:59:36] "GET /eel.js HTTP/1.1" 200 6072 0.001408
+2025-10-25 16:59:36-DEBUG: Initializing WebSocket
+2025-10-25 16:59:36-DEBUG: Validating WebSocket request
+2025-10-25 16:59:36-DEBUG: Attempting to upgrade connection
+2025-10-25 16:59:36-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:00:09-DEBUG: Initializing WebSocket
+2025-10-25 17:00:09-DEBUG: Validating WebSocket request
+2025-10-25 17:00:09-INFO: 127.0.0.1 - - [2025-10-25 17:00:09] "GET /index.html HTTP/1.1" 200 9897 0.001427
+2025-10-25 17:00:09-DEBUG: Initializing WebSocket
+2025-10-25 17:00:09-DEBUG: Validating WebSocket request
+2025-10-25 17:00:09-INFO: 127.0.0.1 - - [2025-10-25 17:00:09] "GET /eel.js HTTP/1.1" 200 6072 0.001008
+2025-10-25 17:00:10-DEBUG: Initializing WebSocket
+2025-10-25 17:00:10-DEBUG: Validating WebSocket request
+2025-10-25 17:00:10-DEBUG: Attempting to upgrade connection
+2025-10-25 17:00:10-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:00:26-DEBUG: Initializing WebSocket
+2025-10-25 17:00:26-DEBUG: Validating WebSocket request
+2025-10-25 17:00:26-INFO: 127.0.0.1 - - [2025-10-25 17:00:26] "GET /index.html HTTP/1.1" 200 9900 0.001332
+2025-10-25 17:00:26-DEBUG: Initializing WebSocket
+2025-10-25 17:00:26-DEBUG: Validating WebSocket request
+2025-10-25 17:00:26-INFO: 127.0.0.1 - - [2025-10-25 17:00:26] "GET /eel.js HTTP/1.1" 200 6072 0.001456
+2025-10-25 17:00:27-DEBUG: Initializing WebSocket
+2025-10-25 17:00:27-DEBUG: Validating WebSocket request
+2025-10-25 17:00:27-DEBUG: Attempting to upgrade connection
+2025-10-25 17:00:27-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:00:33-DEBUG: Initializing WebSocket
+2025-10-25 17:00:33-DEBUG: Validating WebSocket request
+2025-10-25 17:00:33-INFO: 127.0.0.1 - - [2025-10-25 17:00:33] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.003500
+2025-10-25 17:01:46-DEBUG: Closed WebSocket
+2025-10-25 17:01:46-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 17:01:46-DEBUG: Closed WebSocket
+2025-10-25 17:01:48-DEBUG: Initializing WebSocket
+2025-10-25 17:01:48-DEBUG: Validating WebSocket request
+2025-10-25 17:01:48-INFO: 127.0.0.1 - - [2025-10-25 17:01:48] "GET /index.html HTTP/1.1" 200 9897 0.001115
+2025-10-25 17:01:48-DEBUG: Initializing WebSocket
+2025-10-25 17:01:48-DEBUG: Validating WebSocket request
+2025-10-25 17:01:48-INFO: 127.0.0.1 - - [2025-10-25 17:01:48] "GET /eel.js HTTP/1.1" 200 6072 0.000507
+2025-10-25 17:01:49-DEBUG: Initializing WebSocket
+2025-10-25 17:01:49-DEBUG: Validating WebSocket request
+2025-10-25 17:01:49-DEBUG: Attempting to upgrade connection
+2025-10-25 17:01:49-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:01:50-DEBUG: Initializing WebSocket
+2025-10-25 17:01:50-DEBUG: Validating WebSocket request
+2025-10-25 17:01:50-INFO: 127.0.0.1 - - [2025-10-25 17:01:50] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.002013
+2025-10-25 17:02:59-DEBUG: Closed WebSocket
+2025-10-25 17:02:59-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 17:02:59-DEBUG: Closed WebSocket
+2025-10-25 17:03:01-DEBUG: Initializing WebSocket
+2025-10-25 17:03:01-DEBUG: Validating WebSocket request
+2025-10-25 17:03:01-INFO: 127.0.0.1 - - [2025-10-25 17:03:01] "GET /index.html HTTP/1.1" 200 9897 0.001061
+2025-10-25 17:03:01-DEBUG: Initializing WebSocket
+2025-10-25 17:03:01-DEBUG: Validating WebSocket request
+2025-10-25 17:03:01-INFO: 127.0.0.1 - - [2025-10-25 17:03:01] "GET /eel.js HTTP/1.1" 200 6072 0.000506
+2025-10-25 17:03:02-DEBUG: Initializing WebSocket
+2025-10-25 17:03:02-DEBUG: Validating WebSocket request
+2025-10-25 17:03:02-DEBUG: Attempting to upgrade connection
+2025-10-25 17:03:02-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:03:50-DEBUG: Closed WebSocket
+2025-10-25 17:03:50-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 17:03:50-DEBUG: Closed WebSocket
+2025-10-25 17:03:52-DEBUG: Initializing WebSocket
+2025-10-25 17:03:52-DEBUG: Validating WebSocket request
+2025-10-25 17:03:52-INFO: 127.0.0.1 - - [2025-10-25 17:03:52] "GET /index.html HTTP/1.1" 200 9911 0.000996
+2025-10-25 17:03:52-DEBUG: Initializing WebSocket
+2025-10-25 17:03:52-DEBUG: Validating WebSocket request
+2025-10-25 17:03:52-INFO: 127.0.0.1 - - [2025-10-25 17:03:52] "GET /eel.js HTTP/1.1" 200 6072 0.001232
+2025-10-25 17:03:53-DEBUG: Initializing WebSocket
+2025-10-25 17:03:53-DEBUG: Validating WebSocket request
+2025-10-25 17:03:53-DEBUG: Attempting to upgrade connection
+2025-10-25 17:03:53-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:19:58-DEBUG: Initializing WebSocket
+2025-10-25 17:19:58-DEBUG: Validating WebSocket request
+2025-10-25 17:19:58-INFO: 127.0.0.1 - - [2025-10-25 17:19:58] "GET /index.html HTTP/1.1" 200 2537 0.001017
+2025-10-25 17:19:58-DEBUG: Initializing WebSocket
+2025-10-25 17:19:58-DEBUG: Validating WebSocket request
+2025-10-25 17:19:58-INFO: 127.0.0.1 - - [2025-10-25 17:19:58] "GET /eel.js HTTP/1.1" 200 6072 0.001011
+2025-10-25 17:19:59-DEBUG: Initializing WebSocket
+2025-10-25 17:19:59-DEBUG: Validating WebSocket request
+2025-10-25 17:19:59-DEBUG: Attempting to upgrade connection
+2025-10-25 17:19:59-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:20:16-DEBUG: Initializing WebSocket
+2025-10-25 17:20:16-DEBUG: Validating WebSocket request
+2025-10-25 17:20:16-INFO: 127.0.0.1 - - [2025-10-25 17:20:16] "GET /index.html HTTP/1.1" 200 2478 0.002211
+2025-10-25 17:20:16-DEBUG: Initializing WebSocket
+2025-10-25 17:20:16-DEBUG: Validating WebSocket request
+2025-10-25 17:20:16-INFO: 127.0.0.1 - - [2025-10-25 17:20:16] "GET /eel.js HTTP/1.1" 200 6072 0.000998
+2025-10-25 17:20:16-DEBUG: Initializing WebSocket
+2025-10-25 17:20:16-DEBUG: Validating WebSocket request
+2025-10-25 17:20:16-DEBUG: Attempting to upgrade connection
+2025-10-25 17:20:16-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:33:39-DEBUG: Initializing WebSocket
+2025-10-25 17:33:39-DEBUG: Validating WebSocket request
+2025-10-25 17:33:39-INFO: 127.0.0.1 - - [2025-10-25 17:33:39] "GET /index.html HTTP/1.1" 200 2563 0.002154
+2025-10-25 17:33:39-DEBUG: Initializing WebSocket
+2025-10-25 17:33:39-DEBUG: Validating WebSocket request
+2025-10-25 17:33:39-INFO: 127.0.0.1 - - [2025-10-25 17:33:39] "GET /eel.js HTTP/1.1" 200 6091 0.001997
+2025-10-25 17:33:40-DEBUG: Initializing WebSocket
+2025-10-25 17:33:40-DEBUG: Validating WebSocket request
+2025-10-25 17:33:40-DEBUG: Attempting to upgrade connection
+2025-10-25 17:33:40-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:34:12-DEBUG: Initializing WebSocket
+2025-10-25 17:34:12-DEBUG: Validating WebSocket request
+2025-10-25 17:34:12-INFO: 127.0.0.1 - - [2025-10-25 17:34:12] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.003144
+2025-10-25 17:34:44-DEBUG: Closed WebSocket
+2025-10-25 17:34:44-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 17:34:44-DEBUG: Closed WebSocket
+2025-10-25 17:35:50-DEBUG: Initializing WebSocket
+2025-10-25 17:35:50-DEBUG: Validating WebSocket request
+2025-10-25 17:35:50-INFO: 127.0.0.1 - - [2025-10-25 17:35:50] "GET /index.html HTTP/1.1" 200 2563 0.001704
+2025-10-25 17:35:50-DEBUG: Initializing WebSocket
+2025-10-25 17:35:50-DEBUG: Validating WebSocket request
+2025-10-25 17:35:50-INFO: 127.0.0.1 - - [2025-10-25 17:35:50] "GET /eel.js HTTP/1.1" 200 6091 0.000688
+2025-10-25 17:35:51-DEBUG: Initializing WebSocket
+2025-10-25 17:35:51-DEBUG: Validating WebSocket request
+2025-10-25 17:35:51-DEBUG: Attempting to upgrade connection
+2025-10-25 17:35:51-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:37:40-DEBUG: Initializing WebSocket
+2025-10-25 17:37:40-DEBUG: Validating WebSocket request
+2025-10-25 17:37:40-INFO: 127.0.0.1 - - [2025-10-25 17:37:40] "GET /index.html HTTP/1.1" 200 2563 0.001572
+2025-10-25 17:37:40-DEBUG: Initializing WebSocket
+2025-10-25 17:37:40-DEBUG: Validating WebSocket request
+2025-10-25 17:37:40-INFO: 127.0.0.1 - - [2025-10-25 17:37:40] "GET /eel.js HTTP/1.1" 200 6066 0.001325
+2025-10-25 17:37:41-DEBUG: Initializing WebSocket
+2025-10-25 17:37:41-DEBUG: Validating WebSocket request
+2025-10-25 17:37:41-DEBUG: Attempting to upgrade connection
+2025-10-25 17:37:41-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:37:45-DEBUG: Closed WebSocket
+2025-10-25 17:37:45-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 17:37:45-DEBUG: Closed WebSocket
+2025-10-25 17:39:43-DEBUG: Initializing WebSocket
+2025-10-25 17:39:43-DEBUG: Validating WebSocket request
+2025-10-25 17:39:43-INFO: 127.0.0.1 - - [2025-10-25 17:39:43] "GET /index.html HTTP/1.1" 200 2699 0.003129
+2025-10-25 17:39:43-DEBUG: Initializing WebSocket
+2025-10-25 17:39:43-DEBUG: Validating WebSocket request
+2025-10-25 17:39:43-INFO: 127.0.0.1 - - [2025-10-25 17:39:43] "GET /eel.js HTTP/1.1" 200 6032 0.001000
+2025-10-25 17:39:44-DEBUG: Initializing WebSocket
+2025-10-25 17:39:44-DEBUG: Validating WebSocket request
+2025-10-25 17:39:44-DEBUG: Attempting to upgrade connection
+2025-10-25 17:39:44-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:40:25-DEBUG: Initializing WebSocket
+2025-10-25 17:40:25-DEBUG: Validating WebSocket request
+2025-10-25 17:40:25-INFO: 127.0.0.1 - - [2025-10-25 17:40:25] "GET /index.html HTTP/1.1" 200 2774 0.002026
+2025-10-25 17:40:25-DEBUG: Initializing WebSocket
+2025-10-25 17:40:25-DEBUG: Validating WebSocket request
+2025-10-25 17:40:25-INFO: 127.0.0.1 - - [2025-10-25 17:40:25] "GET /eel.js HTTP/1.1" 200 6032 0.001001
+2025-10-25 17:40:25-DEBUG: Initializing WebSocket
+2025-10-25 17:40:25-DEBUG: Validating WebSocket request
+2025-10-25 17:40:25-DEBUG: Attempting to upgrade connection
+2025-10-25 17:40:25-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:40:32-DEBUG: Closed WebSocket
+2025-10-25 17:40:32-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 17:40:32-DEBUG: Closed WebSocket
+2025-10-25 17:40:34-DEBUG: Initializing WebSocket
+2025-10-25 17:40:34-DEBUG: Validating WebSocket request
+2025-10-25 17:40:34-INFO: 127.0.0.1 - - [2025-10-25 17:40:34] "GET /index.html HTTP/1.1" 200 2774 0.001006
+2025-10-25 17:40:34-DEBUG: Initializing WebSocket
+2025-10-25 17:40:34-DEBUG: Validating WebSocket request
+2025-10-25 17:40:34-INFO: 127.0.0.1 - - [2025-10-25 17:40:34] "GET /eel.js HTTP/1.1" 200 6032 0.000997
+2025-10-25 17:40:34-DEBUG: Initializing WebSocket
+2025-10-25 17:40:34-DEBUG: Validating WebSocket request
+2025-10-25 17:40:34-DEBUG: Attempting to upgrade connection
+2025-10-25 17:40:34-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:40:57-DEBUG: Initializing WebSocket
+2025-10-25 17:40:57-DEBUG: Validating WebSocket request
+2025-10-25 17:40:57-INFO: 127.0.0.1 - - [2025-10-25 17:40:57] "GET /index.html HTTP/1.1" 200 2774 0.001168
+2025-10-25 17:40:57-DEBUG: Initializing WebSocket
+2025-10-25 17:40:57-DEBUG: Validating WebSocket request
+2025-10-25 17:40:57-INFO: 127.0.0.1 - - [2025-10-25 17:40:57] "GET /eel.js HTTP/1.1" 200 6032 0.000730
+2025-10-25 17:40:57-DEBUG: Initializing WebSocket
+2025-10-25 17:40:57-DEBUG: Validating WebSocket request
+2025-10-25 17:40:57-DEBUG: Attempting to upgrade connection
+2025-10-25 17:40:57-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:41:17-DEBUG: Initializing WebSocket
+2025-10-25 17:41:17-DEBUG: Validating WebSocket request
+2025-10-25 17:41:17-INFO: 127.0.0.1 - - [2025-10-25 17:41:17] "GET /index.html HTTP/1.1" 200 2774 0.001009
+2025-10-25 17:41:17-DEBUG: Initializing WebSocket
+2025-10-25 17:41:17-DEBUG: Validating WebSocket request
+2025-10-25 17:41:17-INFO: 127.0.0.1 - - [2025-10-25 17:41:17] "GET /eel.js HTTP/1.1" 200 6032 0.001494
+2025-10-25 17:41:17-DEBUG: Initializing WebSocket
+2025-10-25 17:41:17-DEBUG: Validating WebSocket request
+2025-10-25 17:41:17-DEBUG: Attempting to upgrade connection
+2025-10-25 17:41:17-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:42:25-DEBUG: Initializing WebSocket
+2025-10-25 17:42:25-DEBUG: Validating WebSocket request
+2025-10-25 17:42:25-INFO: 127.0.0.1 - - [2025-10-25 17:42:25] "GET /index.html HTTP/1.1" 200 2675 0.001005
+2025-10-25 17:42:25-DEBUG: Initializing WebSocket
+2025-10-25 17:42:25-DEBUG: Validating WebSocket request
+2025-10-25 17:42:25-INFO: 127.0.0.1 - - [2025-10-25 17:42:25] "GET /eel.js HTTP/1.1" 200 6032 0.000576
+2025-10-25 17:42:26-DEBUG: Initializing WebSocket
+2025-10-25 17:42:26-DEBUG: Validating WebSocket request
+2025-10-25 17:42:26-DEBUG: Attempting to upgrade connection
+2025-10-25 17:42:26-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:42:37-DEBUG: Initializing WebSocket
+2025-10-25 17:42:37-DEBUG: Validating WebSocket request
+2025-10-25 17:42:37-INFO: 127.0.0.1 - - [2025-10-25 17:42:37] "GET /index.html HTTP/1.1" 200 2618 0.002231
+2025-10-25 17:42:37-DEBUG: Initializing WebSocket
+2025-10-25 17:42:37-DEBUG: Validating WebSocket request
+2025-10-25 17:42:37-INFO: 127.0.0.1 - - [2025-10-25 17:42:37] "GET /eel.js HTTP/1.1" 200 6032 0.000997
+2025-10-25 17:42:37-DEBUG: Initializing WebSocket
+2025-10-25 17:42:37-DEBUG: Validating WebSocket request
+2025-10-25 17:42:37-DEBUG: Attempting to upgrade connection
+2025-10-25 17:42:37-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:42:46-DEBUG: Initializing WebSocket
+2025-10-25 17:42:46-DEBUG: Validating WebSocket request
+2025-10-25 17:42:46-INFO: 127.0.0.1 - - [2025-10-25 17:42:46] "GET /index.html HTTP/1.1" 200 2564 0.001097
+2025-10-25 17:42:46-DEBUG: Initializing WebSocket
+2025-10-25 17:42:46-DEBUG: Validating WebSocket request
+2025-10-25 17:42:46-INFO: 127.0.0.1 - - [2025-10-25 17:42:46] "GET /eel.js HTTP/1.1" 200 6032 0.001417
+2025-10-25 17:42:46-DEBUG: Initializing WebSocket
+2025-10-25 17:42:46-DEBUG: Validating WebSocket request
+2025-10-25 17:42:46-DEBUG: Attempting to upgrade connection
+2025-10-25 17:42:46-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:43:13-DEBUG: Initializing WebSocket
+2025-10-25 17:43:13-DEBUG: Validating WebSocket request
+2025-10-25 17:43:13-INFO: 127.0.0.1 - - [2025-10-25 17:43:13] "GET /index.html HTTP/1.1" 200 2675 0.002072
+2025-10-25 17:43:13-DEBUG: Initializing WebSocket
+2025-10-25 17:43:13-DEBUG: Validating WebSocket request
+2025-10-25 17:43:13-INFO: 127.0.0.1 - - [2025-10-25 17:43:13] "GET /eel.js HTTP/1.1" 200 6032 0.000000
+2025-10-25 17:43:14-DEBUG: Initializing WebSocket
+2025-10-25 17:43:14-DEBUG: Validating WebSocket request
+2025-10-25 17:43:14-DEBUG: Attempting to upgrade connection
+2025-10-25 17:43:14-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:43:45-DEBUG: Initializing WebSocket
+2025-10-25 17:43:45-DEBUG: Validating WebSocket request
+2025-10-25 17:43:45-INFO: 127.0.0.1 - - [2025-10-25 17:43:45] "GET /index.html HTTP/1.1" 200 2717 0.002160
+2025-10-25 17:43:45-DEBUG: Initializing WebSocket
+2025-10-25 17:43:45-DEBUG: Validating WebSocket request
+2025-10-25 17:43:45-INFO: 127.0.0.1 - - [2025-10-25 17:43:45] "GET /eel.js HTTP/1.1" 200 6032 0.001015
+2025-10-25 17:43:46-DEBUG: Initializing WebSocket
+2025-10-25 17:43:46-DEBUG: Validating WebSocket request
+2025-10-25 17:43:46-DEBUG: Attempting to upgrade connection
+2025-10-25 17:43:46-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:44:06-DEBUG: Initializing WebSocket
+2025-10-25 17:44:06-DEBUG: Validating WebSocket request
+2025-10-25 17:44:06-INFO: 127.0.0.1 - - [2025-10-25 17:44:06] "GET /index.html HTTP/1.1" 200 2720 0.003018
+2025-10-25 17:44:06-DEBUG: Initializing WebSocket
+2025-10-25 17:44:06-DEBUG: Validating WebSocket request
+2025-10-25 17:44:06-INFO: 127.0.0.1 - - [2025-10-25 17:44:06] "GET /eel.js HTTP/1.1" 200 6032 0.001066
+2025-10-25 17:44:06-DEBUG: Initializing WebSocket
+2025-10-25 17:44:06-DEBUG: Validating WebSocket request
+2025-10-25 17:44:06-DEBUG: Attempting to upgrade connection
+2025-10-25 17:44:06-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:47:02-DEBUG: Initializing WebSocket
+2025-10-25 17:47:02-DEBUG: Validating WebSocket request
+2025-10-25 17:47:02-INFO: 127.0.0.1 - - [2025-10-25 17:47:02] "GET /index.html HTTP/1.1" 200 2507 0.001402
+2025-10-25 17:47:02-DEBUG: Initializing WebSocket
+2025-10-25 17:47:02-DEBUG: Validating WebSocket request
+2025-10-25 17:47:02-INFO: 127.0.0.1 - - [2025-10-25 17:47:02] "GET /eel.js HTTP/1.1" 200 6032 0.000000
+2025-10-25 17:47:02-DEBUG: Initializing WebSocket
+2025-10-25 17:47:02-DEBUG: Validating WebSocket request
+2025-10-25 17:47:02-DEBUG: Attempting to upgrade connection
+2025-10-25 17:47:02-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:47:04-DEBUG: Closed WebSocket
+2025-10-25 17:47:04-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 17:47:04-DEBUG: Closed WebSocket
+2025-10-25 17:47:06-DEBUG: Initializing WebSocket
+2025-10-25 17:47:06-DEBUG: Validating WebSocket request
+2025-10-25 17:47:06-INFO: 127.0.0.1 - - [2025-10-25 17:47:06] "GET /index.html HTTP/1.1" 200 2507 0.001139
+2025-10-25 17:47:06-DEBUG: Initializing WebSocket
+2025-10-25 17:47:06-DEBUG: Validating WebSocket request
+2025-10-25 17:47:06-INFO: 127.0.0.1 - - [2025-10-25 17:47:06] "GET /eel.js HTTP/1.1" 200 6032 0.000997
+2025-10-25 17:47:07-DEBUG: Initializing WebSocket
+2025-10-25 17:47:07-DEBUG: Validating WebSocket request
+2025-10-25 17:47:07-DEBUG: Attempting to upgrade connection
+2025-10-25 17:47:07-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:47:34-DEBUG: Initializing WebSocket
+2025-10-25 17:47:34-DEBUG: Validating WebSocket request
+2025-10-25 17:47:34-INFO: 127.0.0.1 - - [2025-10-25 17:47:34] "GET /index.html HTTP/1.1" 200 2504 0.001003
+2025-10-25 17:47:34-DEBUG: Initializing WebSocket
+2025-10-25 17:47:34-DEBUG: Validating WebSocket request
+2025-10-25 17:47:34-INFO: 127.0.0.1 - - [2025-10-25 17:47:34] "GET /eel.js HTTP/1.1" 200 6032 0.001134
+2025-10-25 17:47:35-DEBUG: Initializing WebSocket
+2025-10-25 17:47:35-DEBUG: Validating WebSocket request
+2025-10-25 17:47:35-DEBUG: Attempting to upgrade connection
+2025-10-25 17:47:35-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:47:39-DEBUG: Closed WebSocket
+2025-10-25 17:47:39-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 17:47:39-DEBUG: Closed WebSocket
+2025-10-25 17:48:41-DEBUG: Initializing WebSocket
+2025-10-25 17:48:41-DEBUG: Validating WebSocket request
+2025-10-25 17:48:41-INFO: 127.0.0.1 - - [2025-10-25 17:48:41] "GET /index.html HTTP/1.1" 200 2504 0.001993
+2025-10-25 17:48:41-DEBUG: Initializing WebSocket
+2025-10-25 17:48:41-DEBUG: Validating WebSocket request
+2025-10-25 17:48:41-INFO: 127.0.0.1 - - [2025-10-25 17:48:41] "GET /eel.js HTTP/1.1" 200 6032 0.000503
+2025-10-25 17:48:41-DEBUG: Initializing WebSocket
+2025-10-25 17:48:41-DEBUG: Validating WebSocket request
+2025-10-25 17:48:41-DEBUG: Attempting to upgrade connection
+2025-10-25 17:48:41-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:50:12-DEBUG: Initializing WebSocket
+2025-10-25 17:50:12-DEBUG: Validating WebSocket request
+2025-10-25 17:50:12-INFO: 127.0.0.1 - - [2025-10-25 17:50:12] "GET /index.html HTTP/1.1" 200 2504 0.001327
+2025-10-25 17:50:12-DEBUG: Initializing WebSocket
+2025-10-25 17:50:12-DEBUG: Validating WebSocket request
+2025-10-25 17:50:12-INFO: 127.0.0.1 - - [2025-10-25 17:50:12] "GET /eel.js HTTP/1.1" 200 6032 0.000722
+2025-10-25 17:50:12-DEBUG: Initializing WebSocket
+2025-10-25 17:50:12-DEBUG: Validating WebSocket request
+2025-10-25 17:50:12-DEBUG: Attempting to upgrade connection
+2025-10-25 17:50:12-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:50:17-DEBUG: Closed WebSocket
+2025-10-25 17:50:17-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 17:50:17-DEBUG: Closed WebSocket
+2025-10-25 17:50:20-DEBUG: Initializing WebSocket
+2025-10-25 17:50:20-DEBUG: Validating WebSocket request
+2025-10-25 17:50:20-INFO: 127.0.0.1 - - [2025-10-25 17:50:20] "GET /index.html HTTP/1.1" 200 2504 0.002358
+2025-10-25 17:50:20-DEBUG: Initializing WebSocket
+2025-10-25 17:50:20-DEBUG: Validating WebSocket request
+2025-10-25 17:50:20-INFO: 127.0.0.1 - - [2025-10-25 17:50:20] "GET /eel.js HTTP/1.1" 200 6032 0.001053
+2025-10-25 17:50:21-DEBUG: Initializing WebSocket
+2025-10-25 17:50:21-DEBUG: Validating WebSocket request
+2025-10-25 17:50:21-DEBUG: Attempting to upgrade connection
+2025-10-25 17:50:21-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:50:31-DEBUG: Closed WebSocket
+2025-10-25 17:50:31-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 17:50:31-DEBUG: Closed WebSocket
+2025-10-25 17:51:26-DEBUG: Initializing WebSocket
+2025-10-25 17:51:26-DEBUG: Validating WebSocket request
+2025-10-25 17:51:26-INFO: 127.0.0.1 - - [2025-10-25 17:51:26] "GET /index.html HTTP/1.1" 200 2504 0.001005
+2025-10-25 17:51:26-DEBUG: Initializing WebSocket
+2025-10-25 17:51:26-DEBUG: Validating WebSocket request
+2025-10-25 17:51:26-INFO: 127.0.0.1 - - [2025-10-25 17:51:26] "GET /eel.js HTTP/1.1" 200 6032 0.000502
+2025-10-25 17:51:27-DEBUG: Initializing WebSocket
+2025-10-25 17:51:27-DEBUG: Validating WebSocket request
+2025-10-25 17:51:27-DEBUG: Attempting to upgrade connection
+2025-10-25 17:51:27-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:54:04-DEBUG: Initializing WebSocket
+2025-10-25 17:54:04-DEBUG: Validating WebSocket request
+2025-10-25 17:54:04-INFO: 127.0.0.1 - - [2025-10-25 17:54:04] "GET /index.html HTTP/1.1" 200 2504 0.002057
+2025-10-25 17:54:04-DEBUG: Initializing WebSocket
+2025-10-25 17:54:04-DEBUG: Validating WebSocket request
+2025-10-25 17:54:04-INFO: 127.0.0.1 - - [2025-10-25 17:54:04] "GET /eel.js HTTP/1.1" 200 6032 0.000502
+2025-10-25 17:54:05-DEBUG: Initializing WebSocket
+2025-10-25 17:54:05-DEBUG: Validating WebSocket request
+2025-10-25 17:54:05-DEBUG: Attempting to upgrade connection
+2025-10-25 17:54:05-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:55:02-DEBUG: Initializing WebSocket
+2025-10-25 17:55:02-DEBUG: Validating WebSocket request
+2025-10-25 17:55:02-INFO: 127.0.0.1 - - [2025-10-25 17:55:02] "GET /index.html HTTP/1.1" 200 2504 0.001004
+2025-10-25 17:55:02-DEBUG: Initializing WebSocket
+2025-10-25 17:55:02-DEBUG: Validating WebSocket request
+2025-10-25 17:55:02-INFO: 127.0.0.1 - - [2025-10-25 17:55:02] "GET /eel.js HTTP/1.1" 200 6032 0.001420
+2025-10-25 17:55:03-DEBUG: Initializing WebSocket
+2025-10-25 17:55:03-DEBUG: Validating WebSocket request
+2025-10-25 17:55:03-DEBUG: Attempting to upgrade connection
+2025-10-25 17:55:03-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:55:21-DEBUG: Initializing WebSocket
+2025-10-25 17:55:21-DEBUG: Validating WebSocket request
+2025-10-25 17:55:21-INFO: 127.0.0.1 - - [2025-10-25 17:55:21] "GET /index.html HTTP/1.1" 200 2504 0.001073
+2025-10-25 17:55:21-DEBUG: Initializing WebSocket
+2025-10-25 17:55:21-DEBUG: Validating WebSocket request
+2025-10-25 17:55:21-INFO: 127.0.0.1 - - [2025-10-25 17:55:21] "GET /eel.js HTTP/1.1" 200 6032 0.000664
+2025-10-25 17:55:22-DEBUG: Initializing WebSocket
+2025-10-25 17:55:22-DEBUG: Validating WebSocket request
+2025-10-25 17:55:22-DEBUG: Attempting to upgrade connection
+2025-10-25 17:55:22-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:55:31-DEBUG: Initializing WebSocket
+2025-10-25 17:55:31-DEBUG: Validating WebSocket request
+2025-10-25 17:55:31-INFO: 127.0.0.1 - - [2025-10-25 17:55:31] "GET /index.html HTTP/1.1" 200 2504 0.001008
+2025-10-25 17:55:31-DEBUG: Initializing WebSocket
+2025-10-25 17:55:31-DEBUG: Validating WebSocket request
+2025-10-25 17:55:31-INFO: 127.0.0.1 - - [2025-10-25 17:55:31] "GET /eel.js HTTP/1.1" 200 6032 0.001341
+2025-10-25 17:55:31-DEBUG: Initializing WebSocket
+2025-10-25 17:55:31-DEBUG: Validating WebSocket request
+2025-10-25 17:55:31-DEBUG: Attempting to upgrade connection
+2025-10-25 17:55:31-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:55:56-DEBUG: Initializing WebSocket
+2025-10-25 17:55:56-DEBUG: Validating WebSocket request
+2025-10-25 17:55:56-INFO: 127.0.0.1 - - [2025-10-25 17:55:56] "GET /index.html HTTP/1.1" 200 2504 0.002043
+2025-10-25 17:55:56-DEBUG: Initializing WebSocket
+2025-10-25 17:55:56-DEBUG: Validating WebSocket request
+2025-10-25 17:55:56-INFO: 127.0.0.1 - - [2025-10-25 17:55:56] "GET /eel.js HTTP/1.1" 200 6031 0.000000
+2025-10-25 17:55:56-DEBUG: Initializing WebSocket
+2025-10-25 17:55:56-DEBUG: Validating WebSocket request
+2025-10-25 17:55:56-DEBUG: Attempting to upgrade connection
+2025-10-25 17:55:56-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 17:57:29-DEBUG: Initializing WebSocket
+2025-10-25 17:57:29-DEBUG: Validating WebSocket request
+2025-10-25 17:57:29-INFO: 127.0.0.1 - - [2025-10-25 17:57:29] "GET /index.html HTTP/1.1" 200 2504 0.001013
+2025-10-25 17:57:29-DEBUG: Initializing WebSocket
+2025-10-25 17:57:29-DEBUG: Validating WebSocket request
+2025-10-25 17:57:29-INFO: 127.0.0.1 - - [2025-10-25 17:57:29] "GET /eel.js HTTP/1.1" 200 6031 0.000678
+2025-10-25 17:57:29-DEBUG: Initializing WebSocket
+2025-10-25 17:57:29-DEBUG: Validating WebSocket request
+2025-10-25 17:57:29-DEBUG: Attempting to upgrade connection
+2025-10-25 17:57:29-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:03:47-DEBUG: Initializing WebSocket
+2025-10-25 18:03:47-DEBUG: Validating WebSocket request
+2025-10-25 18:03:47-INFO: 127.0.0.1 - - [2025-10-25 18:03:47] "GET /index.html HTTP/1.1" 200 2504 0.002025
+2025-10-25 18:03:47-DEBUG: Initializing WebSocket
+2025-10-25 18:03:47-DEBUG: Validating WebSocket request
+2025-10-25 18:03:47-INFO: 127.0.0.1 - - [2025-10-25 18:03:47] "GET /eel.js HTTP/1.1" 200 6031 0.002502
+2025-10-25 18:03:48-DEBUG: Initializing WebSocket
+2025-10-25 18:03:48-DEBUG: Validating WebSocket request
+2025-10-25 18:03:48-DEBUG: Attempting to upgrade connection
+2025-10-25 18:03:48-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:06:33-DEBUG: Initializing WebSocket
+2025-10-25 18:06:33-DEBUG: Validating WebSocket request
+2025-10-25 18:06:33-INFO: 127.0.0.1 - - [2025-10-25 18:06:33] "GET /index.html HTTP/1.1" 200 2353 0.002023
+2025-10-25 18:06:33-DEBUG: Initializing WebSocket
+2025-10-25 18:06:33-DEBUG: Validating WebSocket request
+2025-10-25 18:06:33-INFO: 127.0.0.1 - - [2025-10-25 18:06:33] "GET /eel.js HTTP/1.1" 200 6031 0.000996
+2025-10-25 18:06:33-DEBUG: Initializing WebSocket
+2025-10-25 18:06:33-DEBUG: Validating WebSocket request
+2025-10-25 18:06:33-DEBUG: Attempting to upgrade connection
+2025-10-25 18:06:33-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:06:48-DEBUG: Initializing WebSocket
+2025-10-25 18:06:48-DEBUG: Validating WebSocket request
+2025-10-25 18:06:48-INFO: 127.0.0.1 - - [2025-10-25 18:06:48] "GET /index.html HTTP/1.1" 200 2353 0.003286
+2025-10-25 18:06:48-DEBUG: Initializing WebSocket
+2025-10-25 18:06:48-DEBUG: Validating WebSocket request
+2025-10-25 18:06:48-INFO: 127.0.0.1 - - [2025-10-25 18:06:48] "GET /eel.js HTTP/1.1" 200 6031 0.000997
+2025-10-25 18:06:49-DEBUG: Initializing WebSocket
+2025-10-25 18:06:49-DEBUG: Validating WebSocket request
+2025-10-25 18:06:49-DEBUG: Attempting to upgrade connection
+2025-10-25 18:06:49-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:07:22-DEBUG: Closed WebSocket
+2025-10-25 18:07:22-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:07:22-DEBUG: Closed WebSocket
+2025-10-25 18:07:24-DEBUG: Initializing WebSocket
+2025-10-25 18:07:24-DEBUG: Validating WebSocket request
+2025-10-25 18:07:24-INFO: 127.0.0.1 - - [2025-10-25 18:07:24] "GET /index.html HTTP/1.1" 200 2353 0.001994
+2025-10-25 18:07:24-DEBUG: Initializing WebSocket
+2025-10-25 18:07:24-DEBUG: Validating WebSocket request
+2025-10-25 18:07:24-INFO: 127.0.0.1 - - [2025-10-25 18:07:24] "GET /eel.js HTTP/1.1" 200 6031 0.000996
+2025-10-25 18:07:25-DEBUG: Initializing WebSocket
+2025-10-25 18:07:25-DEBUG: Validating WebSocket request
+2025-10-25 18:07:25-DEBUG: Attempting to upgrade connection
+2025-10-25 18:07:25-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:07:39-DEBUG: Closed WebSocket
+2025-10-25 18:07:39-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:07:39-DEBUG: Closed WebSocket
+2025-10-25 18:07:41-DEBUG: Initializing WebSocket
+2025-10-25 18:07:41-DEBUG: Validating WebSocket request
+2025-10-25 18:07:41-INFO: 127.0.0.1 - - [2025-10-25 18:07:41] "GET /index.html HTTP/1.1" 200 2353 0.002056
+2025-10-25 18:07:41-DEBUG: Initializing WebSocket
+2025-10-25 18:07:41-DEBUG: Validating WebSocket request
+2025-10-25 18:07:41-INFO: 127.0.0.1 - - [2025-10-25 18:07:41] "GET /eel.js HTTP/1.1" 200 6031 0.001001
+2025-10-25 18:07:42-DEBUG: Initializing WebSocket
+2025-10-25 18:07:42-DEBUG: Validating WebSocket request
+2025-10-25 18:07:42-DEBUG: Attempting to upgrade connection
+2025-10-25 18:07:42-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:07:51-DEBUG: Closed WebSocket
+2025-10-25 18:07:51-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:07:51-DEBUG: Closed WebSocket
+2025-10-25 18:08:39-DEBUG: Initializing WebSocket
+2025-10-25 18:08:39-DEBUG: Validating WebSocket request
+2025-10-25 18:08:39-INFO: 127.0.0.1 - - [2025-10-25 18:08:39] "GET /index.html HTTP/1.1" 200 2451 0.002229
+2025-10-25 18:08:39-DEBUG: Initializing WebSocket
+2025-10-25 18:08:39-DEBUG: Validating WebSocket request
+2025-10-25 18:08:39-INFO: 127.0.0.1 - - [2025-10-25 18:08:39] "GET /eel.js HTTP/1.1" 200 6031 0.000998
+2025-10-25 18:08:40-DEBUG: Initializing WebSocket
+2025-10-25 18:08:40-DEBUG: Validating WebSocket request
+2025-10-25 18:08:40-DEBUG: Attempting to upgrade connection
+2025-10-25 18:08:40-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:08:48-DEBUG: Initializing WebSocket
+2025-10-25 18:08:48-DEBUG: Validating WebSocket request
+2025-10-25 18:08:48-INFO: 127.0.0.1 - - [2025-10-25 18:08:48] "GET /index.html HTTP/1.1" 200 2442 0.001992
+2025-10-25 18:08:48-DEBUG: Initializing WebSocket
+2025-10-25 18:08:48-DEBUG: Validating WebSocket request
+2025-10-25 18:08:48-INFO: 127.0.0.1 - - [2025-10-25 18:08:48] "GET /eel.js HTTP/1.1" 200 6031 0.000860
+2025-10-25 18:08:49-DEBUG: Initializing WebSocket
+2025-10-25 18:08:49-DEBUG: Validating WebSocket request
+2025-10-25 18:08:49-DEBUG: Attempting to upgrade connection
+2025-10-25 18:08:49-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:08:52-DEBUG: Closed WebSocket
+2025-10-25 18:08:52-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:08:52-DEBUG: Closed WebSocket
+2025-10-25 18:10:09-DEBUG: Initializing WebSocket
+2025-10-25 18:10:09-DEBUG: Validating WebSocket request
+2025-10-25 18:10:09-INFO: 127.0.0.1 - - [2025-10-25 18:10:09] "GET /index.html HTTP/1.1" 200 3198 0.002023
+2025-10-25 18:10:09-DEBUG: Initializing WebSocket
+2025-10-25 18:10:09-DEBUG: Validating WebSocket request
+2025-10-25 18:10:09-INFO: 127.0.0.1 - - [2025-10-25 18:10:09] "GET /eel.js HTTP/1.1" 200 6031 0.000627
+2025-10-25 18:10:10-DEBUG: Initializing WebSocket
+2025-10-25 18:10:10-DEBUG: Validating WebSocket request
+2025-10-25 18:10:10-DEBUG: Attempting to upgrade connection
+2025-10-25 18:10:10-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:10:55-DEBUG: Initializing WebSocket
+2025-10-25 18:10:55-DEBUG: Validating WebSocket request
+2025-10-25 18:10:55-INFO: 127.0.0.1 - - [2025-10-25 18:10:55] "GET /index.html HTTP/1.1" 200 3258 0.002109
+2025-10-25 18:10:55-DEBUG: Initializing WebSocket
+2025-10-25 18:10:55-DEBUG: Validating WebSocket request
+2025-10-25 18:10:55-INFO: 127.0.0.1 - - [2025-10-25 18:10:55] "GET /eel.js HTTP/1.1" 200 6031 0.001075
+2025-10-25 18:10:55-DEBUG: Initializing WebSocket
+2025-10-25 18:10:55-DEBUG: Validating WebSocket request
+2025-10-25 18:10:55-DEBUG: Attempting to upgrade connection
+2025-10-25 18:10:55-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:11:09-DEBUG: Closed WebSocket
+2025-10-25 18:11:09-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:11:09-DEBUG: Closed WebSocket
+2025-10-25 18:11:11-DEBUG: Initializing WebSocket
+2025-10-25 18:11:11-DEBUG: Validating WebSocket request
+2025-10-25 18:11:11-INFO: 127.0.0.1 - - [2025-10-25 18:11:11] "GET /index.html HTTP/1.1" 200 3261 0.002018
+2025-10-25 18:11:11-DEBUG: Initializing WebSocket
+2025-10-25 18:11:11-DEBUG: Validating WebSocket request
+2025-10-25 18:11:11-INFO: 127.0.0.1 - - [2025-10-25 18:11:11] "GET /eel.js HTTP/1.1" 200 6031 0.000503
+2025-10-25 18:11:12-DEBUG: Initializing WebSocket
+2025-10-25 18:11:12-DEBUG: Validating WebSocket request
+2025-10-25 18:11:12-DEBUG: Attempting to upgrade connection
+2025-10-25 18:11:12-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:11:51-DEBUG: Initializing WebSocket
+2025-10-25 18:11:51-DEBUG: Validating WebSocket request
+2025-10-25 18:11:51-INFO: 127.0.0.1 - - [2025-10-25 18:11:51] "GET /index.html HTTP/1.1" 200 3261 0.003151
+2025-10-25 18:11:51-DEBUG: Initializing WebSocket
+2025-10-25 18:11:51-DEBUG: Validating WebSocket request
+2025-10-25 18:11:51-INFO: 127.0.0.1 - - [2025-10-25 18:11:51] "GET /eel.js HTTP/1.1" 200 6031 0.001994
+2025-10-25 18:11:51-DEBUG: Initializing WebSocket
+2025-10-25 18:11:51-DEBUG: Validating WebSocket request
+2025-10-25 18:11:51-DEBUG: Attempting to upgrade connection
+2025-10-25 18:11:51-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:12:59-DEBUG: Initializing WebSocket
+2025-10-25 18:12:59-DEBUG: Validating WebSocket request
+2025-10-25 18:12:59-INFO: 127.0.0.1 - - [2025-10-25 18:12:59] "GET /index.html HTTP/1.1" 200 3261 0.001660
+2025-10-25 18:12:59-DEBUG: Initializing WebSocket
+2025-10-25 18:12:59-DEBUG: Validating WebSocket request
+2025-10-25 18:12:59-INFO: 127.0.0.1 - - [2025-10-25 18:12:59] "GET /eel.js HTTP/1.1" 200 6031 0.001102
+2025-10-25 18:13:00-DEBUG: Initializing WebSocket
+2025-10-25 18:13:00-DEBUG: Validating WebSocket request
+2025-10-25 18:13:00-DEBUG: Attempting to upgrade connection
+2025-10-25 18:13:00-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:13:01-DEBUG: Closed WebSocket
+2025-10-25 18:13:01-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:13:01-DEBUG: Closed WebSocket
+2025-10-25 18:14:37-DEBUG: Initializing WebSocket
+2025-10-25 18:14:37-DEBUG: Validating WebSocket request
+2025-10-25 18:14:37-INFO: 127.0.0.1 - - [2025-10-25 18:14:37] "GET /index.html HTTP/1.1" 200 3261 0.002275
+2025-10-25 18:14:37-DEBUG: Initializing WebSocket
+2025-10-25 18:14:37-DEBUG: Validating WebSocket request
+2025-10-25 18:14:37-INFO: 127.0.0.1 - - [2025-10-25 18:14:37] "GET /eel.js HTTP/1.1" 200 6031 0.000796
+2025-10-25 18:14:37-DEBUG: Initializing WebSocket
+2025-10-25 18:14:37-DEBUG: Validating WebSocket request
+2025-10-25 18:14:37-DEBUG: Attempting to upgrade connection
+2025-10-25 18:14:37-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:14:38-DEBUG: Closed WebSocket
+2025-10-25 18:14:38-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:14:38-DEBUG: Closed WebSocket
+2025-10-25 18:19:15-DEBUG: Initializing WebSocket
+2025-10-25 18:19:15-DEBUG: Validating WebSocket request
+2025-10-25 18:19:15-INFO: 127.0.0.1 - - [2025-10-25 18:19:15] "GET /index.html HTTP/1.1" 200 3261 0.002195
+2025-10-25 18:19:15-DEBUG: Initializing WebSocket
+2025-10-25 18:19:15-DEBUG: Validating WebSocket request
+2025-10-25 18:19:15-INFO: 127.0.0.1 - - [2025-10-25 18:19:15] "GET /eel.js HTTP/1.1" 200 6031 0.001537
+2025-10-25 18:19:16-DEBUG: Initializing WebSocket
+2025-10-25 18:19:16-DEBUG: Validating WebSocket request
+2025-10-25 18:19:16-DEBUG: Attempting to upgrade connection
+2025-10-25 18:19:16-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:19:28-DEBUG: Initializing WebSocket
+2025-10-25 18:19:28-DEBUG: Validating WebSocket request
+2025-10-25 18:19:28-INFO: 127.0.0.1 - - [2025-10-25 18:19:28] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.002798
+2025-10-25 18:19:35-DEBUG: Closed WebSocket
+2025-10-25 18:19:35-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:19:35-DEBUG: Closed WebSocket
+2025-10-25 18:29:09-DEBUG: Initializing WebSocket
+2025-10-25 18:29:09-DEBUG: Validating WebSocket request
+2025-10-25 18:29:09-INFO: 127.0.0.1 - - [2025-10-25 18:29:09] "GET /index.html HTTP/1.1" 200 3261 0.001184
+2025-10-25 18:29:09-DEBUG: Initializing WebSocket
+2025-10-25 18:29:09-DEBUG: Validating WebSocket request
+2025-10-25 18:29:09-INFO: 127.0.0.1 - - [2025-10-25 18:29:09] "GET /eel.js HTTP/1.1" 200 6031 0.001309
+2025-10-25 18:29:09-DEBUG: Initializing WebSocket
+2025-10-25 18:29:09-DEBUG: Validating WebSocket request
+2025-10-25 18:29:09-DEBUG: Attempting to upgrade connection
+2025-10-25 18:29:09-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:29:10-DEBUG: Closed WebSocket
+2025-10-25 18:29:10-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:29:10-DEBUG: Closed WebSocket
+2025-10-25 18:30:01-DEBUG: Initializing WebSocket
+2025-10-25 18:30:01-DEBUG: Validating WebSocket request
+2025-10-25 18:30:01-INFO: 127.0.0.1 - - [2025-10-25 18:30:01] "GET /index.html HTTP/1.1" 200 9911 0.002442
+2025-10-25 18:30:01-DEBUG: Initializing WebSocket
+2025-10-25 18:30:01-DEBUG: Validating WebSocket request
+2025-10-25 18:30:01-INFO: 127.0.0.1 - - [2025-10-25 18:30:01] "GET /eel.js HTTP/1.1" 200 6047 0.001048
+2025-10-25 18:30:02-DEBUG: Initializing WebSocket
+2025-10-25 18:30:02-DEBUG: Validating WebSocket request
+2025-10-25 18:30:02-DEBUG: Attempting to upgrade connection
+2025-10-25 18:30:02-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:36:17-DEBUG: Initializing WebSocket
+2025-10-25 18:36:17-DEBUG: Validating WebSocket request
+2025-10-25 18:36:17-INFO: 127.0.0.1 - - [2025-10-25 18:36:17] "GET /index.html HTTP/1.1" 200 7645 0.001047
+2025-10-25 18:36:17-DEBUG: Initializing WebSocket
+2025-10-25 18:36:17-DEBUG: Validating WebSocket request
+2025-10-25 18:36:17-INFO: 127.0.0.1 - - [2025-10-25 18:36:17] "GET /eel.js HTTP/1.1" 200 6047 0.000504
+2025-10-25 18:36:17-DEBUG: Initializing WebSocket
+2025-10-25 18:36:17-DEBUG: Validating WebSocket request
+2025-10-25 18:36:17-DEBUG: Attempting to upgrade connection
+2025-10-25 18:36:17-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:38:37-DEBUG: Initializing WebSocket
+2025-10-25 18:38:37-DEBUG: Validating WebSocket request
+2025-10-25 18:38:37-INFO: 127.0.0.1 - - [2025-10-25 18:38:37] "GET /index.html HTTP/1.1" 200 7945 0.001047
+2025-10-25 18:38:37-DEBUG: Initializing WebSocket
+2025-10-25 18:38:37-DEBUG: Validating WebSocket request
+2025-10-25 18:38:37-INFO: 127.0.0.1 - - [2025-10-25 18:38:37] "GET /eel.js HTTP/1.1" 200 6047 0.000999
+2025-10-25 18:38:38-DEBUG: Initializing WebSocket
+2025-10-25 18:38:38-DEBUG: Validating WebSocket request
+2025-10-25 18:38:38-DEBUG: Attempting to upgrade connection
+2025-10-25 18:38:38-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:38:43-DEBUG: Closed WebSocket
+2025-10-25 18:38:43-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:38:43-DEBUG: Closed WebSocket
+2025-10-25 18:39:13-DEBUG: Initializing WebSocket
+2025-10-25 18:39:13-DEBUG: Validating WebSocket request
+2025-10-25 18:39:13-INFO: 127.0.0.1 - - [2025-10-25 18:39:13] "GET /index.html HTTP/1.1" 200 7755 0.001056
+2025-10-25 18:39:13-DEBUG: Initializing WebSocket
+2025-10-25 18:39:13-DEBUG: Validating WebSocket request
+2025-10-25 18:39:13-INFO: 127.0.0.1 - - [2025-10-25 18:39:13] "GET /eel.js HTTP/1.1" 200 6047 0.001429
+2025-10-25 18:39:14-DEBUG: Initializing WebSocket
+2025-10-25 18:39:14-DEBUG: Validating WebSocket request
+2025-10-25 18:39:14-DEBUG: Attempting to upgrade connection
+2025-10-25 18:39:14-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:39:34-DEBUG: Initializing WebSocket
+2025-10-25 18:39:34-DEBUG: Validating WebSocket request
+2025-10-25 18:39:34-INFO: 127.0.0.1 - - [2025-10-25 18:39:34] "GET /index.html HTTP/1.1" 200 7945 0.002367
+2025-10-25 18:39:34-DEBUG: Initializing WebSocket
+2025-10-25 18:39:34-DEBUG: Validating WebSocket request
+2025-10-25 18:39:34-INFO: 127.0.0.1 - - [2025-10-25 18:39:34] "GET /eel.js HTTP/1.1" 200 6047 0.000994
+2025-10-25 18:39:35-DEBUG: Initializing WebSocket
+2025-10-25 18:39:35-DEBUG: Validating WebSocket request
+2025-10-25 18:39:35-DEBUG: Attempting to upgrade connection
+2025-10-25 18:39:35-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:40:00-DEBUG: Initializing WebSocket
+2025-10-25 18:40:00-DEBUG: Validating WebSocket request
+2025-10-25 18:40:00-INFO: 127.0.0.1 - - [2025-10-25 18:40:00] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.003009
+2025-10-25 18:40:43-DEBUG: Closed WebSocket
+2025-10-25 18:40:43-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:40:43-DEBUG: Closed WebSocket
+2025-10-25 18:41:38-DEBUG: Initializing WebSocket
+2025-10-25 18:41:38-DEBUG: Validating WebSocket request
+2025-10-25 18:41:38-INFO: 127.0.0.1 - - [2025-10-25 18:41:38] "GET /index.html HTTP/1.1" 200 7786 0.001264
+2025-10-25 18:41:38-DEBUG: Initializing WebSocket
+2025-10-25 18:41:38-DEBUG: Validating WebSocket request
+2025-10-25 18:41:38-INFO: 127.0.0.1 - - [2025-10-25 18:41:38] "GET /eel.js HTTP/1.1" 200 6047 0.000504
+2025-10-25 18:41:39-DEBUG: Initializing WebSocket
+2025-10-25 18:41:39-DEBUG: Validating WebSocket request
+2025-10-25 18:41:39-DEBUG: Attempting to upgrade connection
+2025-10-25 18:41:39-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:42:37-DEBUG: Closed WebSocket
+2025-10-25 18:42:37-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:42:37-DEBUG: Closed WebSocket
+2025-10-25 18:42:39-DEBUG: Initializing WebSocket
+2025-10-25 18:42:39-DEBUG: Validating WebSocket request
+2025-10-25 18:42:39-INFO: 127.0.0.1 - - [2025-10-25 18:42:39] "GET /index.html HTTP/1.1" 200 4788 0.002303
+2025-10-25 18:42:39-DEBUG: Initializing WebSocket
+2025-10-25 18:42:39-DEBUG: Validating WebSocket request
+2025-10-25 18:42:39-INFO: 127.0.0.1 - - [2025-10-25 18:42:39] "GET /eel.js HTTP/1.1" 200 6047 0.000508
+2025-10-25 18:42:40-DEBUG: Initializing WebSocket
+2025-10-25 18:42:40-DEBUG: Validating WebSocket request
+2025-10-25 18:42:40-DEBUG: Attempting to upgrade connection
+2025-10-25 18:42:40-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:42:51-DEBUG: Closed WebSocket
+2025-10-25 18:42:51-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:42:51-DEBUG: Closed WebSocket
+2025-10-25 18:43:03-DEBUG: Initializing WebSocket
+2025-10-25 18:43:03-DEBUG: Validating WebSocket request
+2025-10-25 18:43:03-INFO: 127.0.0.1 - - [2025-10-25 18:43:03] "GET /index.html HTTP/1.1" 200 4706 0.001007
+2025-10-25 18:43:03-DEBUG: Initializing WebSocket
+2025-10-25 18:43:03-DEBUG: Validating WebSocket request
+2025-10-25 18:43:03-INFO: 127.0.0.1 - - [2025-10-25 18:43:03] "GET /eel.js HTTP/1.1" 200 6047 0.000000
+2025-10-25 18:43:03-DEBUG: Initializing WebSocket
+2025-10-25 18:43:03-DEBUG: Validating WebSocket request
+2025-10-25 18:43:03-DEBUG: Attempting to upgrade connection
+2025-10-25 18:43:03-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:44:29-DEBUG: Initializing WebSocket
+2025-10-25 18:44:29-DEBUG: Validating WebSocket request
+2025-10-25 18:44:29-INFO: 127.0.0.1 - - [2025-10-25 18:44:29] "GET /index.html HTTP/1.1" 200 7653 0.001035
+2025-10-25 18:44:29-DEBUG: Initializing WebSocket
+2025-10-25 18:44:29-DEBUG: Validating WebSocket request
+2025-10-25 18:44:29-INFO: 127.0.0.1 - - [2025-10-25 18:44:29] "GET /eel.js HTTP/1.1" 200 6047 0.000502
+2025-10-25 18:44:29-DEBUG: Initializing WebSocket
+2025-10-25 18:44:29-DEBUG: Validating WebSocket request
+2025-10-25 18:44:29-DEBUG: Attempting to upgrade connection
+2025-10-25 18:44:29-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:44:36-DEBUG: Initializing WebSocket
+2025-10-25 18:44:36-DEBUG: Validating WebSocket request
+2025-10-25 18:44:36-INFO: 127.0.0.1 - - [2025-10-25 18:44:36] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.004033
+2025-10-25 18:45:10-DEBUG: Closed WebSocket
+2025-10-25 18:45:10-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:45:10-DEBUG: Closed WebSocket
+2025-10-25 18:49:10-DEBUG: Initializing WebSocket
+2025-10-25 18:49:10-DEBUG: Validating WebSocket request
+2025-10-25 18:49:10-INFO: 127.0.0.1 - - [2025-10-25 18:49:10] "GET /index.html HTTP/1.1" 200 7877 0.001125
+2025-10-25 18:49:10-DEBUG: Initializing WebSocket
+2025-10-25 18:49:10-DEBUG: Validating WebSocket request
+2025-10-25 18:49:10-INFO: 127.0.0.1 - - [2025-10-25 18:49:10] "GET /eel.js HTTP/1.1" 200 6047 0.000503
+2025-10-25 18:49:10-DEBUG: Initializing WebSocket
+2025-10-25 18:49:10-DEBUG: Validating WebSocket request
+2025-10-25 18:49:10-DEBUG: Attempting to upgrade connection
+2025-10-25 18:49:10-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:49:19-DEBUG: Initializing WebSocket
+2025-10-25 18:49:19-DEBUG: Validating WebSocket request
+2025-10-25 18:49:19-INFO: 127.0.0.1 - - [2025-10-25 18:49:19] "GET /index.html HTTP/1.1" 200 7883 0.001057
+2025-10-25 18:49:19-DEBUG: Initializing WebSocket
+2025-10-25 18:49:19-DEBUG: Validating WebSocket request
+2025-10-25 18:49:19-INFO: 127.0.0.1 - - [2025-10-25 18:49:19] "GET /eel.js HTTP/1.1" 200 6047 0.000997
+2025-10-25 18:49:20-DEBUG: Initializing WebSocket
+2025-10-25 18:49:20-DEBUG: Validating WebSocket request
+2025-10-25 18:49:20-DEBUG: Attempting to upgrade connection
+2025-10-25 18:49:20-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:49:43-DEBUG: Initializing WebSocket
+2025-10-25 18:49:43-DEBUG: Validating WebSocket request
+2025-10-25 18:49:43-INFO: 127.0.0.1 - - [2025-10-25 18:49:43] "GET /index.html HTTP/1.1" 200 7840 0.001009
+2025-10-25 18:49:43-DEBUG: Initializing WebSocket
+2025-10-25 18:49:43-DEBUG: Validating WebSocket request
+2025-10-25 18:49:43-INFO: 127.0.0.1 - - [2025-10-25 18:49:43] "GET /eel.js HTTP/1.1" 200 6047 0.000000
+2025-10-25 18:49:44-DEBUG: Initializing WebSocket
+2025-10-25 18:49:44-DEBUG: Validating WebSocket request
+2025-10-25 18:49:44-DEBUG: Attempting to upgrade connection
+2025-10-25 18:49:44-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:50:05-DEBUG: Initializing WebSocket
+2025-10-25 18:50:05-DEBUG: Validating WebSocket request
+2025-10-25 18:50:05-INFO: 127.0.0.1 - - [2025-10-25 18:50:05] "GET /index.html HTTP/1.1" 200 7746 0.001993
+2025-10-25 18:50:05-DEBUG: Initializing WebSocket
+2025-10-25 18:50:05-DEBUG: Validating WebSocket request
+2025-10-25 18:50:05-INFO: 127.0.0.1 - - [2025-10-25 18:50:05] "GET /eel.js HTTP/1.1" 200 6047 0.001003
+2025-10-25 18:50:06-DEBUG: Initializing WebSocket
+2025-10-25 18:50:06-DEBUG: Validating WebSocket request
+2025-10-25 18:50:06-DEBUG: Attempting to upgrade connection
+2025-10-25 18:50:06-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:50:14-DEBUG: Initializing WebSocket
+2025-10-25 18:50:14-DEBUG: Validating WebSocket request
+2025-10-25 18:50:14-INFO: 127.0.0.1 - - [2025-10-25 18:50:14] "GET /index.html HTTP/1.1" 200 7745 0.001005
+2025-10-25 18:50:14-DEBUG: Initializing WebSocket
+2025-10-25 18:50:14-DEBUG: Validating WebSocket request
+2025-10-25 18:50:14-INFO: 127.0.0.1 - - [2025-10-25 18:50:14] "GET /eel.js HTTP/1.1" 200 6047 0.000507
+2025-10-25 18:50:15-DEBUG: Initializing WebSocket
+2025-10-25 18:50:15-DEBUG: Validating WebSocket request
+2025-10-25 18:50:15-DEBUG: Attempting to upgrade connection
+2025-10-25 18:50:15-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:50:23-DEBUG: Initializing WebSocket
+2025-10-25 18:50:23-DEBUG: Validating WebSocket request
+2025-10-25 18:50:23-INFO: 127.0.0.1 - - [2025-10-25 18:50:23] "GET /index.html HTTP/1.1" 200 7746 0.001072
+2025-10-25 18:50:23-DEBUG: Initializing WebSocket
+2025-10-25 18:50:23-DEBUG: Validating WebSocket request
+2025-10-25 18:50:23-INFO: 127.0.0.1 - - [2025-10-25 18:50:23] "GET /eel.js HTTP/1.1" 200 6047 0.001014
+2025-10-25 18:50:23-DEBUG: Initializing WebSocket
+2025-10-25 18:50:23-DEBUG: Validating WebSocket request
+2025-10-25 18:50:23-DEBUG: Attempting to upgrade connection
+2025-10-25 18:50:23-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:50:29-DEBUG: Initializing WebSocket
+2025-10-25 18:50:29-DEBUG: Validating WebSocket request
+2025-10-25 18:50:29-INFO: 127.0.0.1 - - [2025-10-25 18:50:29] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.002024
+2025-10-25 18:50:36-DEBUG: Closed WebSocket
+2025-10-25 18:50:36-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:50:36-DEBUG: Closed WebSocket
+2025-10-25 18:50:49-DEBUG: Initializing WebSocket
+2025-10-25 18:50:49-DEBUG: Validating WebSocket request
+2025-10-25 18:50:49-INFO: 127.0.0.1 - - [2025-10-25 18:50:49] "GET /index.html HTTP/1.1" 200 7798 0.002024
+2025-10-25 18:50:49-DEBUG: Initializing WebSocket
+2025-10-25 18:50:49-DEBUG: Validating WebSocket request
+2025-10-25 18:50:49-INFO: 127.0.0.1 - - [2025-10-25 18:50:49] "GET /eel.js HTTP/1.1" 200 6047 0.001220
+2025-10-25 18:50:50-DEBUG: Initializing WebSocket
+2025-10-25 18:50:50-DEBUG: Validating WebSocket request
+2025-10-25 18:50:50-DEBUG: Attempting to upgrade connection
+2025-10-25 18:50:50-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:50:58-DEBUG: Initializing WebSocket
+2025-10-25 18:50:58-DEBUG: Validating WebSocket request
+2025-10-25 18:50:58-INFO: 127.0.0.1 - - [2025-10-25 18:50:58] "GET /index.html HTTP/1.1" 200 7798 0.002055
+2025-10-25 18:50:58-DEBUG: Initializing WebSocket
+2025-10-25 18:50:58-DEBUG: Validating WebSocket request
+2025-10-25 18:50:58-INFO: 127.0.0.1 - - [2025-10-25 18:50:58] "GET /eel.js HTTP/1.1" 200 6047 0.001178
+2025-10-25 18:50:58-DEBUG: Initializing WebSocket
+2025-10-25 18:50:58-DEBUG: Validating WebSocket request
+2025-10-25 18:50:58-DEBUG: Attempting to upgrade connection
+2025-10-25 18:50:58-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:51:06-DEBUG: Initializing WebSocket
+2025-10-25 18:51:06-DEBUG: Validating WebSocket request
+2025-10-25 18:51:06-INFO: 127.0.0.1 - - [2025-10-25 18:51:06] "GET /index.html HTTP/1.1" 200 7797 0.001119
+2025-10-25 18:51:06-DEBUG: Initializing WebSocket
+2025-10-25 18:51:06-DEBUG: Validating WebSocket request
+2025-10-25 18:51:06-INFO: 127.0.0.1 - - [2025-10-25 18:51:06] "GET /eel.js HTTP/1.1" 200 6047 0.001137
+2025-10-25 18:51:06-DEBUG: Initializing WebSocket
+2025-10-25 18:51:06-DEBUG: Validating WebSocket request
+2025-10-25 18:51:06-DEBUG: Attempting to upgrade connection
+2025-10-25 18:51:06-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:51:15-DEBUG: Initializing WebSocket
+2025-10-25 18:51:15-DEBUG: Validating WebSocket request
+2025-10-25 18:51:15-INFO: 127.0.0.1 - - [2025-10-25 18:51:15] "GET /index.html HTTP/1.1" 200 7750 0.001016
+2025-10-25 18:51:15-DEBUG: Initializing WebSocket
+2025-10-25 18:51:15-DEBUG: Validating WebSocket request
+2025-10-25 18:51:15-INFO: 127.0.0.1 - - [2025-10-25 18:51:15] "GET /eel.js HTTP/1.1" 200 6047 0.001408
+2025-10-25 18:51:16-DEBUG: Initializing WebSocket
+2025-10-25 18:51:16-DEBUG: Validating WebSocket request
+2025-10-25 18:51:16-DEBUG: Attempting to upgrade connection
+2025-10-25 18:51:16-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:51:38-DEBUG: Initializing WebSocket
+2025-10-25 18:51:38-DEBUG: Validating WebSocket request
+2025-10-25 18:51:38-INFO: 127.0.0.1 - - [2025-10-25 18:51:38] "GET /index.html HTTP/1.1" 200 7657 0.001372
+2025-10-25 18:51:38-DEBUG: Initializing WebSocket
+2025-10-25 18:51:38-DEBUG: Validating WebSocket request
+2025-10-25 18:51:38-INFO: 127.0.0.1 - - [2025-10-25 18:51:38] "GET /eel.js HTTP/1.1" 200 6047 0.001079
+2025-10-25 18:51:39-DEBUG: Initializing WebSocket
+2025-10-25 18:51:39-DEBUG: Validating WebSocket request
+2025-10-25 18:51:39-DEBUG: Attempting to upgrade connection
+2025-10-25 18:51:39-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:52:10-DEBUG: Initializing WebSocket
+2025-10-25 18:52:10-DEBUG: Validating WebSocket request
+2025-10-25 18:52:10-INFO: 127.0.0.1 - - [2025-10-25 18:52:10] "GET /index.html HTTP/1.1" 200 7778 0.001020
+2025-10-25 18:52:10-DEBUG: Initializing WebSocket
+2025-10-25 18:52:10-DEBUG: Validating WebSocket request
+2025-10-25 18:52:10-INFO: 127.0.0.1 - - [2025-10-25 18:52:10] "GET /eel.js HTTP/1.1" 200 6047 0.000997
+2025-10-25 18:52:11-DEBUG: Initializing WebSocket
+2025-10-25 18:52:11-DEBUG: Validating WebSocket request
+2025-10-25 18:52:11-DEBUG: Attempting to upgrade connection
+2025-10-25 18:52:11-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:52:28-DEBUG: Initializing WebSocket
+2025-10-25 18:52:28-DEBUG: Validating WebSocket request
+2025-10-25 18:52:28-INFO: 127.0.0.1 - - [2025-10-25 18:52:28] "GET /index.html HTTP/1.1" 200 7655 0.001030
+2025-10-25 18:52:28-DEBUG: Initializing WebSocket
+2025-10-25 18:52:28-DEBUG: Validating WebSocket request
+2025-10-25 18:52:28-INFO: 127.0.0.1 - - [2025-10-25 18:52:28] "GET /eel.js HTTP/1.1" 200 6047 0.000503
+2025-10-25 18:52:29-DEBUG: Initializing WebSocket
+2025-10-25 18:52:29-DEBUG: Validating WebSocket request
+2025-10-25 18:52:29-DEBUG: Attempting to upgrade connection
+2025-10-25 18:52:29-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:52:38-DEBUG: Initializing WebSocket
+2025-10-25 18:52:38-DEBUG: Validating WebSocket request
+2025-10-25 18:52:38-INFO: 127.0.0.1 - - [2025-10-25 18:52:38] "GET /index.html HTTP/1.1" 200 7655 0.002429
+2025-10-25 18:52:38-DEBUG: Initializing WebSocket
+2025-10-25 18:52:38-DEBUG: Validating WebSocket request
+2025-10-25 18:52:38-INFO: 127.0.0.1 - - [2025-10-25 18:52:38] "GET /eel.js HTTP/1.1" 200 6047 0.001041
+2025-10-25 18:52:39-DEBUG: Initializing WebSocket
+2025-10-25 18:52:39-DEBUG: Validating WebSocket request
+2025-10-25 18:52:39-DEBUG: Attempting to upgrade connection
+2025-10-25 18:52:39-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:52:45-DEBUG: Initializing WebSocket
+2025-10-25 18:52:45-DEBUG: Validating WebSocket request
+2025-10-25 18:52:45-INFO: 127.0.0.1 - - [2025-10-25 18:52:45] "GET /index.html HTTP/1.1" 200 7655 0.001099
+2025-10-25 18:52:45-DEBUG: Initializing WebSocket
+2025-10-25 18:52:45-DEBUG: Validating WebSocket request
+2025-10-25 18:52:45-INFO: 127.0.0.1 - - [2025-10-25 18:52:45] "GET /eel.js HTTP/1.1" 200 6047 0.000000
+2025-10-25 18:52:45-DEBUG: Initializing WebSocket
+2025-10-25 18:52:45-DEBUG: Validating WebSocket request
+2025-10-25 18:52:45-DEBUG: Attempting to upgrade connection
+2025-10-25 18:52:45-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:52:59-DEBUG: Closed WebSocket
+2025-10-25 18:52:59-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:52:59-DEBUG: Closed WebSocket
+2025-10-25 18:53:03-DEBUG: Initializing WebSocket
+2025-10-25 18:53:03-DEBUG: Validating WebSocket request
+2025-10-25 18:53:03-INFO: 127.0.0.1 - - [2025-10-25 18:53:03] "GET /index.html HTTP/1.1" 200 7655 0.002494
+2025-10-25 18:53:03-DEBUG: Initializing WebSocket
+2025-10-25 18:53:03-DEBUG: Validating WebSocket request
+2025-10-25 18:53:03-INFO: 127.0.0.1 - - [2025-10-25 18:53:03] "GET /eel.js HTTP/1.1" 200 6047 0.000000
+2025-10-25 18:53:03-DEBUG: Initializing WebSocket
+2025-10-25 18:53:03-DEBUG: Validating WebSocket request
+2025-10-25 18:53:03-DEBUG: Attempting to upgrade connection
+2025-10-25 18:53:03-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:53:12-DEBUG: Initializing WebSocket
+2025-10-25 18:53:12-DEBUG: Validating WebSocket request
+2025-10-25 18:53:12-INFO: 127.0.0.1 - - [2025-10-25 18:53:12] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.003653
+2025-10-25 18:53:22-DEBUG: Closed WebSocket
+2025-10-25 18:53:22-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:53:22-DEBUG: Closed WebSocket
+2025-10-25 18:53:38-DEBUG: Initializing WebSocket
+2025-10-25 18:53:38-DEBUG: Validating WebSocket request
+2025-10-25 18:53:38-INFO: 127.0.0.1 - - [2025-10-25 18:53:38] "GET /index.html HTTP/1.1" 200 7655 0.002135
+2025-10-25 18:53:38-DEBUG: Initializing WebSocket
+2025-10-25 18:53:38-DEBUG: Validating WebSocket request
+2025-10-25 18:53:38-INFO: 127.0.0.1 - - [2025-10-25 18:53:38] "GET /eel.js HTTP/1.1" 200 6047 0.000502
+2025-10-25 18:53:39-DEBUG: Initializing WebSocket
+2025-10-25 18:53:39-DEBUG: Validating WebSocket request
+2025-10-25 18:53:39-DEBUG: Attempting to upgrade connection
+2025-10-25 18:53:39-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:53:41-DEBUG: Initializing WebSocket
+2025-10-25 18:53:41-DEBUG: Validating WebSocket request
+2025-10-25 18:53:41-INFO: 127.0.0.1 - - [2025-10-25 18:53:41] "GET /index.html HTTP/1.1" 200 7655 0.001030
+2025-10-25 18:53:41-DEBUG: Closed WebSocket
+2025-10-25 18:53:41-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:53:41-DEBUG: Closed WebSocket
+2025-10-25 18:53:41-DEBUG: Initializing WebSocket
+2025-10-25 18:53:41-DEBUG: Validating WebSocket request
+2025-10-25 18:53:41-INFO: 127.0.0.1 - - [2025-10-25 18:53:41] "GET /eel.js HTTP/1.1" 200 6047 0.000997
+2025-10-25 18:53:41-DEBUG: Initializing WebSocket
+2025-10-25 18:53:41-DEBUG: Validating WebSocket request
+2025-10-25 18:53:41-DEBUG: Attempting to upgrade connection
+2025-10-25 18:53:41-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:53:42-DEBUG: Initializing WebSocket
+2025-10-25 18:53:42-DEBUG: Validating WebSocket request
+2025-10-25 18:53:42-INFO: 127.0.0.1 - - [2025-10-25 18:53:42] "GET /index.html HTTP/1.1" 200 7655 0.000998
+2025-10-25 18:53:42-DEBUG: Closed WebSocket
+2025-10-25 18:53:42-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:53:42-DEBUG: Closed WebSocket
+2025-10-25 18:53:42-DEBUG: Initializing WebSocket
+2025-10-25 18:53:42-DEBUG: Validating WebSocket request
+2025-10-25 18:53:42-INFO: 127.0.0.1 - - [2025-10-25 18:53:42] "GET /eel.js HTTP/1.1" 200 6047 0.000000
+2025-10-25 18:53:42-DEBUG: Initializing WebSocket
+2025-10-25 18:53:42-DEBUG: Validating WebSocket request
+2025-10-25 18:53:42-DEBUG: Attempting to upgrade connection
+2025-10-25 18:53:42-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:53:44-DEBUG: Initializing WebSocket
+2025-10-25 18:53:44-DEBUG: Validating WebSocket request
+2025-10-25 18:53:44-INFO: 127.0.0.1 - - [2025-10-25 18:53:44] "GET /index.html HTTP/1.1" 200 7655 0.000997
+2025-10-25 18:53:44-DEBUG: Closed WebSocket
+2025-10-25 18:53:44-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:53:44-DEBUG: Closed WebSocket
+2025-10-25 18:53:44-DEBUG: Initializing WebSocket
+2025-10-25 18:53:44-DEBUG: Validating WebSocket request
+2025-10-25 18:53:44-INFO: 127.0.0.1 - - [2025-10-25 18:53:44] "GET /eel.js HTTP/1.1" 200 6047 0.000000
+2025-10-25 18:53:45-DEBUG: Initializing WebSocket
+2025-10-25 18:53:45-DEBUG: Validating WebSocket request
+2025-10-25 18:53:45-DEBUG: Attempting to upgrade connection
+2025-10-25 18:53:45-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:53:46-DEBUG: Initializing WebSocket
+2025-10-25 18:53:46-DEBUG: Validating WebSocket request
+2025-10-25 18:53:46-INFO: 127.0.0.1 - - [2025-10-25 18:53:46] "GET /index.html HTTP/1.1" 200 7655 0.000996
+2025-10-25 18:53:46-DEBUG: Closed WebSocket
+2025-10-25 18:53:46-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:53:46-DEBUG: Closed WebSocket
+2025-10-25 18:53:46-DEBUG: Initializing WebSocket
+2025-10-25 18:53:46-DEBUG: Validating WebSocket request
+2025-10-25 18:53:46-INFO: 127.0.0.1 - - [2025-10-25 18:53:46] "GET /eel.js HTTP/1.1" 200 6047 0.001993
+2025-10-25 18:53:46-DEBUG: Initializing WebSocket
+2025-10-25 18:53:46-DEBUG: Validating WebSocket request
+2025-10-25 18:53:46-DEBUG: Attempting to upgrade connection
+2025-10-25 18:53:46-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:53:48-DEBUG: Initializing WebSocket
+2025-10-25 18:53:48-DEBUG: Validating WebSocket request
+2025-10-25 18:53:48-INFO: 127.0.0.1 - - [2025-10-25 18:53:48] "GET /index.html HTTP/1.1" 200 7655 0.002177
+2025-10-25 18:53:48-DEBUG: Closed WebSocket
+2025-10-25 18:53:48-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:53:48-DEBUG: Closed WebSocket
+2025-10-25 18:53:48-DEBUG: Initializing WebSocket
+2025-10-25 18:53:48-DEBUG: Validating WebSocket request
+2025-10-25 18:53:48-INFO: 127.0.0.1 - - [2025-10-25 18:53:48] "GET /eel.js HTTP/1.1" 200 6047 0.001429
+2025-10-25 18:53:48-DEBUG: Initializing WebSocket
+2025-10-25 18:53:48-DEBUG: Validating WebSocket request
+2025-10-25 18:53:48-DEBUG: Attempting to upgrade connection
+2025-10-25 18:53:48-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:53:51-DEBUG: Initializing WebSocket
+2025-10-25 18:53:51-DEBUG: Validating WebSocket request
+2025-10-25 18:53:51-INFO: 127.0.0.1 - - [2025-10-25 18:53:51] "GET /index.html HTTP/1.1" 200 7655 0.001994
+2025-10-25 18:53:51-DEBUG: Closed WebSocket
+2025-10-25 18:53:51-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:53:51-DEBUG: Closed WebSocket
+2025-10-25 18:53:51-DEBUG: Initializing WebSocket
+2025-10-25 18:53:51-DEBUG: Validating WebSocket request
+2025-10-25 18:53:51-INFO: 127.0.0.1 - - [2025-10-25 18:53:51] "GET /eel.js HTTP/1.1" 200 6047 0.001995
+2025-10-25 18:53:51-DEBUG: Initializing WebSocket
+2025-10-25 18:53:51-DEBUG: Validating WebSocket request
+2025-10-25 18:53:51-DEBUG: Attempting to upgrade connection
+2025-10-25 18:53:51-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:55:38-DEBUG: Initializing WebSocket
+2025-10-25 18:55:38-DEBUG: Validating WebSocket request
+2025-10-25 18:55:38-INFO: 127.0.0.1 - - [2025-10-25 18:55:38] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.003027
+2025-10-25 18:56:41-DEBUG: Closed WebSocket
+2025-10-25 18:56:41-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:56:41-DEBUG: Closed WebSocket
+2025-10-25 18:58:57-DEBUG: Initializing WebSocket
+2025-10-25 18:58:57-DEBUG: Validating WebSocket request
+2025-10-25 18:58:57-INFO: 127.0.0.1 - - [2025-10-25 18:58:57] "GET /index.html HTTP/1.1" 200 8463 0.002015
+2025-10-25 18:58:57-DEBUG: Initializing WebSocket
+2025-10-25 18:58:57-DEBUG: Validating WebSocket request
+2025-10-25 18:58:57-INFO: 127.0.0.1 - - [2025-10-25 18:58:57] "GET /eel.js HTTP/1.1" 200 6047 0.000571
+2025-10-25 18:58:57-DEBUG: Initializing WebSocket
+2025-10-25 18:58:57-DEBUG: Validating WebSocket request
+2025-10-25 18:58:57-DEBUG: Attempting to upgrade connection
+2025-10-25 18:58:57-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:59:17-DEBUG: Initializing WebSocket
+2025-10-25 18:59:17-DEBUG: Validating WebSocket request
+2025-10-25 18:59:17-INFO: 127.0.0.1 - - [2025-10-25 18:59:17] "GET /index.html HTTP/1.1" 200 7620 0.000997
+2025-10-25 18:59:17-DEBUG: Initializing WebSocket
+2025-10-25 18:59:17-DEBUG: Validating WebSocket request
+2025-10-25 18:59:17-INFO: 127.0.0.1 - - [2025-10-25 18:59:17] "GET /eel.js HTTP/1.1" 200 6047 0.000998
+2025-10-25 18:59:18-DEBUG: Initializing WebSocket
+2025-10-25 18:59:18-DEBUG: Validating WebSocket request
+2025-10-25 18:59:18-DEBUG: Attempting to upgrade connection
+2025-10-25 18:59:18-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 18:59:31-DEBUG: Closed WebSocket
+2025-10-25 18:59:31-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 18:59:31-DEBUG: Closed WebSocket
+2025-10-25 19:01:09-DEBUG: Initializing WebSocket
+2025-10-25 19:01:09-DEBUG: Validating WebSocket request
+2025-10-25 19:01:09-INFO: 127.0.0.1 - - [2025-10-25 19:01:09] "GET /index.html HTTP/1.1" 200 7684 0.000996
+2025-10-25 19:01:10-DEBUG: Initializing WebSocket
+2025-10-25 19:01:10-DEBUG: Validating WebSocket request
+2025-10-25 19:01:10-INFO: 127.0.0.1 - - [2025-10-25 19:01:10] "GET /eel.js HTTP/1.1" 200 6047 0.001502
+2025-10-25 19:01:10-DEBUG: Initializing WebSocket
+2025-10-25 19:01:10-DEBUG: Validating WebSocket request
+2025-10-25 19:01:10-DEBUG: Attempting to upgrade connection
+2025-10-25 19:01:10-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:01:15-DEBUG: Initializing WebSocket
+2025-10-25 19:01:15-DEBUG: Validating WebSocket request
+2025-10-25 19:01:15-INFO: 127.0.0.1 - - [2025-10-25 19:01:15] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.002990
+2025-10-25 19:01:40-DEBUG: Initializing WebSocket
+2025-10-25 19:01:40-DEBUG: Validating WebSocket request
+2025-10-25 19:01:40-INFO: 127.0.0.1 - - [2025-10-25 19:01:40] "GET /index.html HTTP/1.1" 200 7685 0.002086
+2025-10-25 19:01:40-DEBUG: Initializing WebSocket
+2025-10-25 19:01:40-DEBUG: Validating WebSocket request
+2025-10-25 19:01:40-INFO: 127.0.0.1 - - [2025-10-25 19:01:40] "GET /eel.js HTTP/1.1" 200 6047 0.001539
+2025-10-25 19:01:41-DEBUG: Initializing WebSocket
+2025-10-25 19:01:41-DEBUG: Validating WebSocket request
+2025-10-25 19:01:41-DEBUG: Attempting to upgrade connection
+2025-10-25 19:01:41-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:01:51-DEBUG: Initializing WebSocket
+2025-10-25 19:01:51-DEBUG: Validating WebSocket request
+2025-10-25 19:01:51-INFO: 127.0.0.1 - - [2025-10-25 19:01:51] "GET /index.html HTTP/1.1" 200 7685 0.001116
+2025-10-25 19:01:51-DEBUG: Closed WebSocket
+2025-10-25 19:01:51-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 19:01:51-DEBUG: Closed WebSocket
+2025-10-25 19:01:51-DEBUG: Initializing WebSocket
+2025-10-25 19:01:51-DEBUG: Validating WebSocket request
+2025-10-25 19:01:51-INFO: 127.0.0.1 - - [2025-10-25 19:01:51] "GET /eel.js HTTP/1.1" 200 6047 0.001429
+2025-10-25 19:01:52-DEBUG: Initializing WebSocket
+2025-10-25 19:01:52-DEBUG: Validating WebSocket request
+2025-10-25 19:01:52-DEBUG: Attempting to upgrade connection
+2025-10-25 19:01:52-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:01:53-DEBUG: Initializing WebSocket
+2025-10-25 19:01:53-DEBUG: Validating WebSocket request
+2025-10-25 19:01:53-INFO: 127.0.0.1 - - [2025-10-25 19:01:53] "GET /index.html HTTP/1.1" 200 7685 0.001021
+2025-10-25 19:01:53-DEBUG: Closed WebSocket
+2025-10-25 19:01:53-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 19:01:53-DEBUG: Closed WebSocket
+2025-10-25 19:01:53-DEBUG: Initializing WebSocket
+2025-10-25 19:01:53-DEBUG: Validating WebSocket request
+2025-10-25 19:01:53-INFO: 127.0.0.1 - - [2025-10-25 19:01:53] "GET /eel.js HTTP/1.1" 200 6047 0.000997
+2025-10-25 19:01:53-DEBUG: Initializing WebSocket
+2025-10-25 19:01:53-DEBUG: Validating WebSocket request
+2025-10-25 19:01:53-DEBUG: Attempting to upgrade connection
+2025-10-25 19:01:53-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:02:46-DEBUG: Closed WebSocket
+2025-10-25 19:02:46-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 19:02:46-DEBUG: Closed WebSocket
+2025-10-25 19:02:48-DEBUG: Initializing WebSocket
+2025-10-25 19:02:48-DEBUG: Validating WebSocket request
+2025-10-25 19:02:48-INFO: 127.0.0.1 - - [2025-10-25 19:02:48] "GET /index.html HTTP/1.1" 200 7685 0.002028
+2025-10-25 19:02:48-DEBUG: Initializing WebSocket
+2025-10-25 19:02:48-DEBUG: Validating WebSocket request
+2025-10-25 19:02:48-INFO: 127.0.0.1 - - [2025-10-25 19:02:48] "GET /eel.js HTTP/1.1" 200 6047 0.000503
+2025-10-25 19:02:49-DEBUG: Initializing WebSocket
+2025-10-25 19:02:49-DEBUG: Validating WebSocket request
+2025-10-25 19:02:49-DEBUG: Attempting to upgrade connection
+2025-10-25 19:02:49-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:02:50-DEBUG: Initializing WebSocket
+2025-10-25 19:02:50-DEBUG: Validating WebSocket request
+2025-10-25 19:02:50-INFO: 127.0.0.1 - - [2025-10-25 19:02:50] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 919 0.003139
+2025-10-25 19:04:19-DEBUG: Initializing WebSocket
+2025-10-25 19:04:19-DEBUG: Validating WebSocket request
+2025-10-25 19:04:19-INFO: 127.0.0.1 - - [2025-10-25 19:04:19] "GET /index.html HTTP/1.1" 200 7739 0.001258
+2025-10-25 19:04:19-DEBUG: Initializing WebSocket
+2025-10-25 19:04:19-DEBUG: Validating WebSocket request
+2025-10-25 19:04:19-INFO: 127.0.0.1 - - [2025-10-25 19:04:19] "GET /eel.js HTTP/1.1" 200 6047 0.000503
+2025-10-25 19:04:21-DEBUG: Initializing WebSocket
+2025-10-25 19:04:21-DEBUG: Validating WebSocket request
+2025-10-25 19:04:21-DEBUG: Attempting to upgrade connection
+2025-10-25 19:04:21-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:05:08-DEBUG: Initializing WebSocket
+2025-10-25 19:05:08-DEBUG: Validating WebSocket request
+2025-10-25 19:05:08-INFO: 127.0.0.1 - - [2025-10-25 19:05:08] "GET /index.html HTTP/1.1" 200 7757 0.001992
+2025-10-25 19:05:08-DEBUG: Initializing WebSocket
+2025-10-25 19:05:08-DEBUG: Validating WebSocket request
+2025-10-25 19:05:08-INFO: 127.0.0.1 - - [2025-10-25 19:05:08] "GET /eel.js HTTP/1.1" 200 6047 0.000996
+2025-10-25 19:05:08-DEBUG: Initializing WebSocket
+2025-10-25 19:05:08-DEBUG: Validating WebSocket request
+2025-10-25 19:05:08-DEBUG: Attempting to upgrade connection
+2025-10-25 19:05:08-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:05:21-DEBUG: Initializing WebSocket
+2025-10-25 19:05:21-DEBUG: Validating WebSocket request
+2025-10-25 19:05:21-INFO: 127.0.0.1 - - [2025-10-25 19:05:21] "GET /index.html HTTP/1.1" 200 7755 0.001005
+2025-10-25 19:05:21-DEBUG: Initializing WebSocket
+2025-10-25 19:05:21-DEBUG: Validating WebSocket request
+2025-10-25 19:05:21-INFO: 127.0.0.1 - - [2025-10-25 19:05:21] "GET /eel.js HTTP/1.1" 200 6047 0.001659
+2025-10-25 19:05:21-DEBUG: Initializing WebSocket
+2025-10-25 19:05:21-DEBUG: Validating WebSocket request
+2025-10-25 19:05:21-DEBUG: Attempting to upgrade connection
+2025-10-25 19:05:21-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:05:59-DEBUG: Initializing WebSocket
+2025-10-25 19:05:59-DEBUG: Validating WebSocket request
+2025-10-25 19:05:59-INFO: 127.0.0.1 - - [2025-10-25 19:05:59] "GET /index.html HTTP/1.1" 200 7764 0.001994
+2025-10-25 19:05:59-DEBUG: Initializing WebSocket
+2025-10-25 19:05:59-DEBUG: Validating WebSocket request
+2025-10-25 19:05:59-INFO: 127.0.0.1 - - [2025-10-25 19:05:59] "GET /eel.js HTTP/1.1" 200 6047 0.000996
+2025-10-25 19:05:59-DEBUG: Initializing WebSocket
+2025-10-25 19:05:59-DEBUG: Validating WebSocket request
+2025-10-25 19:05:59-DEBUG: Attempting to upgrade connection
+2025-10-25 19:05:59-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:06:03-DEBUG: Initializing WebSocket
+2025-10-25 19:06:03-DEBUG: Validating WebSocket request
+2025-10-25 19:06:03-INFO: 127.0.0.1 - - [2025-10-25 19:06:03] "GET /index.html HTTP/1.1" 200 7764 0.001155
+2025-10-25 19:06:03-DEBUG: Closed WebSocket
+2025-10-25 19:06:03-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 19:06:03-DEBUG: Closed WebSocket
+2025-10-25 19:06:03-DEBUG: Initializing WebSocket
+2025-10-25 19:06:03-DEBUG: Validating WebSocket request
+2025-10-25 19:06:03-INFO: 127.0.0.1 - - [2025-10-25 19:06:03] "GET /eel.js HTTP/1.1" 200 6047 0.001331
+2025-10-25 19:06:03-DEBUG: Initializing WebSocket
+2025-10-25 19:06:03-DEBUG: Validating WebSocket request
+2025-10-25 19:06:03-DEBUG: Attempting to upgrade connection
+2025-10-25 19:06:03-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:06:05-DEBUG: Initializing WebSocket
+2025-10-25 19:06:05-DEBUG: Validating WebSocket request
+2025-10-25 19:06:05-INFO: 127.0.0.1 - - [2025-10-25 19:06:05] "GET /index.html HTTP/1.1" 200 7764 0.000000
+2025-10-25 19:06:06-DEBUG: Closed WebSocket
+2025-10-25 19:06:06-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 19:06:06-DEBUG: Closed WebSocket
+2025-10-25 19:06:06-DEBUG: Initializing WebSocket
+2025-10-25 19:06:06-DEBUG: Validating WebSocket request
+2025-10-25 19:06:06-INFO: 127.0.0.1 - - [2025-10-25 19:06:06] "GET /eel.js HTTP/1.1" 200 6047 0.001397
+2025-10-25 19:06:06-DEBUG: Initializing WebSocket
+2025-10-25 19:06:06-DEBUG: Validating WebSocket request
+2025-10-25 19:06:06-DEBUG: Attempting to upgrade connection
+2025-10-25 19:06:06-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:06:06-DEBUG: Initializing WebSocket
+2025-10-25 19:06:06-DEBUG: Validating WebSocket request
+2025-10-25 19:06:06-INFO: 127.0.0.1 - - [2025-10-25 19:06:06] "GET /index.html HTTP/1.1" 200 7764 0.001211
+2025-10-25 19:06:06-DEBUG: Closed WebSocket
+2025-10-25 19:06:06-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 19:06:06-DEBUG: Closed WebSocket
+2025-10-25 19:06:06-DEBUG: Initializing WebSocket
+2025-10-25 19:06:06-DEBUG: Validating WebSocket request
+2025-10-25 19:06:06-INFO: 127.0.0.1 - - [2025-10-25 19:06:06] "GET /eel.js HTTP/1.1" 200 6047 0.000998
+2025-10-25 19:06:06-DEBUG: Initializing WebSocket
+2025-10-25 19:06:06-DEBUG: Validating WebSocket request
+2025-10-25 19:06:06-DEBUG: Attempting to upgrade connection
+2025-10-25 19:06:06-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:06:20-DEBUG: Initializing WebSocket
+2025-10-25 19:06:20-DEBUG: Validating WebSocket request
+2025-10-25 19:06:20-INFO: 127.0.0.1 - - [2025-10-25 19:06:20] "GET /index.html HTTP/1.1" 200 7764 0.001157
+2025-10-25 19:06:20-DEBUG: Closed WebSocket
+2025-10-25 19:06:20-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 19:06:20-DEBUG: Closed WebSocket
+2025-10-25 19:06:20-DEBUG: Initializing WebSocket
+2025-10-25 19:06:20-DEBUG: Validating WebSocket request
+2025-10-25 19:06:20-INFO: 127.0.0.1 - - [2025-10-25 19:06:20] "GET /eel.js HTTP/1.1" 200 6047 0.001182
+2025-10-25 19:06:20-DEBUG: Initializing WebSocket
+2025-10-25 19:06:20-DEBUG: Validating WebSocket request
+2025-10-25 19:06:20-DEBUG: Attempting to upgrade connection
+2025-10-25 19:06:20-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:06:21-DEBUG: Initializing WebSocket
+2025-10-25 19:06:21-DEBUG: Validating WebSocket request
+2025-10-25 19:06:21-INFO: 127.0.0.1 - - [2025-10-25 19:06:21] "GET /index.html HTTP/1.1" 200 7764 0.001993
+2025-10-25 19:06:21-DEBUG: Closed WebSocket
+2025-10-25 19:06:21-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 19:06:21-DEBUG: Closed WebSocket
+2025-10-25 19:06:21-DEBUG: Initializing WebSocket
+2025-10-25 19:06:21-DEBUG: Validating WebSocket request
+2025-10-25 19:06:21-INFO: 127.0.0.1 - - [2025-10-25 19:06:21] "GET /eel.js HTTP/1.1" 200 6047 0.000504
+2025-10-25 19:06:22-DEBUG: Initializing WebSocket
+2025-10-25 19:06:22-DEBUG: Validating WebSocket request
+2025-10-25 19:06:22-DEBUG: Attempting to upgrade connection
+2025-10-25 19:06:22-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:06:22-DEBUG: Initializing WebSocket
+2025-10-25 19:06:22-DEBUG: Validating WebSocket request
+2025-10-25 19:06:22-INFO: 127.0.0.1 - - [2025-10-25 19:06:22] "GET /index.html HTTP/1.1" 200 7764 0.000997
+2025-10-25 19:06:22-DEBUG: Closed WebSocket
+2025-10-25 19:06:22-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 19:06:22-DEBUG: Closed WebSocket
+2025-10-25 19:06:22-DEBUG: Initializing WebSocket
+2025-10-25 19:06:22-DEBUG: Validating WebSocket request
+2025-10-25 19:06:22-INFO: 127.0.0.1 - - [2025-10-25 19:06:22] "GET /eel.js HTTP/1.1" 200 6047 0.000998
+2025-10-25 19:06:22-DEBUG: Initializing WebSocket
+2025-10-25 19:06:22-DEBUG: Validating WebSocket request
+2025-10-25 19:06:22-DEBUG: Attempting to upgrade connection
+2025-10-25 19:06:22-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:09:42-DEBUG: Closed WebSocket
+2025-10-25 19:09:42-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 19:09:42-DEBUG: Closed WebSocket
+2025-10-25 19:09:44-DEBUG: Initializing WebSocket
+2025-10-25 19:09:44-DEBUG: Validating WebSocket request
+2025-10-25 19:09:44-INFO: 127.0.0.1 - - [2025-10-25 19:09:44] "GET /index.html HTTP/1.1" 200 7645 0.001004
+2025-10-25 19:09:44-DEBUG: Initializing WebSocket
+2025-10-25 19:09:44-DEBUG: Validating WebSocket request
+2025-10-25 19:09:44-INFO: 127.0.0.1 - - [2025-10-25 19:09:44] "GET /eel.js HTTP/1.1" 200 6047 0.001504
+2025-10-25 19:09:45-DEBUG: Initializing WebSocket
+2025-10-25 19:09:45-DEBUG: Validating WebSocket request
+2025-10-25 19:09:45-DEBUG: Attempting to upgrade connection
+2025-10-25 19:09:45-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:10:42-DEBUG: Initializing WebSocket
+2025-10-25 19:10:42-DEBUG: Validating WebSocket request
+2025-10-25 19:10:42-INFO: 127.0.0.1 - - [2025-10-25 19:10:42] "GET /index.html HTTP/1.1" 200 7649 0.001009
+2025-10-25 19:10:42-DEBUG: Initializing WebSocket
+2025-10-25 19:10:42-DEBUG: Validating WebSocket request
+2025-10-25 19:10:42-INFO: 127.0.0.1 - - [2025-10-25 19:10:42] "GET /eel.js HTTP/1.1" 200 6047 0.001082
+2025-10-25 19:10:43-DEBUG: Initializing WebSocket
+2025-10-25 19:10:43-DEBUG: Validating WebSocket request
+2025-10-25 19:10:43-DEBUG: Attempting to upgrade connection
+2025-10-25 19:10:43-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:10:53-DEBUG: Initializing WebSocket
+2025-10-25 19:10:53-DEBUG: Validating WebSocket request
+2025-10-25 19:10:53-INFO: 127.0.0.1 - - [2025-10-25 19:10:53] "GET /index.html HTTP/1.1" 200 7643 0.002028
+2025-10-25 19:10:53-DEBUG: Initializing WebSocket
+2025-10-25 19:10:53-DEBUG: Validating WebSocket request
+2025-10-25 19:10:53-INFO: 127.0.0.1 - - [2025-10-25 19:10:53] "GET /eel.js HTTP/1.1" 200 6047 0.000505
+2025-10-25 19:10:53-DEBUG: Initializing WebSocket
+2025-10-25 19:10:53-DEBUG: Validating WebSocket request
+2025-10-25 19:10:53-DEBUG: Attempting to upgrade connection
+2025-10-25 19:10:53-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:13:58-DEBUG: Initializing WebSocket
+2025-10-25 19:13:58-DEBUG: Validating WebSocket request
+2025-10-25 19:13:58-INFO: 127.0.0.1 - - [2025-10-25 19:13:58] "GET /index.html HTTP/1.1" 200 7645 0.002087
+2025-10-25 19:13:58-DEBUG: Initializing WebSocket
+2025-10-25 19:13:58-DEBUG: Validating WebSocket request
+2025-10-25 19:13:58-INFO: 127.0.0.1 - - [2025-10-25 19:13:58] "GET /eel.js HTTP/1.1" 200 6047 0.000504
+2025-10-25 19:13:59-DEBUG: Initializing WebSocket
+2025-10-25 19:13:59-DEBUG: Validating WebSocket request
+2025-10-25 19:13:59-DEBUG: Attempting to upgrade connection
+2025-10-25 19:13:59-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:15:17-DEBUG: Initializing WebSocket
+2025-10-25 19:15:17-DEBUG: Validating WebSocket request
+2025-10-25 19:15:17-INFO: 127.0.0.1 - - [2025-10-25 19:15:17] "GET /index.html HTTP/1.1" 200 7687 0.002017
+2025-10-25 19:15:17-DEBUG: Initializing WebSocket
+2025-10-25 19:15:17-DEBUG: Validating WebSocket request
+2025-10-25 19:15:17-INFO: 127.0.0.1 - - [2025-10-25 19:15:17] "GET /eel.js HTTP/1.1" 200 6047 0.000680
+2025-10-25 19:15:17-DEBUG: Initializing WebSocket
+2025-10-25 19:15:17-DEBUG: Validating WebSocket request
+2025-10-25 19:15:17-DEBUG: Attempting to upgrade connection
+2025-10-25 19:15:17-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:17:12-DEBUG: Initializing WebSocket
+2025-10-25 19:17:12-DEBUG: Validating WebSocket request
+2025-10-25 19:17:12-INFO: 127.0.0.1 - - [2025-10-25 19:17:12] "GET /index.html HTTP/1.1" 200 7675 0.001560
+2025-10-25 19:17:12-DEBUG: Initializing WebSocket
+2025-10-25 19:17:12-DEBUG: Validating WebSocket request
+2025-10-25 19:17:12-INFO: 127.0.0.1 - - [2025-10-25 19:17:12] "GET /eel.js HTTP/1.1" 200 6047 0.000505
+2025-10-25 19:17:13-DEBUG: Initializing WebSocket
+2025-10-25 19:17:13-DEBUG: Validating WebSocket request
+2025-10-25 19:17:13-DEBUG: Attempting to upgrade connection
+2025-10-25 19:17:13-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:18:04-DEBUG: Initializing WebSocket
+2025-10-25 19:18:04-DEBUG: Validating WebSocket request
+2025-10-25 19:18:04-INFO: 127.0.0.1 - - [2025-10-25 19:18:04] "GET /index.html HTTP/1.1" 200 7687 0.001022
+2025-10-25 19:18:04-DEBUG: Initializing WebSocket
+2025-10-25 19:18:04-DEBUG: Validating WebSocket request
+2025-10-25 19:18:04-INFO: 127.0.0.1 - - [2025-10-25 19:18:04] "GET /eel.js HTTP/1.1" 200 6047 0.001009
+2025-10-25 19:18:05-DEBUG: Initializing WebSocket
+2025-10-25 19:18:05-DEBUG: Validating WebSocket request
+2025-10-25 19:18:05-DEBUG: Attempting to upgrade connection
+2025-10-25 19:18:05-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:18:40-DEBUG: Closed WebSocket
+2025-10-25 19:18:40-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 19:18:40-DEBUG: Closed WebSocket
+2025-10-25 19:18:53-DEBUG: Initializing WebSocket
+2025-10-25 19:18:53-DEBUG: Validating WebSocket request
+2025-10-25 19:18:53-INFO: 127.0.0.1 - - [2025-10-25 19:18:53] "GET /index.html HTTP/1.1" 200 7687 0.001992
+2025-10-25 19:18:53-DEBUG: Initializing WebSocket
+2025-10-25 19:18:53-DEBUG: Validating WebSocket request
+2025-10-25 19:18:53-INFO: 127.0.0.1 - - [2025-10-25 19:18:53] "GET /eel.js HTTP/1.1" 200 6047 0.000504
+2025-10-25 19:18:54-DEBUG: Initializing WebSocket
+2025-10-25 19:18:54-DEBUG: Validating WebSocket request
+2025-10-25 19:18:54-DEBUG: Attempting to upgrade connection
+2025-10-25 19:18:54-DEBUG: WebSocket request accepted, switching protocols
+2025-10-25 19:19:09-DEBUG: Closed WebSocket
+2025-10-25 19:19:09-DEBUG: Failed to write closing frame -> closing socket
+2025-10-25 19:19:09-DEBUG: Closed WebSocket

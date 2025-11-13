@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-plus@2.11.5/dist/index.css" />
+    <script src="https://unpkg.com/element-plus@2.11.5/dist/index.full.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs2@0.0.2/qrcode.min.js"></script>
+    <script src="./js/vue.global.prod.js"></script>
+    <link rel="stylesheet" href="./css/index.css" />
+    <script src="./js/index.full.js"></script>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>猫头枪</title>
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #ddd;
+            font-family: Consolas, Monaco, 'Courier New', monospace;
+            margin: 20px;
+        }
+
+        .el-button {
+            margin-left: 12px;
+        }
+
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        #qrcode-container {
+            flex-shrink: 0;
+            width: 120px;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            padding: 5px;
+            border-radius: 4px;
+            font-size: 17px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <el-card shadow="hover" style="background-color:#2d2d2d; color:#ddd; border: #333;">
+            <template #header>
+                <div style="display:flex;  gap:10px; align-items:center;">
+                    <el-space wrap>
+                        <el-button v-for="(locaLink, idx) in localLinkList" :key="idx" class="loca-btn" size="small"
+                            type="primary" @click="buildLocaLinkQRcode(locaLink)">
+                            {{ locaLink }}
+                        </el-button>
+                    </el-space>
+                    <div id="qrcode-container"
+                        style="color: #1e1e1e; width: 120px; height: 120px; background-color: white; padding: 5px; border-radius: 4px;">
+                        请选择连接方式
+                    </div>
+                </div>
+            </template>
+
+            <div class="button-container" v-if="qrdataList.length">
+                <el-button v-for="(item, idx) in qrdataList" :key="idx" :type="item.status ? 'success' : 'danger'"
+                    size="small" @click="copyQrdata(idx)">
+                    {{ item.timestamp + ": " + item.qrdata }}
+                </el-button>
+            </div>
+        </el-card>
+    </div>
+
+    <script src="/eel.js"></script>
+    <script>
+        const { createApp, ref } = Vue;
+
+        createApp({
+            setup() {
+                const localLinkList = ref([]);
+                const qrdataList = ref([]);
+                const newQrdata = ref("");
+
+
+                async function getLocalIps() {
+                    try {
+                        const res = await eel.getLocalIps()();
+                        console.log(res)
+                        localLinkList.value = res;
+                        // buildLocaLinkQRcode(localLinkList.value[0]);
+                        showMessage("ip 列表已读取");
+                    } catch (err) {
+                        showMessage("读取 JSON 列表失败：" + err, 'error');
+                    }
+
+                }
+
+                async function updateqrdata(qrdata) {
+                    try {
+                        const res = [{ "status": "received", "qrdata": "qrdat2222222a", "code": 200, "timestamp": "2025-11-13 14:04" },
+                        { "status": "received", "qrdata": "qrd122211ata", "code": 200, "timestamp": "2025-11-13 14:04" }
+                        ];
+                        if (!res) throw "无数据";
+                        console.log("新增数据：", res);
+                        qrdataList.value = Array.isArray(res) ? res : [res];
+                    } catch (err) {
+                        showMessage("ERROR" + err, 'error');
+                    }
+                }
+
+                async function buildLocaLinkQRcode(locaLink) {
+                    try {
+                        const qrData = "winClientLink:" + locaLink;
+                        const qrcodeContainer = document.getElementById('qrcode-container');
+                        qrcodeContainer.innerHTML = ''; // 清空旧二维码
+
+                        // 生成新二维码
+                        new QRCode(qrcodeContainer, {
+                            text: qrData,
+                            width: 120,
+                            height: 120,
+                            colorDark: "#000000",
+                            colorLight: "#ffffff",
+                            correctLevel: QRCode.CorrectLevel.H
+                        });
+
+                        showMessage(`已生成二维码：${locaLink}`, 'success');
+                    } catch (err) {
+                        showMessage("二维码生成失败：" + err, 'error');
+                    }
+                }
+
+                async function copyQrdata(idx) {
+                    try {
+                        qrdata = qrdataList.value[idx].qrdata;
+                        await navigator.clipboard.writeText(qrdata);
+                        showMessage(`已复制 ${qrdata}`, 'success');
+                    } catch (err) {
+                        showMessage("复制失败：" + err, 'error');
+                    }
+                }
+
+                function showMessage(message, type = 'info') {
+                    console.log(message);
+                    ElementPlus.ElMessage({
+                        showClose: true,
+                        message: String(message),
+                        type: type,
+                        placement: "bottom"
+                    });
+                }
+
+                getLocalIps();
+
+                return {
+                    getLocalIps,
+                    buildLocaLinkQRcode,
+                    localLinkList,
+                    qrdataList,
+                    copyQrdata
+                };
+            }
+        }).use(ElementPlus).mount('#app');
+    </script>
+</body>
+
+</html>
