@@ -108,7 +108,7 @@
                         if (!res) throw new Error('无数据');
                         if (onpaste.value) {
                             showMessage('自动输入：' + res.qrdata);
-                            eel.type_chinese_with_pynput(res.qrdata);
+                            eel.type_chinese_with_pynput(res.qrdata+"\n");
                         } else {
                             showMessage('新增数据：' + res.qrdata);
                         }
