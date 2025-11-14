@@ -10,19 +10,6 @@ import logging
 import socket
 from pynput.keyboard import Controller
 
-# 设计几个api
-# 分别为
-
-# 后端
-# 起一个服务接收两种状态，一种是发起连接，一种是接收数据 ok
-# 收到连接请求返回连接成功并记录log ok
-# 接收数据记录log ok,再拉起键盘输入 ok,再推送给前端显示
-# 查找本机的所有网卡ip地址ok,并推送给前端
-
-# 前端
-# 根据后端返回的地址生成特定组合的二维码
-# 做一个列表显示数据历史记录
-
 
 # ---------------------
 # config 路径使用 get_base_path()
@@ -52,7 +39,7 @@ def get_web_path():
 os.makedirs("log", exist_ok=True)
 filename = f'{datetime.datetime.now().strftime("%Y-%m-%d")}.log'
 logging.basicConfig(  # 设置日志记录器和处理器
-    level=logging.DEBUG,
+    # level=logging.DEBUG,
     format="%(asctime)s-%(levelname)s: %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
     handlers=[logging.StreamHandler(), logging.FileHandler(os.path.join(get_base_path(), "log", filename), encoding="utf-8")],
@@ -135,20 +122,13 @@ def getLocalIps():
 # 推送历史记录列表
 @eel.expose
 def pushqrdata(qrdata):
-    return eel.updateqrdata(qrdata)
+    eel.updateQrData(qrdata)()
 
+# 键盘输入服务
 @eel.expose
-def readJsonlist():
-    config_dir = os.path.join(get_base_path(), "config")
-    json_files_list = [f for f in os.listdir(config_dir) if f.lower().endswith(".json")]
-    return json_files_list
-
-@eel.expose
-def sendConfigJson(filename):
-    config_path = os.path.join(get_base_path(), "config", filename)
-    devlist = readJsonFile(config_path)
-    return devlist
-
+def type_chinese_with_pynput(text):
+    keyboard = Controller()
+    keyboard.type(str(text))
 
 if __name__ == "__main__":
     # 启动 FastAPI 在后台线程

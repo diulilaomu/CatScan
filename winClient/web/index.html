@@ -6,10 +6,11 @@
     <!-- <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/element-plus@2.11.5/dist/index.css" />
     <script src="https://unpkg.com/element-plus@2.11.5/dist/index.full.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs2@0.0.2/qrcode.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/qrcodejs2@0.0.2/qrcode.min.js"></script> -->
+    <script src="./js/qrcode.min.js"></script>
     <script src="./js/vue.global.prod.js"></script>
-    <link rel="stylesheet" href="./css/index.css" />
     <script src="./js/index.full.js"></script>
+    <link rel="stylesheet" href="./css/index.css" />
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <title>猫头枪</title>
     <style>
@@ -53,6 +54,10 @@
             <template #header>
                 <div style="display:flex;  gap:10px; align-items:center;">
                     <el-space wrap>
+                        <el-button class="loca-btn" size="small" :type="onpaste ? 'success' : 'danger'"
+                            @click="switchPasteState()">
+                            自动输入
+                        </el-button>
                         <el-button v-for="(locaLink, idx) in localLinkList" :key="idx" class="loca-btn" size="small"
                             type="primary" @click="buildLocaLinkQRcode(locaLink)">
                             {{ locaLink }}
@@ -66,8 +71,7 @@
             </template>
 
             <div class="button-container" v-if="qrdataList.length">
-                <el-button v-for="(item, idx) in qrdataList" :key="idx" :type="item.status ? 'success' : 'danger'"
-                    size="small" @click="copyQrdata(idx)">
+                <el-button v-for="(item, idx) in qrdataList" :key="idx" size="small" @click="copyQrdata(idx)">
                     {{ item.timestamp + ": " + item.qrdata }}
                 </el-button>
             </div>
@@ -83,33 +87,44 @@
                 const localLinkList = ref([]);
                 const qrdataList = ref([]);
                 const newQrdata = ref("");
-
+                const onpaste = ref(false);
 
                 async function getLocalIps() {
                     try {
                         const res = await eel.getLocalIps()();
                         console.log(res)
                         localLinkList.value = res;
-                        // buildLocaLinkQRcode(localLinkList.value[0]);
-                        showMessage("ip 列表已读取");
+                        showMessage("ip列表已读取");
                     } catch (err) {
-                        showMessage("读取 JSON 列表失败：" + err, 'error');
+                        showMessage("读取IP列表失败：" + err, 'error');
                     }
 
                 }
 
-                async function updateqrdata(qrdata) {
+
+                // updateQrData 函数暴露到全局，供 Python eel调用
+                function updateQrData(res) {
                     try {
-                        const res = [{ "status": "received", "qrdata": "qrdat2222222a", "code": 200, "timestamp": "2025-11-13 14:04" },
-                        { "status": "received", "qrdata": "qrd122211ata", "code": 200, "timestamp": "2025-11-13 14:04" }
-                        ];
-                        if (!res) throw "无数据";
-                        console.log("新增数据：", res);
-                        qrdataList.value = Array.isArray(res) ? res : [res];
+                        if (!res) throw new Error('无数据');
+                        if (onpaste.value) {
+                            showMessage('自动输入：' + res.qrdata);
+                            eel.type_chinese_with_pynput(res.qrdata);
+                        } else {
+                            showMessage('新增数据：' + res.qrdata);
+                        }
+                        const newData = Array.isArray(res) ? res : [res];
+                        qrdataList.value = [...newData, ...qrdataList.value];
                     } catch (err) {
-                        showMessage("ERROR" + err, 'error');
+                        showMessage('ERROR：' + err.message, 'error');
                     }
                 }
+                eel.expose(updateQrData);
+
+                async function switchPasteState() {
+                    console.log(onpaste.value)
+                    onpaste.value = !onpaste.value;
+                }
+
 
                 async function buildLocaLinkQRcode(locaLink) {
                     try {
@@ -152,14 +167,15 @@
                         placement: "bottom"
                     });
                 }
-
                 getLocalIps();
 
                 return {
                     getLocalIps,
+                    switchPasteState,
                     buildLocaLinkQRcode,
                     localLinkList,
                     qrdataList,
+                    onpaste,
                     copyQrdata
                 };
             }
