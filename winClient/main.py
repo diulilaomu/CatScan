@@ -11,6 +11,8 @@ import socket
 from pynput.keyboard import Controller
 
 
+
+
 # ---------------------
 # config 路径使用 get_base_path()
 # ---------------------
@@ -21,6 +23,8 @@ def get_base_path():
     else:
         # ✅ 开发环境下，返回当前脚本目录
         return os.path.dirname(os.path.abspath(__file__))
+
+
 
 
 # ---------------------
@@ -37,15 +41,19 @@ def get_web_path():
 
 # log服务
 os.makedirs("log", exist_ok=True)
-filename = f'{datetime.datetime.now().strftime("%Y-%m-%d")}.log'
+filename = f'qrdata_{datetime.datetime.now().strftime("%Y-%m-%d")}.log'
 logging.basicConfig(  # 设置日志记录器和处理器
-    # level=logging.DEBUG,
+    level=logging.INFO,
     format="%(asctime)s-%(levelname)s: %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
     handlers=[logging.StreamHandler(), logging.FileHandler(os.path.join(get_base_path(), "log", filename), encoding="utf-8")],
 )
 
-
+# 在无控制台模式中创建一个日志文件用来承接所有 print
+if getattr(sys, "frozen", False):
+    log_path = os.path.join(os.path.join(get_base_path(), "log", "fastapi.log"))
+    sys.stdout = open(log_path, "a", encoding="utf-8")
+    sys.stderr = open(log_path, "a", encoding="utf-8")
 
 # 键盘输入服务
 def type_chinese_with_pynput(text):

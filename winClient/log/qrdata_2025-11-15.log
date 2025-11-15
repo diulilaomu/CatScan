@@ -1,0 +1,36 @@
+2025-11-15 13:48:25-INFO: 接收到的 qrdata 数据: qrdata
+2025-11-15 13:48:26-INFO: 接收到的 qrdata 数据: qrdata
+2025-11-15 13:48:26-INFO: 接收到的 qrdata 数据: qrdata
+2025-11-15 13:48:27-INFO: 接收到的 qrdata 数据: qrdata
+2025-11-15 13:48:27-INFO: 接收到的 qrdata 数据: qrdata
+2025-11-15 13:48:35-INFO: 接收到的 qrdata 数据: qrdata
+2025-11-15 13:48:35-INFO: 接收到的 qrdata 数据: qrdata
+2025-11-15 13:48:36-INFO: 接收到的 qrdata 数据: qrdata
+2025-11-15 13:48:59-ERROR: 接收到的 qrdata 数据: qrdata
+2025-11-15 13:49:20-WARNING: 接收到的 qrdata 数据: qrdata
+2025-11-15 13:51:59-DEBUG: Using proactor: IocpProactor
+2025-11-15 13:52:01-DEBUG: Initializing WebSocket
+2025-11-15 13:52:01-DEBUG: Validating WebSocket request
+2025-11-15 13:52:01-INFO: 127.0.0.1 - - [2025-11-15 13:52:01] "GET /index.html HTTP/1.1" 200 7441 0.001060
+2025-11-15 13:52:01-DEBUG: Initializing WebSocket
+2025-11-15 13:52:01-DEBUG: Validating WebSocket request
+2025-11-15 13:52:01-INFO: 127.0.0.1 - - [2025-11-15 13:52:01] "GET /js/qrcode.min.js HTTP/1.1" 200 20200 0.001281
+2025-11-15 13:52:01-DEBUG: Initializing WebSocket
+2025-11-15 13:52:01-DEBUG: Validating WebSocket request
+2025-11-15 13:52:01-DEBUG: Initializing WebSocket
+2025-11-15 13:52:01-DEBUG: Validating WebSocket request
+2025-11-15 13:52:01-INFO: 127.0.0.1 - - [2025-11-15 13:52:01] "GET /js/vue.global.prod.js HTTP/1.1" 200 159906 0.002292
+2025-11-15 13:52:01-INFO: 127.0.0.1 - - [2025-11-15 13:52:01] "GET /css/index.css HTTP/1.1" 200 341554 0.003532
+2025-11-15 13:52:01-DEBUG: Initializing WebSocket
+2025-11-15 13:52:01-DEBUG: Validating WebSocket request
+2025-11-15 13:52:01-INFO: 127.0.0.1 - - [2025-11-15 13:52:01] "GET /js/index.full.js HTTP/1.1" 200 2315768 0.004002
+2025-11-15 13:52:01-DEBUG: Initializing WebSocket
+2025-11-15 13:52:01-DEBUG: Validating WebSocket request
+2025-11-15 13:52:01-INFO: 127.0.0.1 - - [2025-11-15 13:52:01] "GET /eel.js HTTP/1.1" 200 6070 0.001240
+2025-11-15 13:52:01-DEBUG: Initializing WebSocket
+2025-11-15 13:52:01-DEBUG: Validating WebSocket request
+2025-11-15 13:52:01-DEBUG: Attempting to upgrade connection
+2025-11-15 13:52:01-DEBUG: WebSocket request accepted, switching protocols
+2025-11-15 13:55:41-DEBUG: Closed WebSocket
+2025-11-15 13:55:41-DEBUG: Failed to write closing frame -> closing socket
+2025-11-15 13:55:41-DEBUG: Closed WebSocket
