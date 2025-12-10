@@ -110,8 +110,9 @@ fun MainScreen(viewModel: MainViewModel) {
                         text = "识别结果",
                         modifier = Modifier.padding(16.dp)
                     )
-
-                    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                    LazyColumn(modifier = Modifier
+                        .fillMaxWidth().padding(start = 4.dp, end = 4.dp)
+                        ) {
                         itemsIndexed(viewModel.todoList) { index, item ->
                             ResultItem(
                                 text = item,
@@ -121,6 +122,7 @@ fun MainScreen(viewModel: MainViewModel) {
                                     showToast("已复制: $item")
                                 }
                             )
+                            HorizontalDivider(Modifier, DividerDefaults.Thickness, color = Color.LightGray)
                         }
                     }
                 }

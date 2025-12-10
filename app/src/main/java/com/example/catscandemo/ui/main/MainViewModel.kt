@@ -17,7 +17,7 @@ class MainViewModel(
     private val repository: ScanRepository = ScanRepository()
 ) : ViewModel() {
 
-    var todoList by mutableStateOf<List<String>>(listOf("支持条形码、二维码！"))
+    var todoList by mutableStateOf<List<String>>(listOf("支持条形码、二维码！","22维码！"))
         private set
 
     var isFlashOn by mutableStateOf(false)
