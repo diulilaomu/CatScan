@@ -1,7 +1,6 @@
 package com.example.catscandemo.ui.main
 
 import android.annotation.SuppressLint
-import androidx.camera.core.Camera
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -93,7 +92,7 @@ fun MainScreen(viewModel: MainViewModel) {
                             onBarcodeDetected = { code ->
                                 viewModel.onBarcodeScanned(code, copyToClipboard, showToast)
                             },
-                            onCameraReady = {cam -> viewModel.camera = cam}
+                            onCameraReady = { cam -> viewModel.camera = cam }
                         )
                     }
                 }
@@ -110,9 +109,11 @@ fun MainScreen(viewModel: MainViewModel) {
                         text = "识别结果",
                         modifier = Modifier.padding(16.dp)
                     )
-                    LazyColumn(modifier = Modifier
-                        .fillMaxWidth().padding(start = 4.dp, end = 4.dp)
-                        ) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 4.dp, end = 4.dp)
+                    ) {
                         itemsIndexed(viewModel.todoList) { index, item ->
                             ResultItem(
                                 text = item,
@@ -122,7 +123,11 @@ fun MainScreen(viewModel: MainViewModel) {
                                     showToast("已复制: $item")
                                 }
                             )
-                            HorizontalDivider(Modifier, DividerDefaults.Thickness, color = Color.LightGray)
+                            HorizontalDivider(
+                                Modifier,
+                                DividerDefaults.Thickness,
+                                color = Color.LightGray
+                            )
                         }
                     }
                 }

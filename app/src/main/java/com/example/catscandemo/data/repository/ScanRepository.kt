@@ -1,4 +1,5 @@
 package com.example.catscandemo.data.repository
+
 import com.example.catscandemo.data.network.CatScanClient
 
 class ScanRepository(

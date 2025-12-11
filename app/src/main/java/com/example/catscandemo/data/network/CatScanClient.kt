@@ -1,5 +1,7 @@
 package com.example.catscandemo.data.network
 
+import android.os.Handler
+import android.os.Looper
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -13,9 +15,9 @@ class CatScanClient {
         .readTimeout(10, TimeUnit.SECONDS)
         .build()
 
-    /**
-     * 上传数据到电脑端。异步回调在 OkHttp 线程中，调用方一般切回主线程显示 UI。
-     */
+    // 添加主线程 Handler
+    private val mainHandler = Handler(Looper.getMainLooper())
+
     fun uploadToComputer(
         url: String,
         qrData: String,
@@ -23,7 +25,7 @@ class CatScanClient {
         onFailure: (String) -> Unit
     ) {
         if (url.isEmpty()) {
-            onFailure("目标地址为空")
+            mainHandler.post { onFailure("目标地址为空") }
             return
         }
 
@@ -33,26 +35,29 @@ class CatScanClient {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                onFailure(e.message ?: "网络连接失败")
+                mainHandler.post { onFailure(e.message ?: "网络连接失败") }
             }
 
             override fun onResponse(call: Call, response: Response) {
                 response.use {
                     if (!it.isSuccessful) {
-                        onFailure("HTTP ${it.code}")
+                        mainHandler.post { onFailure("HTTP ${it.code}") }
                         return
                     }
                     try {
                         val bodyStr = it.body?.string() ?: ""
                         val obj = JSONObject(bodyStr)
                         val code = obj.optInt("code", -1)
-                        if (code == 200) onSuccess() else onFailure("服务器返回错误: $code")
+                        if (code == 200) {
+                            mainHandler.post(onSuccess)
+                        } else {
+                            mainHandler.post { onFailure("服务器返回错误: $code") }
+                        }
                     } catch (e: Exception) {
-                        onFailure("解析响应失败: ${e.message}")
+                        mainHandler.post { onFailure("解析响应失败: ${e.message}") }
                     }
                 }
             }
         })
     }
 }
-
