@@ -26,13 +26,17 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.draw.shadow
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.platform.LocalConfiguration
 import com.example.catscandemo.ui.components.CameraPreview
-import com.example.catscandemo.ui.components.ResultItem
+import com.example.catscandemo.ui.components.ResultItemController
 import com.example.catscandemo.ui.components.SettingsDrawer
 import com.example.catscandemo.ui.components.ChangeServerUrlDialog
 import com.example.catscandemo.utils.AutoRequestCameraPermission
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,6 +55,20 @@ fun MainScreen(viewModel: MainViewModel) {
     val showToast = { msg: String ->
         android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
     }
+    val imagePickerLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent()
+        ) { uri: Uri? ->
+            uri?.let {
+                viewModel.onImagePicked(
+                    uri = it,
+                    context = context,
+                    copyToClipboard = copyToClipboard,
+                    showToast = showToast
+                )
+            }
+        }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -69,7 +87,7 @@ fun MainScreen(viewModel: MainViewModel) {
                 // 顶部栏
                 TopAppBar(
                     modifier = Modifier
-                        .weight(2.1f)
+                        .weight(3f)
                         .padding(2.dp),
                     title = { Text("") },
                     navigationIcon = {
@@ -82,7 +100,7 @@ fun MainScreen(viewModel: MainViewModel) {
                 // 摄像头区域
                 Box(
                     modifier = Modifier
-                        .weight(4f)
+                        .weight(2.1f)
                         .fillMaxWidth()
                         .background(Color(0xFF488ECC)),
                     contentAlignment = Alignment.Center
@@ -95,12 +113,31 @@ fun MainScreen(viewModel: MainViewModel) {
                             onCameraReady = { cam -> viewModel.camera = cam }
                         )
                     }
+                    Column (
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(bottom = 16.dp, end = 16.dp)
+                    ) {
+
+                        AlbumButton (
+                            onClick = {
+                                imagePickerLauncher.launch("image/*")
+                            }
+                        )
+
+                        FlashlightButton(
+                            isOn = viewModel.isFlashOn,
+                            onToggle = { viewModel.onToggleFlash() },
+                            modifier = Modifier
+                        )
+                    }
+
                 }
 
                 // 识别结果列表
                 Column(
                     modifier = Modifier
-                        .weight(3.9f)
+                        .weight(4.2f)
                         .fillMaxWidth()
                         .background(Color(0xFFF5F5F5))
                 ) {
@@ -112,37 +149,52 @@ fun MainScreen(viewModel: MainViewModel) {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 4.dp, end = 4.dp)
+                            .padding(horizontal = 4.dp)
                     ) {
-                        itemsIndexed(viewModel.todoList) { index, item ->
-                            ResultItem(
-                                text = item,
-                                onDelete = { viewModel.deleteItem(index) },
-                                onClickCopy = {
-                                    copyToClipboard(item)
-                                    showToast("已复制: $item")
-                                }
-                            )
+                        itemsIndexed(viewModel.historyManager.items,key = { _, item -> item.index }) { index, item ->
+
+                            val isDuplicate = viewModel.historyManager.items.count { it.text == item.text } > 1
+
+                            val controller = remember {
+                                ResultItemController(
+                                    initialItem = item,
+                                    onDelete = { viewModel.deleteItem(index) },
+                                    onClickCopy = {
+                                        copyToClipboard(item.text)
+                                        showToast(item.text) },
+                                    onUpdate = { updatedItem ->
+                                        viewModel.updateItem(index, updatedItem)
+                                    }
+                                )
+                            }
+                            LaunchedEffect(item) {
+                                controller.syncItem(item)
+                            }
+                            controller.Render(highlight = isDuplicate)
+
                             HorizontalDivider(
-                                Modifier,
-                                DividerDefaults.Thickness,
+                                thickness = DividerDefaults.Thickness,
                                 color = Color.LightGray
                             )
                         }
                     }
                 }
-            }
-            // 闪光灯按钮
-            FlashlightButton(
-                isOn = viewModel.isFlashOn,
-                onToggle = {
-                    viewModel.onToggleFlash()
-                },
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .offset(y = LocalConfiguration.current.screenHeightDp.dp * 0.56f + 12.dp)
+<<<<<<< HEAD
+=======
+                // 底部操作
+                Box(
+                    modifier = Modifier
+                        .weight(0.8f)
+                        .fillMaxWidth()
+                        .background(Color(0xFF488ECC)),
+                    contentAlignment = Alignment.Center
+                ) {
 
-            )
+                }
+
+>>>>>>> f7acbd8 (增加相册识别)
+            }
+
         }
     }
 
@@ -173,9 +225,8 @@ fun FlashlightButton(isOn: Boolean, onToggle: () -> Unit, modifier: Modifier) {
 
     Box(
         modifier = modifier
-            .padding(end = 24.dp)
             .shadow(elevation, CircleShape)
-            .size(56.dp)
+            .size(50.dp)
             .background(if (isOn) Color(0xFFFFC107) else Color(0xFF9E9E9E), CircleShape)
             .clickable(
                 interactionSource = interactionSource,
@@ -188,6 +239,27 @@ fun FlashlightButton(isOn: Boolean, onToggle: () -> Unit, modifier: Modifier) {
         Icon(
             imageVector = if (isOn) Icons.Filled.FlashlightOn else Icons.Filled.FlashlightOff,
             contentDescription = "手电筒",
+            tint = Color.White
+        )
+    }
+}
+@Composable
+fun AlbumButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .padding(top = 4.dp, bottom = 4.dp)
+            .shadow(8.dp, CircleShape)
+            .size(50.dp)
+            .background(Color(0xFF9E9E9E), CircleShape)
+            .clickable { onClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.PhotoLibrary,
+            contentDescription = "相册",
             tint = Color.White
         )
     }
