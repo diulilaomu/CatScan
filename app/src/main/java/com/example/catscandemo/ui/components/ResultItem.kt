@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.catscandemo.ui.main.ScanItem
+import androidx.compose.ui.text.style.TextOverflow
 
 
 /**
@@ -86,6 +87,7 @@ class ResultItemController(
                         .weight(1f)
                         .clickable { onClickCopy() },
                     maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodyLarge
                 )
 

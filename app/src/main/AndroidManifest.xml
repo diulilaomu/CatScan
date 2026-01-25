@@ -10,9 +10,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_logo"
+        android:icon="@mipmap/n_ic_logo"
         android:label="猫头枪"
-        android:roundIcon="@mipmap/ic_logo"
+        android:roundIcon="@mipmap/n_ic_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.CatScanDemo"
         android:usesCleartextTraffic="true">
