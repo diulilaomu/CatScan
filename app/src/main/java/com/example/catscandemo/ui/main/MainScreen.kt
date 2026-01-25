@@ -32,6 +32,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.example.catscandemo.ui.components.CameraPreview
 import com.example.catscandemo.ui.components.ChangeServerUrlDialog
+import com.example.catscandemo.ui.components.DiscoveredPcDialog
 import com.example.catscandemo.ui.components.ResultItemController
 import com.example.catscandemo.ui.components.SettingsDrawer
 import com.example.catscandemo.ui.components.TemplateEditorRightDrawer
@@ -54,6 +55,8 @@ fun MainScreen(viewModel: MainViewModel) {
         viewModel.initTemplateStore(context.applicationContext)
         viewModel.initHistoryStore(context.applicationContext)
         viewModel.initSettingsStore(context.applicationContext)
+        // 启动被动发现 PC：每 1 秒扫描，发现后弹窗
+        viewModel.startPassivePcDiscovery(context.applicationContext)
     }
 
 
@@ -387,6 +390,18 @@ fun MainScreen(viewModel: MainViewModel) {
                 showToast("已更新上传地址")
             },
             onDismiss = { viewModel.showUrlChangeDialog = false }
+        )
+    }
+
+    // 被动发现 PC 后弹窗
+    viewModel.discoveredPcToNotify?.let { server ->
+        DiscoveredPcDialog(
+            server = server,
+            onUse = {
+                viewModel.onUseDiscoveredPc(server)
+                showToast("已切换到: ${server.url}")
+            },
+            onDismiss = { viewModel.dismissDiscoveredPcDialog(ignoredServer = server) }
         )
     }
 }

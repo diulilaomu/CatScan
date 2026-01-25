@@ -300,6 +300,11 @@ class MainViewModel(
     val discoveredServers = mutableStateListOf<DiscoveredServer>()
     var isDiscovering by mutableStateOf(false)
     
+    // --- 被动发现 PC：每 1 秒扫描，发现后弹窗 ---
+    var discoveredPcToNotify by mutableStateOf<DiscoveredServer?>(null)
+    private var lastDismissedPcUrl: String? = null
+    private var lastDismissedPcTime: Long = 0
+    
     private val _clipboardEnabled = mutableStateOf(true)
     var clipboardEnabled: Boolean
         get() = _clipboardEnabled.value
@@ -429,11 +434,15 @@ class MainViewModel(
     }
 
 
-    private fun appendScanToActiveTemplate(text: String) {
+    /**
+     * 往当前模板追加一条扫码，与识别结果同步。
+     * @param timestamp 必须与对应 ScanItem 的 timestamp 一致，以便删除时能正确匹配并同步到模板。
+     */
+    private fun appendScanToActiveTemplate(text: String, timestamp: Long) {
         val t = getActiveTemplate() ?: return
         val record = TemplateScan(
             text = text,
-            timestamp = System.currentTimeMillis(),
+            timestamp = timestamp,
             operator = currentOperator,
             campus = currentArea.campus,
             building = currentArea.building,
@@ -487,8 +496,8 @@ class MainViewModel(
 
 
 
-                    // 写入模板离线扫码列表
-                    appendScanToActiveTemplate(code)
+                    // 写入模板离线扫码列表（与识别结果同一条，用相同 timestamp 以便删除时同步）
+                    appendScanToActiveTemplate(code, historyManager.items.first().timestamp)
 
                     if (clipboardEnabled) {
                         copyToClipboard(code)
@@ -512,7 +521,14 @@ class MainViewModel(
     private fun uploadData(code: String, showToast: (String) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.upload(
-                code, serverUrl,
+                qrData = code,
+                url = serverUrl,
+                templateName = getActiveTemplate()?.name ?: "",
+                operator = currentOperator,
+                campus = currentArea.campus,
+                building = currentArea.building,
+                floor = currentArea.floor,
+                room = currentArea.room,
                 onSuccess = {
                     viewModelScope.launch(Dispatchers.Main) { showToast("上传成功: $code") }
                 },
@@ -571,6 +587,11 @@ class MainViewModel(
         val deleted = historyManager.items.firstOrNull { it.id == id }
         historyManager.deleteById(id)
 
+        // 同步到模板数据：从对应模板的 scans 中删除同一条（按 templateId + timestamp 匹配）
+        if (deleted != null && deleted.templateId.isNotBlank()) {
+            deleteTemplateScan(deleted.templateId, deleted.timestamp)
+        }
+
         val floor = deleted?.let { parseFloorNumber(it.area.floor) }
         if (floor != null) {
             rebuildCursorAfterDelete(floor)
@@ -597,6 +618,8 @@ class MainViewModel(
         
         if (networkDiscovery == null) {
             networkDiscovery = NetworkDiscovery(context.applicationContext)
+            // 启动被动监听服务
+            networkDiscovery?.startPassiveListener()
         }
         
         networkDiscovery?.startDiscovery(
@@ -608,6 +631,7 @@ class MainViewModel(
             onDiscoveryComplete = {
                 isDiscovering = false
                 onDiscoveryComplete()
+                startPassivePcDiscovery(context) // 手动发现结束后重启被动发现
             }
         )
     }
@@ -620,6 +644,54 @@ class MainViewModel(
     fun selectDiscoveredServer(server: DiscoveredServer) {
         serverUrl = server.url
         uploadEnabled = true
+    }
+    
+    /**
+     * 启动被动发现 PC 客户端：每 1 秒扫描一次，发现后主动弹窗。
+     * 同时启动被动监听（响应其他设备的发现请求）。
+     */
+    fun startPassivePcDiscovery(context: Context) {
+        if (networkDiscovery == null) {
+            networkDiscovery = NetworkDiscovery(context.applicationContext)
+        }
+        networkDiscovery?.startPassiveListener()
+        networkDiscovery?.startContinuousDiscovery(onServerFound = { server ->
+            if (discoveredPcToNotify != null) return@startContinuousDiscovery
+            if (serverUrl.isNotEmpty()) return@startContinuousDiscovery  // 已配置连接则不再弹窗
+            if (lastDismissedPcUrl == server.url &&
+                (System.currentTimeMillis() - lastDismissedPcTime) < 5 * 60 * 1000
+            ) return@startContinuousDiscovery
+            discoveredPcToNotify = server
+        })
+    }
+    
+    /**
+     * 关闭「发现 PC」弹窗。若为忽略（传入 server），5 分钟内同一 PC 不再弹窗。
+     */
+    fun dismissDiscoveredPcDialog(ignoredServer: DiscoveredServer? = null) {
+        ignoredServer?.let {
+            lastDismissedPcUrl = it.url
+            lastDismissedPcTime = System.currentTimeMillis()
+        }
+        discoveredPcToNotify = null
+    }
+    
+    /**
+     * 使用发现的 PC 作为上传目标，并关闭弹窗。
+     */
+    fun onUseDiscoveredPc(server: DiscoveredServer) {
+        selectDiscoveredServer(server)
+        discoveredPcToNotify = null
+    }
+    
+    /**
+     * 启动被动网络发现监听服务（响应其他设备的发现请求）
+     */
+    fun startPassiveDiscovery(context: Context) {
+        if (networkDiscovery == null) {
+            networkDiscovery = NetworkDiscovery(context.applicationContext)
+        }
+        networkDiscovery?.startPassiveListener()
     }
     
     override fun onCleared() {

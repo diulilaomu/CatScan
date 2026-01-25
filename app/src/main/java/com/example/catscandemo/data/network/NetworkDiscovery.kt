@@ -17,17 +17,20 @@ data class DiscoveredServer(
 class NetworkDiscovery(private val context: Context) {
     private val discoveryScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var discoveryJob: Job? = null
+    private var listenerJob: Job? = null // 被动监听任务
+    private var isContinuous = false
     
     companion object {
         private const val TAG = "NetworkDiscovery"
         private const val DISCOVERY_PORT = 29028 // 发现端口（与Windows客户端通信）
         private const val DISCOVERY_MESSAGE = "CATSCAN_DISCOVERY_REQUEST"
         private const val DISCOVERY_RESPONSE_PREFIX = "CATSCAN_DISCOVERY_RESPONSE:"
-        private const val DISCOVERY_TIMEOUT_MS = 3000L // 3秒超时
+        private const val DISCOVERY_TIMEOUT_MS = 500L // 500ms超时（单次扫描）
+        private const val DISCOVERY_INTERVAL_MS = 1000L // 1秒扫描一次
     }
     
     /**
-     * 开始网络发现
+     * 开始单次网络发现
      * @param onServerFound 发现服务器时的回调
      * @param onDiscoveryComplete 发现完成时的回调（无论是否找到服务器）
      */
@@ -35,9 +38,40 @@ class NetworkDiscovery(private val context: Context) {
         onServerFound: (DiscoveredServer) -> Unit,
         onDiscoveryComplete: () -> Unit
     ) {
-        stopDiscovery() // 先停止之前的发现
+        stopDiscovery()
+        isContinuous = false
+        performSingleDiscovery(onServerFound, onDiscoveryComplete)
+    }
+    
+    /**
+     * 开始周期性网络发现（每1秒扫描一次）
+     * @param onServerFound 发现服务器时的回调
+     */
+    fun startContinuousDiscovery(
+        onServerFound: (DiscoveredServer) -> Unit
+    ) {
+        stopDiscovery()
+        isContinuous = true
         
         discoveryJob = discoveryScope.launch {
+            while (isContinuous && isActive) {
+                performSingleDiscovery(
+                    onServerFound = onServerFound,
+                    onDiscoveryComplete = {}
+                )
+                delay(DISCOVERY_INTERVAL_MS)
+            }
+        }
+    }
+    
+    /**
+     * 执行单次发现
+     */
+    private fun performSingleDiscovery(
+        onServerFound: (DiscoveredServer) -> Unit,
+        onDiscoveryComplete: () -> Unit
+    ) {
+        discoveryScope.launch {
             try {
                 val servers = mutableSetOf<String>() // 用于去重
                 val socket = DatagramSocket().apply {
@@ -105,13 +139,17 @@ class NetworkDiscovery(private val context: Context) {
                 }
                 
                 socket.close()
-                withContext(Dispatchers.Main) {
-                    onDiscoveryComplete()
+                if (!isContinuous) {
+                    withContext(Dispatchers.Main) {
+                        onDiscoveryComplete()
+                    }
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "网络发现失败: ${e.message}", e)
-                withContext(Dispatchers.Main) {
-                    onDiscoveryComplete()
+                if (!isContinuous) {
+                    withContext(Dispatchers.Main) {
+                        onDiscoveryComplete()
+                    }
                 }
             }
         }
@@ -123,6 +161,105 @@ class NetworkDiscovery(private val context: Context) {
     fun stopDiscovery() {
         discoveryJob?.cancel()
         discoveryJob = null
+    }
+    
+    /**
+     * 启动被动监听服务（响应其他设备的发现请求）
+     */
+    fun startPassiveListener() {
+        stopPassiveListener()
+        
+        listenerJob = discoveryScope.launch {
+            try {
+                val socket = DatagramSocket(DISCOVERY_PORT).apply {
+                    broadcast = true
+                    reuseAddress = true
+                }
+                
+                Log.d(TAG, "被动监听服务已启动，端口 $DISCOVERY_PORT")
+                
+                while (isActive) {
+                    try {
+                        val buffer = ByteArray(1024)
+                        val packet = DatagramPacket(buffer, buffer.size)
+                        socket.receive(packet)
+                        
+                        val request = String(
+                            packet.data,
+                            0,
+                            packet.length,
+                            StandardCharsets.UTF_8
+                        )
+                        
+                        if (request == DISCOVERY_MESSAGE) {
+                            // 获取本机IP地址
+                            val localIp = getLocalIpAddress()
+                            if (localIp != null) {
+                                // 构造响应（虽然Android客户端不提供HTTP服务，但可以响应发现请求）
+                                val responseUrl = "http://$localIp:29027/postqrdata"
+                                val response = "${DISCOVERY_RESPONSE_PREFIX}$responseUrl"
+                                
+                                val responseData = response.toByteArray(StandardCharsets.UTF_8)
+                                val responsePacket = DatagramPacket(
+                                    responseData,
+                                    responseData.size,
+                                    packet.address,
+                                    packet.port
+                                )
+                                socket.send(responsePacket)
+                                Log.d(TAG, "响应发现请求: ${packet.address.hostAddress} -> $responseUrl")
+                            }
+                        }
+                    } catch (e: Exception) {
+                        if (isActive) {
+                            Log.e(TAG, "被动监听错误: ${e.message}")
+                        }
+                    }
+                }
+                
+                socket.close()
+            } catch (e: Exception) {
+                Log.e(TAG, "启动被动监听服务失败: ${e.message}", e)
+            }
+        }
+    }
+    
+    /**
+     * 停止被动监听服务
+     */
+    fun stopPassiveListener() {
+        listenerJob?.cancel()
+        listenerJob = null
+    }
+    
+    /**
+     * 获取本机IP地址
+     */
+    private fun getLocalIpAddress(): String? {
+        try {
+            val interfaces = NetworkInterface.getNetworkInterfaces()
+            while (interfaces.hasMoreElements()) {
+                val networkInterface = interfaces.nextElement()
+                
+                // 跳过回环接口和未激活的接口
+                if (networkInterface.isLoopback || !networkInterface.isUp) {
+                    continue
+                }
+                
+                val addresses = networkInterface.inetAddresses
+                while (addresses.hasMoreElements()) {
+                    val address = addresses.nextElement()
+                    
+                    // 只返回IPv4地址，且不是回环地址
+                    if (address is Inet4Address && !address.isLoopbackAddress) {
+                        return address.hostAddress
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "获取本机IP地址失败: ${e.message}")
+        }
+        return null
     }
     
     /**
@@ -233,6 +370,7 @@ class NetworkDiscovery(private val context: Context) {
      */
     fun cleanup() {
         stopDiscovery()
+        stopPassiveListener()
         discoveryScope.cancel()
     }
 }

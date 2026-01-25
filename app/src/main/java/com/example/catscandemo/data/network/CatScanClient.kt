@@ -21,6 +21,12 @@ class CatScanClient {
     fun uploadToComputer(
         url: String,
         qrData: String,
+        templateName: String? = null,
+        operator: String? = null,
+        campus: String? = null,
+        building: String? = null,
+        floor: String? = null,
+        room: String? = null,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     ) {
@@ -29,7 +35,15 @@ class CatScanClient {
             return
         }
 
-        val json = JSONObject().apply { put("qrdata", qrData) }
+        val json = JSONObject().apply {
+            put("qrdata", qrData)
+            put("templateName", templateName ?: "")
+            put("operator", operator ?: "")
+            put("campus", campus ?: "")
+            put("building", building ?: "")
+            put("floor", floor ?: "")
+            put("room", room ?: "")
+        }
         val body = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
         val request = Request.Builder().url(url).post(body).build()
 

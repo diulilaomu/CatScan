@@ -3,10 +3,6 @@
 
 <head>
     <meta charset="UTF-8" />
-    <!-- <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/element-plus@2.11.5/dist/index.css" />
-    <script src="https://unpkg.com/element-plus@2.11.5/dist/index.full.js"></script> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/qrcodejs2@0.0.2/qrcode.min.js"></script> -->
     <script src="./js/qrcode.min.js"></script>
     <script src="./js/vue.global.prod.js"></script>
     <script src="./js/index.full.js"></script>
@@ -14,103 +10,490 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <title>猫头枪</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            background-color: #1e1e1e;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             color: #ddd;
-            font-family: Consolas, Monaco, 'Courier New', monospace;
-            margin: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 16px;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
         }
 
-        .el-button {
-            margin-left: 12px;
-        }
-
-        .button-container {
+        .app-root {
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 16px;
+            height: 100%;
+            width: 100%;
+        }
+
+        .main-8 {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-2 {
+            flex: 0 0 380px;
+            min-width: 320px;
+            max-width: 450px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-8 .el-card,
+        .side-2 .el-card {
+            background: linear-gradient(145deg, #2a2a2a 0%, #252525 100%);
+            color: #ddd;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .main-8 .el-card__header,
+        .side-2 .el-card__header {
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 16px 20px;
+            font-weight: 600;
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .main-8 .el-card__body {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+        }
+
+        .table-wrapper {
+            flex: 1;
+            overflow: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .table-wrapper::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .data-table thead {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: linear-gradient(180deg, #3a3a3a 0%, #2f2f2f 100%);
+        }
+
+        .data-table th {
+            padding: 12px 14px;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            white-space: nowrap;
+            font-weight: 600;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .data-table td {
+            padding: 10px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .data-table td[data-col="qrdata"] {
+            max-width: 500px;
+        }
+
+        .data-table td[data-col="__index__"] {
+            max-width: 70px;
+            text-align: center;
+            font-weight: 500;
+            color: #aaa;
+        }
+
+        .data-table tbody tr:nth-child(even) {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .data-table tbody tr:hover {
+            background: rgba(64, 158, 255, 0.1);
+            transform: scale(1.001);
+            transition: all 0.2s ease;
+        }
+
+        .data-table tbody tr {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .delete-btn {
+            background: transparent;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delete-btn:hover {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff5252;
+        }
+
+        .delete-btn:active {
+            transform: scale(0.95);
+        }
+
+        .side-2 .el-card__body {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* 操作按钮区域 */
+        .action-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .action-section .el-button {
+            width: 100%;
+            height: 42px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-section .el-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 网络信息区域 */
+        .network-info {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .network-info .label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #aaa;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .network-info .label::before {
+            content: '🌐';
+            font-size: 14px;
+        }
+
+        .link-item {
+            font-size: 12px;
+            word-break: break-all;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            border-left: 3px solid #409eff;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .link-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-left-color: #66b1ff;
+        }
+
+        .link-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .link-item.empty {
+            color: #666;
+            border-left-color: #444;
+            cursor: default;
+        }
+
+        /* 二维码区域 */
+        .qr-section {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .qr-section > .label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #aaa;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .qr-section > .label::before {
+            content: '📱';
+            font-size: 14px;
+        }
+
+
+        .qr-connection-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: stretch;
+            width: 100%;
+        }
+
+        .qr-connection-buttons .el-button {
+            width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+            height: 38px;
+            font-size: 13px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            margin: 0 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-connection-buttons .el-button:hover {
+            transform: translateX(4px);
+        }
+
+        .auto-input-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .auto-input-section .label {
+            margin: 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: #aaa;
+        }
+
+        .auto-input-section .label::before {
+            content: '⌨️';
+            font-size: 14px;
+            margin-right: 6px;
+        }
+
+        .auto-input-section .el-button {
+            min-width: 100px;
+            height: 36px;
+            border-radius: 6px;
+            font-weight: 500;
         }
 
         #qrcode-container {
-            flex-shrink: 0;
-            width: 120px;
-            aspect-ratio: 1 / 1;
+            width: 100%;
+            max-width: 260px;
+            aspect-ratio: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: white;
-            padding: 5px;
-            border-radius: 4px;
-            font-size: 17px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 0 auto;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: #1e1e1e;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        #qrcode-container:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
 
 <body>
     <div id="app">
-        <el-card shadow="hover" style="background-color:#2d2d2d; color:#ddd; border: #333;">
-            <template #header>
-                <div style="display:flex;  gap:10px; align-items:center;">
-                    <el-space wrap>
-                        <el-button class="loca-btn" size="small" :type="onpaste ? 'success' : 'danger'"
-                            @click="switchPasteState()">
-                            自动输入
-                        </el-button>
-                        <el-button v-for="(locaLink, idx) in localLinkList" :key="idx" class="loca-btn" size="small"
-                            type="primary" @click="buildLocaLinkQRcode(locaLink)">
-                            {{ locaLink }}
-                        </el-button>
-                    </el-space>
-                    <div id="qrcode-container"
-                        style="color: #1e1e1e; width: 120px; height: 120px; background-color: white; padding: 5px; border-radius: 4px;">
-                        请选择连接方式
+        <div class="app-root">
+            <!-- 左侧 8 分：Excel 表格展示全部数据字段 -->
+            <div class="main-8">
+                <el-card shadow="hover">
+                    <template #header>
+                        <span>扫码数据</span>
+                    </template>
+                    <div class="table-wrapper">
+                        <table class="data-table" v-if="qrdataList.length">
+                            <thead>
+                                <tr>
+                                    <th v-for="col in tableColumns" :key="col.key">{{ col.label }}</th>
+                                    <th style="width: 60px;">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(item, idx) in qrdataList" :key="idx" @click="copyQrdata(idx)">
+                                    <td v-for="col in tableColumns" :key="col.key" :data-col="col.key">
+                                        {{ col.key === '__index__' ? (idx + 1) : (item[col.key] ?? '') }}
+                                    </td>
+                                    <td @click.stop>
+                                        <button class="delete-btn" @click="deleteItem(idx)" title="删除">
+                                            ✕
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div v-else style="padding:24px; color:#888; text-align:center;">暂无数据</div>
                     </div>
-                </div>
-            </template>
-
-            <div class="button-container" v-if="qrdataList.length">
-                <el-button v-for="(item, idx) in qrdataList" :key="idx" size="small" @click="copyQrdata(idx)">
-                    {{ item.timestamp + ": " + item.qrdata }}
-                </el-button>
+                </el-card>
             </div>
-        </el-card>
+
+            <!-- 右侧：控制面板 -->
+            <div class="side-2">
+                <el-card shadow="hover">
+                    <template #header>
+                        <span>控制面板</span>
+                    </template>
+                    <div class="el-card__body">
+                        <!-- 操作按钮区域 -->
+                        <div class="action-section">
+                            <el-button type="primary" @click="exportData" icon="Download">
+                                导出 CSV 数据
+                            </el-button>
+                        </div>
+
+                        <!-- 网络信息区域 -->
+                        <div class="network-info">
+                            <div class="label">本机网络地址</div>
+                            <div v-for="(link, i) in localLinkList" :key="i" class="link-item" 
+                                 @click="copyToClipboard(link)" :title="'点击复制: ' + link">
+                                {{ link }}
+                            </div>
+                            <div v-if="!localLinkList.length" class="link-item empty">加载中…</div>
+                        </div>
+
+                        <!-- 二维码区域 -->
+                        <div class="qr-section">
+                            <div class="label">连接方式</div>
+                            <div class="qr-connection-buttons">
+                                <el-button v-for="(locaLink, idx) in localLinkList" :key="idx" 
+                                    type="primary" @click="buildLocaLinkQRcode(locaLink)">
+                                    {{ locaLink.replace(/^http:\/\/([^:]+):\d+\/.*/, '$1') }}
+                                </el-button>
+                            </div>
+
+                            <div class="auto-input-section">
+                                <div class="label">自动输入</div>
+                                <el-button :type="onpaste ? 'success' : 'info'" 
+                                    @click="switchPasteState()" size="small">
+                                    {{ onpaste ? '已开启' : '已关闭' }}
+                                </el-button>
+                            </div>
+
+                            <div class="label">二维码</div>
+                            <div id="qrcode-container">请选择连接方式</div>
+                        </div>
+                    </div>
+                </el-card>
+            </div>
+        </div>
     </div>
 
     <script src="/eel.js"></script>
     <script>
-        const { createApp, ref } = Vue;
+        const { createApp, ref, computed } = Vue;
+
+        const KEY_LABELS = {
+            __index__: '序号', templateName: '模板名称', campus: '校区', building: '楼栋', floor: '楼层', room: '房间',
+            qrdata: '扫码结果', operator: '操作', timestamp: '时间戳'
+        };
+        const TABLE_KEYS = ['__index__', 'templateName', 'campus', 'building', 'floor', 'room', 'qrdata', 'operator', 'timestamp'];
 
         createApp({
             setup() {
                 const localLinkList = ref([]);
                 const qrdataList = ref([]);
-                const newQrdata = ref("");
                 const onpaste = ref(false);
+
+                const tableColumns = computed(() => TABLE_KEYS.map(k => ({ key: k, label: KEY_LABELS[k] || k })));
 
                 async function getLocalIps() {
                     try {
                         const res = await eel.getLocalIps()();
-                        console.log(res)
-                        localLinkList.value = res;
-                        showMessage("ip列表已读取");
+                        localLinkList.value = res || [];
+                        showMessage("IP 列表已读取");
                     } catch (err) {
-                        showMessage("读取IP列表失败：" + err, 'error');
+                        showMessage("读取 IP 列表失败：" + err, 'error');
                     }
-
                 }
 
-
-                // updateQrData 函数暴露到全局，供 Python eel调用
                 function updateQrData(res) {
                     try {
                         if (!res) throw new Error('无数据');
-                        if (onpaste.value) {
+                        if (onpaste.value && res.qrdata) {
                             showMessage('自动输入：' + res.qrdata);
-                            eel.type_chinese_with_pynput(res.qrdata+"\n");
+                            eel.type_chinese_with_pynput(res.qrdata + "\n");
                         } else {
-                            showMessage('新增数据：' + res.qrdata);
+                            showMessage('新增数据：' + (res.qrdata != null ? res.qrdata : (res.msg || '')));
                         }
                         const newData = Array.isArray(res) ? res : [res];
                         qrdataList.value = [...newData, ...qrdataList.value];
@@ -120,53 +503,97 @@
                 }
                 eel.expose(updateQrData);
 
-                async function switchPasteState() {
-                    console.log(onpaste.value)
+                function switchPasteState() {
                     onpaste.value = !onpaste.value;
                 }
 
-
-                async function buildLocaLinkQRcode(locaLink) {
+                function buildLocaLinkQRcode(locaLink) {
                     try {
                         const qrData = "winClientLink:" + locaLink;
-                        const qrcodeContainer = document.getElementById('qrcode-container');
-                        qrcodeContainer.innerHTML = ''; // 清空旧二维码
-
-                        // 生成新二维码
-                        new QRCode(qrcodeContainer, {
+                        const el = document.getElementById('qrcode-container');
+                        el.innerHTML = '';
+                        new QRCode(el, {
                             text: qrData,
-                            width: 120,
-                            height: 120,
+                            width: 200,
+                            height: 200,
                             colorDark: "#000000",
                             colorLight: "#ffffff",
                             correctLevel: QRCode.CorrectLevel.H
                         });
-
                         showMessage(`已生成二维码：${locaLink}`, 'success');
                     } catch (err) {
                         showMessage("二维码生成失败：" + err, 'error');
                     }
                 }
 
-                async function copyQrdata(idx) {
-                    try {
-                        qrdata = qrdataList.value[idx].qrdata;
-                        await navigator.clipboard.writeText(qrdata);
-                        showMessage(`已复制 ${qrdata}`, 'success');
-                    } catch (err) {
-                        showMessage("复制失败：" + err, 'error');
+                function copyQrdata(idx) {
+                    const item = qrdataList.value[idx];
+                    const text = (item && (item.qrdata != null ? item.qrdata : item.msg)) || JSON.stringify(item || {});
+                    navigator.clipboard.writeText(text).then(
+                        () => showMessage('已复制：' + (text.length > 30 ? text.slice(0, 30) + '…' : text), 'success'),
+                        () => showMessage("复制失败", 'error')
+                    );
+                }
+
+                function deleteItem(idx) {
+                    if (idx >= 0 && idx < qrdataList.value.length) {
+                        qrdataList.value.splice(idx, 1);
+                        showMessage('已删除第 ' + (idx + 1) + ' 行数据', 'success');
                     }
                 }
 
-                function showMessage(message, type = 'info') {
-                    console.log(message);
-                    ElementPlus.ElMessage({
-                        showClose: true,
-                        message: String(message),
-                        type: type,
-                        placement: "bottom"
-                    });
+                function exportData() {
+                    if (!qrdataList.value.length) { showMessage('暂无数据可导出', 'warning'); return; }
+                    const cols = tableColumns.value;
+                    const headers = cols.map(c => c.label);
+                    const escape = (v) => /[,"\n\r]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : String(v);
+                    const rows = qrdataList.value.map((item, idx) =>
+                        cols.map(c => escape(c.key === '__index__' ? (idx + 1) : (item[c.key] ?? '')))
+                    );
+                    const csv = '\uFEFF' + [headers.map(escape).join(','), ...rows.map(r => r.join(','))].join('\n');
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = 'catscan_' + new Date().toISOString().slice(0, 10) + '.csv';
+                    a.click();
+                    URL.revokeObjectURL(a.href);
+                    showMessage('已导出 CSV', 'success');
                 }
+
+                function copyToClipboard(text) {
+                    navigator.clipboard.writeText(text).then(
+                        () => showMessage('已复制地址：' + text, 'success'),
+                        () => showMessage("复制失败", 'error')
+                    );
+                }
+
+                function showMessage(message, type = 'info') {
+                    ElementPlus.ElMessage({ showClose: true, message: String(message), type, placement: "bottom" });
+                }
+
+                // 窗口自适应和最大化
+                function maximizeWindow() {
+                    try {
+                        if (window.eel) {
+                            // 尝试最大化窗口（如果eel支持）
+                            window.resizeTo(screen.width, screen.height);
+                            window.moveTo(0, 0);
+                        }
+                    } catch (e) {
+                        console.log('窗口最大化功能不可用');
+                    }
+                }
+
+                // 监听窗口大小变化
+                window.addEventListener('resize', () => {
+                    // 确保界面自适应
+                });
+
+                // 页面加载完成后最大化窗口
+                window.addEventListener('load', () => {
+                    setTimeout(maximizeWindow, 100);
+                });
+
                 getLocalIps();
 
                 return {
@@ -176,7 +603,11 @@
                     localLinkList,
                     qrdataList,
                     onpaste,
-                    copyQrdata
+                    copyQrdata,
+                    deleteItem,
+                    exportData,
+                    copyToClipboard,
+                    tableColumns
                 };
             }
         }).use(ElementPlus).mount('#app');
