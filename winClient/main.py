@@ -133,12 +133,45 @@ app = FastAPI()
 
 @app.post("/postqrdata")
 async def receive_json(data: dict):
-    if "qrdata" in data:
+    if "batch" in data and data["batch"] is True and "data" in data:
+        # 处理批量上传数据
+        batch_data = data["data"]
+        if isinstance(batch_data, list):
+            logging.info("接收到批量数据，共 %d 条", len(batch_data))
+            # 处理每条数据
+            for item in batch_data:
+                if "qrdata" in item:
+                    # 合并请求体全部字段，并补充 status/code/timestamp（后者优先）
+                    payload = {**item, "status": "received", "code": 200, "timestamp": getTime()}
+                    # 处理action字段
+                    action = item.get("action", "add")
+                    # 无论什么操作，都需要传递给前端处理
+                    pushqrdata(payload)
+                    if action == "delete":
+                        # 处理删除操作
+                        logging.info("删除数据: %s", item["qrdata"])
+                    else:
+                        # 处理添加或更新操作
+                        logging.info("处理批量数据: %s", item["qrdata"])
+            return {"status": "received", "code": 200, "timestamp": getTime(), "msg": f"成功处理 {len(batch_data)} 条数据"}
+        else:
+            logging.error("接收到的批量数据格式错误: %s", data)
+            return {"status": "error", "msg": "批量数据格式错误", "data": data, "code": 500, "timestamp": getTime()}
+    elif "qrdata" in data:
+        # 处理单条数据
         qrdata = data["qrdata"]
         # 合并请求体全部字段，并补充 status/code/timestamp（后者优先）
         payload = {**data, "status": "received", "code": 200, "timestamp": getTime()}
+        # 处理action字段
+        action = data.get("action", "add")
+        # 无论什么操作，都需要传递给前端处理
         pushqrdata(payload)
-        logging.info("接收到的 qrdata 数据: %s", qrdata)
+        if action == "delete":
+            # 处理删除操作
+            logging.info("删除数据: %s", qrdata)
+        else:
+            # 处理添加或更新操作
+            logging.info("接收到的 qrdata 数据: %s", qrdata)
         return payload
     else:
         logging.error("接收到的数据: %s", data)
