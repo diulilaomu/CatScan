@@ -6,6 +6,7 @@ import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import org.json.JSONArray
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
@@ -27,6 +28,8 @@ class CatScanClient {
         building: String? = null,
         floor: String? = null,
         room: String? = null,
+        id: String? = null,
+        action: String? = null,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     ) {
@@ -43,6 +46,71 @@ class CatScanClient {
             put("building", building ?: "")
             put("floor", floor ?: "")
             put("room", room ?: "")
+            put("id", id ?: "")
+            put("action", action ?: "add")
+        }
+        val body = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+        val request = Request.Builder().url(url).post(body).build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                mainHandler.post { onFailure(e.message ?: "网络连接失败") }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (!it.isSuccessful) {
+                        mainHandler.post { onFailure("HTTP ${it.code}") }
+                        return
+                    }
+                    try {
+                        val bodyStr = it.body?.string() ?: ""
+                        val obj = JSONObject(bodyStr)
+                        val code = obj.optInt("code", -1)
+                        if (code == 200) {
+                            mainHandler.post(onSuccess)
+                        } else {
+                            mainHandler.post { onFailure("服务器返回错误: $code") }
+                        }
+                    } catch (e: Exception) {
+                        mainHandler.post { onFailure("解析响应失败: ${e.message}") }
+                    }
+                }
+            }
+        })
+    }
+
+    /**
+     * 批量上传数据
+     */
+    fun uploadBatchToComputer(
+        url: String,
+        dataList: List<Map<String, Any>>,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        if (url.isEmpty()) {
+            mainHandler.post { onFailure("目标地址为空") }
+            return
+        }
+
+        val json = JSONObject().apply {
+            put("batch", true)
+            val dataArray = JSONArray()
+            dataList.forEach {
+                val itemJson = JSONObject()
+                itemJson.put("qrdata", it["qrdata"] ?: "")
+                itemJson.put("templateName", it["templateName"] ?: "")
+                itemJson.put("operator", it["operator"] ?: "")
+                itemJson.put("campus", it["campus"] ?: "")
+                itemJson.put("building", it["building"] ?: "")
+                itemJson.put("floor", it["floor"] ?: "")
+                itemJson.put("room", it["room"] ?: "")
+                itemJson.put("id", it["id"] ?: "")
+                itemJson.put("action", it["action"] ?: "add")
+                dataArray.put(itemJson)
+            }
+            put("data", dataArray)
         }
         val body = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
         val request = Request.Builder().url(url).post(body).build()

@@ -24,8 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.catscandemo.ui.main.MainViewModel
-import com.example.catscandemo.ui.main.TemplateModel
+import com.example.catscandemo.presentation.viewmodel.MainViewModel
+import com.example.catscandemo.domain.model.TemplateModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -78,13 +78,20 @@ fun TemplateEditorNavigator(
                 page = DrawerPage.MANAGER
                 return
             }
+            val context = LocalContext.current
+            val showToast = { msg: String ->
+                android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
+            }
+            
             TemplateEditorSheet(
+                viewModel = viewModel,
                 template = t,
                 isActive = (t.id == activeId),
                 onSetActive = { viewModel.setActiveTemplate(t.id) },
                 onSave = { updated -> viewModel.updateTemplate(updated) },
                 onDeleteScan = { ts -> viewModel.deleteTemplateScan(t.id, ts) },
                 onClearScans = { viewModel.clearTemplateScans(t.id) },
+                onUploadTemplateData = { templateData, toastCallback -> viewModel.uploadTemplateData(templateData, toastCallback) },
                 onBack = { page = DrawerPage.MANAGER },
                 onEditRooms = { page = DrawerPage.ROOMS },
                 onClose = onClose,
@@ -538,12 +545,14 @@ private fun TemplateManagerPage(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TemplateEditorSheet(
+    viewModel: MainViewModel,
     template: TemplateModel,
     isActive: Boolean,
     onSetActive: () -> Unit,
     onSave: (TemplateModel) -> Unit,
-    onDeleteScan: (Long) -> Unit,
+    onDeleteScan: (String) -> Unit,
     onClearScans: () -> Unit,
+    onUploadTemplateData: (TemplateModel, (String) -> Unit) -> Unit,
     onBack: () -> Unit,
     onEditRooms: () -> Unit,
     onClose: () -> Unit,
@@ -704,6 +713,31 @@ fun TemplateEditorSheet(
                 Spacer(Modifier.height(8.dp))
                 Text("模板内已扫描数据（离线）", style = MaterialTheme.typography.titleMedium)
             }
+            
+            // 上传模板数据按钮
+            item {
+                if (template.scans.isNotEmpty()) {
+                    val context = LocalContext.current
+                    val showToast = { msg: String ->
+                        android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
+                    }
+                    
+                    Button(
+                        onClick = { onUploadTemplateData(template, showToast) },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = viewModel.uploadEnabled && viewModel.serverUrl.isNotEmpty()
+                    ) {
+                        Text(
+                            if (viewModel.uploadEnabled && viewModel.serverUrl.isNotEmpty()) {
+                                "上传模板数据到电脑"
+                            } else {
+                                "请先连接电脑"
+                            }
+                        )
+                    }
+                    Spacer(Modifier.height(16.dp))
+                }
+            }
 
             if (template.scans.isEmpty()) {
                 item { Text("暂无扫码数据。") }
@@ -723,7 +757,7 @@ fun TemplateEditorSheet(
                                     style = MaterialTheme.typography.bodySmall
                                 )
                             }
-                            IconButton(onClick = { onDeleteScan(s.timestamp) }) {
+                            IconButton(onClick = { onDeleteScan(s.id) }) {
                                 Icon(Icons.Default.Delete, contentDescription = "删除该条")
                             }
                         }

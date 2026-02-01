@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.catscandemo.data.network.DiscoveredServer
-import com.example.catscandemo.ui.main.MainViewModel
+import com.example.catscandemo.presentation.viewmodel.MainViewModel
 
 @Composable
 fun NetworkSettingsScreen(
@@ -33,37 +33,53 @@ fun NetworkSettingsScreen(
     
     Column(modifier = modifier.fillMaxSize()) {
         // 顶部标题栏
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.surface
         ) {
-            IconButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack, 
+                        contentDescription = "返回",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                Text(
+                    text = "网络设置",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
-            Text(
-                text = "网络设置",
-                style = MaterialTheme.typography.titleLarge
-            )
         }
         
-        HorizontalDivider()
+        HorizontalDivider(
+            color = MaterialTheme.colorScheme.outlineVariant
+        )
         
         // 内容区域
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             // 网络发现区域
             Card(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    modifier = Modifier.padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -72,7 +88,8 @@ fun NetworkSettingsScreen(
                     ) {
                         Text(
                             text = "网络发现",
-                            style = MaterialTheme.typography.titleMedium
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         IconButton(
                             onClick = {
@@ -84,17 +101,24 @@ fun NetworkSettingsScreen(
                                     }
                                 }
                             },
-                            enabled = !viewModel.isDiscovering
+                            enabled = !viewModel.isDiscovering,
+                            colors = IconButtonDefaults.iconButtonColors(
+                                contentColor = MaterialTheme.colorScheme.primary
+                            )
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Refresh,
-                                contentDescription = "发现服务器"
+                                contentDescription = "发现服务器",
+                                modifier = Modifier.size(24.dp)
                             )
                         }
                     }
                     
                     if (viewModel.isDiscovering) {
-                        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                        LinearProgressIndicator(
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.primary
+                        )
                         Text(
                             text = "正在搜索服务器...",
                             style = MaterialTheme.typography.bodySmall,
@@ -105,7 +129,8 @@ fun NetworkSettingsScreen(
                     if (viewModel.discoveredServers.isNotEmpty()) {
                         Text(
                             text = "发现的服务器：",
-                            style = MaterialTheme.typography.labelMedium
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         LazyColumn(
                             modifier = Modifier
@@ -127,20 +152,30 @@ fun NetworkSettingsScreen(
                                         } else {
                                             MaterialTheme.colorScheme.surfaceVariant
                                         }
-                                    )
+                                    ),
+                                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                                 ) {
                                     Column(
-                                        modifier = Modifier.padding(12.dp)
+                                        modifier = Modifier.padding(16.dp)
                                     ) {
                                         Text(
                                             text = server.name,
-                                            style = MaterialTheme.typography.labelLarge
+                                            style = MaterialTheme.typography.labelLarge,
+                                            color = if (serverUrl == server.url) {
+                                                MaterialTheme.colorScheme.onPrimaryContainer
+                                            } else {
+                                                MaterialTheme.colorScheme.onSurfaceVariant
+                                            }
                                         )
                                         Spacer(Modifier.height(4.dp))
                                         Text(
                                             text = server.url,
                                             style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            color = if (serverUrl == server.url) {
+                                                MaterialTheme.colorScheme.onPrimaryContainer
+                                            } else {
+                                                MaterialTheme.colorScheme.onSurfaceVariant
+                                            }
                                         )
                                     }
                                 }
@@ -158,24 +193,45 @@ fun NetworkSettingsScreen(
             
             // 服务器配置区域
             Card(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    modifier = Modifier.padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     Text(
                         text = "服务器配置",
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     
                     OutlinedTextField(
                         value = serverUrl,
                         onValueChange = onServerUrlChange,
-                        label = { Text("电脑端地址") },
-                        placeholder = { Text("http://192.168.1.100:29027/postqrdata") },
+                        label = { 
+                            Text(
+                                "电脑端地址",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            ) 
+                        },
+                        placeholder = { 
+                            Text(
+                                "http://192.168.1.100:29027/postqrdata",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            ) 
+                        },
                         modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                            cursorColor = MaterialTheme.colorScheme.primary,
+                            focusedLabelColor = MaterialTheme.colorScheme.primary
+                        )
                     )
                     
                     Row(
@@ -186,7 +242,8 @@ fun NetworkSettingsScreen(
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = "启用上传到电脑",
-                                style = MaterialTheme.typography.bodyLarge
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
                                 text = "扫描结果将自动上传到服务器",
@@ -202,7 +259,12 @@ fun NetworkSettingsScreen(
                                 } else {
                                     showToast("请先设置服务器地址")
                                 }
-                            }
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedTrackColor = MaterialTheme.colorScheme.primary,
+                                checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                                uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant
+                            )
                         )
                     }
                 }

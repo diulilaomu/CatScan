@@ -115,12 +115,21 @@ class NetworkDiscovery(private val context: Context) {
                         )
                         
                         if (response.startsWith(DISCOVERY_RESPONSE_PREFIX)) {
+                            val serverIp = responsePacket.address.hostAddress
+                            val localIp = getLocalIpAddress()
+                            
+                            // 过滤掉本机IP的响应，避免把自己识别为PC客户端
+                            if (serverIp != null && localIp != null && serverIp == localIp) {
+                                Log.d(TAG, "忽略本机响应: $serverIp")
+                                continue
+                            }
+                            
                             val serverUrl = response.removePrefix(DISCOVERY_RESPONSE_PREFIX).trim()
-                            val serverKey = "${responsePacket.address.hostAddress}:29027"
+                            val serverKey = "${serverIp}:29027"
                             
                             if (servers.add(serverKey)) {
                                 val server = parseServerResponse(
-                                    responsePacket.address.hostAddress,
+                                    serverIp,
                                     serverUrl
                                 )
                                 if (server != null) {

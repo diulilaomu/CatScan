@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import com.example.catscandemo.ui.main.MainViewModel
+import com.example.catscandemo.presentation.viewmodel.MainViewModel
 
 @Composable
 fun TemplateEditorRightDrawer(

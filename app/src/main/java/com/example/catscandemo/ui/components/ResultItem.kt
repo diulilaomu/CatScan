@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.catscandemo.ui.main.ScanItem
+import com.example.catscandemo.domain.model.ScanResult
 import androidx.compose.ui.text.style.TextOverflow
 
 
@@ -22,10 +22,10 @@ import androidx.compose.ui.text.style.TextOverflow
  * ResultItemController: 管理单条扫描结果的数据与状态
  */
 class ResultItemController(
-    initialItem: ScanItem,
+    initialItem: ScanResult,
     private val onDelete: () -> Unit,
     private val onClickCopy: () -> Unit,
-    private val onUpdate: (ScanItem) -> Unit
+    private val onUpdate: (ScanResult) -> Unit
 ) {
 
     var item by mutableStateOf(initialItem)
@@ -34,29 +34,30 @@ class ResultItemController(
     var expanded by mutableStateOf(false)
 
     // 可编辑字段状态
-    var operator by mutableStateOf(initialItem.operator)
-    var room by mutableStateOf(initialItem.area.room)
-    var content by mutableStateOf(initialItem.text)
+    var operator by mutableStateOf(initialItem.scanData.operator)
+    var room by mutableStateOf(initialItem.scanData.room)
+    var content by mutableStateOf(initialItem.scanData.text)
 
     /**
      * 更新本地字段状态
      */
-    fun syncItem(newItem: ScanItem) {
+    fun syncItem(newItem: ScanResult) {
         item = newItem
-        operator = newItem.operator
-        room = newItem.area.room
-        content = newItem.text
+        operator = newItem.scanData.operator
+        room = newItem.scanData.room
+        content = newItem.scanData.text
     }
 
     /**
      * 保存当前编辑
      */
     fun save() {
-        val updatedItem = item.copy(
+        val updatedScanData = item.scanData.copy(
             operator = operator,
             text = content,
-            area = item.area.copy(room = room)
+            room = room
         )
+        val updatedItem = item.copy(scanData = updatedScanData)
         item = updatedItem
         onUpdate(updatedItem)
         expanded = false
@@ -82,7 +83,7 @@ class ResultItemController(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = item.text,
+                    text = item.scanData.text,
                     modifier = Modifier
                         .weight(1f)
                         .clickable { onClickCopy() },

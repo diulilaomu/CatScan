@@ -1,6 +1,9 @@
 package com.example.catscandemo.ui.main
 
 import android.content.Context
+import com.example.catscandemo.domain.model.ScanData
+import com.example.catscandemo.domain.model.ScanResult
+import com.example.catscandemo.domain.model.TemplateModel
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -91,7 +94,7 @@ object TemplateStorage {
         )
     }
 
-    private fun scanToJson(s: TemplateScan): JSONObject {
+    private fun scanToJson(s: ScanData): JSONObject {
         val obj = JSONObject()
         obj.put("text", s.text)
         obj.put("timestamp", s.timestamp)
@@ -103,8 +106,8 @@ object TemplateStorage {
         return obj
     }
 
-    private fun scanFromJson(obj: JSONObject): TemplateScan {
-        return TemplateScan(
+    private fun scanFromJson(obj: JSONObject): ScanData {
+        return ScanData(
             text = obj.optString("text", ""),
             timestamp = obj.optLong("timestamp", System.currentTimeMillis()),
             operator = obj.optString("operator", ""),
@@ -115,12 +118,12 @@ object TemplateStorage {
         )
     }
 }
-// ===================== 识别结果（ScanItem）离线存储（同文件，不新增文件） =====================
+// ===================== 识别结果（ScanResult）离线存储（同文件，不新增文件） =====================
 object ScanHistoryStorage {
     private const val FILE_NAME = "scan_history.json"
 
     data class Loaded(
-        val items: List<ScanItem>
+        val items: List<ScanResult>
     )
 
     fun load(context: Context): Loaded {
@@ -134,7 +137,7 @@ object ScanHistoryStorage {
             val root = JSONObject(text)
             val arr = root.optJSONArray("items") ?: JSONArray()
 
-            val list = buildList {
+            val list = buildList<ScanResult> {
                 for (i in 0 until arr.length()) {
                     val obj = arr.getJSONObject(i)
                     add(fromJson(obj))
@@ -146,7 +149,7 @@ object ScanHistoryStorage {
         }
     }
 
-    fun save(context: Context, items: List<ScanItem>) {
+    fun save(context: Context, items: List<ScanResult>) {
         val root = JSONObject()
         val arr = JSONArray()
         items.forEach { arr.put(toJson(it)) }
@@ -155,44 +158,43 @@ object ScanHistoryStorage {
         File(context.filesDir, FILE_NAME).writeText(root.toString(), Charsets.UTF_8)
     }
 
-    private fun toJson(item: ScanItem): JSONObject {
+    private fun toJson(item: ScanResult): JSONObject {
         val obj = JSONObject()
         obj.put("id", item.id)
         obj.put("index", item.index)
-        obj.put("text", item.text)
-        obj.put("operator", item.operator)
-        obj.put("timestamp", item.timestamp)
+        obj.put("text", item.scanData.text)
+        obj.put("operator", item.scanData.operator)
+        obj.put("timestamp", item.scanData.timestamp)
         obj.put("uploaded", item.uploaded)
-        obj.put("templateId", item.templateId) // ✅ 新增
+        obj.put("templateId", item.scanData.templateId) // ✅ 新增
 
         val area = JSONObject()
-        area.put("campus", item.area.campus)
-        area.put("building", item.area.building)
-        area.put("floor", item.area.floor)
-        area.put("room", item.area.room)
+        area.put("campus", item.scanData.campus)
+        area.put("building", item.scanData.building)
+        area.put("floor", item.scanData.floor)
+        area.put("room", item.scanData.room)
         obj.put("area", area)
 
         return obj
     }
 
-    private fun fromJson(obj: JSONObject): ScanItem {
+    private fun fromJson(obj: JSONObject): ScanResult {
         val areaObj = obj.optJSONObject("area") ?: JSONObject()
-        val area = AreaInfo(
+        val scanData = ScanData(
+            text = obj.optString("text", ""),
+            timestamp = obj.optLong("timestamp", System.currentTimeMillis()),
+            operator = obj.optString("operator", "unknown"),
             campus = areaObj.optString("campus", ""),
             building = areaObj.optString("building", ""),
             floor = areaObj.optString("floor", ""),
-            room = areaObj.optString("room", "")
+            room = areaObj.optString("room", ""),
+            templateId = obj.optString("templateId", "") // ✅ 新增
         )
 
-        return ScanItem(
+        return ScanResult(
             id = obj.optLong("id", System.currentTimeMillis()),
             index = obj.optInt("index", 0),
-            text = obj.optString("text", ""),
-            operator = obj.optString("operator", "unknown"),
-            area = area,
-            templateId = obj.optString("templateId", ""), // ✅ 新增
-
-            timestamp = obj.optLong("timestamp", System.currentTimeMillis()),
+            scanData = scanData,
             uploaded = obj.optBoolean("uploaded", false)
         )
     }
