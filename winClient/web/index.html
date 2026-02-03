@@ -59,7 +59,7 @@
             display: flex;
             flex-direction: column;
             border-radius: 12px;
-            overflow: hidden;
+            overflow: visible;  /* ✅ 改为 visible，允许内部滚轮显示 */
             transition: all 0.3s ease;
         }
 
@@ -78,8 +78,9 @@
             font-size: 16px;
             color: #fff;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;  /* ✅ 让 header 支持多行布局 */
+            gap: 12px;
+            align-items: flex-start;
         }
 
         .main-8 .el-card__body {
@@ -87,16 +88,27 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            padding: 16px;
+            padding: 12px;
+            min-height: 0;
+        }
+
+        /* 内容容器 */
+        .content-scroll-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
         }
 
         /* 搜索和过滤区域 */
         .search-filter-section {
             display: flex;
             gap: 12px;
-            margin-bottom: 16px;
             align-items: center;
             flex-wrap: wrap;
+            width: 100%;  /* ✅ 占满 header 宽度 */
         }
 
         .search-filter-section .el-input {
@@ -130,6 +142,8 @@
 
         .table-wrapper {
             flex: 1;
+            min-height: 0;
+            max-height: 600px;  /* ✅ 固定最大高度，超出内容通过分页显示 */
             overflow: auto;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
@@ -679,69 +693,72 @@
                         </div>
                     </template>
                     <div class="el-card__body">
-                        <div class="table-controls">
-                            <span>共 {{ totalItems }} 条数据</span>
-                            <el-select
-                                v-model="pageSize"
-                                size="small"
-                                @change="handlePageSizeChange"
-                                style="width: 120px"
-                            >
-                                <el-option label="10 条/页" :value="10" />
-                                <el-option label="20 条/页" :value="20" />
-                                <el-option label="50 条/页" :value="50" />
-                                <el-option label="100 条/页" :value="100" />
-                            </el-select>
-                        </div>
-                        <div class="table-wrapper">
-                            <table class="data-table" v-if="filteredAndPagedData.length">
-                                <thead>
-                                    <tr>
-                                        <th
-                                            v-for="col in tableColumns"
-                                            :key="col.key"
-                                            :class="{
-                                                'sortable': col.key !== '__index__',
-                                                'asc': sortKey === col.key && sortOrder === 'asc',
-                                                'desc': sortKey === col.key && sortOrder === 'desc'
-                                            }"
-                                            @click="handleSort(col.key)"
-                                        >
-                                            {{ col.label }}
-                                        </th>
-                                        <th style="width: 60px;">操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(item, idx) in filteredAndPagedData" :key="idx" @click="copyQrdata(idx)">
-                                        <td v-for="col in tableColumns" :key="col.key" :data-col="col.key">
-                                            {{ col.key === '__index__' ? (getItemIndex(idx) + 1) : (item[col.key] ?? '') }}
-                                        </td>
-                                        <td @click.stop>
-                                            <button class="delete-btn" @click="deleteItem(getItemIndex(idx))" title="删除">
-                                                ✕
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div v-else class="empty-state">
-                                <div class="empty-state-icon">📋</div>
-                                <div class="empty-state-text">暂无数据</div>
-                                <div class="empty-state-subtext">请扫描二维码或条码以添加数据</div>
+                        <!-- ✅ 新增：内容滚动容器，包含表格和分页 -->
+                        <div class="content-scroll-container">
+                            <div class="table-controls">
+                                <span>共 {{ totalItems }} 条数据</span>
+                                <el-select
+                                    v-model="pageSize"
+                                    size="small"
+                                    @change="handlePageSizeChange"
+                                    style="width: 120px"
+                                >
+                                    <el-option label="10 条/页" :value="10" />
+                                    <el-option label="20 条/页" :value="20" />
+                                    <el-option label="50 条/页" :value="50" />
+                                    <el-option label="100 条/页" :value="100" />
+                                </el-select>
                             </div>
-                        </div>
-                        <div v-if="filteredData.length > 0" class="pagination-section">
-                            <span>显示 {{ (currentPage - 1) * pageSize + 1 }} 到 {{ Math.min(currentPage * pageSize, filteredData.length) }} 条，共 {{ filteredData.length }} 条</span>
-                            <el-pagination
-                                v-model:current-page="currentPage"
-                                v-model:page-size="pageSize"
-                                :page-sizes="[10, 20, 50, 100]"
-                                layout="prev, pager, next"
-                                :total="filteredData.length"
-                                @size-change="handlePageSizeChange"
-                                @current-change="handleCurrentPageChange"
-                            />
+                            <div class="table-wrapper">
+                                <table class="data-table" v-if="filteredAndPagedData.length">
+                                    <thead>
+                                        <tr>
+                                            <th
+                                                v-for="col in tableColumns"
+                                                :key="col.key"
+                                                :class="{
+                                                    'sortable': col.key !== '__index__',
+                                                    'asc': sortKey === col.key && sortOrder === 'asc',
+                                                    'desc': sortKey === col.key && sortOrder === 'desc'
+                                                }"
+                                                @click="handleSort(col.key)"
+                                            >
+                                                {{ col.label }}
+                                            </th>
+                                            <th style="width: 60px;">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(item, idx) in filteredAndPagedData" :key="idx" @click="copyQrdata(idx)">
+                                            <td v-for="col in tableColumns" :key="col.key" :data-col="col.key">
+                                                {{ col.key === '__index__' ? (getItemIndex(idx) + 1) : (item[col.key] ?? '') }}
+                                            </td>
+                                            <td @click.stop>
+                                                <button class="delete-btn" @click="deleteItem(getItemIndex(idx))" title="删除">
+                                                    ✕
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div v-else class="empty-state">
+                                    <div class="empty-state-icon">📋</div>
+                                    <div class="empty-state-text">暂无数据</div>
+                                    <div class="empty-state-subtext">请扫描二维码或条码以添加数据</div>
+                                </div>
+                            </div>
+                            <div v-if="filteredData.length > 0" class="pagination-section">
+                                <span>显示 {{ (currentPage - 1) * pageSize + 1 }} 到 {{ Math.min(currentPage * pageSize, filteredData.length) }} 条，共 {{ filteredData.length }} 条</span>
+                                <el-pagination
+                                    v-model:current-page="currentPage"
+                                    v-model:page-size="pageSize"
+                                    :page-sizes="[10, 20, 50, 100]"
+                                    layout="prev, pager, next"
+                                    :total="filteredData.length"
+                                    @size-change="handlePageSizeChange"
+                                    @current-change="handleCurrentPageChange"
+                                />
+                            </div>
                         </div>
                     </div>
                 </el-card>
@@ -957,8 +974,11 @@
                                 // 检查是否已经存在相同内容的数据（主要检查qrdata字段）
                                 if (newItem.qrdata) {
                                     // 检查qrdataList.value中的数据
-                                    if (qrdataList.value.some(existingItem => existingItem.qrdata === newItem.qrdata)) {
-                                        return false;
+                                    const existingIndex = qrdataList.value.findIndex(existingItem => existingItem.qrdata === newItem.qrdata);
+                                    if (existingIndex !== -1) {
+                                        // 如果存在相同内容的数据，更新它的其他字段（如operator, room等）
+                                        qrdataList.value[existingIndex] = { ...qrdataList.value[existingIndex], ...newItem };
+                                        return false; // 不需要添加到列表
                                     }
                                     // 检查pendingData列表中的数据
                                     if (pendingData.some(pendingItem => pendingItem.qrdata === newItem.qrdata)) {
@@ -1053,10 +1073,50 @@
                         showMessage('暂无数据可清空', 'warning');
                         return;
                     }
-                    if (confirm('确定要清空所有数据吗？此操作不可恢复。')) {
+                    
+                    // 使用ElementPlus的确认对话框
+                    ElementPlus.ElMessageBox.confirm(
+                        `确定要清空全部 ${qrdataList.value.length} 条数据吗？`,
+                        '清空数据确认',
+                        {
+                            confirmButtonText: '确定清空',
+                            cancelButtonText: '取消',
+                            type: 'warning',
+                        }
+                    ).then(() => {
+                        // 保存备份用于撤销
+                        const backupData = [...qrdataList.value];
                         qrdataList.value = [];
-                        showMessage('已清空所有数据', 'success');
-                    }
+                        localStorage.removeItem('catscan_data');
+                        
+                        // 显示带撤销按钮的消息
+                        const msgInstance = ElementPlus.ElMessage({
+                            message: '已清空所有数据。',
+                            type: 'success',
+                            duration: 5000,
+                            showClose: true,
+                        });
+                        
+                        // 5秒内可撤销
+                        const undoTimeout = setTimeout(() => {
+                            // 超时后清理备份
+                        }, 5000);
+                        
+                        // 添加撤销功能（通过快捷键 Ctrl+Z）
+                        const undoHandler = (e) => {
+                            if (e.ctrlKey && e.key === 'z') {
+                                e.preventDefault();
+                                clearTimeout(undoTimeout);
+                                qrdataList.value = backupData;
+                                showMessage(`已撤销，恢复 ${backupData.length} 条数据`, 'success');
+                                document.removeEventListener('keydown', undoHandler);
+                            }
+                        };
+                        document.addEventListener('keydown', undoHandler);
+                        setTimeout(() => document.removeEventListener('keydown', undoHandler), 5000);
+                    }).catch(() => {
+                        // 用户取消
+                    });
                 }
 
                 function refreshData() {

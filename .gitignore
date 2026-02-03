@@ -15,3 +15,10 @@
 local.properties
 .idea/
 .kotlin/
+.trae/
+*.apk
+*.exe
+winClient/dist/
+winClient/build/
+__pycache__/
+*.log

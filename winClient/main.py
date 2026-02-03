@@ -185,21 +185,40 @@ async def health_check():
 
 def run_fastapi():
     """在后台线程中运行FastAPI服务"""
-    try:
-        uvicorn.run(
-            app, 
-            host="0.0.0.0", 
-            port=29027, 
-            log_level="info",
-            access_log=False  # 禁用访问日志以减少输出
-        )
-    except OSError as e:
-        if "Address already in use" in str(e):
-            logging.error(f"端口 29027 已被占用，请关闭占用该端口的程序")
-        else:
+    max_retries = 3
+    retry_count = 0
+    
+    while retry_count < max_retries:
+        try:
+            uvicorn.run(
+                app, 
+                host="0.0.0.0", 
+                port=29027, 
+                log_level="info",
+                access_log=False  # 禁用访问日志以减少输出
+            )
+            break  # 正常启动则退出循环
+        except OSError as e:
+            if "Address already in use" in str(e) or "10048" in str(e):
+                retry_count += 1
+                if retry_count < max_retries:
+                    logging.warning(f"端口 29027 已被占用，{retry_count}/{max_retries} 次重试中...")
+                    import time
+                    time.sleep(2)  # 等待2秒后重试
+                else:
+                    logging.error("端口 29027 已被占用，请关闭占用该端口的程序后重试")
+                    # 尝试弹出提示框（如果可能）
+                    try:
+                        import ctypes
+                        ctypes.windll.user32.MessageBoxW(0, "端口 29027 已被占用\n请关闭占用该端口的程序后重新启动", "猫头枪 - 端口占用错误", 0x10)
+                    except Exception:
+                        pass
+            else:
+                logging.error(f"FastAPI 服务启动失败: {e}")
+                break
+        except Exception as e:
             logging.error(f"FastAPI 服务启动失败: {e}")
-    except Exception as e:
-        logging.error(f"FastAPI 服务启动失败: {e}")
+            break
 
 
 # 获取IP地址
