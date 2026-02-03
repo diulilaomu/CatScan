@@ -19,8 +19,10 @@ import com.example.catscandemo.domain.model.ScanResult
 import com.example.catscandemo.domain.model.TemplateModel
 import com.example.catscandemo.domain.use_case.*
 import com.example.catscandemo.utils.ImageEnhancer
+import com.example.catscandemo.ui.components.FastImageEnhancer
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
+import com.google.android.gms.tasks.Tasks
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -612,45 +614,39 @@ class MainViewModel @Inject constructor(
                 return@launch
             }
             
-            // 使用增强配置处理图像
-            val enhancedBitmap = ImageEnhancer.enhanceBitmap(
-                bitmap,
-                ImageEnhancer.ENHANCE_CONFIG
+            // 与实时分层通道对齐：全幅多层对比度增强（无中心裁剪、无锐化）
+            val luminance = ImageEnhancer.extractLuminanceFromBitmap(bitmap)
+            val layers = FastImageEnhancer.createLayeredEnhancements(
+                luminance = luminance,
+                width = bitmap.width,
+                height = bitmap.height,
+                scaleFactor = 4
             )
             
-            val enhancedImage = InputImage.fromBitmap(enhancedBitmap, 0)
-            
             launch(Dispatchers.Main) {
-                scanner.process(enhancedImage)
-                    .addOnSuccessListener { enhancedBarcodes ->
-                        val enhancedResult = enhancedBarcodes.firstOrNull()?.rawValue
-                        
-                        // 回收bitmap
-                        if (enhancedBitmap != bitmap) {
-                            enhancedBitmap.recycle()
-                        }
-                        bitmap.recycle()
-                        
-                        if (enhancedResult != null) {
-                            Log.d("CatScan", "增强图像扫描成功")
-                            onBarcodeScanned(enhancedResult, copyToClipboard, showToast)
-                        } else {
-                            showToast("未识别到条码")
-                        }
-                        scanner.close()
+                var detectedValue: String? = null
+                var detectedBarcodes: List<com.google.mlkit.vision.barcode.common.Barcode> = emptyList()
+                
+                for (layer in layers) {
+                    val image = InputImage.fromBitmap(layer, 0)
+                    val barcodes = scanner.process(image).await()
+                    layer.recycle()
+                    if (barcodes.isNotEmpty()) {
+                        detectedBarcodes = barcodes
+                        detectedValue = barcodes.first().rawValue
+                        break
                     }
-                    .addOnFailureListener { e ->
-                        Log.e("CatScan", "Enhanced scan failed", e)
-                        
-                        // 回收bitmap
-                        if (enhancedBitmap != bitmap) {
-                            enhancedBitmap.recycle()
-                        }
-                        bitmap.recycle()
-                        
-                        showToast("识别失败")
-                        scanner.close()
-                    }
+                }
+                
+                bitmap.recycle()
+                
+                if (detectedValue != null) {
+                    Log.d("CatScan", "分层增强图像扫描成功")
+                    onBarcodeScanned(detectedValue!!, copyToClipboard, showToast)
+                } else {
+                    showToast("未识别到条码")
+                }
+                scanner.close()
             }
         }
     }
