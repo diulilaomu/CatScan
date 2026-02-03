@@ -409,47 +409,42 @@ object FastImageEnhancer {
                             yBuffer.get(luminanceData)
                             yBuffer.rewind()
                             
-                            // ===== 通道1: 原图扫描（每3帧执行一次）=====
-                            if (currentFrame % 3 == 0) {
-                                val inputImage1 = InputImage.fromMediaImage(mediaImage, rotationDegrees)
-                                
-                                scanner1.process(inputImage1)
-                                    .addOnSuccessListener { barcodes ->
-                                        val detected = barcodes.mapNotNull { barcode ->
-                                            barcode.boundingBox?.let { box ->
-                                                DetectedBarcode(
-                                                    left = box.left.toFloat(),
-                                                    top = box.top.toFloat(),
-                                                    right = box.right.toFloat(),
-                                                    bottom = box.bottom.toFloat(),
-                                                    rawValue = barcode.rawValue,
-                                                    format = barcode.format,
-                                                    imageWidth = imageWidth,
-                                                    imageHeight = imageHeight,
-                                                    rotationDegrees = rotationDegrees
-                                                )
-                                            }
+                            // ===== 通道1: 原图扫描（每帧执行，减少抖动需求）=====
+                            val inputImage1 = InputImage.fromMediaImage(mediaImage, rotationDegrees)
+                            
+                            scanner1.process(inputImage1)
+                                .addOnSuccessListener { barcodes ->
+                                    val detected = barcodes.mapNotNull { barcode ->
+                                        barcode.boundingBox?.let { box ->
+                                            DetectedBarcode(
+                                                left = box.left.toFloat(),
+                                                top = box.top.toFloat(),
+                                                right = box.right.toFloat(),
+                                                bottom = box.bottom.toFloat(),
+                                                rawValue = barcode.rawValue,
+                                                format = barcode.format,
+                                                imageWidth = imageWidth,
+                                                imageHeight = imageHeight,
+                                                rotationDegrees = rotationDegrees
+                                            )
                                         }
-                                        
-                                        mainHandler.post { channel1Barcodes = detected }
-                                        
-                                        val first = barcodes.firstOrNull()
-                                        if (first?.rawValue != null) {
-                                            Log.d("CameraPreview", "通道1(蓝)识别: ${first.rawValue}")
-                                            mainHandler.post {
-                                                barcodeStabilizer.stabilize(first.rawValue!!) {
-                                                    onBarcodeDetected(it)
-                                                }
+                                    }
+                                    
+                                    mainHandler.post { channel1Barcodes = detected }
+                                    
+                                    val first = barcodes.firstOrNull()
+                                    if (first?.rawValue != null) {
+                                        Log.d("CameraPreview", "通道1(蓝)识别: ${first.rawValue}")
+                                        mainHandler.post {
+                                            barcodeStabilizer.stabilize(first.rawValue!!) {
+                                                onBarcodeDetected(it)
                                             }
                                         }
                                     }
-                                    .addOnCompleteListener {
-                                        imageProxy.close()
-                                    }
-                            } else {
-                                // 非通道1帧，直接关闭
-                                imageProxy.close()
-                            }
+                                }
+                                .addOnCompleteListener {
+                                    imageProxy.close()
+                                }
                             
                             // ===== 通道2: 增强扫描（每帧都执行，全速运行）=====
                             if (channel2Processing.compareAndSet(false, true)) {
