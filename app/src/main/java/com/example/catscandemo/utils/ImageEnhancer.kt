@@ -45,12 +45,11 @@ object ImageEnhancer {
     
     // 增强配置：适用于低质量环境
     val ENHANCE_CONFIG = EnhanceConfig(
-        enableCenterCrop = true,
+        enableCenterCrop = false,          // 对齐实时全幅扫描，关闭中心裁剪
         cropRatio = 0.7f,
         enableContrastBoost = true,
-        contrastFactor = 1.4f,
-        enableSharpening = true,
-        sharpenStrength = 0.25f
+        contrastFactor = 1.5f,             // 对齐实时分层的中等对比度
+        enableSharpening = false           // 与实时分层保持一致，先不锐化
     )
     
     /**
@@ -256,6 +255,28 @@ object ImageEnhancer {
         }
         
         return result
+    }
+
+    /**
+     * 提取 Bitmap 的灰度数据（与实时分层管线对齐）
+     */
+    fun extractLuminanceFromBitmap(bitmap: Bitmap): ByteArray {
+        val width = bitmap.width
+        val height = bitmap.height
+        val size = width * height
+        val pixels = IntArray(size)
+        bitmap.getPixels(pixels, 0, width, 0, 0, width, height)
+        val luminance = ByteArray(size)
+        for (i in pixels.indices) {
+            val p = pixels[i]
+            val r = Color.red(p)
+            val g = Color.green(p)
+            val b = Color.blue(p)
+            // 简单加权转换为灰度，权重与实时摄像头 Y 相近
+            val y = (0.299f * r + 0.587f * g + 0.114f * b).toInt().coerceIn(0, 255)
+            luminance[i] = y.toByte()
+        }
+        return luminance
     }
     
     /**
