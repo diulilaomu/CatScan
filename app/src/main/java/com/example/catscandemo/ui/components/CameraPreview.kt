@@ -409,92 +409,111 @@ object FastImageEnhancer {
                             yBuffer.get(luminanceData)
                             yBuffer.rewind()
                             
-                            // ===== 通道1: 原图扫描（每帧执行，减少抖动需求）=====
-                            val inputImage1 = InputImage.fromMediaImage(mediaImage, rotationDegrees)
-                            
-                            scanner1.process(inputImage1)
-                                .addOnSuccessListener { barcodes ->
-                                    val detected = barcodes.mapNotNull { barcode ->
-                                        barcode.boundingBox?.let { box ->
-                                            DetectedBarcode(
-                                                left = box.left.toFloat(),
-                                                top = box.top.toFloat(),
-                                                right = box.right.toFloat(),
-                                                bottom = box.bottom.toFloat(),
-                                                rawValue = barcode.rawValue,
-                                                format = barcode.format,
-                                                imageWidth = imageWidth,
-                                                imageHeight = imageHeight,
-                                                rotationDegrees = rotationDegrees
-                                            )
+                            // ===== 通道1: 原图扫描（每3帧执行一次，恢复原策略）=====
+                            if (currentFrame % 3 == 0) {
+                                val inputImage1 = InputImage.fromMediaImage(mediaImage, rotationDegrees)
+                                
+                                scanner1.process(inputImage1)
+                                    .addOnSuccessListener { barcodes ->
+                                        val detected = barcodes.mapNotNull { barcode ->
+                                            barcode.boundingBox?.let { box ->
+                                                DetectedBarcode(
+                                                    left = box.left.toFloat(),
+                                                    top = box.top.toFloat(),
+                                                    right = box.right.toFloat(),
+                                                    bottom = box.bottom.toFloat(),
+                                                    rawValue = barcode.rawValue,
+                                                    format = barcode.format,
+                                                    imageWidth = imageWidth,
+                                                    imageHeight = imageHeight,
+                                                    rotationDegrees = rotationDegrees
+                                                )
+                                            }
                                         }
-                                    }
-                                    
-                                    mainHandler.post { channel1Barcodes = detected }
-                                    
-                                    val first = barcodes.firstOrNull()
-                                    if (first?.rawValue != null) {
-                                        Log.d("CameraPreview", "通道1(蓝)识别: ${first.rawValue}")
-                                        mainHandler.post {
-                                            barcodeStabilizer.stabilize(first.rawValue!!) {
-                                                onBarcodeDetected(it)
+                                        
+                                        mainHandler.post { channel1Barcodes = detected }
+                                        
+                                        val first = barcodes.firstOrNull()
+                                        if (first?.rawValue != null) {
+                                            Log.d("CameraPreview", "通道1(蓝)识别: ${first.rawValue}")
+                                            mainHandler.post {
+                                                barcodeStabilizer.stabilize(first.rawValue!!) {
+                                                    onBarcodeDetected(it)
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                .addOnCompleteListener {
-                                    imageProxy.close()
-                                }
+                                    .addOnCompleteListener {
+                                        imageProxy.close()
+                                    }
+                            } else {
+                                // 非通道1帧，直接关闭
+                                imageProxy.close()
+                            }
                             
-                            // ===== 通道2: 增强扫描（每帧都执行，全速运行）=====
+                            // ===== 通道2: 增强扫描（快速两层策略，减少等待）=====
                             if (channel2Processing.compareAndSet(false, true)) {
                                 enhanceExecutor.execute {
                                     var enhancedBitmap: Bitmap? = null
                                     try {
-                                        val scaleFactor = 4
-                                        enhancedBitmap = FastImageEnhancer.enhanceFromLuminance(
-                                            luminanceData, imageWidth, imageHeight, scaleFactor
+                                        val scaleFactor = 3 // 稍低倍率，提速
+                                        // 两层增强：正常对比度 + 强对比度
+                                        val layers = listOf(
+                                            FastImageEnhancer.enhanceFromLuminance(
+                                                luminanceData, imageWidth, imageHeight, scaleFactor, contrastBoost = 1.2f
+                                            ),
+                                            FastImageEnhancer.enhanceFromLuminance(
+                                                luminanceData, imageWidth, imageHeight, scaleFactor, contrastBoost = 1.8f
+                                            )
                                         )
-                                        val inputImage2 = InputImage.fromBitmap(enhancedBitmap, rotationDegrees)
                                         
-                                        scanner2.process(inputImage2)
-                                            .addOnSuccessListener { barcodes ->
-                                                val first = barcodes.firstOrNull()
-                                                
-                                                if (first?.rawValue != null) {
-                                                    // 识别成功
-                                                    val detected = barcodes.mapNotNull { barcode ->
-                                                        barcode.boundingBox?.let { box ->
-                                                            DetectedBarcode(
-                                                                left = box.left.toFloat() * scaleFactor,
-                                                                top = box.top.toFloat() * scaleFactor,
-                                                                right = box.right.toFloat() * scaleFactor,
-                                                                bottom = box.bottom.toFloat() * scaleFactor,
-                                                                rawValue = barcode.rawValue,
-                                                                format = barcode.format,
-                                                                imageWidth = imageWidth,
-                                                                imageHeight = imageHeight,
-                                                                rotationDegrees = rotationDegrees
-                                                            )
-                                                        }
+                                        var capturedValue: String? = null
+                                        var detected: List<DetectedBarcode> = emptyList()
+                                        
+                                        for (layer in layers) {
+                                            enhancedBitmap = layer
+                                            val inputImage2 = InputImage.fromBitmap(enhancedBitmap, rotationDegrees)
+                                            
+                                            val barcodes = Tasks.await(scanner2.process(inputImage2))
+                                            val first = barcodes.firstOrNull()
+                                            
+                                            if (first?.rawValue != null) {
+                                                capturedValue = first.rawValue
+                                                detected = barcodes.mapNotNull { barcode ->
+                                                    barcode.boundingBox?.let { box ->
+                                                        DetectedBarcode(
+                                                            left = box.left.toFloat() * scaleFactor,
+                                                            top = box.top.toFloat() * scaleFactor,
+                                                            right = box.right.toFloat() * scaleFactor,
+                                                            bottom = box.bottom.toFloat() * scaleFactor,
+                                                            rawValue = barcode.rawValue,
+                                                            format = barcode.format,
+                                                            imageWidth = imageWidth,
+                                                            imageHeight = imageHeight,
+                                                            rotationDegrees = rotationDegrees
+                                                        )
                                                     }
-                                                    mainHandler.post { channel2Barcodes = detected }
-                                                    
-                                                    Log.d("CameraPreview", "通道2(红)识别: ${first.rawValue}")
-                                                    mainHandler.post {
-                                                        barcodeStabilizer.stabilize(first.rawValue!!) {
-                                                            onBarcodeDetected(it)
-                                                        }
-                                                    }
-                                                } else {
-                                                    mainHandler.post { channel2Barcodes = emptyList() }
+                                                }
+                                                break
+                                            }
+                                        }
+                                        
+                                        layers.forEach { it.recycle() }
+                                        
+                                        if (capturedValue != null) {
+                                            mainHandler.post { channel2Barcodes = detected }
+                                            Log.d("CameraPreview", "通道2(红)识别: $capturedValue")
+                                            mainHandler.post {
+                                                barcodeStabilizer.stabilize(capturedValue!!) {
+                                                    onBarcodeDetected(it)
                                                 }
                                             }
-                                            .addOnCompleteListener {
-                                                enhancedBitmap?.recycle()
-                                                channel2Processing.set(false)
-                                            }
+                                        } else {
+                                            mainHandler.post { channel2Barcodes = emptyList() }
+                                        }
                                     } catch (e: Exception) {
+                                        channel2Barcodes = emptyList()
+                                    } finally {
                                         enhancedBitmap?.recycle()
                                         channel2Processing.set(false)
                                     }
@@ -505,7 +524,7 @@ object FastImageEnhancer {
                             if (layeredChannelProcessing.compareAndSet(false, true)) {
                                 enhanceExecutor.execute {
                                     val layers = FastImageEnhancer.createLayeredEnhancements(
-                                        luminanceData, imageWidth, imageHeight, scaleFactor = 4
+                                        luminanceData, imageWidth, imageHeight, scaleFactor = 3
                                     )
                                     var capturedValue: String? = null
                                     try {
