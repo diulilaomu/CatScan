@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.Executors
@@ -115,7 +116,13 @@ object FastImageEnhancer {
     /**
      * 从已复制的灰度数据增强图像（避免 imageProxy 关闭后访问问题）
      */
-    fun enhanceFromLuminance(luminance: ByteArray, width: Int, height: Int, scaleFactor: Int): Bitmap {
+    fun enhanceFromLuminance(
+        luminance: ByteArray,
+        width: Int,
+        height: Int,
+        scaleFactor: Int,
+        contrastBoost: Float = 1.0f
+    ): Bitmap {
         val newWidth = width / scaleFactor
         val newHeight = height / scaleFactor
         
@@ -148,11 +155,29 @@ object FastImageEnhancer {
             val gray = sampleValues[i]
             val stretched = if (range > 10) ((gray - minVal) * 255) / range else gray
             val clamped = stretched.coerceIn(0, 255)
-            pixels[i] = Color.rgb(clamped, clamped, clamped)
+            val boosted = (((clamped - 128) * contrastBoost) + 128).toInt().coerceIn(0, 255)
+            pixels[i] = Color.rgb(boosted, boosted, boosted)
         }
         
         bitmap.setPixels(pixels, 0, newWidth, 0, 0, newWidth, newHeight)
         return bitmap
+    }
+
+    /**
+     * 创建多层增强结果（用于双通道分层扫描）
+     */
+    fun createLayeredEnhancements(
+        luminance: ByteArray,
+        width: Int,
+        height: Int,
+        scaleFactor: Int = 4
+    ): List<Bitmap> {
+        // 从温和到强烈的对比度增强层
+        return listOf(
+            enhanceFromLuminance(luminance, width, height, scaleFactor, contrastBoost = 1.0f),
+            enhanceFromLuminance(luminance, width, height, scaleFactor, contrastBoost = 1.5f),
+            enhanceFromLuminance(luminance, width, height, scaleFactor, contrastBoost = 2.0f)
+        )
     }
     
     /**
@@ -312,12 +337,12 @@ object FastImageEnhancer {
 
 @OptIn(ExperimentalGetImage::class)
 @Composable
-fun CameraPreview(
-    modifier: Modifier = Modifier,
-    onCameraReady: (Camera) -> Unit = {},
-    onBarcodeDetected: (String) -> Unit,
-    showBarcodeOverlay: Boolean = true
-) {
+    fun CameraPreview(
+        modifier: Modifier = Modifier,
+        onCameraReady: (Camera) -> Unit = {},
+        onBarcodeDetected: (String) -> Unit,
+        showBarcodeOverlay: Boolean = true
+    ) {
     val context = LocalContext.current
     val mainHandler = remember { Handler(Looper.getMainLooper()) }
     val analysisExecutor = remember { Executors.newSingleThreadExecutor() }
@@ -331,6 +356,7 @@ fun CameraPreview(
     // 帧计数器和通道2处理标志
     val frameCounter = remember { AtomicInteger(0) }
     val channel2Processing = remember { AtomicBoolean(false) }
+    val layeredChannelProcessing = remember { AtomicBoolean(false) }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -476,6 +502,62 @@ fun CameraPreview(
                                     } catch (e: Exception) {
                                         enhancedBitmap?.recycle()
                                         channel2Processing.set(false)
+                                    }
+                                }
+                            }
+
+                            // ===== 通道2叠层: 多层增强扫描（针对低质量条码）=====
+                            if (layeredChannelProcessing.compareAndSet(false, true)) {
+                                enhanceExecutor.execute {
+                                    val layers = FastImageEnhancer.createLayeredEnhancements(
+                                        luminanceData, imageWidth, imageHeight, scaleFactor = 4
+                                    )
+                                    var capturedValue: String? = null
+                                    try {
+                                        for (layer in layers) {
+                                            if (capturedValue != null) break
+                                            val input = InputImage.fromBitmap(layer, rotationDegrees)
+                                            val task = scanner2.process(input)
+                                            // 同步等待简化控制流（ML Kit 任务为异步，这里阻塞到完成）
+                                            val barcodes = try {
+                                                Tasks.await(task)
+                                            } catch (_: Exception) {
+                                                emptyList<com.google.mlkit.vision.barcode.common.Barcode>()
+                                            }
+                                            val first = barcodes.firstOrNull()
+                                            if (first?.rawValue != null) {
+                                                capturedValue = first.rawValue
+                                                val scale = 4f
+                                                val detected = barcodes.mapNotNull { barcode ->
+                                                    barcode.boundingBox?.let { box ->
+                                                        DetectedBarcode(
+                                                            left = box.left.toFloat() * scale,
+                                                            top = box.top.toFloat() * scale,
+                                                            right = box.right.toFloat() * scale,
+                                                            bottom = box.bottom.toFloat() * scale,
+                                                            rawValue = barcode.rawValue,
+                                                            format = barcode.format,
+                                                            imageWidth = imageWidth,
+                                                            imageHeight = imageHeight,
+                                                            rotationDegrees = rotationDegrees
+                                                        )
+                                                    }
+                                                }
+                                                mainHandler.post { channel2Barcodes = detected }
+                                            }
+                                        }
+                                        
+                                        capturedValue?.let { value ->
+                                            Log.d("CameraPreview", "通道2叠层识别: $value")
+                                            mainHandler.post {
+                                                barcodeStabilizer.stabilize(value) {
+                                                    onBarcodeDetected(it)
+                                                }
+                                            }
+                                        }
+                                    } finally {
+                                        layers.forEach { it.recycle() }
+                                        layeredChannelProcessing.set(false)
                                     }
                                 }
                             }
