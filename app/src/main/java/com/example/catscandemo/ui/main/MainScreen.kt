@@ -262,7 +262,7 @@ fun MainScreen(viewModel: MainViewModel) {
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 // 模板选择器
-                                val templates by remember(viewModel.templates) { mutableStateOf(viewModel.templates) }
+                                val templates by remember { derivedStateOf { viewModel.templates } }
                                 val activeTemplateName = remember(viewModel.activeTemplate) {
                                     viewModel.activeTemplate?.name?.ifBlank { "未命名模板" } ?: "无模板"
                                 }
