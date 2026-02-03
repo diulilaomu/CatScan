@@ -1,6 +1,7 @@
 package com.example.catscandemo.ui.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -436,10 +437,25 @@ private fun TemplateManagerPage(
                     }
                 },
                 enabled = templates.isNotEmpty(),
-                modifier = Modifier.weight(0.7f)
+                modifier = Modifier.weight(0.7f),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = if (isBatchMode && allSelected) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    }
+                ),
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = if (isBatchMode && allSelected) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.outline
+                    }
+                )
             ) {
                 Text(
-                    text = if (isBatchMode && allSelected) "取消全选" else "全选",
+                    text = "全选",
                     style = MaterialTheme.typography.labelSmall
                 )
             }

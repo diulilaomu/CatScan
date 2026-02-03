@@ -17,8 +17,13 @@ class ScanUseCases(
     val markScanAsUploaded: MarkScanAsUploadedUseCase,
     val addScanToTemplate: AddScanToTemplateUseCase,
     val clearAllScans: ClearAllScansUseCase,
-    val replaceAll: ReplaceAllScansUseCase
-)
+    val replaceAll: ReplaceAllScansUseCase,
+    private val scanRepository: ScanRepository
+) {
+    fun setCurrentTemplateId(templateId: String?) {
+        scanRepository.setCurrentTemplateId(templateId)
+    }
+}
 
 /**
  * 清空所有扫描数据的 Use Case
@@ -159,6 +164,8 @@ class AddScanToTemplateUseCase(
  * 扫描数据仓库接口
  */
 interface ScanRepository {
+    fun setCurrentTemplateId(templateId: String?)
+    
     fun addScan(
         text: String,
         templateId: String = "",
@@ -170,7 +177,7 @@ interface ScanRepository {
         room: String = "",
         allowDuplicate: Boolean = true
     ): ScanData?
-    
+
     fun deleteScan(id: Long): ScanResult?
     fun updateScan(id: Long, scanData: ScanData)
     fun getScanById(id: Long): ScanResult?

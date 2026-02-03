@@ -44,6 +44,7 @@ import com.example.catscandemo.utils.AutoRequestCameraPermission
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextAlign
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,7 +101,7 @@ fun MainScreen(viewModel: MainViewModel) {
     val selectedFloor by derivedStateOf { viewModel.scanSelectedFloor }
 
     val displayItems by derivedStateOf {
-        if (activeId.isNullOrBlank()) {
+        val result = if (activeId.isNullOrBlank()) {
             scanItems
         } else {
             scanItems.filter {
@@ -109,6 +110,8 @@ fun MainScreen(viewModel: MainViewModel) {
                         parseFloorNumberLocal(it.scanData.floor) == selectedFloor
             }
         }
+        // 确保每次都返回一个新的列表对象，触发LazyColumn更新
+        result.toList()
     }
 
 
@@ -146,7 +149,9 @@ fun MainScreen(viewModel: MainViewModel) {
                 clipboardEnabled = viewModel.clipboardEnabled,
                 onClipboardEnabledChange = { viewModel.clipboardEnabled = it },
                 duplicateScanEnabled = viewModel.duplicateScanEnabled,
-                onDuplicateScanEnabledChange = { viewModel.duplicateScanEnabled = it }
+                onDuplicateScanEnabledChange = { viewModel.duplicateScanEnabled = it },
+                showBarcodeOverlay = viewModel.showBarcodeOverlay,
+                onShowBarcodeOverlayChange = { viewModel.showBarcodeOverlay = it }
             )
         }
     ) {
@@ -200,7 +205,8 @@ fun MainScreen(viewModel: MainViewModel) {
                                 onBarcodeDetected = { code ->
                                     viewModel.onBarcodeScanned(code, copyToClipboard, showToast)
                                 },
-                                onCameraReady = { cam -> viewModel.camera = cam }
+                                onCameraReady = { cam -> viewModel.camera = cam },
+                                showBarcodeOverlay = viewModel.showBarcodeOverlay
                             )
                         }
 
@@ -293,6 +299,26 @@ fun MainScreen(viewModel: MainViewModel) {
                                         onDismissRequest = { templateMenuExpanded = false },
                                         modifier = Modifier.widthIn(max = 240.dp)
                                     ) {
+                                        // 添加"无模板"选项
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(
+                                                    text = "无模板",
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                    style = MaterialTheme.typography.bodyMedium
+                                                )
+                                            },
+                                            onClick = {
+                                                viewModel.clearActiveTemplate()
+                                                templateMenuExpanded = false
+                                            }
+                                        )
+                                        
+                                        // 分隔线
+                                        Divider()
+                                        
+                                        // 模板列表
                                         templates.forEach { t ->
                                             DropdownMenuItem(
                                                 text = {
@@ -312,7 +338,7 @@ fun MainScreen(viewModel: MainViewModel) {
                                     }
                                 }
 
-                                // 楼层选择器
+                                // 楼层选择器或清空按钮
                                 val hasTemplate = remember(viewModel.activeTemplate) {
                                     viewModel.activeTemplate != null
                                 }
@@ -322,50 +348,74 @@ fun MainScreen(viewModel: MainViewModel) {
                                 var floorMenuExpanded by remember { mutableStateOf(false) }
 
                                 Box(modifier = Modifier.width(70.dp)) {
-                                    AssistChip(
-                                        onClick = { if (hasTemplate) floorMenuExpanded = true },
-                                        enabled = hasTemplate,
-                                        modifier = Modifier.fillMaxWidth(),
-                                        label = { 
-                                            Text(
-                                                text = if (hasTemplate) "${selectedFloor}层" else "无",
-                                                style = MaterialTheme.typography.bodySmall,
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis
-                                            ) 
-                                        },
-                                        trailingIcon = {
-                                            Icon(
-                                                imageVector = Icons.Default.ArrowDropDown,
-                                                contentDescription = "选择楼层",
-                                                modifier = Modifier.size(16.dp)
+                                    if (hasTemplate) {
+                                        // 有模板时显示楼层选择器
+                                        AssistChip(
+                                            onClick = { floorMenuExpanded = true },
+                                            enabled = true,
+                                            modifier = Modifier.fillMaxWidth(),
+                                            label = { 
+                                                Text(
+                                                    text = "${selectedFloor}层",
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis
+                                                ) 
+                                            },
+                                            trailingIcon = {
+                                                Icon(
+                                                    imageVector = Icons.Default.ArrowDropDown,
+                                                    contentDescription = "选择楼层",
+                                                    modifier = Modifier.size(16.dp)
+                                                )
+                                            },
+                                            colors = AssistChipDefaults.assistChipColors(
+                                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                                labelColor = MaterialTheme.colorScheme.onSecondaryContainer
                                             )
-                                        },
-                                        colors = AssistChipDefaults.assistChipColors(
-                                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                            labelColor = MaterialTheme.colorScheme.onSecondaryContainer
                                         )
-                                    )
 
-                                    DropdownMenu(
-                                        expanded = floorMenuExpanded,
-                                        onDismissRequest = { floorMenuExpanded = false }
-                                    ) {
-                                        val maxFloor = viewModel.activeTemplate?.maxFloor ?: 0
-                                        for (f in 1..maxFloor.coerceAtLeast(1)) {
-                                            DropdownMenuItem(
-                                                text = { 
-                                                    Text(
-                                                        text = "${f}层",
-                                                        style = MaterialTheme.typography.bodyMedium
-                                                    ) 
-                                                },
-                                                onClick = {
-                                                    viewModel.selectScanFloor(f)
-                                                    floorMenuExpanded = false
-                                                }
-                                            )
+                                        DropdownMenu(
+                                            expanded = floorMenuExpanded,
+                                            onDismissRequest = { floorMenuExpanded = false }
+                                        ) {
+                                            val maxFloor = viewModel.activeTemplate?.maxFloor ?: 0
+                                            for (f in 1..maxFloor.coerceAtLeast(1)) {
+                                                DropdownMenuItem(
+                                                    text = { 
+                                                        Text(
+                                                            text = "${f}层",
+                                                            style = MaterialTheme.typography.bodyMedium
+                                                        ) 
+                                                    },
+                                                    onClick = {
+                                                        viewModel.selectScanFloor(f)
+                                                        floorMenuExpanded = false
+                                                    }
+                                                )
+                                            }
                                         }
+                                    } else {
+                                        // 无模板时显示清空按钮
+                                        AssistChip(
+                                            onClick = { viewModel.clearAllScans(showToast) },
+                                            enabled = true,
+                                            modifier = Modifier.fillMaxWidth(),
+                                            label = { 
+                                                Text(
+                                                    text = "清空",
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                    textAlign = TextAlign.Center,
+                                                    modifier = Modifier.fillMaxWidth()
+                                                ) 
+                                            },
+                                            colors = AssistChipDefaults.assistChipColors(
+                                                containerColor = MaterialTheme.colorScheme.errorContainer,
+                                                labelColor = MaterialTheme.colorScheme.onErrorContainer
+                                            )
+                                        )
                                     }
                                 }
 

@@ -1,7 +1,9 @@
 package com.example.catscandemo.presentation.viewmodel
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Log
 import androidx.camera.core.Camera
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -16,18 +18,15 @@ import com.example.catscandemo.domain.model.ScanData
 import com.example.catscandemo.domain.model.ScanResult
 import com.example.catscandemo.domain.model.TemplateModel
 import com.example.catscandemo.domain.use_case.*
-import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.example.catscandemo.utils.ImageEnhancer
 import com.google.mlkit.vision.barcode.BarcodeScanning
-import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.math.max
 
@@ -41,6 +40,10 @@ class MainViewModel @Inject constructor(
     private val templateUseCases: TemplateUseCases,
     private val networkUseCases: NetworkUseCases
 ) : ViewModel() {
+
+    companion object {
+        private const val TAG = "MainViewModel"
+    }
 
     // 数据管理中心
     private val dataManager = DataManager(scanUseCases, templateUseCases)
@@ -71,9 +74,7 @@ class MainViewModel @Inject constructor(
     fun initHistoryStore(context: Context) {
         if (historyReady) return
         historyReady = true
-        appContext = context.applicationContext  // 复用同一个 appContext
-
-        // 历史数据现在通过 use case 管理，不需要手动加载
+        appContext = context.applicationContext
     }
 
     fun initSettingsStore(context: Context) {
@@ -82,12 +83,6 @@ class MainViewModel @Inject constructor(
         if (appContext == null) {
             appContext = context.applicationContext
         }
-
-        // 设置现在通过 use case 管理，不需要手动加载
-    }
-
-    private fun persistHistory() {
-        // 历史数据现在通过 use case 管理，不需要手动保存
     }
 
     fun initTemplateStore(context: Context) {
@@ -101,17 +96,20 @@ class MainViewModel @Inject constructor(
         // 同步ViewModel的状态
         activeTemplateId = dataManager.activeTemplateId
         activeTemplate = dataManager.activeTemplate
+        
+        // 初始化结果列表，确保数据同步
+        if (activeTemplateId != null) {
+            dataManager.scanUseCases.setCurrentTemplateId(activeTemplateId)
+        } else {
+            dataManager.scanUseCases.setCurrentTemplateId(null)
+        }
+        getAllScans()
     }
-
-    private fun persistTemplates() {
-        // 数据持久化现在由DataManager处理
-    }
-
-
 
     fun getAllScans(): List<ScanResult> {
         val scans = dataManager.getAllScans()
-        _scanResults.value = scans
+        // 确保每次都创建一个新的列表对象，触发StateFlow值变化
+        _scanResults.value = scans.toList()
         return scans
     }
 
@@ -130,8 +128,28 @@ class MainViewModel @Inject constructor(
         if (t != null) {
             clampSelectedFloor(scanSelectedFloor, t.maxFloor)
         }
+        
+        // 初始化结果列表，确保数据同步
+        dataManager.scanUseCases.setCurrentTemplateId(id)
+        // 立即更新UI的扫描结果
+        getAllScans()
     }
-
+    
+    /**
+     * 清除激活模板（设置为无模板）
+     */
+    fun clearActiveTemplate() {
+        // 使用数据管理中心清除激活模板
+        dataManager.clearActiveTemplate()
+        
+        // 同步ViewModel的状态
+        activeTemplateId = dataManager.activeTemplateId
+        activeTemplate = dataManager.activeTemplate
+        
+        // 初始化结果列表，确保数据同步
+        dataManager.scanUseCases.setCurrentTemplateId(null)
+        getAllScans()
+    }
 
     fun addTemplate(name: String) {
         // 使用数据管理中心添加模板
@@ -159,11 +177,8 @@ class MainViewModel @Inject constructor(
         activeTemplate = dataManager.activeTemplate
 
         if (wasActive) {
-            // ✅ 清空游标缓存（避免残留）
+            // 清空游标缓存（避免残留）
             cursorByTemplateFloor.remove(id)
-
-            // ✅ 保存识别结果到本地（scan_history.json）
-            persistHistory()
         }
         
         // 更新扫描结果StateFlow，触发UI更新
@@ -191,25 +206,20 @@ class MainViewModel @Inject constructor(
                 
                 // 批量上传删除同步数据
                 if (batchData.isNotEmpty()) {
-                    try {
-                        networkUseCases.uploadBatchScanData(
-                            scanDataList = batchData,
-                            serverUrl = serverUrl,
-                            onSuccess = {
-                                println("批量同步删除模板数据成功: ${batchData.size} 条数据")
-                            },
-                            onError = {
-                                println("批量同步删除模板数据失败: $it")
-                            }
-                        )
-                    } catch (e: Exception) {
-                        println("同步删除模板数据异常: ${e.message}")
-                    }
+                    networkUseCases.uploadBatchScanData(
+                        scanDataList = batchData,
+                        serverUrl = serverUrl,
+                        onSuccess = {
+                            Log.d(TAG, "批量同步删除模板数据成功: ${batchData.size} 条数据")
+                        },
+                        onError = { error ->
+                            Log.e(TAG, "批量同步删除模板数据失败: $error")
+                        }
+                    )
                 }
             }
         }
     }
-
 
     fun updateTemplate(updated: TemplateModel) {
         // 使用数据管理中心更新模板
@@ -236,14 +246,14 @@ class MainViewModel @Inject constructor(
                             scanDataList = updated.scans,
                             serverUrl = serverUrl,
                             onSuccess = {
-                                println("批量同步模板数据成功: ${updated.scans.size} 条数据")
+                                Log.d(TAG, "批量同步模板数据成功: ${updated.scans.size} 条数据")
                             },
                             onError = {
-                                println("批量同步模板数据失败: $it")
+                                Log.e(TAG, "批量同步模板数据失败: $it")
                             }
                         )
                     } catch (e: Exception) {
-                        println("同步模板数据异常: ${e.message}")
+                        Log.e(TAG, "同步模板数据异常: ${e.message}", e)
                     }
                 }
             }
@@ -294,37 +304,31 @@ class MainViewModel @Inject constructor(
         get() = _clipboardEnabled.value
         set(value) {
             _clipboardEnabled.value = value
-            persistSettings()
         }
     
     var showUrlChangeDialog by mutableStateOf(false)
     var pendingNewUrl by mutableStateOf("")
     var camera by mutableStateOf<Camera?>(null)
-    
-    // --- 心跳检测 ---
-    private var heartbeatJob: kotlinx.coroutines.Job? = null
-    private val HEARTBEAT_INTERVAL_MS = 2000L // 2秒检测一次
-    private val HEARTBEAT_TIMEOUT_MS = 1000L // 1秒超时
 
     private val _duplicateScanEnabled = mutableStateOf(true)
     var duplicateScanEnabled: Boolean
         get() = _duplicateScanEnabled.value
         set(value) {
             _duplicateScanEnabled.value = value
-            persistSettings()
         }
-    
-    /**
-     * 保存设置
-     */
-    private fun persistSettings() {
-        // 设置现在通过 use case 管理，不需要手动保存
-    }
-    
+
+    // 是否显示条码检测框
+    private val _showBarcodeOverlay = mutableStateOf(true)
+    var showBarcodeOverlay: Boolean
+        get() = _showBarcodeOverlay.value
+        set(value) {
+            _showBarcodeOverlay.value = value
+        }
+
     var showTemplateEditor by mutableStateOf(false)
 
     // 当前一次扫码写入的字段（每次扫码前会被模板刷新）
-    var currentOperator by mutableStateOf("张国豪")
+    var currentOperator by mutableStateOf("猫头枪")
     var currentCampus by mutableStateOf("天河校区")
     var currentBuilding by mutableStateOf("")
     var currentFloor by mutableStateOf("1层")
@@ -442,6 +446,9 @@ class MainViewModel @Inject constructor(
         // 同步ViewModel的状态
         activeTemplateId = dataManager.activeTemplateId
         activeTemplate = dataManager.activeTemplate
+        
+        // 更新扫描结果StateFlow，确保UI同步
+        getAllScans()
     }
 
     // ===================== 扫码入口 =====================
@@ -491,8 +498,11 @@ class MainViewModel @Inject constructor(
                             }
                         }
 
-                        // 写入模板离线扫码列表（直接使用返回的scanData对象，确保数据同步）
-                        appendScanToActiveTemplate(scanData)
+                        // 只有有模板时才写入模板离线扫码列表
+                        if (activeTemplate != null) {
+                            // 写入模板离线扫码列表（直接使用返回的scanData对象，确保数据同步）
+                            appendScanToActiveTemplate(scanData)
+                        }
 
                         if (clipboardEnabled) {
                             copyToClipboard(code)
@@ -501,7 +511,6 @@ class MainViewModel @Inject constructor(
                         if (uploadEnabled && serverUrl.isNotEmpty()) {
                             uploadData(scanData, showToast)
                         }
-                        persistHistory()
                         // 更新扫描结果StateFlow，触发UI更新
                         getAllScans()
 
@@ -509,8 +518,8 @@ class MainViewModel @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            println("扫码处理异常: ${e.message}")
-            showToast("处理扫码数据失败")
+            Log.e(TAG, "扫码处理异常: ${e.message}", e)
+            showToast("处理扫码数据失败：${e.message ?: "未知错误"}")
         }
     }
 
@@ -542,41 +551,107 @@ class MainViewModel @Inject constructor(
         copyToClipboard: (String) -> Unit,
         showToast: (String) -> Unit
     ) {
-        viewModelScope.launch {
-            val image = try {
-                InputImage.fromFilePath(context, uri)
+        // 使用默认扫描器，自动检测所有条码格式
+        val scanner = BarcodeScanning.getClient()
+
+        // 首先尝试直接扫描原图
+        val originalImage = try {
+            InputImage.fromFilePath(context, uri)
+        } catch (e: Exception) {
+            Log.e("CatScan", "InputImage.fromFilePath failed, uri=$uri", e)
+            showToast("图片读取失败：${e.message ?: e.javaClass.simpleName}")
+            scanner.close()  // 确保异常时关闭 scanner
+            return
+        }
+
+        scanner.process(originalImage)
+            .addOnSuccessListener { barcodes ->
+                val result = barcodes.firstOrNull()?.rawValue
+                if (result != null) {
+                    // 原图扫描成功
+                    onBarcodeScanned(result, copyToClipboard, showToast)
+                    scanner.close()
+                } else {
+                    // 原图扫描失败，尝试图像增强后再扫描
+                    Log.d("CatScan", "原图扫描失败，尝试增强图像...")
+                    tryEnhancedScan(uri, context, scanner, copyToClipboard, showToast)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("CatScan", "Barcode scan failed, uri=$uri", e)
+                showToast("识别失败")
+                scanner.close()
+            }
+    }
+    
+    /**
+     * 使用增强图像进行二次扫描
+     */
+    private fun tryEnhancedScan(
+        uri: Uri,
+        context: Context,
+        scanner: com.google.mlkit.vision.barcode.BarcodeScanner,
+        copyToClipboard: (String) -> Unit,
+        showToast: (String) -> Unit
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val bitmap = try {
+                context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                    BitmapFactory.decodeStream(inputStream)
+                }
             } catch (e: Exception) {
-                android.util.Log.e("CatScan", "InputImage.fromFilePath failed, uri=$uri", e)
-                showToast("图片读取失败：${e.message ?: e.javaClass.simpleName}")
+                Log.e("CatScan", "Failed to decode bitmap for enhancement", e)
+                null
+            }
+            
+            if (bitmap == null) {
+                launch(Dispatchers.Main) {
+                    showToast("未识别到条码")
+                    scanner.close()
+                }
                 return@launch
             }
-
-            val options = BarcodeScannerOptions.Builder()
-                .setBarcodeFormats(
-                    Barcode.FORMAT_QR_CODE,
-                    Barcode.FORMAT_CODE_128,
-                    Barcode.FORMAT_CODE_39,
-                    Barcode.FORMAT_EAN_13,
-                    Barcode.FORMAT_EAN_8
-                )
-                .build()
-
-            val scanner = BarcodeScanning.getClient(options)
-
-            scanner.process(image)
-                .addOnSuccessListener { barcodes ->
-                    val c = barcodes.firstOrNull()?.rawValue
-                    viewModelScope.launch(Dispatchers.Main) {
-                        if (c != null) onBarcodeScanned(c, copyToClipboard, showToast)
-                        else showToast("未识别到条码")
+            
+            // 使用增强配置处理图像
+            val enhancedBitmap = ImageEnhancer.enhanceBitmap(
+                bitmap,
+                ImageEnhancer.ENHANCE_CONFIG
+            )
+            
+            val enhancedImage = InputImage.fromBitmap(enhancedBitmap, 0)
+            
+            launch(Dispatchers.Main) {
+                scanner.process(enhancedImage)
+                    .addOnSuccessListener { enhancedBarcodes ->
+                        val enhancedResult = enhancedBarcodes.firstOrNull()?.rawValue
+                        
+                        // 回收bitmap
+                        if (enhancedBitmap != bitmap) {
+                            enhancedBitmap.recycle()
+                        }
+                        bitmap.recycle()
+                        
+                        if (enhancedResult != null) {
+                            Log.d("CatScan", "增强图像扫描成功")
+                            onBarcodeScanned(enhancedResult, copyToClipboard, showToast)
+                        } else {
+                            showToast("未识别到条码")
+                        }
+                        scanner.close()
                     }
-                    scanner.close()
-                }
-                .addOnFailureListener { e2 ->
-                    android.util.Log.e("CatScan", "Barcode scan failed, uri=$uri", e2)
-                    viewModelScope.launch(Dispatchers.Main) { showToast("识别失败") }
-                    scanner.close()
-                }
+                    .addOnFailureListener { e ->
+                        Log.e("CatScan", "Enhanced scan failed", e)
+                        
+                        // 回收bitmap
+                        if (enhancedBitmap != bitmap) {
+                            enhancedBitmap.recycle()
+                        }
+                        bitmap.recycle()
+                        
+                        showToast("识别失败")
+                        scanner.close()
+                    }
+            }
         }
     }
 
@@ -588,9 +663,6 @@ class MainViewModel @Inject constructor(
         if (floor != null) {
             rebuildCursorAfterDelete(floor)
         }
-
-        // ✅ 保存识别结果列表
-        persistHistory()
         
         // 同步ViewModel的状态
         activeTemplateId = dataManager.activeTemplateId
@@ -610,10 +682,10 @@ class MainViewModel @Inject constructor(
                     serverUrl = serverUrl,
                     action = "delete",
                     onSuccess = {
-                        println("同步删除结果列表数据成功")
+                        Log.d(TAG, "同步删除结果列表数据成功")
                     },
                     onError = {
-                        println("同步删除结果列表数据失败: $it")
+                        Log.e(TAG, "同步删除结果列表数据失败: $it")
                     }
                 )
             }
@@ -623,11 +695,13 @@ class MainViewModel @Inject constructor(
     fun updateItemById(id: Long, updated: ScanResult) {
         // 使用数据管理中心更新扫描数据
         dataManager.updateScan(id, updated.scanData)
-        persistHistory()
         
         // 同步ViewModel的状态
         activeTemplateId = dataManager.activeTemplateId
         activeTemplate = dataManager.activeTemplate
+        
+        // 更新扫描结果StateFlow，触发UI更新
+        getAllScans()
         
         // 自动同步到PC客户端
         if (uploadEnabled && serverUrl.isNotEmpty()) {
@@ -640,17 +714,32 @@ class MainViewModel @Inject constructor(
                     serverUrl = serverUrl,
                     action = "update",
                     onSuccess = {
-                        println("同步修改结果列表数据成功")
+                        Log.d(TAG, "同步修改结果列表数据成功")
                     },
                     onError = {
-                        println("同步修改结果列表数据失败: $it")
+                        Log.e(TAG, "同步修改结果列表数据失败: $it")
                     }
                 )
             }
         }
+    }
+    
+    /**
+     * 清空所有扫描结果
+     */
+    fun clearAllScans(showToast: (String) -> Unit) {
+        // 使用数据管理中心清空所有扫描数据
+        dataManager.clearAllScans()
+        
+        // 同步ViewModel的状态
+        activeTemplateId = dataManager.activeTemplateId
+        activeTemplate = dataManager.activeTemplate
         
         // 更新扫描结果StateFlow，触发UI更新
         getAllScans()
+        
+        // 显示清空成功提示
+        showToast("已清空所有扫描结果")
     }
     
     // ===================== 网络发现 =====================
@@ -772,7 +861,7 @@ class MainViewModel @Inject constructor(
                             try {
                                 uploadPendingData()
                             } catch (e: Exception) {
-                                println("心跳检测上传数据异常: ${e.message}")
+                                Log.e(TAG, "心跳检测上传数据异常: ${e.message}", e)
                             }
                         }
                     } else {
@@ -781,14 +870,14 @@ class MainViewModel @Inject constructor(
                             try {
                                 startPassivePcDiscovery(it)
                             } catch (e: Exception) {
-                                println("心跳检测重启被动发现异常: ${e.message}")
+                                Log.e(TAG, "心跳检测重启被动发现异常: ${e.message}", e)
                             }
                         }
                     }
                 }
             )
         } catch (e: Exception) {
-            println("启动心跳检测异常: ${e.message}")
+            Log.e(TAG, "启动心跳检测异常: ${e.message}", e)
         }
     }
     
@@ -814,7 +903,7 @@ class MainViewModel @Inject constructor(
         } else {
             // 服务器响应异常，标记为未连接
             uploadEnabled = false
-            println("服务器连接异常")
+            Log.w(TAG, "服务器连接异常")
             // 断开连接后重新启动被动发现
             appContext?.let { startPassivePcDiscovery(it) }
         }
@@ -831,7 +920,7 @@ class MainViewModel @Inject constructor(
                 // 获取模板的扫描数据
                 val templateScans = dataManager.getAllScans().filter { it.scanData.templateId == activeTemplate.id }
                 if (templateScans.isNotEmpty()) {
-                    println("上传模板 ${activeTemplate.name} 的 ${templateScans.size} 条数据...")
+                    Log.d(TAG, "上传模板 ${activeTemplate.name} 的 ${templateScans.size} 条数据...")
                     
                     // 转换为ScanData列表
                     val scanDataList = templateScans.map { it.scanData }
@@ -842,15 +931,15 @@ class MainViewModel @Inject constructor(
                         scanDataList = scanDataList,
                         serverUrl = serverUrl,
                         onSuccess = {
-                            println("批量上传成功: ${scanDataList.size} 条数据")
+                            Log.d(TAG, "批量上传成功: ${scanDataList.size} 条数据")
                         },
                         onError = { err ->
-                            println("批量上传失败: $err")
+                            Log.e(TAG, "批量上传失败: $err")
                         }
                     )
                 }
             } catch (e: Exception) {
-                println("上传未上传数据异常: ${e.message}")
+                Log.e(TAG, "上传未上传数据异常: ${e.message}", e)
             }
         }
     }
@@ -877,14 +966,14 @@ class MainViewModel @Inject constructor(
                     scanDataList = template.scans,
                     serverUrl = serverUrl,
                     onSuccess = {
-                        println("批量上传成功: ${template.scans.size} 条数据")
+                        Log.d(TAG, "批量上传成功: ${template.scans.size} 条数据")
                         // 在UI线程中显示Toast
                         viewModelScope.launch(Dispatchers.Main) {
                             showToast("上传完成：成功 ${template.scans.size} 条，失败 0 条")
                         }
                     },
                     onError = { err ->
-                        println("批量上传失败: $err")
+                        Log.e(TAG, "批量上传失败: $err")
                         // 在UI线程中显示Toast
                         viewModelScope.launch(Dispatchers.Main) {
                             showToast("上传失败：请检查网络连接")
@@ -892,7 +981,7 @@ class MainViewModel @Inject constructor(
                     }
                 )
             } catch (e: Exception) {
-                println("上传异常: ${e.message}")
+                Log.e(TAG, "上传异常: ${e.message}", e)
                 // 在UI线程中显示Toast
                 viewModelScope.launch(Dispatchers.Main) {
                     showToast("上传失败：请检查网络连接")

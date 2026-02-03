@@ -96,6 +96,7 @@ object TemplateStorage {
 
     private fun scanToJson(s: ScanData): JSONObject {
         val obj = JSONObject()
+        obj.put("id", s.id)  // ✅ 修复：添加id字段序列化，确保数据可追踪
         obj.put("text", s.text)
         obj.put("timestamp", s.timestamp)
         obj.put("operator", s.operator)
@@ -103,32 +104,41 @@ object TemplateStorage {
         obj.put("building", s.building)
         obj.put("floor", s.floor)
         obj.put("room", s.room)
+        obj.put("templateId", s.templateId)  // ✅ 添加templateId字段
+        obj.put("templateName", s.templateName)  // ✅ 添加templateName字段
+        obj.put("uploaded", s.uploaded)  // ✅ 添加uploaded状态字段
         return obj
     }
 
     private fun scanFromJson(obj: JSONObject): ScanData {
         return ScanData(
+            id = obj.optString("id", java.util.UUID.randomUUID().toString()),  // ✅ 修复：读取id字段，提供默认值
             text = obj.optString("text", ""),
             timestamp = obj.optLong("timestamp", System.currentTimeMillis()),
             operator = obj.optString("operator", ""),
             campus = obj.optString("campus", ""),
             building = obj.optString("building", ""),
             floor = obj.optString("floor", ""),
-            room = obj.optString("room", "")
+            room = obj.optString("room", ""),
+            templateId = obj.optString("templateId", ""),  // ✅ 读取templateId字段
+            templateName = obj.optString("templateName", ""),  // ✅ 读取templateName字段
+            uploaded = obj.optBoolean("uploaded", false)  // ✅ 读取uploaded状态字段
         )
     }
 }
-// ===================== 识别结果（ScanResult）离线存储（同文件，不新增文件） =====================
+// ===================== 识别结果（ScanResult）离线存储 =====================
 object ScanHistoryStorage {
-    private const val FILE_NAME = "scan_history.json"
+    private const val BASE_FILE_NAME = "scan_history_"
+    private const val FILE_EXTENSION = ".json"
 
     data class Loaded(
         val items: List<ScanResult>
     )
 
-    fun load(context: Context): Loaded {
+    fun load(context: Context, templateId: String?): Loaded {
         return try {
-            val file = File(context.filesDir, FILE_NAME)
+            val fileName = getFileNameForTemplate(templateId)
+            val file = File(context.filesDir, fileName)
             if (!file.exists()) return Loaded(emptyList())
 
             val text = file.readText(Charsets.UTF_8)
@@ -149,13 +159,22 @@ object ScanHistoryStorage {
         }
     }
 
-    fun save(context: Context, items: List<ScanResult>) {
+    fun save(context: Context, templateId: String?, items: List<ScanResult>) {
+        val fileName = getFileNameForTemplate(templateId)
         val root = JSONObject()
         val arr = JSONArray()
         items.forEach { arr.put(toJson(it)) }
         root.put("items", arr)
 
-        File(context.filesDir, FILE_NAME).writeText(root.toString(), Charsets.UTF_8)
+        File(context.filesDir, fileName).writeText(root.toString(), Charsets.UTF_8)
+    }
+
+    private fun getFileNameForTemplate(templateId: String?): String {
+        return if (templateId.isNullOrBlank()) {
+            "${BASE_FILE_NAME}no_template${FILE_EXTENSION}"
+        } else {
+            "${BASE_FILE_NAME}${templateId}${FILE_EXTENSION}"
+        }
     }
 
     private fun toJson(item: ScanResult): JSONObject {

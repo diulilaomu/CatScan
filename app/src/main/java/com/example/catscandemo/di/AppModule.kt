@@ -147,7 +147,8 @@ object AppModule {
             markScanAsUploaded = markScanAsUploaded,
             addScanToTemplate = addScanToTemplate,
             clearAllScans = clearAllScans,
-            replaceAll = replaceAll
+            replaceAll = replaceAll,
+            scanRepository = scanRepository
         )
     }
 

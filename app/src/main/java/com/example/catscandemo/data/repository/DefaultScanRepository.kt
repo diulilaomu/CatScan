@@ -18,14 +18,24 @@ class DefaultScanRepository(
     private var nextId: Long = 1L
     private var nextIndex: Int = 1
     private var initialized = false
+    private var currentTemplateId: String? = null
 
     init {
         initialize()
     }
 
+    override fun setCurrentTemplateId(templateId: String?) {
+        if (currentTemplateId != templateId) {
+            currentTemplateId = templateId
+            // 重新初始化，加载对应模板的数据
+            initialized = false
+            initialize()
+        }
+    }
+
     private fun initialize() {
         if (!initialized) {
-            val loaded = ScanHistoryStorage.load(context)
+            val loaded = ScanHistoryStorage.load(context, currentTemplateId)
             scanResults = loaded.items.toMutableList()
             // 恢复自增序号，避免新扫描 id/index 重复
             val maxId = scanResults.maxOfOrNull { it.id } ?: 0L
@@ -140,6 +150,6 @@ class DefaultScanRepository(
     }
 
     private fun saveScanResults() {
-        ScanHistoryStorage.save(context, scanResults)
+        ScanHistoryStorage.save(context, currentTemplateId, scanResults)
     }
 }

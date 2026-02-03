@@ -30,7 +30,9 @@ fun SettingsDrawer(
     clipboardEnabled: Boolean,
     onClipboardEnabledChange: (Boolean) -> Unit,
     duplicateScanEnabled: Boolean,
-    onDuplicateScanEnabledChange: (Boolean) -> Unit
+    onDuplicateScanEnabledChange: (Boolean) -> Unit,
+    showBarcodeOverlay: Boolean,
+    onShowBarcodeOverlayChange: (Boolean) -> Unit
 )
  {
     var currentPage by remember { mutableStateOf(SettingsPage.MAIN) }
@@ -43,6 +45,8 @@ fun SettingsDrawer(
                     onClipboardEnabledChange = onClipboardEnabledChange,
                     duplicateScanEnabled = duplicateScanEnabled,
                     onDuplicateScanEnabledChange = onDuplicateScanEnabledChange,
+                    showBarcodeOverlay = showBarcodeOverlay,
+                    onShowBarcodeOverlayChange = onShowBarcodeOverlayChange,
                     onNetworkClick = { currentPage = SettingsPage.NETWORK }
                 )
             }
@@ -66,6 +70,8 @@ private fun MainSettingsPage(
     onClipboardEnabledChange: (Boolean) -> Unit,
     duplicateScanEnabled: Boolean,
     onDuplicateScanEnabledChange: (Boolean) -> Unit,
+    showBarcodeOverlay: Boolean,
+    onShowBarcodeOverlayChange: (Boolean) -> Unit,
     onNetworkClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -198,6 +204,33 @@ private fun MainSettingsPage(
                     Switch(
                         checked = duplicateScanEnabled,
                         onCheckedChange = onDuplicateScanEnabledChange,
+                        colors = SwitchDefaults.colors(
+                            checkedTrackColor = MaterialTheme.colorScheme.primary,
+                            checkedThumbColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    )
+                }
+                
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+                
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "显示检测框",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Switch(
+                        checked = showBarcodeOverlay,
+                        onCheckedChange = onShowBarcodeOverlayChange,
                         colors = SwitchDefaults.colors(
                             checkedTrackColor = MaterialTheme.colorScheme.primary,
                             checkedThumbColor = MaterialTheme.colorScheme.onPrimary
