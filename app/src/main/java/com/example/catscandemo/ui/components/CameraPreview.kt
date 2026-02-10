@@ -1,4 +1,4 @@
-package com.example.catscandemo.ui.components
+﻿package com.example.catscandemo.ui.components
 
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream
 import android.graphics.Rect
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.media.Image
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -27,6 +28,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import com.example.catscandemo.utils.NativeBarcodeDetector
+import com.example.catscandemo.utils.RealtimeFrameCropEngine
+import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.Executors
@@ -34,7 +38,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * 条码稳定器类
+ * 鏉＄爜绋冲畾鍣ㄧ被
  */
 class BarcodeStabilizer {
     private var stableText: String? = null
@@ -64,12 +68,12 @@ class BarcodeStabilizer {
 }
 
 /**
- * 快速图像增强 - 对比度拉伸 + 锐化
+ * 蹇€熷浘鍍忓寮?- 瀵规瘮搴︽媺浼?+ 閿愬寲
  */
 object FastImageEnhancer {
     
     /**
-     * 增强版：对比度拉伸 + 局部锐化
+     * 澧炲己鐗堬細瀵规瘮搴︽媺浼?+ 灞€閮ㄩ攼鍖?
      */
     fun enhanceFromLuminanceV2(luminance: ByteArray, width: Int, height: Int, scaleFactor: Int): Bitmap {
         val newWidth = width / scaleFactor
@@ -79,7 +83,7 @@ object FastImageEnhancer {
         val pixels = IntArray(newWidth * newHeight)
         val grayValues = IntArray(newWidth * newHeight)
         
-        // 第一遍：采样并找 min/max
+        // 绗竴閬嶏細閲囨牱骞舵壘 min/max
         var minVal = 255
         var maxVal = 0
         
@@ -99,16 +103,16 @@ object FastImageEnhancer {
         
         val range = maxVal - minVal
         
-        // 第二遍：对比度拉伸 + 简单锐化
+        // 绗簩閬嶏細瀵规瘮搴︽媺浼?+ 绠€鍗曢攼鍖?
         for (y in 0 until newHeight) {
             for (x in 0 until newWidth) {
                 val i = y * newWidth + x
                 var gray = grayValues[i]
                 
-                // 对比度拉伸
+                // 瀵规瘮搴︽媺浼?
                 val stretched = if (range > 10) ((gray - minVal) * 255) / range else gray
                 
-                // 简单锐化：增强与邻域的差异
+                // 绠€鍗曢攼鍖栵細澧炲己涓庨偦鍩熺殑宸紓
                 if (x > 0 && x < newWidth - 1) {
                     val left = grayValues[i - 1]
                     val right = grayValues[i + 1]
@@ -119,7 +123,7 @@ object FastImageEnhancer {
                     gray = stretched.coerceIn(0, 255)
                 }
                 
-                // 增强对比度：将中间值推向两端
+                // 澧炲己瀵规瘮搴︼細灏嗕腑闂村€兼帹鍚戜袱绔?
                 val enhanced = if (gray > 128) {
                     (gray + (gray - 128) / 2).coerceIn(0, 255)
                 } else {
@@ -185,7 +189,7 @@ object FastImageEnhancer {
     }
     
     /**
-     * 从已复制的灰度数据增强图像（避免 imageProxy 关闭后访问问题）
+     * 浠庡凡澶嶅埗鐨勭伆搴︽暟鎹寮哄浘鍍忥紙閬垮厤 imageProxy 鍏抽棴鍚庤闂棶棰橈級
      */
     fun enhanceFromLuminance(luminance: ByteArray, width: Int, height: Int, scaleFactor: Int): Bitmap {
         val newWidth = width / scaleFactor
@@ -194,7 +198,7 @@ object FastImageEnhancer {
         val bitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(newWidth * newHeight)
         
-        // 单次遍历：同时找 min/max 并填充像素
+        // 鍗曟閬嶅巻锛氬悓鏃舵壘 min/max 骞跺～鍏呭儚绱?
         var minVal = 255
         var maxVal = 0
         val sampleValues = IntArray(newWidth * newHeight)
@@ -215,7 +219,7 @@ object FastImageEnhancer {
         
         val range = maxVal - minVal
         
-        // 应用对比度拉伸
+        // 搴旂敤瀵规瘮搴︽媺浼?
         for (i in sampleValues.indices) {
             val gray = sampleValues[i]
             val stretched = if (range > 10) ((gray - minVal) * 255) / range else gray
@@ -228,15 +232,15 @@ object FastImageEnhancer {
     }
     
     /**
-     * 裁剪条码中心区域并增强（只保留条码核心部分）
-     * @param luminance 原始灰度数据
-     * @param width 原始图像宽度
-     * @param height 原始图像高度
-     * @param left 检测到的条码左边界
-     * @param top 检测到的条码上边界
-     * @param right 检测到的条码右边界
-     * @param bottom 检测到的条码下边界
-     * @param targetHeightPx 目标高度（像素），从条码中心向内裁剪
+     * 瑁佸壀鏉＄爜涓績鍖哄煙骞跺寮猴紙鍙繚鐣欐潯鐮佹牳蹇冮儴鍒嗭級
+     * @param luminance 鍘熷鐏板害鏁版嵁
+     * @param width 鍘熷鍥惧儚瀹藉害
+     * @param height 鍘熷鍥惧儚楂樺害
+     * @param left 妫€娴嬪埌鐨勬潯鐮佸乏杈圭晫
+     * @param top 妫€娴嬪埌鐨勬潯鐮佷笂杈圭晫
+     * @param right 妫€娴嬪埌鐨勬潯鐮佸彸杈圭晫
+     * @param bottom 妫€娴嬪埌鐨勬潯鐮佷笅杈圭晫
+     * @param targetHeightPx 鐩爣楂樺害锛堝儚绱狅級锛屼粠鏉＄爜涓績鍚戝唴瑁佸壀
      */
     fun enhanceCroppedRegion(
         luminance: ByteArray,
@@ -246,10 +250,10 @@ object FastImageEnhancer {
         top: Int,
         right: Int,
         bottom: Int,
-        targetHeightPx: Int = 40  // 约20dp，扙2x密度计算
+        targetHeightPx: Int = 40  // 绾?0dp锛屾墮2x瀵嗗害璁＄畻
     ): Bitmap {
-        // ===== 第一步：对整个图像进行增强 =====
-        // 找全图的 min/max
+        // ===== 绗竴姝ワ細瀵规暣涓浘鍍忚繘琛屽寮?=====
+        // 鎵惧叏鍥剧殑 min/max
         var globalMin = 255
         var globalMax = 0
         for (i in luminance.indices) {
@@ -259,16 +263,16 @@ object FastImageEnhancer {
         }
         val globalRange = globalMax - globalMin
         
-        // ===== 第二步：计算裁剪区域 =====
-        // 计算条码中心
+        // ===== 绗簩姝ワ細璁＄畻瑁佸壀鍖哄煙 =====
+        // 璁＄畻鏉＄爜涓績
         val centerY = (top + bottom) / 2
         
-        // 从中心向内裁剪，只保留目标高度
+        // 浠庝腑蹇冨悜鍐呰鍓紝鍙繚鐣欑洰鏍囬珮搴?
         val halfHeight = targetHeightPx / 2
         val cropTop = (centerY - halfHeight).coerceIn(0, height - 1)
         val cropBottom = (centerY + halfHeight).coerceIn(0, height)
         
-        // 宽度保持条码宽度（稍微内缩5%）
+        // 瀹藉害淇濇寔鏉＄爜瀹藉害锛堢◢寰唴缂?%锛?
         val barcodeWidth = right - left
         val inset = (barcodeWidth * 0.05).toInt()
         val cropLeft = (left + inset).coerceIn(0, width - 1)
@@ -281,7 +285,7 @@ object FastImageEnhancer {
             return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
         }
         
-        // ===== 第三步：裁剪并应用增强 =====
+        // ===== 绗笁姝ワ細瑁佸壀骞跺簲鐢ㄥ寮?=====
         val bitmap = Bitmap.createBitmap(cropWidth, cropHeight, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(cropWidth * cropHeight)
         
@@ -292,9 +296,9 @@ object FastImageEnhancer {
                 val idx = srcY * width + srcX
                 if (idx < luminance.size) {
                     val gray = luminance[idx].toInt() and 0xFF
-                    // 使用全图的 min/max 进行对比度拉伸
+                    // 浣跨敤鍏ㄥ浘鐨?min/max 杩涜瀵规瘮搴︽媺浼?
                     val stretched = if (globalRange > 10) ((gray - globalMin) * 255) / globalRange else gray
-                    // 简单的对比度增强：将中间值推向两端
+                    // 绠€鍗曠殑瀵规瘮搴﹀寮猴細灏嗕腑闂村€兼帹鍚戜袱绔?
                     val enhanced = if (stretched > 128) {
                         (stretched + (stretched - 128) / 2).coerceIn(0, 255)
                     } else {
@@ -310,14 +314,14 @@ object FastImageEnhancer {
     }
     
     /**
-     * 平扫增强 - 直接裁剪指定区域并增强（用于从上到下逐行扫描）
-     * @param luminance 原始灰度数据
-     * @param width 原始图像宽度
-     * @param height 原始图像高度
-     * @param left 裁剪区域左边界
-     * @param top 裁剪区域上边界
-     * @param right 裁剪区域右边界
-     * @param bottom 裁剪区域下边界
+     * 骞虫壂澧炲己 - 鐩存帴瑁佸壀鎸囧畾鍖哄煙骞跺寮猴紙鐢ㄤ簬浠庝笂鍒颁笅閫愯鎵弿锛?
+     * @param luminance 鍘熷鐏板害鏁版嵁
+     * @param width 鍘熷鍥惧儚瀹藉害
+     * @param height 鍘熷鍥惧儚楂樺害
+     * @param left 瑁佸壀鍖哄煙宸﹁竟鐣?
+     * @param top 瑁佸壀鍖哄煙涓婅竟鐣?
+     * @param right 瑁佸壀鍖哄煙鍙宠竟鐣?
+     * @param bottom 瑁佸壀鍖哄煙涓嬭竟鐣?
      */
     fun enhanceScanLine(
         luminance: ByteArray,
@@ -343,7 +347,7 @@ object FastImageEnhancer {
         val bitmap = Bitmap.createBitmap(cropWidth, cropHeight, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(cropWidth * cropHeight)
         
-        // 找裁剪区域的 min/max
+        // 鎵捐鍓尯鍩熺殑 min/max
         var minVal = 255
         var maxVal = 0
         val grayValues = IntArray(cropWidth * cropHeight)
@@ -364,11 +368,11 @@ object FastImageEnhancer {
         
         val range = maxVal - minVal
         
-        // 应用强对比度增强
+        // 搴旂敤寮哄姣斿害澧炲己
         for (i in grayValues.indices) {
             val gray = grayValues[i]
             val stretched = if (range > 10) ((gray - minVal) * 255) / range else gray
-            // 更强的对比度增强
+            // 鏇村己鐨勫姣斿害澧炲己
             val enhanced = if (stretched > 128) {
                 (stretched + (stretched - 128) * 2 / 3).coerceIn(0, 255)
             } else {
@@ -383,7 +387,7 @@ object FastImageEnhancer {
 }
 
 /**
- * 对Bitmap应用3x3高斯模糊
+ * 瀵笲itmap搴旂敤3x3楂樻柉妯＄硦
  */
 fun applyGaussianBlur3x3(bitmap: Bitmap): Bitmap {
     val width = bitmap.width
@@ -391,7 +395,7 @@ fun applyGaussianBlur3x3(bitmap: Bitmap): Bitmap {
     val pixels = IntArray(width * height)
     bitmap.getPixels(pixels, 0, width, 0, 0, width, height)
     
-    // 3x3高斯核 (sigma ≈ 0.85)
+    // 3x3楂樻柉鏍?(sigma 鈮?0.85)
     val kernel = floatArrayOf(
         1/16f, 2/16f, 1/16f,
         2/16f, 4/16f, 2/16f,
@@ -417,7 +421,7 @@ fun applyGaussianBlur3x3(bitmap: Bitmap): Bitmap {
         }
     }
     
-    // 复制边缘像素
+    // 澶嶅埗杈圭紭鍍忕礌
     for (x in 0 until width) {
         result[x] = pixels[x]
         result[(height - 1) * width + x] = pixels[(height - 1) * width + x]
@@ -432,25 +436,78 @@ fun applyGaussianBlur3x3(bitmap: Bitmap): Bitmap {
     return resultBitmap
 }
 
+private fun yuv420888ToNv21(image: Image): ByteArray {
+    val width = image.width
+    val height = image.height
+    val ySize = width * height
+    val uvSize = width * height / 4
+    val out = ByteArray(ySize + uvSize * 2)
+
+    val yPlane = image.planes[0]
+    val uPlane = image.planes[1]
+    val vPlane = image.planes[2]
+
+    val yBuffer = yPlane.buffer
+    val uBuffer = uPlane.buffer
+    val vBuffer = vPlane.buffer
+
+    val yRowStride = yPlane.rowStride
+    val yPixelStride = yPlane.pixelStride
+    var outIndex = 0
+    for (row in 0 until height) {
+        val rowStart = row * yRowStride
+        for (col in 0 until width) {
+            out[outIndex++] = yBuffer.get(rowStart + col * yPixelStride)
+        }
+    }
+
+    val uRowStride = uPlane.rowStride
+    val uPixelStride = uPlane.pixelStride
+    val vRowStride = vPlane.rowStride
+    val vPixelStride = vPlane.pixelStride
+    val chromaHeight = height / 2
+    val chromaWidth = width / 2
+    for (row in 0 until chromaHeight) {
+        val uRowStart = row * uRowStride
+        val vRowStart = row * vRowStride
+        for (col in 0 until chromaWidth) {
+            out[outIndex++] = vBuffer.get(vRowStart + col * vPixelStride)
+            out[outIndex++] = uBuffer.get(uRowStart + col * uPixelStride)
+        }
+    }
+
+    return out
+}
+
 @OptIn(ExperimentalGetImage::class)
 @Composable
 fun CameraPreview(
     modifier: Modifier = Modifier,
     onCameraReady: (Camera) -> Unit = {},
     onBarcodeDetected: (String) -> Unit,
-    showBarcodeOverlay: Boolean = true
+    showBarcodeOverlay: Boolean = true,
+    channel1ScanFrameInterval: Int = 3,
+    channel2MinAreaScore: Double = 3.5,
+    channel2MinAspectScore: Double = 28.0,
+    channel2MinSolidityScore: Double = 10.0,
+    channel2MinGradScore: Double = 8.0
 ) {
     val context = LocalContext.current
     val mainHandler = remember { Handler(Looper.getMainLooper()) }
     val analysisExecutor = remember { Executors.newSingleThreadExecutor() }
     val enhanceExecutor = remember { Executors.newSingleThreadExecutor() }
     val barcodeStabilizer = remember { BarcodeStabilizer() }
+    val channel1ScanFrameIntervalState = rememberUpdatedState(channel1ScanFrameInterval.coerceAtLeast(1))
+    val channel2MinAreaScoreState = rememberUpdatedState(channel2MinAreaScore.coerceIn(0.0, 100.0))
+    val channel2MinAspectScoreState = rememberUpdatedState(channel2MinAspectScore.coerceIn(0.0, 100.0))
+    val channel2MinSolidityScoreState = rememberUpdatedState(channel2MinSolidityScore.coerceIn(0.0, 100.0))
+    val channel2MinGradScoreState = rememberUpdatedState(channel2MinGradScore.coerceIn(0.0, 100.0))
     
-    // 使用 DetectedBarcode 类型，与 BarcodeOverlay 兼容
+    // 浣跨敤 DetectedBarcode 绫诲瀷锛屼笌 BarcodeOverlay 鍏煎
     var channel1Barcodes by remember { mutableStateOf<List<DetectedBarcode>>(emptyList()) }
     var channel2Barcodes by remember { mutableStateOf<List<DetectedBarcode>>(emptyList()) }
     
-    // 帧计数器和通道2处理标志
+    // 甯ц鏁板櫒鍜岄€氶亾2澶勭悊鏍囧織
     val frameCounter = remember { AtomicInteger(0) }
     val channel2Processing = remember { AtomicBoolean(false) }
 
@@ -499,22 +556,11 @@ fun CameraPreview(
                             val rotationDegrees = imageProxy.imageInfo.rotationDegrees
                             val currentFrame = frameCounter.incrementAndGet()
                             
-                            // 复制YUV数据用于通道2（在关闭imageProxy前）
-                            val yBuffer = mediaImage.planes[0].buffer
-                            val luminanceData = ByteArray(yBuffer.remaining())
-                            yBuffer.get(luminanceData)
-                            yBuffer.rewind()
+                            // 澶嶅埗YUV鏁版嵁鐢ㄤ簬閫氶亾2锛堝湪鍏抽棴imageProxy鍓嶏級
+                            val nv21Data = yuv420888ToNv21(mediaImage)
                             
-                            // 复制UV数据用于通道2彩色处理
-                            val uBuffer = mediaImage.planes[1].buffer
-                            val uvData = ByteArray(uBuffer.remaining())
-                            uBuffer.get(uvData)
-                            uBuffer.rewind()
-                            val uvPixelStride = mediaImage.planes[1].pixelStride
-                            val uvRowStride = mediaImage.planes[1].rowStride
-                            
-                            // ===== 通道1: 原图扫描（每3帧执行一次）=====
-                            if (currentFrame % 3 == 0) {
+                            // ===== 閫氶亾1: scan source frame with configurable interval =====
+                            if (currentFrame % channel1ScanFrameIntervalState.value == 0) {
                                 val inputImage1 = InputImage.fromMediaImage(mediaImage, rotationDegrees)
                                 
                                 scanner1.process(inputImage1)
@@ -539,7 +585,7 @@ fun CameraPreview(
                                         
                                         val first = barcodes.firstOrNull()
                                         if (first?.rawValue != null) {
-                                            Log.d("CameraPreview", "通道1(蓝)识别: ${first.rawValue}")
+                                            Log.d("CameraPreview", "閫氶亾1(钃?璇嗗埆: ${first.rawValue}")
                                             mainHandler.post {
                                                 barcodeStabilizer.stabilize(first.rawValue!!) {
                                                     onBarcodeDetected(it)
@@ -551,190 +597,119 @@ fun CameraPreview(
                                         imageProxy.close()
                                     }
                             } else {
-                                // 非通道1帧，直接关闭
+                                // 闈為€氶亾1甯э紝鐩存帴鍏抽棴
                                 imageProxy.close()
                             }
                             
-                            // ===== 通道2: 多分辨率增强扫描（每帧都执行，全速运行）=====
+                            // ===== 閫氶亾2: 澶氬垎杈ㄧ巼澧炲己鎵弿锛堟瘡甯ч兘鎵ц锛屽叏閫熻繍琛岋級=====
                             if (channel2Processing.compareAndSet(false, true)) {
+                                val channel2Frame = nv21Data.copyOf()
                                 enhanceExecutor.execute {
-                                    var bitmap2x: Bitmap? = null
-                                    var bitmap4x: Bitmap? = null
                                     try {
-                                        // 策略：先用2倍缩放（高分辨率），失败再用4倍缩放（快速+强增强）
-                                        val scaleFactors = listOf(2, 4)
-                                        var currentIndex = 0
-                                        var scanSuccess = false
-                                        
-                                        fun tryWithScale() {
-                                            if (scanSuccess || currentIndex >= scaleFactors.size) {
-                                                if (!scanSuccess) {
-                                                    mainHandler.post { channel2Barcodes = emptyList() }
-                                                }
-                                                bitmap2x?.recycle()
-                                                bitmap4x?.recycle()
-                                                channel2Processing.set(false)
-                                                return
-                                            }
-                                            
-                                            val scaleFactor = scaleFactors[currentIndex]
-                                            currentIndex++
-                                            
-                                            // 根据缩放级别选择增强方法
-                                            val enhancedBitmap = if (scaleFactor == 2) {
-                                                bitmap2x ?: FastImageEnhancer.enhanceFromLuminance(
-                                                    luminanceData, imageWidth, imageHeight, 2
-                                                ).also { bitmap2x = it }
-                                            } else {
-                                                bitmap4x ?: FastImageEnhancer.enhanceFromLuminanceV2(
-                                                    luminanceData, imageWidth, imageHeight, 4
-                                                ).also { bitmap4x = it }
-                                            }
-                                            
-                                            val inputImage2 = InputImage.fromBitmap(enhancedBitmap, rotationDegrees)
-                                            
-                                            scanner2.process(inputImage2)
-                                                .addOnSuccessListener { barcodes ->
-                                                    val first = barcodes.firstOrNull()
-                                                    
-                                                    if (first?.rawValue != null && !scanSuccess) {
-                                                        scanSuccess = true
-                                                        // 识别成功
-                                                        val detected = barcodes.mapNotNull { barcode ->
-                                                            barcode.boundingBox?.let { box ->
-                                                                DetectedBarcode(
-                                                                    left = box.left.toFloat() * scaleFactor,
-                                                                    top = box.top.toFloat() * scaleFactor,
-                                                                    right = box.right.toFloat() * scaleFactor,
-                                                                    bottom = box.bottom.toFloat() * scaleFactor,
-                                                                    rawValue = barcode.rawValue,
-                                                                    format = barcode.format,
-                                                                    imageWidth = imageWidth,
-                                                                    imageHeight = imageHeight,
-                                                                    rotationDegrees = rotationDegrees
-                                                                )
-                                                            }
-                                                        }
-                                                        mainHandler.post { channel2Barcodes = detected }
-                                                        
-                                                        Log.d("CameraPreview", "通道2(红)识别 scale=${scaleFactor}x: ${first.rawValue}")
-                                                        mainHandler.post {
-                                                            barcodeStabilizer.stabilize(first.rawValue!!) {
-                                                                onBarcodeDetected(it)
-                                                            }
-                                                        }
-                                                        bitmap2x?.recycle()
-                                                        bitmap4x?.recycle()
-                                                        channel2Processing.set(false)
-                                                    }
-                                                }
-                                                .addOnCompleteListener {
-                                                    if (!scanSuccess) {
-                                                        // 尝试下一个分辨率
-                                                        tryWithScale()
-                                                    }
-                                                }
-                                        }
-                                        
-                                        // 开始尝试
-                                        tryWithScale()
-                                    } catch (e: Exception) {
-                                        bitmap2x?.recycle()
-                                        bitmap4x?.recycle()
-                            // ===== 通道2: 蒙版裁剪扫描（每帧都执行，全速运行）=====
-                            if (channel2Processing.compareAndSet(false, true)) {
-                                enhanceExecutor.execute {
-                                    var rotatedBitmap: Bitmap? = null
-                                    var croppedBitmap: Bitmap? = null
-                                    var blurredBitmap: Bitmap? = null
-                                    try {
-                                        // 蒙版参数：上下40%，左右20%
-                                        val maskTopRatio = 0.40f
-                                        val maskBottomRatio = 0.40f
-                                        val maskLeftRatio = 0.20f
-                                        val maskRightRatio = 0.20f
-
-                                        // 1. YUV转Bitmap（原始方向）
-                                        val yuvImage = YuvImage(
-                                            luminanceData,
-                                            ImageFormat.NV21,
-                                            imageWidth,
-                                            imageHeight,
-                                            null
+                                        val frameOutput = RealtimeFrameCropEngine.processNv21Frame(
+                                            nv21 = channel2Frame,
+                                            width = imageWidth,
+                                            height = imageHeight,
+                                            rotationDegrees = rotationDegrees,
+                                            config = RealtimeFrameCropEngine.FrameConfig(
+                                                detectionConfig = NativeBarcodeDetector.DetectionConfig(
+                                                    minAreaScore = channel2MinAreaScoreState.value,
+                                                    minAspectScore = channel2MinAspectScoreState.value,
+                                                    minSolidityScore = channel2MinSolidityScoreState.value,
+                                                    minGradScore = channel2MinGradScoreState.value
+                                                ),
+                                                minProcessIntervalMs = 0L,
+                                                maxOutputs = 8,
+                                                cropPaddingPx = 18,
+                                                enableStabilizer = true
+                                            )
                                         )
-                                        val out = ByteArrayOutputStream()
-                                        yuvImage.compressToJpeg(Rect(0, 0, imageWidth, imageHeight), 100, out)
-                                        val yuvBytes = out.toByteArray()
-                                        var bitmap = BitmapFactory.decodeByteArray(yuvBytes, 0, yuvBytes.size)
 
-                                        // 2. 旋转到正方向
-                                        if (rotationDegrees != 0) {
-                                            val matrix = Matrix()
-                                            matrix.postRotate(rotationDegrees.toFloat())
-                                            rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-                                            bitmap.recycle()
-                                        } else {
-                                            rotatedBitmap = bitmap
+                                        if (frameOutput == null) {
+                                            mainHandler.post { channel2Barcodes = emptyList() }
+                                            channel2Processing.set(false)
+                                            return@execute
                                         }
 
-                                        // 3. 裁剪蒙版区域（基于旋转后bitmap）
-                                        val rotatedWidth = rotatedBitmap!!.width
-                                        val rotatedHeight = rotatedBitmap.height
-                                        val cropLeft = (rotatedWidth * maskLeftRatio).toInt()
-                                        val cropTop = (rotatedHeight * maskTopRatio).toInt()
-                                        val cropWidth = (rotatedWidth * (1 - maskLeftRatio - maskRightRatio)).toInt()
-                                        val cropHeight = (rotatedHeight * (1 - maskTopRatio - maskBottomRatio)).toInt()
-                                        if (cropWidth > 0 && cropHeight > 0) {
-                                            croppedBitmap = Bitmap.createBitmap(rotatedBitmap, cropLeft, cropTop, cropWidth, cropHeight)
-                                            // 4. 高斯模糊
-                                            blurredBitmap = applyGaussianBlur3x3(croppedBitmap)
-                                            // 5. 传给MLKit（此时rotation=0）
-                                            val inputImage2 = InputImage.fromBitmap(blurredBitmap, 0)
+                                        val candidates = frameOutput.detections.map { det ->
+                                            DetectedBarcode(
+                                                left = (det.boundingBox.left + frameOutput.roiLeft).toFloat(),
+                                                top = (det.boundingBox.top + frameOutput.roiTop).toFloat(),
+                                                right = (det.boundingBox.right + frameOutput.roiLeft).toFloat(),
+                                                bottom = (det.boundingBox.bottom + frameOutput.roiTop).toFloat(),
+                                                rawValue = null,
+                                                format = 0,
+                                                imageWidth = frameOutput.frameWidth,
+                                                imageHeight = frameOutput.frameHeight,
+                                                rotationDegrees = 0
+                                            )
+                                        }
+                                        mainHandler.post { channel2Barcodes = candidates }
+
+                                        if (frameOutput.crops.isEmpty()) {
+                                            frameOutput.roiBitmap.recycle()
+                                            channel2Processing.set(false)
+                                            return@execute
+                                        }
+
+                                        val recognized = java.util.Collections.synchronizedList(
+                                            mutableListOf<DetectedBarcode>()
+                                        )
+
+                                        val tasks = frameOutput.crops.map { crop ->
+                                            val inputImage2 = InputImage.fromBitmap(crop.bitmap, 0)
                                             scanner2.process(inputImage2)
                                                 .addOnSuccessListener { barcodes ->
-                                                    val first = barcodes.firstOrNull()
-                                                    if (first?.rawValue != null) {
-                                                        // 识别成功，映射回原始图像坐标（需加上cropLeft/cropTop，并考虑rotationDegrees）
-                                                        val detected = barcodes.mapNotNull { barcode ->
-                                                            barcode.boundingBox?.let { box ->
-                                                                DetectedBarcode(
-                                                                    left = box.left.toFloat() + cropLeft,
-                                                                    top = box.top.toFloat() + cropTop,
-                                                                    right = box.right.toFloat() + cropLeft,
-                                                                    bottom = box.bottom.toFloat() + cropTop,
-                                                                    rawValue = barcode.rawValue,
-                                                                    format = barcode.format,
-                                                                    imageWidth = rotatedWidth,
-                                                                    imageHeight = rotatedHeight,
-                                                                    rotationDegrees = 0 // 已正向
-                                                                )
-                                                            }
-                                                        }
-                                                        mainHandler.post { channel2Barcodes = detected }
-                                                        Log.d("CameraPreview", "通道2(红)识别: ${first.rawValue}")
-                                                        mainHandler.post {
-                                                            barcodeStabilizer.stabilize(first.rawValue!!) {
-                                                                onBarcodeDetected(it)
-                                                            }
-                                                        }
-                                                    } else {
-                                                        mainHandler.post { channel2Barcodes = emptyList() }
+                                                    barcodes.forEach { barcode ->
+                                                        val rawValue = barcode.rawValue ?: return@forEach
+                                                        recognized.add(
+                                                            DetectedBarcode(
+                                                                left = (crop.sourceBox.left + frameOutput.roiLeft).toFloat(),
+                                                                top = (crop.sourceBox.top + frameOutput.roiTop).toFloat(),
+                                                                right = (crop.sourceBox.right + frameOutput.roiLeft).toFloat(),
+                                                                bottom = (crop.sourceBox.bottom + frameOutput.roiTop).toFloat(),
+                                                                rawValue = rawValue,
+                                                                format = barcode.format,
+                                                                imageWidth = frameOutput.frameWidth,
+                                                                imageHeight = frameOutput.frameHeight,
+                                                                rotationDegrees = 0
+                                                            )
+                                                        )
                                                     }
                                                 }
                                                 .addOnCompleteListener {
-                                                    croppedBitmap?.recycle()
-                                                    blurredBitmap?.recycle()
-                                                    rotatedBitmap?.recycle()
-                                                    channel2Processing.set(false)
+                                                    crop.bitmap.recycle()
                                                 }
-                                        } else {
-                                            rotatedBitmap?.recycle()
+                                        }
+
+                                        Tasks.whenAllComplete(tasks).addOnCompleteListener {
+                                            frameOutput.roiBitmap.recycle()
+
+                                            val finalRecognized = recognized.distinctBy {
+                                                "${it.rawValue}_${it.left.toInt()}_${it.top.toInt()}_${it.right.toInt()}_${it.bottom.toInt()}"
+                                            }
+
+                                            mainHandler.post {
+                                                if (finalRecognized.isNotEmpty()) {
+                                                    channel2Barcodes = finalRecognized
+                                                    finalRecognized
+                                                        .mapNotNull { it.rawValue }
+                                                        .distinct()
+                                                        .forEach { value ->
+                                                            barcodeStabilizer.stabilize(value) { stable ->
+                                                                onBarcodeDetected(stable)
+                                                            }
+                                                        }
+                                                } else {
+                                                    channel2Barcodes = emptyList()
+                                                }
+                                            }
+
                                             channel2Processing.set(false)
                                         }
                                     } catch (e: Exception) {
-                                        croppedBitmap?.recycle()
-                                        blurredBitmap?.recycle()
-                                        rotatedBitmap?.recycle()
+                                        Log.e("CameraPreview", "Channel2 processing failed: ${e.message}")
+                                        mainHandler.post { channel2Barcodes = emptyList() }
                                         channel2Processing.set(false)
                                     }
                                 }
@@ -750,7 +725,7 @@ fun CameraPreview(
                         )
                         onCameraReady(camera)
                     } catch (e: Exception) {
-                        Log.e("CameraPreview", "相机初始化失败: ${e.message}")
+                        Log.e("CameraPreview", "鐩告満鍒濆鍖栧け璐? ${e.message}")
                     }
                 }, ContextCompat.getMainExecutor(ctx))
 
@@ -759,12 +734,12 @@ fun CameraPreview(
             modifier = Modifier.fillMaxSize()
         )
         
-        // 蒙版遮罩层（显示扫描区域）
+        // 钂欑増閬僵灞傦紙鏄剧ず鎵弿鍖哄煙锛?
         ScanMaskOverlay(
             modifier = Modifier.fillMaxSize()
         )
         
-        // 通道1 检测框 (蓝色)
+        // 閫氶亾1 妫€娴嬫 (钃濊壊)
         if (showBarcodeOverlay) {
             BarcodeOverlay(
                 detectedBarcodes = channel1Barcodes,
@@ -773,7 +748,7 @@ fun CameraPreview(
                 cornerColor = ComposeColor.Cyan
             )
             
-            // 通道2 检测框 (红色)
+            // 閫氶亾2 妫€娴嬫 (绾㈣壊)
             BarcodeOverlay(
                 detectedBarcodes = channel2Barcodes,
                 modifier = Modifier.fillMaxSize(),
@@ -784,14 +759,14 @@ fun CameraPreview(
     }
 }
 
-// ==================== 扫描蒙版遮罩层 ====================
+// ==================== 鎵弿钂欑増閬僵灞?====================
 
 @Composable
 fun ScanMaskOverlay(
     modifier: Modifier = Modifier,
     maskColor: ComposeColor = ComposeColor.Black.copy(alpha = 0.5f)
 ) {
-    // 蒙版参数：与通道2裁剪参数一致
+    // 钂欑増鍙傛暟锛氫笌閫氶亾2瑁佸壀鍙傛暟涓€鑷?
     val maskTopRatio = 0.40f
     val maskBottomRatio = 0.40f
     val maskLeftRatio = 0.20f
@@ -801,41 +776,41 @@ fun ScanMaskOverlay(
         val canvasWidth = size.width
         val canvasHeight = size.height
         
-        // 计算透明区域（中间扫描区域）
+        // 璁＄畻閫忔槑鍖哄煙锛堜腑闂存壂鎻忓尯鍩燂級
         val scanLeft = canvasWidth * maskLeftRatio
         val scanRight = canvasWidth * (1 - maskRightRatio)
         val scanTop = canvasHeight * maskTopRatio
         val scanBottom = canvasHeight * (1 - maskBottomRatio)
         
-        // 绘制上方遮罩
+        // 缁樺埗涓婃柟閬僵
         drawRect(
             color = maskColor,
             topLeft = androidx.compose.ui.geometry.Offset(0f, 0f),
             size = androidx.compose.ui.geometry.Size(canvasWidth, scanTop)
         )
         
-        // 绘制下方遮罩
+        // 缁樺埗涓嬫柟閬僵
         drawRect(
             color = maskColor,
             topLeft = androidx.compose.ui.geometry.Offset(0f, scanBottom),
             size = androidx.compose.ui.geometry.Size(canvasWidth, canvasHeight - scanBottom)
         )
         
-        // 绘制左侧遮罩
+        // 缁樺埗宸︿晶閬僵
         drawRect(
             color = maskColor,
             topLeft = androidx.compose.ui.geometry.Offset(0f, scanTop),
             size = androidx.compose.ui.geometry.Size(scanLeft, scanBottom - scanTop)
         )
         
-        // 绘制右侧遮罩
+        // 缁樺埗鍙充晶閬僵
         drawRect(
             color = maskColor,
             topLeft = androidx.compose.ui.geometry.Offset(scanRight, scanTop),
             size = androidx.compose.ui.geometry.Size(canvasWidth - scanRight, scanBottom - scanTop)
         )
         
-        // 绘制扫描区域边框
+        // 缁樺埗鎵弿鍖哄煙杈规
         drawRect(
             color = ComposeColor.White,
             topLeft = androidx.compose.ui.geometry.Offset(scanLeft, scanTop),
@@ -844,3 +819,6 @@ fun ScanMaskOverlay(
         )
     }
 }
+
+
+

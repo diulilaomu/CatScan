@@ -1,6 +1,7 @@
 package com.example.catscandemo.presentation.viewmodel
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
@@ -18,7 +19,6 @@ import com.example.catscandemo.domain.model.ScanData
 import com.example.catscandemo.domain.model.ScanResult
 import com.example.catscandemo.domain.model.TemplateModel
 import com.example.catscandemo.domain.use_case.*
-import com.example.catscandemo.utils.ImageEnhancer
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -325,6 +325,42 @@ class MainViewModel @Inject constructor(
             _showBarcodeOverlay.value = value
         }
 
+    // ===== Scan parameters =====
+    private val _channel1ScanFrameInterval = mutableStateOf(3)
+    var channel1ScanFrameInterval: Int
+        get() = _channel1ScanFrameInterval.value
+        set(value) {
+            _channel1ScanFrameInterval.value = value.coerceAtLeast(1)
+        }
+
+    private val _channel2MinAreaScore = mutableStateOf(3.5)
+    var channel2MinAreaScore: Double
+        get() = _channel2MinAreaScore.value
+        set(value) {
+            _channel2MinAreaScore.value = value.coerceIn(0.0, 100.0)
+        }
+
+    private val _channel2MinAspectScore = mutableStateOf(28.0)
+    var channel2MinAspectScore: Double
+        get() = _channel2MinAspectScore.value
+        set(value) {
+            _channel2MinAspectScore.value = value.coerceIn(0.0, 100.0)
+        }
+
+    private val _channel2MinSolidityScore = mutableStateOf(10.0)
+    var channel2MinSolidityScore: Double
+        get() = _channel2MinSolidityScore.value
+        set(value) {
+            _channel2MinSolidityScore.value = value.coerceIn(0.0, 100.0)
+        }
+
+    private val _channel2MinGradScore = mutableStateOf(8.0)
+    var channel2MinGradScore: Double
+        get() = _channel2MinGradScore.value
+        set(value) {
+            _channel2MinGradScore.value = value.coerceIn(0.0, 100.0)
+        }
+
     var showTemplateEditor by mutableStateOf(false)
 
     // 当前一次扫码写入的字段（每次扫码前会被模板刷新）
@@ -613,10 +649,7 @@ class MainViewModel @Inject constructor(
             }
             
             // 使用增强配置处理图像
-            val enhancedBitmap = ImageEnhancer.enhanceBitmap(
-                bitmap,
-                ImageEnhancer.ENHANCE_CONFIG
-            )
+            val enhancedBitmap = buildCenterCroppedBitmap(bitmap, 0.7f)
             
             val enhancedImage = InputImage.fromBitmap(enhancedBitmap, 0)
             
@@ -653,6 +686,15 @@ class MainViewModel @Inject constructor(
                     }
             }
         }
+    }
+
+    private fun buildCenterCroppedBitmap(source: Bitmap, ratio: Float): Bitmap {
+        val safeRatio = ratio.coerceIn(0.3f, 1.0f)
+        val cropWidth = (source.width * safeRatio).toInt().coerceIn(1, source.width)
+        val cropHeight = (source.height * safeRatio).toInt().coerceIn(1, source.height)
+        val left = ((source.width - cropWidth) / 2).coerceAtLeast(0)
+        val top = ((source.height - cropHeight) / 2).coerceAtLeast(0)
+        return Bitmap.createBitmap(source, left, top, cropWidth, cropHeight)
     }
 
     fun deleteItemById(id: Long) {

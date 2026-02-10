@@ -151,7 +151,17 @@ fun MainScreen(viewModel: MainViewModel) {
                 duplicateScanEnabled = viewModel.duplicateScanEnabled,
                 onDuplicateScanEnabledChange = { viewModel.duplicateScanEnabled = it },
                 showBarcodeOverlay = viewModel.showBarcodeOverlay,
-                onShowBarcodeOverlayChange = { viewModel.showBarcodeOverlay = it }
+                onShowBarcodeOverlayChange = { viewModel.showBarcodeOverlay = it },
+                channel1ScanFrameInterval = viewModel.channel1ScanFrameInterval,
+                onChannel1ScanFrameIntervalChange = { viewModel.channel1ScanFrameInterval = it },
+                channel2MinAreaScore = viewModel.channel2MinAreaScore,
+                onChannel2MinAreaScoreChange = { viewModel.channel2MinAreaScore = it },
+                channel2MinAspectScore = viewModel.channel2MinAspectScore,
+                onChannel2MinAspectScoreChange = { viewModel.channel2MinAspectScore = it },
+                channel2MinSolidityScore = viewModel.channel2MinSolidityScore,
+                onChannel2MinSolidityScoreChange = { viewModel.channel2MinSolidityScore = it },
+                channel2MinGradScore = viewModel.channel2MinGradScore,
+                onChannel2MinGradScoreChange = { viewModel.channel2MinGradScore = it }
             )
         }
     ) {
@@ -206,7 +216,12 @@ fun MainScreen(viewModel: MainViewModel) {
                                     viewModel.onBarcodeScanned(code, copyToClipboard, showToast)
                                 },
                                 onCameraReady = { cam -> viewModel.camera = cam },
-                                showBarcodeOverlay = viewModel.showBarcodeOverlay
+                                showBarcodeOverlay = viewModel.showBarcodeOverlay,
+                                channel1ScanFrameInterval = viewModel.channel1ScanFrameInterval,
+                                channel2MinAreaScore = viewModel.channel2MinAreaScore,
+                                channel2MinAspectScore = viewModel.channel2MinAspectScore,
+                                channel2MinSolidityScore = viewModel.channel2MinSolidityScore,
+                                channel2MinGradScore = viewModel.channel2MinGradScore
                             )
                         }
 
