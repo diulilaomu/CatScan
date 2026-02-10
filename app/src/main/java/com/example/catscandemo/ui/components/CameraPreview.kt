@@ -2,6 +2,12 @@ package com.example.catscandemo.ui.components
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.YuvImage
+import android.graphics.ImageFormat
+import java.io.ByteArrayOutputStream
+import android.graphics.Rect
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -376,6 +382,56 @@ object FastImageEnhancer {
     }
 }
 
+/**
+ * 对Bitmap应用3x3高斯模糊
+ */
+fun applyGaussianBlur3x3(bitmap: Bitmap): Bitmap {
+    val width = bitmap.width
+    val height = bitmap.height
+    val pixels = IntArray(width * height)
+    bitmap.getPixels(pixels, 0, width, 0, 0, width, height)
+    
+    // 3x3高斯核 (sigma ≈ 0.85)
+    val kernel = floatArrayOf(
+        1/16f, 2/16f, 1/16f,
+        2/16f, 4/16f, 2/16f,
+        1/16f, 2/16f, 1/16f
+    )
+    
+    val result = IntArray(width * height)
+    
+    for (y in 1 until height - 1) {
+        for (x in 1 until width - 1) {
+            var r = 0f; var g = 0f; var b = 0f
+            var ki = 0
+            for (ky in -1..1) {
+                for (kx in -1..1) {
+                    val pixel = pixels[(y + ky) * width + (x + kx)]
+                    val weight = kernel[ki++]
+                    r += Color.red(pixel) * weight
+                    g += Color.green(pixel) * weight
+                    b += Color.blue(pixel) * weight
+                }
+            }
+            result[y * width + x] = Color.rgb(r.toInt().coerceIn(0, 255), g.toInt().coerceIn(0, 255), b.toInt().coerceIn(0, 255))
+        }
+    }
+    
+    // 复制边缘像素
+    for (x in 0 until width) {
+        result[x] = pixels[x]
+        result[(height - 1) * width + x] = pixels[(height - 1) * width + x]
+    }
+    for (y in 0 until height) {
+        result[y * width] = pixels[y * width]
+        result[y * width + width - 1] = pixels[y * width + width - 1]
+    }
+    
+    val resultBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    resultBitmap.setPixels(result, 0, width, 0, 0, width, height)
+    return resultBitmap
+}
+
 @OptIn(ExperimentalGetImage::class)
 @Composable
 fun CameraPreview(
@@ -443,11 +499,19 @@ fun CameraPreview(
                             val rotationDegrees = imageProxy.imageInfo.rotationDegrees
                             val currentFrame = frameCounter.incrementAndGet()
                             
-                            // 复制灰度数据用于通道2（在关闭imageProxy前）
+                            // 复制YUV数据用于通道2（在关闭imageProxy前）
                             val yBuffer = mediaImage.planes[0].buffer
                             val luminanceData = ByteArray(yBuffer.remaining())
                             yBuffer.get(luminanceData)
                             yBuffer.rewind()
+                            
+                            // 复制UV数据用于通道2彩色处理
+                            val uBuffer = mediaImage.planes[1].buffer
+                            val uvData = ByteArray(uBuffer.remaining())
+                            uBuffer.get(uvData)
+                            uBuffer.rewind()
+                            val uvPixelStride = mediaImage.planes[1].pixelStride
+                            val uvRowStride = mediaImage.planes[1].rowStride
                             
                             // ===== 通道1: 原图扫描（每3帧执行一次）=====
                             if (currentFrame % 3 == 0) {
@@ -577,6 +641,100 @@ fun CameraPreview(
                                     } catch (e: Exception) {
                                         bitmap2x?.recycle()
                                         bitmap4x?.recycle()
+                            // ===== 通道2: 蒙版裁剪扫描（每帧都执行，全速运行）=====
+                            if (channel2Processing.compareAndSet(false, true)) {
+                                enhanceExecutor.execute {
+                                    var rotatedBitmap: Bitmap? = null
+                                    var croppedBitmap: Bitmap? = null
+                                    var blurredBitmap: Bitmap? = null
+                                    try {
+                                        // 蒙版参数：上下40%，左右20%
+                                        val maskTopRatio = 0.40f
+                                        val maskBottomRatio = 0.40f
+                                        val maskLeftRatio = 0.20f
+                                        val maskRightRatio = 0.20f
+
+                                        // 1. YUV转Bitmap（原始方向）
+                                        val yuvImage = YuvImage(
+                                            luminanceData,
+                                            ImageFormat.NV21,
+                                            imageWidth,
+                                            imageHeight,
+                                            null
+                                        )
+                                        val out = ByteArrayOutputStream()
+                                        yuvImage.compressToJpeg(Rect(0, 0, imageWidth, imageHeight), 100, out)
+                                        val yuvBytes = out.toByteArray()
+                                        var bitmap = BitmapFactory.decodeByteArray(yuvBytes, 0, yuvBytes.size)
+
+                                        // 2. 旋转到正方向
+                                        if (rotationDegrees != 0) {
+                                            val matrix = Matrix()
+                                            matrix.postRotate(rotationDegrees.toFloat())
+                                            rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+                                            bitmap.recycle()
+                                        } else {
+                                            rotatedBitmap = bitmap
+                                        }
+
+                                        // 3. 裁剪蒙版区域（基于旋转后bitmap）
+                                        val rotatedWidth = rotatedBitmap!!.width
+                                        val rotatedHeight = rotatedBitmap.height
+                                        val cropLeft = (rotatedWidth * maskLeftRatio).toInt()
+                                        val cropTop = (rotatedHeight * maskTopRatio).toInt()
+                                        val cropWidth = (rotatedWidth * (1 - maskLeftRatio - maskRightRatio)).toInt()
+                                        val cropHeight = (rotatedHeight * (1 - maskTopRatio - maskBottomRatio)).toInt()
+                                        if (cropWidth > 0 && cropHeight > 0) {
+                                            croppedBitmap = Bitmap.createBitmap(rotatedBitmap, cropLeft, cropTop, cropWidth, cropHeight)
+                                            // 4. 高斯模糊
+                                            blurredBitmap = applyGaussianBlur3x3(croppedBitmap)
+                                            // 5. 传给MLKit（此时rotation=0）
+                                            val inputImage2 = InputImage.fromBitmap(blurredBitmap, 0)
+                                            scanner2.process(inputImage2)
+                                                .addOnSuccessListener { barcodes ->
+                                                    val first = barcodes.firstOrNull()
+                                                    if (first?.rawValue != null) {
+                                                        // 识别成功，映射回原始图像坐标（需加上cropLeft/cropTop，并考虑rotationDegrees）
+                                                        val detected = barcodes.mapNotNull { barcode ->
+                                                            barcode.boundingBox?.let { box ->
+                                                                DetectedBarcode(
+                                                                    left = box.left.toFloat() + cropLeft,
+                                                                    top = box.top.toFloat() + cropTop,
+                                                                    right = box.right.toFloat() + cropLeft,
+                                                                    bottom = box.bottom.toFloat() + cropTop,
+                                                                    rawValue = barcode.rawValue,
+                                                                    format = barcode.format,
+                                                                    imageWidth = rotatedWidth,
+                                                                    imageHeight = rotatedHeight,
+                                                                    rotationDegrees = 0 // 已正向
+                                                                )
+                                                            }
+                                                        }
+                                                        mainHandler.post { channel2Barcodes = detected }
+                                                        Log.d("CameraPreview", "通道2(红)识别: ${first.rawValue}")
+                                                        mainHandler.post {
+                                                            barcodeStabilizer.stabilize(first.rawValue!!) {
+                                                                onBarcodeDetected(it)
+                                                            }
+                                                        }
+                                                    } else {
+                                                        mainHandler.post { channel2Barcodes = emptyList() }
+                                                    }
+                                                }
+                                                .addOnCompleteListener {
+                                                    croppedBitmap?.recycle()
+                                                    blurredBitmap?.recycle()
+                                                    rotatedBitmap?.recycle()
+                                                    channel2Processing.set(false)
+                                                }
+                                        } else {
+                                            rotatedBitmap?.recycle()
+                                            channel2Processing.set(false)
+                                        }
+                                    } catch (e: Exception) {
+                                        croppedBitmap?.recycle()
+                                        blurredBitmap?.recycle()
+                                        rotatedBitmap?.recycle()
                                         channel2Processing.set(false)
                                     }
                                 }
@@ -601,6 +759,11 @@ fun CameraPreview(
             modifier = Modifier.fillMaxSize()
         )
         
+        // 蒙版遮罩层（显示扫描区域）
+        ScanMaskOverlay(
+            modifier = Modifier.fillMaxSize()
+        )
+        
         // 通道1 检测框 (蓝色)
         if (showBarcodeOverlay) {
             BarcodeOverlay(
@@ -618,5 +781,66 @@ fun CameraPreview(
                 cornerColor = ComposeColor.Magenta
             )
         }
+    }
+}
+
+// ==================== 扫描蒙版遮罩层 ====================
+
+@Composable
+fun ScanMaskOverlay(
+    modifier: Modifier = Modifier,
+    maskColor: ComposeColor = ComposeColor.Black.copy(alpha = 0.5f)
+) {
+    // 蒙版参数：与通道2裁剪参数一致
+    val maskTopRatio = 0.40f
+    val maskBottomRatio = 0.40f
+    val maskLeftRatio = 0.20f
+    val maskRightRatio = 0.20f
+    
+    androidx.compose.foundation.Canvas(modifier = modifier) {
+        val canvasWidth = size.width
+        val canvasHeight = size.height
+        
+        // 计算透明区域（中间扫描区域）
+        val scanLeft = canvasWidth * maskLeftRatio
+        val scanRight = canvasWidth * (1 - maskRightRatio)
+        val scanTop = canvasHeight * maskTopRatio
+        val scanBottom = canvasHeight * (1 - maskBottomRatio)
+        
+        // 绘制上方遮罩
+        drawRect(
+            color = maskColor,
+            topLeft = androidx.compose.ui.geometry.Offset(0f, 0f),
+            size = androidx.compose.ui.geometry.Size(canvasWidth, scanTop)
+        )
+        
+        // 绘制下方遮罩
+        drawRect(
+            color = maskColor,
+            topLeft = androidx.compose.ui.geometry.Offset(0f, scanBottom),
+            size = androidx.compose.ui.geometry.Size(canvasWidth, canvasHeight - scanBottom)
+        )
+        
+        // 绘制左侧遮罩
+        drawRect(
+            color = maskColor,
+            topLeft = androidx.compose.ui.geometry.Offset(0f, scanTop),
+            size = androidx.compose.ui.geometry.Size(scanLeft, scanBottom - scanTop)
+        )
+        
+        // 绘制右侧遮罩
+        drawRect(
+            color = maskColor,
+            topLeft = androidx.compose.ui.geometry.Offset(scanRight, scanTop),
+            size = androidx.compose.ui.geometry.Size(canvasWidth - scanRight, scanBottom - scanTop)
+        )
+        
+        // 绘制扫描区域边框
+        drawRect(
+            color = ComposeColor.White,
+            topLeft = androidx.compose.ui.geometry.Offset(scanLeft, scanTop),
+            size = androidx.compose.ui.geometry.Size(scanRight - scanLeft, scanBottom - scanTop),
+            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2f)
+        )
     }
 }
