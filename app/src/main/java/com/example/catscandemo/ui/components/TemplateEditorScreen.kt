@@ -1,7 +1,6 @@
 package com.example.catscandemo.ui.components
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -17,7 +16,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.CheckBox
 import androidx.compose.material.icons.filled.CheckBoxOutlineBlank
-import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -25,17 +23,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.catscandemo.presentation.viewmodel.MainViewModel
 import com.example.catscandemo.domain.model.TemplateModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import android.content.ContentValues
+import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.compose.ui.platform.LocalContext
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -142,45 +143,56 @@ private fun TemplateManagerPage(
 
     fun saveTextToDownloads(fileName: String, mime: String, content: String): Boolean {
         return try {
-            val resolver = context.contentResolver
-            val values = ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-                put(MediaStore.MediaColumns.MIME_TYPE, mime)
-                put(
-                    MediaStore.MediaColumns.RELATIVE_PATH,
-                    Environment.DIRECTORY_DOWNLOADS + "/CatScan"
-                )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val resolver = context.contentResolver
+                val values = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                    put(MediaStore.MediaColumns.MIME_TYPE, mime)
+                    put(
+                        MediaStore.MediaColumns.RELATIVE_PATH,
+                        Environment.DIRECTORY_DOWNLOADS + "/CatScan"
+                    )
+                }
+                val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values) ?: return false
+                resolver.openOutputStream(uri)?.use { os ->
+                    os.write(content.toByteArray(Charsets.UTF_8))
+                } ?: return false
+                true
+            } else {
+                val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                val targetDir = File(downloadsDir, "CatScan")
+                if (!targetDir.exists() && !targetDir.mkdirs()) {
+                    return false
+                }
+                val targetFile = File(targetDir, fileName)
+                targetFile.writeText(content, Charsets.UTF_8)
+                true
             }
-            val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values) ?: return false
-            resolver.openOutputStream(uri)?.use { os ->
-                os.write(content.toByteArray(Charsets.UTF_8))
-            } ?: return false
-            true
         } catch (_: Exception) {
             false
         }
     }
 
     fun floorFromRoomCode(code: String): String {
-        // 约定：最后两位为房间序号（01~99），前面为楼层号
+        // 绾﹀畾锛氭渶鍚庝袱浣嶄负鎴块棿搴忓彿锛?1~99锛夛紝鍓嶉潰涓烘ゼ灞傚彿
         return if (code.length >= 3) {
-            code.dropLast(2).toIntOrNull()?.let { "${it}层" } ?: ""
+            code.dropLast(2).toIntOrNull()?.let { "${it}灞? } ?: ""
         } else ""
     }
 
     fun buildExportTxt(selectedTemplates: List<TemplateModel> = templates): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
-        val header = "序号\t模板名称\t校区名称\t楼栋\t楼层\t房间号\t操作人\t时间\t扫码内容"
+        val header = "搴忓彿\t妯℃澘鍚嶇О\t鏍″尯鍚嶇О\t妤兼爧\t妤煎眰\t鎴块棿鍙穃t鎿嶄綔浜篭t鏃堕棿\t鎵爜鍐呭"
         val lines = ArrayList<String>()
         lines.add(header)
 
         var seq = 1
 
         selectedTemplates.forEach { t ->
-            // 按 scan 明细导出
+            // 鎸?scan 鏄庣粏瀵煎嚭
             if (t.scans.isEmpty()) {
-                // 如果你希望“没有扫码也导出一行”，取消注释下面这行即可：
+                // 濡傛灉浣犲笇鏈涒€滄病鏈夋壂鐮佷篃瀵煎嚭涓€琛屸€濓紝鍙栨秷娉ㄩ噴涓嬮潰杩欒鍗冲彲锛?
                 lines.add("${seq++}\t${t.name}\t${t.campus}\t${t.building}\t\t\t${t.operator}\t\t")
             } else {
                 t.scans.forEach { s ->
@@ -233,7 +245,7 @@ private fun TemplateManagerPage(
         }
         root.put("templates", arr)
 
-        return root.toString(2) // 带缩进，便于阅读
+        return root.toString(2) // 甯︾缉杩涳紝渚夸簬闃呰
     }
 
     fun toast(msg: String) {
@@ -241,7 +253,7 @@ private fun TemplateManagerPage(
     }
     fun safeFileNamePart(s: String): String {
         return s.trim()
-            .ifBlank { "未命名" }
+            .ifBlank { "鏈懡鍚? }
             .replace(Regex("""[\\/:*?"<>|]"""), "_")
             .replace(Regex("""\s+"""), "_")
     }
@@ -250,11 +262,11 @@ private fun TemplateManagerPage(
         val sdf = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
         val time = sdf.format(Date())
         return if (selectedCount > 0 && selectedCount < templates.size) {
-            "批量导出_${selectedCount}个模板_$time"
+            "鎵归噺瀵煎嚭_${selectedCount}涓ā鏉縚$time"
         } else {
             val t = templates.firstOrNull { it.id == activeId }
-            val name = safeFileNamePart(t?.name ?: "模板")
-            val campus = safeFileNamePart(t?.campus ?: "校区")
+            val name = safeFileNamePart(t?.name ?: "妯℃澘")
+            val campus = safeFileNamePart(t?.campus ?: "鏍″尯")
             "${name}_${campus}_$time"
         }
     }
@@ -264,43 +276,39 @@ private fun TemplateManagerPage(
 
     Column(modifier = modifier.padding(16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("模板管理", style = MaterialTheme.typography.titleLarge)
+            Text("妯℃澘绠＄悊", style = MaterialTheme.typography.titleLarge)
             Spacer(Modifier.weight(1f))
             if (isBatchMode) {
                 Text(
-                    "已选 ${selectedTemplateIds.size}/${templates.size}",
+                    "宸查€?${selectedTemplateIds.size}/${templates.size}",
                     style = MaterialTheme.typography.bodyMedium
                 )
+                Spacer(Modifier.width(8.dp))
+                TextButton(
+                    onClick = {
+                        isBatchMode = false
+                        selectedTemplateIds = emptySet()
+                    }
+                ) {
+                    Text("瀹屾垚")
+                }
             }
             if (!isBatchMode) {
                 IconButton(onClick = { showAdd = true }) {
-                    Icon(Icons.Default.Add, contentDescription = "新增模板")
+                    Icon(Icons.Default.Add, contentDescription = "鏂板妯℃澘")
                 }
-            }
-            IconButton(
-                onClick = {
-                    isBatchMode = !isBatchMode
-                    if (!isBatchMode) {
-                        selectedTemplateIds = emptySet()
-                    }
-                }
-            ) {
-                Icon(
-                    imageVector = if (isBatchMode) Icons.Default.Close else Icons.Default.SelectAll,
-                    contentDescription = if (isBatchMode) "取消批量选择" else "批量选择"
-                )
             }
             IconButton(onClick = onClose) {
-                Icon(Icons.Default.Close, contentDescription = "关闭")
+                Icon(Icons.Default.Close, contentDescription = "鍏抽棴")
             }
         }
 
         Spacer(Modifier.height(12.dp))
 
-// ✅ 中间内容占满剩余空间
+// 鉁?涓棿鍐呭鍗犳弧鍓╀綑绌洪棿
         Box(modifier = Modifier.weight(1f, fill = true)) {
             if (templates.isEmpty()) {
-                Text("暂无模板，点击右上角 + 新增。")
+                Text("鏆傛棤妯℃澘锛岀偣鍑诲彸涓婅 + 鏂板銆?)
             } else {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     items(templates, key = { it.id }) { t ->
@@ -338,26 +346,26 @@ private fun TemplateManagerPage(
                                     ) {
                                         Icon(
                                             imageVector = if (isChecked) Icons.Default.CheckBox else Icons.Default.CheckBoxOutlineBlank,
-                                            contentDescription = if (isChecked) "取消选择" else "选择"
+                                            contentDescription = if (isChecked) "鍙栨秷閫夋嫨" else "閫夋嫨"
                                         )
                                     }
                                 }
                                 Column(Modifier.weight(1f)) {
                                     Text(t.name, style = MaterialTheme.typography.titleMedium)
                                     Text(
-                                        "${t.campus} / ${t.building}  | 楼层:${t.maxFloor} 房间/层:${t.roomCountPerFloor}  | 已选房间:${t.selectedRooms.size}  | 扫码:${t.scans.size}",
+                                        "${t.campus} / ${t.building}  | 妤煎眰:${t.maxFloor} 鎴块棿/灞?${t.roomCountPerFloor}  | 宸查€夋埧闂?${t.selectedRooms.size}  | 鎵爜:${t.scans.size}",
                                         style = MaterialTheme.typography.bodySmall
                                     )
                                 }
                                 if (!isBatchMode) {
                                     if (isActive) {
-                                        AssistChip(onClick = {}, label = { Text("已选") })
+                                        AssistChip(onClick = {}, label = { Text("宸查€?) })
                                     }
                                     IconButton(onClick = { onOpen(t.id) }) {
-                                        Icon(Icons.Default.Edit, contentDescription = "查看/编辑")
+                                        Icon(Icons.Default.Edit, contentDescription = "鏌ョ湅/缂栬緫")
                                     }
                                     IconButton(onClick = { showDeleteId = t.id }) {
-                                        Icon(Icons.Default.Delete, contentDescription = "删除")
+                                        Icon(Icons.Default.Delete, contentDescription = "鍒犻櫎")
                                     }
                                 }
                             }
@@ -369,18 +377,38 @@ private fun TemplateManagerPage(
 
         Spacer(Modifier.height(12.dp))
 
-        // 底部操作栏（始终显示）
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            val exportButtonTextStyle = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp)
+            val exportButtonContentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp)
             if (isBatchMode) {
-                // 批量选择模式：导出TXT - 全选 - 导出JSON
+                OutlinedButton(
+                    onClick = {
+                        selectedTemplateIds = if (allSelected) {
+                            emptySet()
+                        } else {
+                            templates.map { it.id }.toSet()
+                        }
+                    },
+                    enabled = templates.isNotEmpty(),
+                    modifier = Modifier.weight(1f),
+                    contentPadding = exportButtonContentPadding,
+                ) {
+                    Text(
+                        text = if (allSelected) "鍙栨秷鍏ㄩ€? else "鍏ㄩ€?,
+                        style = exportButtonTextStyle,
+                        maxLines = 1,
+                        softWrap = false
+                    )
+                }
+
                 Button(
                     onClick = {
                         if (selectedTemplateIds.isEmpty()) {
-                            toast("请至少选择一个模板")
+                            toast("璇疯嚦灏戦€夋嫨涓€涓ā鏉?)
                             return@Button
                         }
                         val fileName = "${exportBaseName(selectedTemplateIds.size)}.txt"
@@ -389,83 +417,26 @@ private fun TemplateManagerPage(
                             mime = "text/plain",
                             content = buildExportTxt(selectedTemplates)
                         )
-                        toast(if (ok) "已导出 ${selectedTemplateIds.size} 个模板：下载/CatScan/$fileName" else "导出TXT失败")
+                        toast(if (ok) "宸插鍑?${selectedTemplateIds.size} 涓ā鏉匡細涓嬭浇/CatScan/$fileName" else "瀵煎嚭TXT澶辫触")
                         isBatchMode = false
                         selectedTemplateIds = emptySet()
                     },
                     enabled = selectedTemplateIds.isNotEmpty(),
-                    modifier = Modifier.weight(1f)
-                ) { 
+                    modifier = Modifier.weight(1f),
+                    contentPadding = exportButtonContentPadding,
+                ) {
                     Text(
-                        text = "导出TXT",
-                        style = MaterialTheme.typography.labelSmall
+                        text = "瀵煎嚭TXT",
+                        style = exportButtonTextStyle,
+                        maxLines = 1,
+                        softWrap = false
                     )
                 }
-            } else {
-                // 普通模式：导出TXT
-                Button(
-                    onClick = {
-                        val fileName = "${exportBaseName()}.txt"
-                        val ok = saveTextToDownloads(
-                            fileName = fileName,
-                            mime = "text/plain",
-                            content = buildExportTxt()
-                        )
-                        toast(if (ok) "已导出：下载/CatScan/$fileName" else "导出TXT失败")
-                    },
-                    enabled = templates.isNotEmpty(),
-                    modifier = Modifier.weight(1f)
-                ) { 
-                    Text(
-                        text = "导出TXT",
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                }
-            }
-            
-            // 全选按钮（中间，始终显示）
-            OutlinedButton(
-                onClick = {
-                    if (!isBatchMode) {
-                        // 如果不在批量模式，先进入批量模式
-                        isBatchMode = true
-                    }
-                    selectedTemplateIds = if (allSelected) {
-                        emptySet()
-                    } else {
-                        templates.map { it.id }.toSet()
-                    }
-                },
-                enabled = templates.isNotEmpty(),
-                modifier = Modifier.weight(0.7f),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = if (isBatchMode && allSelected) {
-                        MaterialTheme.colorScheme.error
-                    } else {
-                        MaterialTheme.colorScheme.onSurface
-                    }
-                ),
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = if (isBatchMode && allSelected) {
-                        MaterialTheme.colorScheme.error
-                    } else {
-                        MaterialTheme.colorScheme.outline
-                    }
-                )
-            ) {
-                Text(
-                    text = "全选",
-                    style = MaterialTheme.typography.labelSmall
-                )
-            }
-            
-            if (isBatchMode) {
-                // 批量选择模式：导出JSON
+
                 Button(
                     onClick = {
                         if (selectedTemplateIds.isEmpty()) {
-                            toast("请至少选择一个模板")
+                            toast("璇疯嚦灏戦€夋嫨涓€涓ā鏉?)
                             return@Button
                         }
                         val fileName = "${exportBaseName(selectedTemplateIds.size)}.json"
@@ -474,20 +445,45 @@ private fun TemplateManagerPage(
                             mime = "application/json",
                             content = buildExportJson(selectedTemplates)
                         )
-                        toast(if (ok) "已导出 ${selectedTemplateIds.size} 个模板：下载/CatScan/$fileName" else "导出JSON失败")
+                        toast(if (ok) "宸插鍑?${selectedTemplateIds.size} 涓ā鏉匡細涓嬭浇/CatScan/$fileName" else "瀵煎嚭JSON澶辫触")
                         isBatchMode = false
                         selectedTemplateIds = emptySet()
                     },
                     enabled = selectedTemplateIds.isNotEmpty(),
-                    modifier = Modifier.weight(1f)
-                ) { 
+                    modifier = Modifier.weight(1f),
+                    contentPadding = exportButtonContentPadding,
+                ) {
                     Text(
-                        text = "导出JSON",
-                        style = MaterialTheme.typography.labelSmall
+                        text = "瀵煎嚭JSON",
+                        style = exportButtonTextStyle,
+                        maxLines = 1,
+                        softWrap = false
                     )
                 }
+
             } else {
-                // 普通模式：导出JSON
+                Button(
+                    onClick = {
+                        val fileName = "${exportBaseName()}.txt"
+                        val ok = saveTextToDownloads(
+                            fileName = fileName,
+                            mime = "text/plain",
+                            content = buildExportTxt()
+                        )
+                        toast(if (ok) "宸插鍑猴細涓嬭浇/CatScan/$fileName" else "瀵煎嚭TXT澶辫触")
+                    },
+                    enabled = templates.isNotEmpty(),
+                    modifier = Modifier.weight(1f),
+                    contentPadding = exportButtonContentPadding,
+                ) {
+                    Text(
+                        text = "瀵煎嚭TXT",
+                        style = exportButtonTextStyle,
+                        maxLines = 1,
+                        softWrap = false
+                    )
+                }
+
                 Button(
                     onClick = {
                         val fileName = "${exportBaseName()}.json"
@@ -496,14 +492,34 @@ private fun TemplateManagerPage(
                             mime = "application/json",
                             content = buildExportJson()
                         )
-                        toast(if (ok) "已导出：下载/CatScan/$fileName" else "导出JSON失败")
+                        toast(if (ok) "宸插鍑猴細涓嬭浇/CatScan/$fileName" else "瀵煎嚭JSON澶辫触")
                     },
                     enabled = templates.isNotEmpty(),
-                    modifier = Modifier.weight(1f)
-                ) { 
+                    modifier = Modifier.weight(1f),
+                    contentPadding = exportButtonContentPadding,
+                ) {
                     Text(
-                        text = "导出JSON",
-                        style = MaterialTheme.typography.labelSmall
+                        text = "瀵煎嚭JSON",
+                        style = exportButtonTextStyle,
+                        maxLines = 1,
+                        softWrap = false
+                    )
+                }
+
+                OutlinedButton(
+                    onClick = {
+                        isBatchMode = true
+                        selectedTemplateIds = emptySet()
+                    },
+                    enabled = templates.isNotEmpty(),
+                    modifier = Modifier.weight(1f),
+                    contentPadding = exportButtonContentPadding,
+                ) {
+                    Text(
+                        text = "鎵归噺瀵煎嚭",
+                        style = exportButtonTextStyle,
+                        maxLines = 1,
+                        softWrap = false
                     )
                 }
             }
@@ -517,21 +533,21 @@ private fun TemplateManagerPage(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        onAdd(newName.trim().ifBlank { "未命名模板" })
+                        onAdd(newName.trim().ifBlank { "鏈懡鍚嶆ā鏉? })
                         newName = ""
                         showAdd = false
                     }
-                ) { Text("创建") }
+                ) { Text("鍒涘缓") }
             },
             dismissButton = {
-                TextButton(onClick = { showAdd = false }) { Text("取消") }
+                TextButton(onClick = { showAdd = false }) { Text("鍙栨秷") }
             },
-            title = { Text("新增模板") },
+            title = { Text("鏂板妯℃澘") },
             text = {
                 OutlinedTextField(
                     value = newName,
                     onValueChange = { newName = it },
-                    label = { Text("模板名称") },
+                    label = { Text("妯℃澘鍚嶇О") },
                     singleLine = true
                 )
             }
@@ -547,13 +563,13 @@ private fun TemplateManagerPage(
                         onDelete(id)
                         showDeleteId = null
                     }
-                ) { Text("删除") }
+                ) { Text("鍒犻櫎") }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteId = null }) { Text("取消") }
+                TextButton(onClick = { showDeleteId = null }) { Text("鍙栨秷") }
             },
-            title = { Text("删除模板") },
-            text = { Text("确认删除该模板？该模板的离线扫码数据也会一并删除。") }
+            title = { Text("鍒犻櫎妯℃澘") },
+            text = { Text("纭鍒犻櫎璇ユā鏉匡紵璇ユā鏉跨殑绂荤嚎鎵爜鏁版嵁涔熶細涓€骞跺垹闄ゃ€?) }
         )
     }
 
@@ -594,14 +610,14 @@ fun TemplateEditorSheet(
     }
 
     /**
-     * 仅在“楼层数量/房间数量”输入完成后自动保存：
-     * - 自动计算全量房间号
-     * - selectedRooms：保留有效项；若为空则默认全选
+     * 浠呭湪鈥滄ゼ灞傛暟閲?鎴块棿鏁伴噺鈥濊緭鍏ュ畬鎴愬悗鑷姩淇濆瓨锛?
+     * - 鑷姩璁＄畻鍏ㄩ噺鎴块棿鍙?
+     * - selectedRooms锛氫繚鐣欐湁鏁堥」锛涜嫢涓虹┖鍒欓粯璁ゅ叏閫?
      */
     fun scheduleAutoSaveCounts() {
         autoSaveJob?.cancel()
         autoSaveJob = scope.launch {
-            delay(450) // 认为用户停止输入
+            delay(450) // 璁や负鐢ㄦ埛鍋滄杈撳叆
             val f = floorText.toIntOrNull()?.takeIf { it > 0 } ?: return@launch
             val r = roomText.toIntOrNull()?.takeIf { it > 0 } ?: return@launch
 
@@ -630,21 +646,21 @@ fun TemplateEditorSheet(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "杩斿洖")
             }
-            Text("模板编辑", style = MaterialTheme.typography.titleLarge)
+            Text("妯℃澘缂栬緫", style = MaterialTheme.typography.titleLarge)
             Spacer(Modifier.weight(1f))
             if (!isActive) {
-                TextButton(onClick = onSetActive) { Text("设为当前") }
+                TextButton(onClick = onSetActive) { Text("璁句负褰撳墠") }
             } else {
-                AssistChip(onClick = {}, label = { Text("当前模板") })
+                AssistChip(onClick = {}, label = { Text("褰撳墠妯℃澘") })
             }
             IconButton(onClick = onClose) {
-                Icon(Icons.Default.Close, contentDescription = "关闭")
+                Icon(Icons.Default.Close, contentDescription = "鍏抽棴")
             }
         }
 
-        // 关键：用 LazyColumn 承载所有内容，避免 verticalScroll + LazyColumn 嵌套崩溃
+        // 鍏抽敭锛氱敤 LazyColumn 鎵胯浇鎵€鏈夊唴瀹癸紝閬垮厤 verticalScroll + LazyColumn 宓屽宕╂簝
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -653,16 +669,16 @@ fun TemplateEditorSheet(
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
             item {
-                OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("模板名称") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("妯℃澘鍚嶇О") }, modifier = Modifier.fillMaxWidth())
             }
             item {
-                OutlinedTextField(value = op, onValueChange = { op = it }, label = { Text("操作人") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = op, onValueChange = { op = it }, label = { Text("鎿嶄綔浜?) }, modifier = Modifier.fillMaxWidth())
             }
             item {
-                OutlinedTextField(value = campus, onValueChange = { campus = it }, label = { Text("校区") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = campus, onValueChange = { campus = it }, label = { Text("鏍″尯") }, modifier = Modifier.fillMaxWidth())
             }
             item {
-                OutlinedTextField(value = building, onValueChange = { building = it }, label = { Text("楼栋") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(value = building, onValueChange = { building = it }, label = { Text("妤兼爧") }, modifier = Modifier.fillMaxWidth())
             }
             item {
                 OutlinedTextField(
@@ -671,7 +687,7 @@ fun TemplateEditorSheet(
                         floorText = it.filter(Char::isDigit)
                         scheduleAutoSaveCounts()
                     },
-                    label = { Text("楼层数量（最大楼层数）") },
+                    label = { Text("妤煎眰鏁伴噺锛堟渶澶фゼ灞傛暟锛?) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -683,7 +699,7 @@ fun TemplateEditorSheet(
                         roomText = it.filter(Char::isDigit)
                         scheduleAutoSaveCounts()
                     },
-                    label = { Text("房间数量（每层房间数）") },
+                    label = { Text("鎴块棿鏁伴噺锛堟瘡灞傛埧闂存暟锛?) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -695,21 +711,21 @@ fun TemplateEditorSheet(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("已选房间：${template.selectedRooms.size}")
-                    TextButton(onClick = onEditRooms) { Text("编辑房间号") }
+                    Text("宸查€夋埧闂达細${template.selectedRooms.size}")
+                    TextButton(onClick = onEditRooms) { Text("缂栬緫鎴块棿鍙?) }
                 }
             }
 
             item {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    OutlinedButton(onClick = onClearScans) { Text("清空扫码数据") }
+                    OutlinedButton(onClick = onClearScans) { Text("娓呯┖鎵爜鏁版嵁") }
                     Button(
                         onClick = {
                             val f = parsePositiveInt(floorText, 1).coerceAtLeast(1)
                             val r = parsePositiveInt(roomText, 1).coerceAtLeast(1)
                             onSave(
                                 template.copy(
-                                    name = name.trim().ifBlank { "未命名模板" },
+                                    name = name.trim().ifBlank { "鏈懡鍚嶆ā鏉? },
                                     operator = op,
                                     campus = campus,
                                     building = building,
@@ -717,20 +733,20 @@ fun TemplateEditorSheet(
                                     roomCountPerFloor = r
                                 )
                             )
-                            // ✅ 保存后自动返回（回到模板管理列表）
+                            // 鉁?淇濆瓨鍚庤嚜鍔ㄨ繑鍥烇紙鍥炲埌妯℃澘绠＄悊鍒楄〃锛?
                             onBack()
                         }
-                    ) { Text("保存模板") }
+                    ) { Text("淇濆瓨妯℃澘") }
 
                 }
             }
 
             item {
                 Spacer(Modifier.height(8.dp))
-                Text("模板内已扫描数据（离线）", style = MaterialTheme.typography.titleMedium)
+                Text("妯℃澘鍐呭凡鎵弿鏁版嵁锛堢绾匡級", style = MaterialTheme.typography.titleMedium)
             }
             
-            // 上传模板数据按钮
+            // 涓婁紶妯℃澘鏁版嵁鎸夐挳
             item {
                 if (template.scans.isNotEmpty()) {
                     val context = LocalContext.current
@@ -745,9 +761,9 @@ fun TemplateEditorSheet(
                     ) {
                         Text(
                             if (viewModel.uploadEnabled && viewModel.serverUrl.isNotEmpty()) {
-                                "上传模板数据到电脑"
+                                "涓婁紶妯℃澘鏁版嵁鍒扮數鑴?
                             } else {
-                                "请先连接电脑"
+                                "璇峰厛杩炴帴鐢佃剳"
                             }
                         )
                     }
@@ -756,7 +772,7 @@ fun TemplateEditorSheet(
             }
 
             if (template.scans.isEmpty()) {
-                item { Text("暂无扫码数据。") }
+                item { Text("鏆傛棤鎵爜鏁版嵁銆?) }
             } else {
                 items(template.scans, key = { it.timestamp }) { s ->
                     Card(Modifier.fillMaxWidth()) {
@@ -774,7 +790,7 @@ fun TemplateEditorSheet(
                                 )
                             }
                             IconButton(onClick = { onDeleteScan(s.id) }) {
-                                Icon(Icons.Default.Delete, contentDescription = "删除该条")
+                                Icon(Icons.Default.Delete, contentDescription = "鍒犻櫎璇ユ潯")
                             }
                         }
                     }
@@ -799,8 +815,8 @@ private fun RoomPickerPage(
     var selectedFloor by rememberSaveable { mutableStateOf(1) }
     if (selectedFloor > maxFloor) selectedFloor = maxFloor.coerceAtLeast(1)
 
-    // ✅ 生成所有房间号（所有楼层）
-    // 规则：1~9 -> 01~09，所以 1 层为 101~109
+    // 鉁?鐢熸垚鎵€鏈夋埧闂村彿锛堟墍鏈夋ゼ灞傦級
+    // 瑙勫垯锛?~9 -> 01~09锛屾墍浠?1 灞備负 101~109
     val allRooms = remember(maxFloor, roomCountPerFloor) {
         val mf = maxFloor.coerceAtLeast(1)
         val rc = roomCountPerFloor.coerceAtLeast(1)
@@ -809,17 +825,17 @@ private fun RoomPickerPage(
         }
     }
 
-    // ✅ 用 rememberSaveable 保存“List<String>”（可保存），避免 Set 的保存/委托问题
+    // 鉁?鐢?rememberSaveable 淇濆瓨鈥淟ist<String>鈥濓紙鍙繚瀛橈級锛岄伩鍏?Set 鐨勪繚瀛?濮旀墭闂
     val selectedRoomsState = rememberSaveable {
         mutableStateOf(
             if (initialSelected.isEmpty()) allRooms else initialSelected
         )
     }
 
-    // 当前选中集合（用于 contains / 计数）
+    // 褰撳墠閫変腑闆嗗悎锛堢敤浜?contains / 璁℃暟锛?
     val selectedSet = remember(selectedRoomsState.value) { selectedRoomsState.value.toSet() }
 
-    // ✅ 当楼层/房间数量变化时，剔除无效房间；如果是默认全选场景且被清空，则恢复全选
+    // 鉁?褰撴ゼ灞?鎴块棿鏁伴噺鍙樺寲鏃讹紝鍓旈櫎鏃犳晥鎴块棿锛涘鏋滄槸榛樿鍏ㄩ€夊満鏅笖琚竻绌猴紝鍒欐仮澶嶅叏閫?
     LaunchedEffect(allRooms) {
         val filtered = selectedRoomsState.value.filter { it in allRooms }
         selectedRoomsState.value = if (initialSelected.isEmpty() && filtered.isEmpty()) {
@@ -836,36 +852,36 @@ private fun RoomPickerPage(
         (1..roomCountPerFloor.coerceAtLeast(1)).map { r -> "$selectedFloor${roomSuffix(r)}" }
     }
     val selectedCount = roomsOfFloor.count { it in selectedSet }
-    // ✅ 若楼层/房间数量变化，剔除无效选中；
-    // 如果你希望“变化后仍保持全选”，把 intersect 改成 selectedSet = allRooms.toSet()
+    // 鉁?鑻ユゼ灞?鎴块棿鏁伴噺鍙樺寲锛屽墧闄ゆ棤鏁堥€変腑锛?
+    // 濡傛灉浣犲笇鏈涒€滃彉鍖栧悗浠嶄繚鎸佸叏閫夆€濓紝鎶?intersect 鏀规垚 selectedSet = allRooms.toSet()
 
     Column(modifier = modifier.padding(16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "杩斿洖")
             }
-            Text("房间号编辑", style = MaterialTheme.typography.titleLarge)
+            Text("鎴块棿鍙风紪杈?, style = MaterialTheme.typography.titleLarge)
             Spacer(Modifier.weight(1f))
-            TextButton(onClick = { onApply(selectedSet.toList()) }) { Text("应用") }
+            TextButton(onClick = { onApply(selectedSet.toList()) }) { Text("搴旂敤") }
         }
 
         Spacer(Modifier.height(10.dp))
 
-        Text("选择楼层", style = MaterialTheme.typography.titleMedium)
+        Text("閫夋嫨妤煎眰", style = MaterialTheme.typography.titleMedium)
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             items(floors) { f ->
                 FilterChip(
                     selected = f == selectedFloor,
                     onClick = { selectedFloor = f },
-                    label = { Text("${f}层") }
+                    label = { Text("${f}灞?) }
                 )
             }
         }
 
         Spacer(Modifier.height(8.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("本层房间：${roomsOfFloor.size}")
-            Text("本层已选：$selectedCount")
+            Text("鏈眰鎴块棿锛?{roomsOfFloor.size}")
+            Text("鏈眰宸查€夛細$selectedCount")
         }
 
         Spacer(Modifier.height(8.dp))
@@ -875,14 +891,14 @@ private fun RoomPickerPage(
                     selectedRoomsState.value = (selectedSet + roomsOfFloor).toList()
                 },
                 modifier = Modifier.weight(1f)
-            ) { Text("全选本层") }
+            ) { Text("鍏ㄩ€夋湰灞?) }
 
             OutlinedButton(
                 onClick = {
                     selectedRoomsState.value = (selectedSet - roomsOfFloor.toSet()).toList()
                 },
                 modifier = Modifier.weight(1f)
-            ) { Text("取消本层") }
+            ) { Text("鍙栨秷鏈眰") }
 
         }
 

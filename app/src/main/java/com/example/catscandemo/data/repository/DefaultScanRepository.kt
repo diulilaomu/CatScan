@@ -7,8 +7,8 @@ import com.example.catscandemo.domain.use_case.ScanRepository
 import com.example.catscandemo.ui.main.ScanHistoryStorage
 
 /**
- * 默认扫描数据仓库实现
- * 负责扫描数据的存储和管理
+ * 榛樿鎵弿鏁版嵁浠撳簱瀹炵幇
+ * 璐熻矗鎵弿鏁版嵁鐨勫瓨鍌ㄥ拰绠＄悊
  */
 class DefaultScanRepository(
     private val context: Context
@@ -27,8 +27,7 @@ class DefaultScanRepository(
     override fun setCurrentTemplateId(templateId: String?) {
         if (currentTemplateId != templateId) {
             currentTemplateId = templateId
-            // 重新初始化，加载对应模板的数据
-            initialized = false
+            // 閲嶆柊鍒濆鍖栵紝鍔犺浇瀵瑰簲妯℃澘鐨勬暟鎹?            initialized = false
             initialize()
         }
     }
@@ -37,7 +36,7 @@ class DefaultScanRepository(
         if (!initialized) {
             val loaded = ScanHistoryStorage.load(context, currentTemplateId)
             scanResults = loaded.items.toMutableList()
-            // 恢复自增序号，避免新扫描 id/index 重复
+            // 鎭㈠鑷搴忓彿锛岄伩鍏嶆柊鎵弿 id/index 閲嶅
             val maxId = scanResults.maxOfOrNull { it.id } ?: 0L
             val maxIndex = scanResults.maxOfOrNull { it.index } ?: 0
             nextId = maxId + 1
@@ -57,8 +56,7 @@ class DefaultScanRepository(
         room: String,
         allowDuplicate: Boolean
     ): ScanData? {
-        // 检查重复
-        if (!allowDuplicate) {
+        // 妫€鏌ラ噸澶?        if (!allowDuplicate) {
             if (scanResults.any { it.scanData.text == text }) {
                 return null
             }
@@ -102,7 +100,10 @@ class DefaultScanRepository(
     override fun updateScan(id: Long, scanData: ScanData) {
         val index = scanResults.indexOfFirst { it.id == id }
         if (index != -1) {
-            val updatedResult = scanResults[index].copy(scanData = scanData)
+            val updatedResult = scanResults[index].copy(
+                scanData = scanData,
+                uploaded = scanData.uploaded
+            )
             scanResults[index] = updatedResult
             saveScanResults()
         }
@@ -123,7 +124,11 @@ class DefaultScanRepository(
     override fun markScanAsUploaded(id: Long) {
         val index = scanResults.indexOfFirst { it.id == id }
         if (index != -1) {
-            val updatedResult = scanResults[index].copy(uploaded = true)
+            val current = scanResults[index]
+            val updatedResult = current.copy(
+                scanData = current.scanData.copy(uploaded = true),
+                uploaded = true
+            )
             scanResults[index] = updatedResult
             saveScanResults()
         }
@@ -131,7 +136,7 @@ class DefaultScanRepository(
 
     override fun replaceAll(scans: List<ScanResult>) {
         scanResults = scans.toMutableList()
-        // 恢复自增序号，避免新扫描 id/index 重复
+        // 鎭㈠鑷搴忓彿锛岄伩鍏嶆柊鎵弿 id/index 閲嶅
         val maxId = scanResults.maxOfOrNull { it.id } ?: 0L
         val maxIndex = scanResults.maxOfOrNull { it.index } ?: 0
         nextId = maxId + 1
@@ -140,8 +145,7 @@ class DefaultScanRepository(
     }
 
     /**
-     * 清空所有扫描数据
-     */
+     * 娓呯┖鎵€鏈夋壂鎻忔暟鎹?     */
     override fun clearAllScans() {
         scanResults.clear()
         nextId = 1L

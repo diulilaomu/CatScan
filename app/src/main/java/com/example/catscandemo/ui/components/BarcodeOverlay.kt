@@ -15,10 +15,10 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.DrawScope
 
 /**
- * 检测到的条码信息
- * @param boundingBox 边界框 (归一化坐标 0-1)
- * @param rawValue 条码值
- * @param format 条码格式
+ * 妫€娴嬪埌鐨勬潯鐮佷俊鎭?
+ * @param boundingBox 杈圭晫妗?(褰掍竴鍖栧潗鏍?0-1)
+ * @param rawValue 鏉＄爜鍊?
+ * @param format 鏉＄爜鏍煎紡
  */
 data class DetectedBarcode(
     val left: Float,
@@ -33,8 +33,8 @@ data class DetectedBarcode(
 )
 
 /**
- * 条码检测框叠加层
- * 在相机预览上绘制实时检测到的条码边界框
+ * 鏉＄爜妫€娴嬫鍙犲姞灞?
+ * 鍦ㄧ浉鏈洪瑙堜笂缁樺埗瀹炴椂妫€娴嬪埌鐨勬潯鐮佽竟鐣屾
  */
 @Composable
 fun BarcodeOverlay(
@@ -45,7 +45,7 @@ fun BarcodeOverlay(
     strokeWidth: Float = 3f,
     cornerLength: Float = 30f
 ) {
-    // 动画效果：边框透明度
+    // 鍔ㄧ敾鏁堟灉锛氳竟妗嗛€忔槑搴?
     val alpha by animateFloatAsState(
         targetValue = if (detectedBarcodes.isNotEmpty()) 1f else 0f,
         animationSpec = tween(durationMillis = 150),
@@ -54,14 +54,14 @@ fun BarcodeOverlay(
     
     Canvas(modifier = modifier.fillMaxSize()) {
         detectedBarcodes.forEach { barcode ->
-            // 转换坐标：从图像坐标系转换到Canvas坐标系
+            // 杞崲鍧愭爣锛氫粠鍥惧儚鍧愭爣绯昏浆鎹㈠埌Canvas鍧愭爣绯?
             val rect = transformBarcodeRect(
                 barcode = barcode,
                 canvasWidth = size.width,
                 canvasHeight = size.height
             )
             
-            // 绘制半透明填充
+            // 缁樺埗鍗婇€忔槑濉厖
             drawRoundRect(
                 color = boxColor.copy(alpha = 0.1f * alpha),
                 topLeft = Offset(rect.left, rect.top),
@@ -69,7 +69,7 @@ fun BarcodeOverlay(
                 cornerRadius = CornerRadius(8f, 8f)
             )
             
-            // 绘制边框
+            // 缁樺埗杈规
             drawRoundRect(
                 color = boxColor.copy(alpha = 0.6f * alpha),
                 topLeft = Offset(rect.left, rect.top),
@@ -78,7 +78,7 @@ fun BarcodeOverlay(
                 style = Stroke(width = strokeWidth)
             )
             
-            // 绘制四个角的强调线
+            // 缁樺埗鍥涗釜瑙掔殑寮鸿皟绾?
             drawCorners(
                 left = rect.left,
                 top = rect.top,
@@ -93,7 +93,7 @@ fun BarcodeOverlay(
 }
 
 /**
- * 转换条码边界框坐标到Canvas坐标系
+ * 杞崲鏉＄爜杈圭晫妗嗗潗鏍囧埌Canvas鍧愭爣绯?
  */
 private fun transformBarcodeRect(
     barcode: DetectedBarcode,
@@ -103,10 +103,10 @@ private fun transformBarcodeRect(
     val imageWidth = barcode.imageWidth.toFloat()
     val imageHeight = barcode.imageHeight.toFloat()
     
-    // 根据旋转角度调整坐标
+    // 鏍规嵁鏃嬭浆瑙掑害璋冩暣鍧愭爣
     val (transformedLeft, transformedTop, transformedRight, transformedBottom) = when (barcode.rotationDegrees) {
         90 -> {
-            // 图像旋转90度：x和y交换，y轴翻转
+            // 鍥惧儚鏃嬭浆90搴︼細x鍜寉浜ゆ崲锛寉杞寸炕杞?
             val newLeft = barcode.top
             val newTop = imageWidth - barcode.right
             val newRight = barcode.bottom
@@ -114,7 +114,7 @@ private fun transformBarcodeRect(
             Quadruple(newLeft, newTop, newRight, newBottom)
         }
         180 -> {
-            // 图像旋转180度：x和y都翻转
+            // 鍥惧儚鏃嬭浆180搴︼細x鍜寉閮界炕杞?
             val newLeft = imageWidth - barcode.right
             val newTop = imageHeight - barcode.bottom
             val newRight = imageWidth - barcode.left
@@ -122,7 +122,7 @@ private fun transformBarcodeRect(
             Quadruple(newLeft, newTop, newRight, newBottom)
         }
         270 -> {
-            // 图像旋转270度：x和y交换，x轴翻转
+            // 鍥惧儚鏃嬭浆270搴︼細x鍜寉浜ゆ崲锛寈杞寸炕杞?
             val newLeft = imageHeight - barcode.bottom
             val newTop = barcode.left
             val newRight = imageHeight - barcode.top
@@ -130,27 +130,27 @@ private fun transformBarcodeRect(
             Quadruple(newLeft, newTop, newRight, newBottom)
         }
         else -> {
-            // 0度或其他：不变
+            // 0搴︽垨鍏朵粬锛氫笉鍙?
             Quadruple(barcode.left, barcode.top, barcode.right, barcode.bottom)
         }
     }
     
-    // 根据旋转角度确定实际的图像尺寸
+    // 鏍规嵁鏃嬭浆瑙掑害纭畾瀹為檯鐨勫浘鍍忓昂瀵?
     val (actualImageWidth, actualImageHeight) = when (barcode.rotationDegrees) {
         90, 270 -> imageHeight to imageWidth
         else -> imageWidth to imageHeight
     }
     
-    // 计算缩放比例（保持宽高比，填充整个Canvas）
+    // 璁＄畻缂╂斁姣斾緥锛堜繚鎸佸楂樻瘮锛屽～鍏呮暣涓狢anvas锛?
     val scaleX = canvasWidth / actualImageWidth
     val scaleY = canvasHeight / actualImageHeight
     val scale = maxOf(scaleX, scaleY)
     
-    // 计算偏移量（居中显示）
+    // 璁＄畻鍋忕Щ閲忥紙灞呬腑鏄剧ず锛?
     val offsetX = (canvasWidth - actualImageWidth * scale) / 2
     val offsetY = (canvasHeight - actualImageHeight * scale) / 2
     
-    // 应用缩放和偏移
+    // 搴旂敤缂╂斁鍜屽亸绉?
     return TransformedRect(
         left = transformedLeft * scale + offsetX,
         top = transformedTop * scale + offsetY,
@@ -163,7 +163,7 @@ private data class Quadruple(val first: Float, val second: Float, val third: Flo
 private data class TransformedRect(val left: Float, val top: Float, val right: Float, val bottom: Float)
 
 /**
- * 绘制四个角的强调线
+ * 缁樺埗鍥涗釜瑙掔殑寮鸿皟绾?
  */
 private fun DrawScope.drawCorners(
     left: Float,
@@ -176,22 +176,22 @@ private fun DrawScope.drawCorners(
 ) {
     val path = Path()
     
-    // 左上角
+    // 宸︿笂瑙?
     path.moveTo(left, top + cornerLength)
     path.lineTo(left, top)
     path.lineTo(left + cornerLength, top)
     
-    // 右上角
+    // 鍙充笂瑙?
     path.moveTo(right - cornerLength, top)
     path.lineTo(right, top)
     path.lineTo(right, top + cornerLength)
     
-    // 右下角
+    // 鍙充笅瑙?
     path.moveTo(right, bottom - cornerLength)
     path.lineTo(right, bottom)
     path.lineTo(right - cornerLength, bottom)
     
-    // 左下角
+    // 宸︿笅瑙?
     path.moveTo(left + cornerLength, bottom)
     path.lineTo(left, bottom)
     path.lineTo(left, bottom - cornerLength)
@@ -204,8 +204,8 @@ private fun DrawScope.drawCorners(
 }
 
 /**
- * 扫描框引导叠加层
- * 显示扫描区域的引导框
+ * 鎵弿妗嗗紩瀵煎彔鍔犲眰
+ * 鏄剧ず鎵弿鍖哄煙鐨勫紩瀵兼
  */
 @Composable
 fun ScanGuideOverlay(
@@ -224,7 +224,7 @@ fun ScanGuideOverlay(
         val right = centerX + scanSize / 2
         val bottom = centerY + scanSize / 2
         
-        // 绘制四个角
+        // 缁樺埗鍥涗釜瑙?
         val cornerLength = scanSize * 0.1f
         val strokeWidth = 4f
         
@@ -238,7 +238,7 @@ fun ScanGuideOverlay(
             cornerLength = cornerLength
         )
         
-        // 绘制边框虚线
+        // 缁樺埗杈规铏氱嚎
         drawRoundRect(
             color = guideColor,
             topLeft = Offset(left, top),

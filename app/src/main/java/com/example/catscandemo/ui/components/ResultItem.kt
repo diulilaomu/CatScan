@@ -19,7 +19,7 @@ import androidx.compose.ui.text.style.TextOverflow
 
 
 /**
- * ResultItemController: 管理单条扫描结果的数据与状态
+ * ResultItemController: 绠＄悊鍗曟潯鎵弿缁撴灉鐨勬暟鎹笌鐘舵€?
  */
 class ResultItemController(
     initialItem: ScanResult,
@@ -33,13 +33,13 @@ class ResultItemController(
 
     var expanded by mutableStateOf(false)
 
-    // 可编辑字段状态
+    // 鍙紪杈戝瓧娈电姸鎬?
     var operator by mutableStateOf(initialItem.scanData.operator)
     var room by mutableStateOf(initialItem.scanData.room)
     var content by mutableStateOf(initialItem.scanData.text)
 
     /**
-     * 更新本地字段状态
+     * 鏇存柊鏈湴瀛楁鐘舵€?
      */
     fun syncItem(newItem: ScanResult) {
         item = newItem
@@ -49,7 +49,7 @@ class ResultItemController(
     }
 
     /**
-     * 保存当前编辑
+     * 淇濆瓨褰撳墠缂栬緫
      */
     fun save() {
         val updatedScanData = item.scanData.copy(
@@ -64,7 +64,7 @@ class ResultItemController(
     }
 
     /**
-     * Composable 渲染函数
+     * Composable 娓叉煋鍑芥暟
      */
     @Composable
     fun Render(highlight: Boolean = false) {
@@ -95,7 +95,7 @@ class ResultItemController(
                 IconButton(onClick = { expanded = !expanded }) {
                     Icon(
                         imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
-                        contentDescription = if (expanded) "收起" else "展开",
+                        contentDescription = if (expanded) "鏀惰捣" else "灞曞紑",
                         tint = expandColor
                     )
                 }
@@ -103,7 +103,7 @@ class ResultItemController(
                 IconButton(onClick = onDelete) {
                     Icon(
                         imageVector = Icons.Filled.Delete,
-                        contentDescription = "删除",
+                        contentDescription = "鍒犻櫎",
                         tint = deleteColor
                     )
                 }
@@ -116,7 +116,7 @@ class ResultItemController(
     }
 
     /**
-     * 下拉编辑区域 Composable
+     * 涓嬫媺缂栬緫鍖哄煙 Composable
      */
     @Composable
     private fun ResultItemExpandEditor() {
@@ -126,14 +126,14 @@ class ResultItemController(
                 .background(Color(0xFFF5F5F5), RoundedCornerShape(8.dp))
                 .padding(12.dp)
         ) {
-            Text(text = "序号：${item.index}", style = MaterialTheme.typography.bodyMedium)
+            Text(text = "搴忓彿锛?{item.index}", style = MaterialTheme.typography.bodyMedium)
 
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
                 value = operator,
                 onValueChange = { operator = it },
-                label = { Text("牛马") },
+                label = { Text("鐗涢┈") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -143,7 +143,7 @@ class ResultItemController(
             OutlinedTextField(
                 value = room,
                 onValueChange = { room = it},
-                label = { Text("房间") },
+                label = { Text("鎴块棿") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -153,7 +153,7 @@ class ResultItemController(
             OutlinedTextField(
                 value = content,
                 onValueChange = { content = it },
-                label = { Text("内容") },
+                label = { Text("鍐呭") },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -163,7 +163,7 @@ class ResultItemController(
                 onClick = { save() },
                 modifier = Modifier.align(Alignment.End)
             ) {
-                Text("保存")
+                Text("淇濆瓨")
             }
         }
     }

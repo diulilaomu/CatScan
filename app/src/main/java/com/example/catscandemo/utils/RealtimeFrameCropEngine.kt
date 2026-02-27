@@ -1,4 +1,4 @@
-﻿package com.example.catscandemo.utils
+package com.example.catscandemo.utils
 
 import android.graphics.Bitmap
 import android.graphics.Rect

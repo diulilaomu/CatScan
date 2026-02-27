@@ -4,7 +4,7 @@ import com.example.catscandemo.domain.model.NetworkScanData
 import com.example.catscandemo.domain.model.ScanData
 
 /**
- * 网络通信相关的 Use Case
+ * 缃戠粶閫氫俊鐩稿叧鐨?Use Case
  */
 class NetworkUseCases(
     val uploadScanData: UploadScanDataUseCase,
@@ -19,7 +19,7 @@ class NetworkUseCases(
 )
 
 /**
- * 上传单条扫描数据的 Use Case
+ * 涓婁紶鍗曟潯鎵弿鏁版嵁鐨?Use Case
  */
 class UploadScanDataUseCase(
     private val networkRepository: NetworkRepository
@@ -53,7 +53,7 @@ class UploadScanDataUseCase(
 }
 
 /**
- * 批量上传扫描数据的 Use Case
+ * 鎵归噺涓婁紶鎵弿鏁版嵁鐨?Use Case
  */
 class UploadBatchScanDataUseCase(
     private val networkRepository: NetworkRepository
@@ -88,7 +88,7 @@ class UploadBatchScanDataUseCase(
 }
 
 /**
- * 上传模板数据的 Use Case
+ * 涓婁紶妯℃澘鏁版嵁鐨?Use Case
  */
 class UploadTemplateDataUseCase(
     private val networkRepository: NetworkRepository
@@ -125,7 +125,7 @@ class UploadTemplateDataUseCase(
 }
 
 /**
- * 检查服务器连接状态的 Use Case
+ * 妫€鏌ユ湇鍔″櫒杩炴帴鐘舵€佺殑 Use Case
  */
 class CheckServerConnectivityUseCase(
     private val networkRepository: NetworkRepository
@@ -136,7 +136,7 @@ class CheckServerConnectivityUseCase(
 }
 
 /**
- * 开始网络发现的 Use Case
+ * 寮€濮嬬綉缁滃彂鐜扮殑 Use Case
  */
 class StartNetworkDiscoveryUseCase(
     private val networkRepository: NetworkRepository
@@ -153,7 +153,7 @@ class StartNetworkDiscoveryUseCase(
 }
 
 /**
- * 停止网络发现的 Use Case
+ * 鍋滄缃戠粶鍙戠幇鐨?Use Case
  */
 class StopNetworkDiscoveryUseCase(
     private val networkRepository: NetworkRepository
@@ -164,7 +164,7 @@ class StopNetworkDiscoveryUseCase(
 }
 
 /**
- * 选择发现的服务器的 Use Case
+ * 閫夋嫨鍙戠幇鐨勬湇鍔″櫒鐨?Use Case
  */
 class SelectDiscoveredServerUseCase(
     private val networkRepository: NetworkRepository
@@ -175,24 +175,26 @@ class SelectDiscoveredServerUseCase(
 }
 
 /**
- * 开始心跳检测的 Use Case
+ * 寮€濮嬪績璺虫娴嬬殑 Use Case
  */
 class StartHeartbeatDetectionUseCase(
     private val networkRepository: NetworkRepository
 ) {
     operator fun invoke(
         serverUrl: String,
-        onConnectivityChanged: (Boolean) -> Unit
+        onConnectivityChanged: (Boolean) -> Unit,
+        onBlocked: (String) -> Unit
     ) {
         networkRepository.startHeartbeatDetection(
             serverUrl = serverUrl,
-            onConnectivityChanged = onConnectivityChanged
+            onConnectivityChanged = onConnectivityChanged,
+            onBlocked = onBlocked
         )
     }
 }
 
 /**
- * 停止心跳检测的 Use Case
+ * 鍋滄蹇冭烦妫€娴嬬殑 Use Case
  */
 class StopHeartbeatDetectionUseCase(
     private val networkRepository: NetworkRepository
@@ -203,17 +205,17 @@ class StopHeartbeatDetectionUseCase(
 }
 
 /**
- * 发现的服务器模型
+ * 鍙戠幇鐨勬湇鍔″櫒妯″瀷
  */
 data class DiscoveredServer(
     val ip: String,
     val port: Int,
     val url: String,
-    val name: String = "Windows客户端"
+    val name: String = "Windows瀹㈡埛绔?
 )
 
 /**
- * 网络仓库接口
+ * 缃戠粶浠撳簱鎺ュ彛
  */
 interface NetworkRepository {
     suspend fun uploadData(
@@ -243,7 +245,8 @@ interface NetworkRepository {
     
     fun startHeartbeatDetection(
         serverUrl: String,
-        onConnectivityChanged: (Boolean) -> Unit
+        onConnectivityChanged: (Boolean) -> Unit,
+        onBlocked: (String) -> Unit
     )
     
     fun stopHeartbeatDetection()

@@ -16,32 +16,28 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * 数据管理中心
- * 统一管理所有数据的添加、删除、修改和同步操作
- * 确保模板数据和扫描数据保持一致
- */
+ * 鏁版嵁绠＄悊涓績
+ * 缁熶竴绠＄悊鎵€鏈夋暟鎹殑娣诲姞銆佸垹闄ゃ€佷慨鏀瑰拰鍚屾鎿嶄綔
+ * 纭繚妯℃澘鏁版嵁鍜屾壂鎻忔暟鎹繚鎸佷竴鑷? */
 class DataManager(
     val scanUseCases: ScanUseCases,
     private val templateUseCases: TemplateUseCases
 ) {
 
-    // 模板数据状态
-    val templates = mutableStateListOf<TemplateModel>()
+    // 妯℃澘鏁版嵁鐘舵€?    val templates = mutableStateListOf<TemplateModel>()
     var activeTemplateId by mutableStateOf<String?>(null)
     var activeTemplate by mutableStateOf<TemplateModel?>(null)
 
-    // 协程作用域
-    private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    // 鍗忕▼浣滅敤鍩?    private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     /**
-     * 初始化数据
-     */
+     * 鍒濆鍖栨暟鎹?     */
     fun initializeData() {
         loadTemplates()
     }
 
     /**
-     * 加载模板数据
+     * 鍔犺浇妯℃澘鏁版嵁
      */
     private fun loadTemplates() {
         val (loadedTemplates, activeId) = templateUseCases.loadTemplates.invoke()
@@ -50,8 +46,7 @@ class DataManager(
         activeTemplateId = activeId
         activeTemplate = activeId?.let { templateUseCases.getTemplateById(it) }
 
-        // 同步模板中的扫描数据到结果列表
-        syncTemplateScansToResults()
+        // 鍚屾妯℃澘涓殑鎵弿鏁版嵁鍒扮粨鏋滃垪琛?        syncTemplateScansToResults()
 
         if (activeTemplateId == null && templates.isNotEmpty()) {
             setActiveTemplate(templates.first().id)
@@ -59,22 +54,15 @@ class DataManager(
     }
     
     /**
-     * 同步模板中的扫描数据到结果列表
-     * 这是一个单向同步：从模板 -> 到扫描结果列表
-     */
+     * 鍚屾妯℃澘涓殑鎵弿鏁版嵁鍒扮粨鏋滃垪琛?     * 杩欐槸涓€涓崟鍚戝悓姝ワ細浠庢ā鏉?-> 鍒版壂鎻忕粨鏋滃垪琛?     */
     private fun syncTemplateScansToResults() {
-        // 确保当前模板ID已设置
-        if (activeTemplateId != null) {
-            // 加载当前模板
+        // 纭繚褰撳墠妯℃澘ID宸茶缃?        if (activeTemplateId != null) {
+            // 鍔犺浇褰撳墠妯℃澘
             val currentTemplate = templateUseCases.getTemplateById(activeTemplateId!!)
             if (currentTemplate != null) {
-                // 直接替换整个扫描结果列表，保持与模板数据的一致性
-                // 通过直接赋值的方式避免重新生成ID导致的数据不一致
-                val scanResults = currentTemplate.scans.mapIndexed { index, scanData ->
-                    // 使用scanData.id的hash作为ScanResult的id，确保可追踪性
-                    ScanResult(
-                        id = index.toLong() + 1,  // 使用简单的递增ID，与模板顺序保持一致
-                        index = index + 1,
+                // 鐩存帴鏇挎崲鏁翠釜鎵弿缁撴灉鍒楄〃锛屼繚鎸佷笌妯℃澘鏁版嵁鐨勪竴鑷存€?                // 閫氳繃鐩存帴璧嬪€肩殑鏂瑰紡閬垮厤閲嶆柊鐢熸垚ID瀵艰嚧鐨勬暟鎹笉涓€鑷?                val scanResults = currentTemplate.scans.mapIndexed { index, scanData ->
+                    // 浣跨敤scanData.id鐨刪ash浣滀负ScanResult鐨刬d锛岀‘淇濆彲杩借釜鎬?                    ScanResult(
+                        id = index.toLong() + 1,  // 浣跨敤绠€鍗曠殑閫掑ID锛屼笌妯℃澘椤哄簭淇濇寔涓€鑷?                        index = index + 1,
                         scanData = scanData,
                         uploaded = scanData.uploaded
                     )
@@ -85,7 +73,7 @@ class DataManager(
     }
 
     /**
-     * 保存模板数据
+     * 淇濆瓨妯℃澘鏁版嵁
      */
     private fun saveTemplates() {
         val list = templates.toList()
@@ -94,7 +82,7 @@ class DataManager(
     }
 
     /**
-     * 添加模板
+     * 娣诲姞妯℃澘
      */
     fun addTemplate(name: String): TemplateModel {
         val template = templateUseCases.addTemplate(name)
@@ -105,7 +93,7 @@ class DataManager(
     }
 
     /**
-     * 删除模板
+     * 鍒犻櫎妯℃澘
      */
     fun deleteTemplate(id: String): TemplateModel? {
         val wasActive = (activeTemplateId == id)
@@ -115,14 +103,14 @@ class DataManager(
         if (idx != -1) templates.removeAt(idx)
 
         if (wasActive) {
-            // 删的是当前模板：尝试把 active 切到第一个；如果没有模板了则为 null
+            // 鍒犵殑鏄綋鍓嶆ā鏉匡細灏濊瘯鎶?active 鍒囧埌绗竴涓紱濡傛灉娌℃湁妯℃澘浜嗗垯涓?null
             activeTemplateId = templates.firstOrNull()?.id
             activeTemplate = activeTemplateId?.let { templateUseCases.getTemplateById(it) }
 
-            // 清空识别结果（全部）
+            // 娓呯┖璇嗗埆缁撴灉锛堝叏閮級
             scanUseCases.clearAllScans.invoke()
         } else {
-            // 删的不是当前模板：只删除该模板的识别结果
+            // 鍒犵殑涓嶆槸褰撳墠妯℃澘锛氬彧鍒犻櫎璇ユā鏉跨殑璇嗗埆缁撴灉
             val allScans = scanUseCases.getAllScans.invoke()
             val scansToDelete = allScans.filter { it.scanData.templateId == id }
             scansToDelete.forEach {
@@ -135,79 +123,71 @@ class DataManager(
     }
 
     /**
-     * 更新模板
+     * 鏇存柊妯℃澘
      */
     fun updateTemplate(updated: TemplateModel) {
         templateUseCases.updateTemplate(updated)
 
-        // 使用removeAt和add来触发状态更新
-        val idx = templates.indexOfFirst { it.id == updated.id }
+        // 浣跨敤removeAt鍜宎dd鏉ヨЕ鍙戠姸鎬佹洿鏂?        val idx = templates.indexOfFirst { it.id == updated.id }
         if (idx != -1) {
             templates.removeAt(idx)
             templates.add(idx, updated)
         }
 
-        // 如果更新的是当前活动模板，更新activeTemplate状态并重新加载数据
+        // 濡傛灉鏇存柊鐨勬槸褰撳墠娲诲姩妯℃澘锛屾洿鏂癮ctiveTemplate鐘舵€佸苟閲嶆柊鍔犺浇鏁版嵁
         if (activeTemplateId == updated.id) {
             activeTemplate = updated
-            // 重新加载当前模板的数据，确保结果列表同步
+            // 閲嶆柊鍔犺浇褰撳墠妯℃澘鐨勬暟鎹紝纭繚缁撴灉鍒楄〃鍚屾
             scanUseCases.setCurrentTemplateId(updated.id)
-            // 同步模板中的扫描数据到结果列表
-            syncTemplateScansToResults()
+            // 鍚屾妯℃澘涓殑鎵弿鏁版嵁鍒扮粨鏋滃垪琛?            syncTemplateScansToResults()
         }
 
         saveTemplates()
     }
 
     /**
-     * 设置激活模板
-     */
+     * 璁剧疆婵€娲绘ā鏉?     */
     fun setActiveTemplate(id: String) {
         activeTemplateId = id
         val t = templateUseCases.getTemplateById(id)
         activeTemplate = t
         saveTemplates()
-        // ✅ 关键：必须先设置 currentTemplateId，然后再调用 syncTemplateScansToResults()
-        // 这样 Repository 会加载正确的模板数据文件
+        // 鉁?鍏抽敭锛氬繀椤诲厛璁剧疆 currentTemplateId锛岀劧鍚庡啀璋冪敤 syncTemplateScansToResults()
+        // 杩欐牱 Repository 浼氬姞杞芥纭殑妯℃澘鏁版嵁鏂囦欢
         scanUseCases.setCurrentTemplateId(id)
-        // 同步模板中的扫描数据到结果列表
-        syncTemplateScansToResults()
+        // 鍚屾妯℃澘涓殑鎵弿鏁版嵁鍒扮粨鏋滃垪琛?        syncTemplateScansToResults()
     }
     
     /**
-     * 清除激活模板（设置为无模板）
-     */
+     * 娓呴櫎婵€娲绘ā鏉匡紙璁剧疆涓烘棤妯℃澘锛?     */
     fun clearActiveTemplate() {
         activeTemplateId = null
         activeTemplate = null
         saveTemplates()
-        // ✅ 关键：必须先设置 setCurrentTemplateId(null)，再调用 syncTemplateScansToResults
-        // 这样才能加载无模板状态下的数据
-        scanUseCases.setCurrentTemplateId(null)
-        // 同步模板中的扫描数据到结果列表（此时应该是空的）
+        // 鉁?鍏抽敭锛氬繀椤诲厛璁剧疆 setCurrentTemplateId(null)锛屽啀璋冪敤 syncTemplateScansToResults
+        // 杩欐牱鎵嶈兘鍔犺浇鏃犳ā鏉跨姸鎬佷笅鐨勬暟鎹?        scanUseCases.setCurrentTemplateId(null)
+        // 鍚屾妯℃澘涓殑鎵弿鏁版嵁鍒扮粨鏋滃垪琛紙姝ゆ椂搴旇鏄┖鐨勶級
         syncTemplateScansToResults()
     }
 
     /**
-     * 清空模板扫描数据
+     * 娓呯┖妯℃澘鎵弿鏁版嵁
      */
     fun clearTemplateScans(id: String) {
         templateUseCases.clearTemplateScans(id)
         
-        // 同时清空扫描结果中该模板的所有数据
-        val allScans = scanUseCases.getAllScans.invoke()
+        // 鍚屾椂娓呯┖鎵弿缁撴灉涓妯℃澘鐨勬墍鏈夋暟鎹?        val allScans = scanUseCases.getAllScans.invoke()
         val scansToClear = allScans.filter { it.scanData.templateId == id }
         scansToClear.forEach { scanUseCases.deleteScan(it.id) }
 
-        // 更新模板数据，确保数据同步
-        val idx = templates.indexOfFirst { it.id == id }
+        // 鏇存柊妯℃澘鏁版嵁锛岀‘淇濇暟鎹悓姝?        val idx = templates.indexOfFirst { it.id == id }
         if (idx != -1) {
             val template = templates[idx]
             val updatedTemplate = template.copy(scans = emptyList())
             templates.removeAt(idx)
             templates.add(idx, updatedTemplate)
 
-            // 如果是当前激活的模板，也更新activeTemplate
+            // 濡傛灉鏄綋鍓嶆縺娲荤殑妯℃澘锛屼篃鏇存柊activeTemplate
             if (activeTemplateId == id) {
                 activeTemplate = updatedTemplate
             }
@@ -217,20 +197,18 @@ class DataManager(
     }
 
     /**
-     * 删除模板中的扫描数据
+     * 鍒犻櫎妯℃澘涓殑鎵弿鏁版嵁
      */
     fun deleteTemplateScan(id: String, scanId: String) {
         templateUseCases.deleteTemplateScan(id, scanId)
         
-        // 同时从扫描结果中删除该数据
-        val allScans = scanUseCases.getAllScans.invoke()
+        // 鍚屾椂浠庢壂鎻忕粨鏋滀腑鍒犻櫎璇ユ暟鎹?        val allScans = scanUseCases.getAllScans.invoke()
         val scanToDelete = allScans.find { it.scanData.id == scanId }
         if (scanToDelete != null) {
             scanUseCases.deleteScan(scanToDelete.id)
         }
 
-        // 更新模板数据，确保数据同步
-        val idx = templates.indexOfFirst { it.id == id }
+        // 鏇存柊妯℃澘鏁版嵁锛岀‘淇濇暟鎹悓姝?        val idx = templates.indexOfFirst { it.id == id }
         if (idx != -1) {
             val template = templates[idx]
             val updatedTemplate = template.copy(
@@ -239,7 +217,7 @@ class DataManager(
             templates.removeAt(idx)
             templates.add(idx, updatedTemplate)
 
-            // 如果是当前激活的模板，也更新activeTemplate
+            // 濡傛灉鏄綋鍓嶆縺娲荤殑妯℃澘锛屼篃鏇存柊activeTemplate
             if (activeTemplateId == id) {
                 activeTemplate = updatedTemplate
             }
@@ -249,43 +227,39 @@ class DataManager(
     }
 
     /**
-     * 向当前模板添加扫描数据
-     * 注意：scanData 已经通过 addScan() 添加到 ScanRepository 了
-     * 这里只需要同步到 TemplateModel 以保证模板持久化
+     * 鍚戝綋鍓嶆ā鏉挎坊鍔犳壂鎻忔暟鎹?     * 娉ㄦ剰锛歴canData 宸茬粡閫氳繃 addScan() 娣诲姞鍒?ScanRepository 浜?     * 杩欓噷鍙渶瑕佸悓姝ュ埌 TemplateModel 浠ヤ繚璇佹ā鏉挎寔涔呭寲
      */
     fun addScanToActiveTemplate(scanData: ScanData): ScanData {
         val t = activeTemplate ?: throw IllegalStateException("No active template")
         
-        // 确保templateId和templateName正确设置
+        // 纭繚templateId鍜宼emplateName姝ｇ‘璁剧疆
         val updatedScanData = scanData.copy(
             templateId = t.id,
             templateName = t.name
         )
         
-        // 更新模板数据（ScanRepository 已经通过 addScan() 更新了）
+        // 鏇存柊妯℃澘鏁版嵁锛圫canRepository 宸茬粡閫氳繃 addScan() 鏇存柊浜嗭級
         val updatedTemplate = t.copy(
             scans = listOf(updatedScanData) + t.scans
         )
         updateTemplate(updatedTemplate)
         
-        // 同步当前激活模板的引用
+        // 鍚屾褰撳墠婵€娲绘ā鏉跨殑寮曠敤
         activeTemplate = updatedTemplate
 
-        // 保存数据，确保数据同步
-        saveTemplates()
+        // 淇濆瓨鏁版嵁锛岀‘淇濇暟鎹悓姝?        saveTemplates()
 
         return updatedScanData
     }
 
     /**
-     * 删除扫描数据
+     * 鍒犻櫎鎵弿鏁版嵁
      */
     fun deleteScan(id: Long): ScanResult? {
         val deleted = scanUseCases.deleteScan(id)
 
-        // 同步到模板数据：从对应模板的 scans 中删除同一条（按 templateId + 数据id 匹配）
-        if (deleted != null && deleted.scanData.templateId.isNotBlank()) {
-            // 更新模板中的scans列表
+        // 鍚屾鍒版ā鏉挎暟鎹細浠庡搴旀ā鏉跨殑 scans 涓垹闄ゅ悓涓€鏉★紙鎸?templateId + 鏁版嵁id 鍖归厤锛?        if (deleted != null && deleted.scanData.templateId.isNotBlank()) {
+            // 鏇存柊妯℃澘涓殑scans鍒楄〃
             val templateId = deleted.scanData.templateId
             val scanId = deleted.scanData.id
             val idx = templates.indexOfFirst { it.id == templateId }
@@ -297,7 +271,7 @@ class DataManager(
                 templates.removeAt(idx)
                 templates.add(idx, updatedTemplate)
                 
-                // 如果删除的是当前激活模板的数据，同步activeTemplate
+                // 濡傛灉鍒犻櫎鐨勬槸褰撳墠婵€娲绘ā鏉跨殑鏁版嵁锛屽悓姝ctiveTemplate
                 if (activeTemplateId == templateId) {
                     activeTemplate = updatedTemplate
                 }
@@ -310,12 +284,12 @@ class DataManager(
     }
 
     /**
-     * 更新扫描数据
+     * 鏇存柊鎵弿鏁版嵁
      */
     fun updateScan(id: Long, scanData: ScanData) {
         scanUseCases.updateScan(id, scanData)
 
-        // 同步到模板数据：更新对应模板中的扫描数据
+        // 鍚屾鍒版ā鏉挎暟鎹細鏇存柊瀵瑰簲妯℃澘涓殑鎵弿鏁版嵁
         if (scanData.templateId.isNotBlank()) {
             val templateId = scanData.templateId
             val template = templateUseCases.getTemplateById(templateId)
@@ -326,46 +300,43 @@ class DataManager(
                 val updatedTemplate = template.copy(scans = updatedScans)
                 updateTemplate(updatedTemplate)
                 
-                // 如果更新的是当前活动模板的数据，同步activeTemplate
+                // 濡傛灉鏇存柊鐨勬槸褰撳墠娲诲姩妯℃澘鐨勬暟鎹紝鍚屾activeTemplate
                 if (activeTemplateId == templateId) {
                     activeTemplate = updatedTemplate
                 }
             }
         }
         
-        // 保存数据
+        // 淇濆瓨鏁版嵁
         saveTemplates()
     }
 
     /**
-     * 获取所有扫描数据
-     */
+     * 鑾峰彇鎵€鏈夋壂鎻忔暟鎹?     */
     fun getAllScans(): List<ScanResult> {
         return scanUseCases.getAllScans.invoke()
     }
 
     /**
-     * 清空所有扫描数据
-     */
+     * 娓呯┖鎵€鏈夋壂鎻忔暟鎹?     */
     fun clearAllScans() {
         scanUseCases.clearAllScans.invoke()
         
-        // 清空所有模板的扫描数据 - 使用map创建更新后的列表避免并发修改问题
+        // 娓呯┖鎵€鏈夋ā鏉跨殑鎵弿鏁版嵁 - 浣跨敤map鍒涘缓鏇存柊鍚庣殑鍒楄〃閬垮厤骞跺彂淇敼闂
         val updatedTemplates = templates.map { template ->
             template.copy(scans = emptyList())
         }
         templates.clear()
         templates.addAll(updatedTemplates)
         
-        // 更新当前激活模板的引用
+        // 鏇存柊褰撳墠婵€娲绘ā鏉跨殑寮曠敤
         activeTemplate = activeTemplate?.copy(scans = emptyList())
         
         saveTemplates()
     }
 
     /**
-     * 批量操作：添加多个扫描数据
-     */
+     * 鎵归噺鎿嶄綔锛氭坊鍔犲涓壂鎻忔暟鎹?     */
     fun addMultipleScans(scanDataList: List<ScanData>) {
         coroutineScope.launch {
             withContext(Dispatchers.IO) {
@@ -373,7 +344,7 @@ class DataManager(
                     try {
                         addScanToActiveTemplate(scanData)
                     } catch (e: Exception) {
-                        android.util.Log.w("DataManager", "批量添加失败: ${e.message}")
+                        android.util.Log.w("DataManager", "鎵归噺娣诲姞澶辫触: ${e.message}")
                     }
                 }
             }
@@ -381,8 +352,7 @@ class DataManager(
     }
 
     /**
-     * 批量操作：删除多个扫描数据
-     */
+     * 鎵归噺鎿嶄綔锛氬垹闄ゅ涓壂鎻忔暟鎹?     */
     fun deleteMultipleScans(ids: List<Long>) {
         coroutineScope.launch {
             withContext(Dispatchers.IO) {
@@ -390,7 +360,7 @@ class DataManager(
                     try {
                         deleteScan(id)
                     } catch (e: Exception) {
-                        android.util.Log.w("DataManager", "批量删除失败: ${e.message}")
+                        android.util.Log.w("DataManager", "鎵归噺鍒犻櫎澶辫触: ${e.message}")
                     }
                 }
             }
@@ -398,7 +368,7 @@ class DataManager(
     }
 
     /**
-     * 添加扫描数据
+     * 娣诲姞鎵弿鏁版嵁
      */
     fun addScan(
         text: String,
@@ -411,8 +381,8 @@ class DataManager(
         room: String = "",
         allowDuplicate: Boolean = true
     ): ScanData? {
-        // ✅ 关键：确保 Repository 的 currentTemplateId 与要添加的 scanData.templateId 匹配
-        // 否则数据会被保存到错误的文件中，导致无模板和有模板的数据混杂
+        // 鉁?鍏抽敭锛氱‘淇?Repository 鐨?currentTemplateId 涓庤娣诲姞鐨?scanData.templateId 鍖归厤
+        // 鍚﹀垯鏁版嵁浼氳淇濆瓨鍒伴敊璇殑鏂囦欢涓紝瀵艰嚧鏃犳ā鏉垮拰鏈夋ā鏉跨殑鏁版嵁娣锋潅
         if (templateId.isNotBlank()) {
             scanUseCases.setCurrentTemplateId(templateId)
         } else {

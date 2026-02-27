@@ -6,8 +6,8 @@ import com.example.catscandemo.domain.use_case.TemplateRepository
 import com.example.catscandemo.ui.main.TemplateStorage
 
 /**
- * 默认模板仓库实现
- * 负责模板数据的存储和管理
+ * 榛樿妯℃澘浠撳簱瀹炵幇
+ * 璐熻矗妯℃澘鏁版嵁鐨勫瓨鍌ㄥ拰绠＄悊
  */
 class DefaultTemplateRepository(
     private val context: Context

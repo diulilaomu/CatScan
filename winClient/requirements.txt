@@ -1,4 +1,4 @@
-# CatScan Windows客户端依赖
+﻿# CatScan Windows客户端依赖
 # Python 3.8+
 
 # Web框架

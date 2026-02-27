@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
@@ -41,6 +41,14 @@
             flex-direction: column;
         }
 
+        .left-3 {
+            flex: 0 0 320px;
+            min-width: 260px;
+            max-width: 380px;
+            display: flex;
+            flex-direction: column;
+        }
+
         .side-2 {
             flex: 0 0 380px;
             min-width: 320px;
@@ -49,6 +57,7 @@
             flex-direction: column;
         }
 
+        .left-3 .el-card,
         .main-8 .el-card,
         .side-2 .el-card {
             background: linear-gradient(145deg, #2a2a2a 0%, #252525 100%);
@@ -59,16 +68,18 @@
             display: flex;
             flex-direction: column;
             border-radius: 12px;
-            overflow: visible;  /* ✅ 改为 visible，允许内部滚轮显示 */
+            overflow: visible;  
             transition: all 0.3s ease;
         }
 
         .main-8 .el-card:hover,
+        .left-3 .el-card:hover,
         .side-2 .el-card:hover {
             box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
             transform: translateY(-2px);
         }
 
+        .left-3 .el-card__header,
         .main-8 .el-card__header,
         .side-2 .el-card__header {
             background: rgba(0, 0, 0, 0.2);
@@ -78,7 +89,7 @@
             font-size: 16px;
             color: #fff;
             display: flex;
-            flex-direction: column;  /* ✅ 让 header 支持多行布局 */
+            flex-direction: column;  
             gap: 12px;
             align-items: flex-start;
         }
@@ -92,7 +103,14 @@
             min-height: 0;
         }
 
-        /* 内容容器 */
+        .left-3 .el-card__body {
+            flex: 1;
+            overflow: hidden;
+            padding: 14px;
+            min-height: 0;
+        }
+
+        
         .content-scroll-container {
             display: flex;
             flex-direction: column;
@@ -102,13 +120,13 @@
             overflow: hidden;
         }
 
-        /* 搜索和过滤区域 */
+        
         .search-filter-section {
             display: flex;
             gap: 12px;
             align-items: center;
             flex-wrap: wrap;
-            width: 100%;  /* ✅ 占满 header 宽度 */
+            width: 100%;  
         }
 
         .search-filter-section .el-input {
@@ -130,7 +148,7 @@
             transition: all 0.3s ease;
         }
 
-        /* 表格控制区域 */
+        
         .table-controls {
             display: flex;
             justify-content: space-between;
@@ -140,10 +158,114 @@
             color: #aaa;
         }
 
+        .client-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .client-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            height: 100%;
+            min-height: 0;
+        }
+
+        .client-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-height: 0;
+            flex: 1;
+        }
+
+        .client-section-title {
+            font-size: 12px;
+            color: #9aa3ad;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .client-section-body {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .client-section-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .client-section-body::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 4px;
+        }
+
+        .client-section-body::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.18);
+            border-radius: 4px;
+        }
+
+        .client-list-header,
+        .client-list-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 88px;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .client-list-header {
+            font-size: 12px;
+            color: #aaa;
+            padding: 0 6px;
+        }
+
+        .client-list-row {
+            font-size: 12px;
+            color: #ddd;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 8px 10px;
+            transition: all 0.2s ease;
+        }
+
+        .client-list-row.offline {
+            color: #8f96a3;
+            background: rgba(148, 163, 184, 0.08);
+            border-color: rgba(148, 163, 184, 0.3);
+        }
+
+        .client-list-row.offline .kick-btn {
+            opacity: 0.72;
+        }
+
+        .client-list-cell {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .client-list-empty {
+            color: #888;
+            font-size: 12px;
+            text-align: center;
+            padding: 18px 8px;
+            border: 1px dashed rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+
+        .kick-btn {
+            width: 100%;
+        }
+
         .table-wrapper {
             flex: 1;
             min-height: 0;
-            max-height: 600px;  /* ✅ 固定最大高度，超出内容通过分页显示 */
+            max-height: 600px;  
             overflow: auto;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
@@ -293,7 +415,7 @@
             overflow-y: auto;
         }
 
-        /* 操作按钮区域 */
+        
         .action-section {
             display: flex;
             flex-direction: column;
@@ -366,7 +488,7 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
-        /* 网络信息区域 */
+        
         .network-info {
             background: rgba(0, 0, 0, 0.2);
             border-radius: 10px;
@@ -429,7 +551,7 @@
             background: rgba(255, 255, 255, 0.03);
         }
 
-        /* 二维码区域 */
+        
         .qr-section {
             display: flex;
             flex-direction: column;
@@ -447,7 +569,7 @@
         }
 
         .qr-section > .label::before {
-            content: '📱';
+            content: '🔗';
             font-size: 14px;
         }
 
@@ -542,7 +664,7 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
 
-        /* 分页控件 */
+        
         .pagination-section {
             display: flex;
             justify-content: space-between;
@@ -567,8 +689,13 @@
             color: #ddd !important;
         }
 
-        /* 响应式设计 */
+        
         @media (max-width: 1200px) {
+            .left-3 {
+                flex: 0 0 280px;
+                min-width: 240px;
+            }
+
             .side-2 {
                 flex: 0 0 320px;
                 min-width: 280px;
@@ -583,6 +710,11 @@
             .side-2 {
                 flex: 0 0 auto;
                 max-height: 50vh;
+            }
+
+            .left-3 {
+                flex: 0 0 auto;
+                max-height: 35vh;
             }
 
             .main-8 {
@@ -600,6 +732,7 @@
             }
 
             .main-8 .el-card__body,
+            .left-3 .el-card__body,
             .side-2 .el-card__body {
                 padding: 12px;
             }
@@ -626,7 +759,7 @@
             }
         }
 
-        /* 加载动画 */
+        
         .loading-spinner {
             display: inline-block;
             width: 20px;
@@ -641,7 +774,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* 空状态设计 */
+        
         .empty-state {
             display: flex;
             flex-direction: column;
@@ -674,7 +807,74 @@
 <body>
     <div id="app">
         <div class="app-root">
-            <!-- 左侧 8 分：Excel 表格展示全部数据字段 -->
+            <div class="left-3">
+                <el-card shadow="hover">
+                    <template #header>
+                        <span>客户端连接</span>
+                    </template>
+                    <div class="el-card__body">
+                        <div class="client-sections">
+                            <div class="client-section">
+                                <div class="client-section-title">正常连接</div>
+                                <div class="client-section-body">
+                                    <div class="client-list">
+                                        <div class="client-list-header">
+                                            <span>IP</span>
+                                            <span>MAC</span>
+                                            <span>Action</span>
+                                        </div>
+                                        <div v-if="clientConnectionRows.length">
+                                            <div :class="['client-list-row', { offline: !client.online }]" v-for="client in clientConnectionRows" :key="client.key">
+                                                <span class="client-list-cell" :title="client.ip">{{ client.ip }}</span>
+                                                <span class="client-list-cell" :title="client.mac">{{ client.mac }}</span>
+                                                <el-button
+                                                    class="kick-btn"
+                                                    type="danger"
+                                                    size="small"
+                                                    :disabled="client.ip === '--'"
+                                                    @click="kickClient(client)"
+                                                >
+                                                    踢出
+                                                </el-button>
+                                            </div>
+                                        </div>
+                                        <div v-else class="client-list-empty">暂无客户端连接</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="client-section">
+                                <div class="client-section-title">已踢出</div>
+                                <div class="client-section-body">
+                                    <div class="client-list">
+                                        <div class="client-list-header">
+                                            <span>IP</span>
+                                            <span>MAC</span>
+                                            <span>操作</span>
+                                        </div>
+                                        <div v-if="kickedConnectionRows.length">
+                                            <div class="client-list-row offline" v-for="client in kickedConnectionRows" :key="client.key">
+                                                <span class="client-list-cell" :title="client.ip">{{ client.ip }}</span>
+                                                <span class="client-list-cell" :title="client.mac">{{ client.mac }}</span>
+                                                <el-button
+                                                    class="kick-btn"
+                                                    type="success"
+                                                    size="small"
+                                                    :disabled="client.ip === '--' && client.mac === '--'"
+                                                    @click="restoreClient(client)"
+                                                >
+                                                    恢复
+                                                </el-button>
+                                            </div>
+                                        </div>
+                                        <div v-else class="client-list-empty">暂无踢出客户端</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </el-card>
+            </div>
+            
             <div class="main-8">
                 <el-card shadow="hover">
                     <template #header>
@@ -693,7 +893,7 @@
                         </div>
                     </template>
                     <div class="el-card__body">
-                        <!-- ✅ 新增：内容滚动容器，包含表格和分页 -->
+                        
                         <div class="content-scroll-container">
                             <div class="table-controls">
                                 <span>共 {{ totalItems }} 条数据</span>
@@ -735,7 +935,7 @@
                                             </td>
                                             <td @click.stop>
                                                 <button class="delete-btn" @click="deleteItem(getItemIndex(idx))" title="删除">
-                                                    ✕
+                                                    ×
                                                 </button>
                                             </td>
                                         </tr>
@@ -764,14 +964,14 @@
                 </el-card>
             </div>
 
-            <!-- 右侧：控制面板 -->
+            
             <div class="side-2">
                 <el-card shadow="hover">
                     <template #header>
                         <span>控制面板</span>
                     </template>
                     <div class="el-card__body">
-                        <!-- 操作按钮区域 -->
+                        
                         <div class="action-section">
                             <div style="width: 100%;">
                                 <el-button type="primary" @click="exportData" icon="Download" style="width: 100%; min-width: 100%; max-width: 100%;">
@@ -785,17 +985,17 @@
                             </div>
                         </div>
 
-                        <!-- 网络信息区域 -->
+                        
                         <div class="network-info">
                             <div class="label">本机网络地址</div>
                             <div v-for="(link, i) in localLinkList" :key="i" class="link-item" 
                                  @click="copyToClipboard(link)" :title="'点击复制: ' + link">
                                 {{ link }}
                             </div>
-                            <div v-if="!localLinkList.length" class="link-item empty">加载中…</div>
+                            <div v-if="!localLinkList.length" class="link-item empty">加载中...</div>
                         </div>
 
-                        <!-- 二维码区域 -->
+                        
                         <div class="qr-section">
                             <div class="label">连接方式</div>
                             <div class="qr-connection-buttons">
@@ -824,403 +1024,459 @@
 
     <script src="/eel.js"></script>
     <script>
-        const { createApp, ref, computed, watch } = Vue;
+const { createApp, ref, computed } = Vue;
 
-        const KEY_LABELS = {
-            __index__: '序号', templateName: '模板名称', campus: '校区', building: '楼栋', floor: '楼层', room: '房间',
-            qrdata: '扫码结果', operator: '操作', timestamp: '时间戳'
-        };
-        const TABLE_KEYS = ['__index__', 'templateName', 'campus', 'building', 'floor', 'room', 'qrdata', 'operator', 'timestamp'];
+const KEY_LABELS = {
+    __index__: '序号',
+    templateName: '模板名称',
+    campus: '校区',
+    building: '楼栋',
+    floor: '楼层',
+    room: '房间',
+    qrdata: '扫码结果',
+    operator: '操作人',
+    timestamp: '时间戳',
+};
+const TABLE_KEYS = ['__index__', 'templateName', 'campus', 'building', 'floor', 'room', 'qrdata', 'operator', 'timestamp'];
+const CLIENT_POLL_INTERVAL_MS = 2000;
 
-        createApp({
-            setup() {
-                const localLinkList = ref([]);
-                const qrdataList = ref([]);
-                const onpaste = ref(false);
-                const searchQuery = ref('');
-                const currentPage = ref(1);
-                const pageSize = ref(20);
-                const sortKey = ref('');
-                const sortOrder = ref('asc');
-                
-                // 防抖相关变量
-                let debounceTimer = null;
-                let pendingData = [];
+createApp({
+    setup() {
+        const localLinkList = ref([]);
+        const activeConnections = ref([]);
+        const kickedConnections = ref([]);
+        const qrdataList = ref([]);
+        const onpaste = ref(false);
+        const searchQuery = ref('');
+        const currentPage = ref(1);
+        const pageSize = ref(20);
+        const sortKey = ref('');
+        const sortOrder = ref('asc');
 
-                const tableColumns = computed(() => TABLE_KEYS.map(k => ({ key: k, label: KEY_LABELS[k] || k })));
+        let debounceTimer = null;
+        let pendingData = [];
+        let clientPollTimer = null;
 
-                // 过滤后的数据
-                const filteredData = computed(() => {
-                    if (!searchQuery.value) {
-                        return sortData(qrdataList.value);
-                    }
-                    const query = searchQuery.value.toLowerCase();
-                    return sortData(
-                        qrdataList.value.filter(item => {
-                            return Object.values(item).some(value => {
-                                return String(value).toLowerCase().includes(query);
-                            });
-                        })
-                    );
-                });
+        const tableColumns = computed(() => TABLE_KEYS.map((k) => ({ key: k, label: KEY_LABELS[k] || k })));
 
-                // 分页后的数据
-                const filteredAndPagedData = computed(() => {
-                    const start = (currentPage.value - 1) * pageSize.value;
-                    const end = start + pageSize.value;
-                    return filteredData.value.slice(start, end);
-                });
-
-                // 总数据量
-                const totalItems = computed(() => qrdataList.value.length);
-
-                // 排序数据
-                function sortData(data) {
-                    if (!sortKey.value) return data;
-                    return [...data].sort((a, b) => {
-                        const aVal = a[sortKey.value];
-                        const bVal = b[sortKey.value];
-                        if (aVal < bVal) return sortOrder.value === 'asc' ? -1 : 1;
-                        if (aVal > bVal) return sortOrder.value === 'asc' ? 1 : -1;
-                        return 0;
-                    });
-                }
-
-                // 处理排序
-                function handleSort(key) {
-                    if (key === '__index__') return;
-                    if (sortKey.value === key) {
-                        sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
-                    } else {
-                        sortKey.value = key;
-                        sortOrder.value = 'asc';
-                    }
-                    currentPage.value = 1;
-                }
-
-                // 处理搜索
-                function handleSearch() {
-                    currentPage.value = 1;
-                }
-
-                // 处理分页大小变化
-                function handlePageSizeChange(size) {
-                    pageSize.value = size;
-                    currentPage.value = 1;
-                }
-
-                // 处理当前页变化
-                function handleCurrentPageChange(page) {
-                    currentPage.value = page;
-                }
-
-                // 获取项目在原始列表中的索引
-                function getItemIndex(idx) {
-                    const start = (currentPage.value - 1) * pageSize.value;
-                    return start + idx;
-                }
-
-                async function getLocalIps() {
-                    try {
-                        const res = await eel.getLocalIps()();
-                        localLinkList.value = res || [];
-                        showMessage("IP 列表已读取");
-                    } catch (err) {
-                        showMessage("读取 IP 列表失败：" + err, 'error');
-                    }
-                }
-
-                function updateQrData(res) {
-                    try {
-                        if (!res) throw new Error('无数据');
-                        const newData = Array.isArray(res) ? res : [res];
-                        
-                        // 处理每条数据
-                        const filteredData = newData.filter(newItem => {
-                            // 检查是否有action字段
-                            const action = newItem.action || 'add';
-                            
-                            if (action === 'delete') {
-                                // 处理删除操作
-                                // 根据id或qrdata字段删除对应的数据
-                                if (newItem.id) {
-                                    qrdataList.value = qrdataList.value.filter(item => item.id !== newItem.id);
-                                } else if (newItem.qrdata) {
-                                    qrdataList.value = qrdataList.value.filter(item => item.qrdata !== newItem.qrdata);
-                                }
-                                showMessage('删除数据：' + (newItem.qrdata || '未知'), 'info');
-                                return false; // 不需要添加到列表
-                            } else {
-                                // 过滤掉重复数据，根据id字段和内容识别
-                                // 检查是否已经存在相同id的数据
-                                if (newItem.id) {
-                                    // 检查qrdataList.value中的数据
-                                    if (qrdataList.value.some(existingItem => existingItem.id === newItem.id)) {
-                                        // 如果存在相同id的数据，更新它
-                                        qrdataList.value = qrdataList.value.map(existingItem => {
-                                            if (existingItem.id === newItem.id) {
-                                                return { ...existingItem, ...newItem };
-                                            }
-                                            return existingItem;
-                                        });
-                                        return false; // 不需要添加到列表
-                                    }
-                                    // 检查pendingData列表中的数据
-                                    if (pendingData.some(pendingItem => pendingItem.id === newItem.id)) {
-                                        return false;
-                                    }
-                                }
-                                
-                                // 检查是否已经存在相同内容的数据（主要检查qrdata字段）
-                                if (newItem.qrdata) {
-                                    // 检查qrdataList.value中的数据
-                                    const existingIndex = qrdataList.value.findIndex(existingItem => existingItem.qrdata === newItem.qrdata);
-                                    if (existingIndex !== -1) {
-                                        // 如果存在相同内容的数据，更新它的其他字段（如operator, room等）
-                                        qrdataList.value[existingIndex] = { ...qrdataList.value[existingIndex], ...newItem };
-                                        return false; // 不需要添加到列表
-                                    }
-                                    // 检查pendingData列表中的数据
-                                    if (pendingData.some(pendingItem => pendingItem.qrdata === newItem.qrdata)) {
-                                        return false;
-                                    }
-                                }
-                                
-                                return true;
-                            }
-                        });
-                        
-                        if (filteredData.length > 0) {
-                            // 处理自动输入
-                            filteredData.forEach(item => {
-                                if (onpaste.value && item.qrdata) {
-                                    showMessage('自动输入：' + item.qrdata);
-                                    eel.type_chinese_with_pynput(item.qrdata + "\n");
-                                }
-                            });
-                            
-                            // 添加新数据到待处理列表
-                            pendingData = [...pendingData, ...filteredData];
-                            
-                            // 清除之前的定时器
-                            if (debounceTimer) {
-                                clearTimeout(debounceTimer);
-                            }
-                            
-                            // 设置新的定时器，1秒后批量处理
-                            debounceTimer = setTimeout(() => {
-                                if (pendingData.length > 0) {
-                                    // 添加新数据到列表开头
-                                    qrdataList.value = [...pendingData, ...qrdataList.value];
-                                    showMessage('新增数据：' + pendingData.length + ' 条', 'success');
-                                    // 清空待处理列表
-                                    pendingData = [];
-                                }
-                            }, 1000);
-                        }
-                        // 不再显示"无新数据"消息
-                    } catch (err) {
-                        showMessage('ERROR：' + err.message, 'error');
-                    }
-                }
-                eel.expose(updateQrData);
-
-                function switchPasteState() {
-                    onpaste.value = !onpaste.value;
-                    showMessage(onpaste.value ? '自动输入已开启' : '自动输入已关闭', 'success');
-                }
-
-                function buildLocaLinkQRcode(locaLink) {
-                    try {
-                        const qrData = "winClientLink:" + locaLink;
-                        const el = document.getElementById('qrcode-container');
-                        el.innerHTML = '';
-                        new QRCode(el, {
-                            text: qrData,
-                            width: 200,
-                            height: 200,
-                            colorDark: "#000000",
-                            colorLight: "#ffffff",
-                            correctLevel: QRCode.CorrectLevel.H
-                        });
-                        showMessage(`已生成二维码：${locaLink}`, 'success');
-                    } catch (err) {
-                        showMessage("二维码生成失败：" + err, 'error');
-                    }
-                }
-
-                function copyQrdata(idx) {
-                    const item = filteredAndPagedData.value[idx];
-                    const text = (item && (item.qrdata != null ? item.qrdata : item.msg)) || JSON.stringify(item || {});
-                    navigator.clipboard.writeText(text).then(
-                        () => showMessage('已复制：' + (text.length > 30 ? text.slice(0, 30) + '…' : text), 'success'),
-                        () => showMessage("复制失败", 'error')
-                    );
-                }
-
-                function deleteItem(idx) {
-                    if (idx >= 0 && idx < qrdataList.value.length) {
-                        qrdataList.value.splice(idx, 1);
-                        showMessage('已删除第 ' + (idx + 1) + ' 行数据', 'success');
-                        if (filteredAndPagedData.value.length === 0 && currentPage.value > 1) {
-                            currentPage.value--;
-                        }
-                    }
-                }
-
-                function clearAllData() {
-                    if (qrdataList.value.length === 0) {
-                        showMessage('暂无数据可清空', 'warning');
-                        return;
-                    }
-                    
-                    // 使用ElementPlus的确认对话框
-                    ElementPlus.ElMessageBox.confirm(
-                        `确定要清空全部 ${qrdataList.value.length} 条数据吗？`,
-                        '清空数据确认',
-                        {
-                            confirmButtonText: '确定清空',
-                            cancelButtonText: '取消',
-                            type: 'warning',
-                        }
-                    ).then(() => {
-                        // 保存备份用于撤销
-                        const backupData = [...qrdataList.value];
-                        qrdataList.value = [];
-                        localStorage.removeItem('catscan_data');
-                        
-                        // 显示带撤销按钮的消息
-                        const msgInstance = ElementPlus.ElMessage({
-                            message: '已清空所有数据。',
-                            type: 'success',
-                            duration: 5000,
-                            showClose: true,
-                        });
-                        
-                        // 5秒内可撤销
-                        const undoTimeout = setTimeout(() => {
-                            // 超时后清理备份
-                        }, 5000);
-                        
-                        // 添加撤销功能（通过快捷键 Ctrl+Z）
-                        const undoHandler = (e) => {
-                            if (e.ctrlKey && e.key === 'z') {
-                                e.preventDefault();
-                                clearTimeout(undoTimeout);
-                                qrdataList.value = backupData;
-                                showMessage(`已撤销，恢复 ${backupData.length} 条数据`, 'success');
-                                document.removeEventListener('keydown', undoHandler);
-                            }
-                        };
-                        document.addEventListener('keydown', undoHandler);
-                        setTimeout(() => document.removeEventListener('keydown', undoHandler), 5000);
-                    }).catch(() => {
-                        // 用户取消
-                    });
-                }
-
-                function refreshData() {
-                    getLocalIps();
-                    showMessage('数据已刷新', 'success');
-                }
-
-                function exportData() {
-                    if (!qrdataList.value.length) { showMessage('暂无数据可导出', 'warning'); return; }
-                    const cols = tableColumns.value;
-                    const headers = cols.map(c => c.label);
-                    const escape = (v) => /[,"\n\r]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : String(v);
-                    const rows = qrdataList.value.map((item, idx) =>
-                        cols.map(c => escape(c.key === '__index__' ? (idx + 1) : (item[c.key] ?? '')))
-                    );
-                    const csv = '\uFEFF' + [headers.map(escape).join(','), ...rows.map(r => r.join(','))].join('\n');
-                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-                    const a = document.createElement('a');
-                    a.href = URL.createObjectURL(blob);
-                    a.download = 'catscan_' + new Date().toISOString().slice(0, 10) + '.csv';
-                    a.click();
-                    URL.revokeObjectURL(a.href);
-                    showMessage('已导出 CSV', 'success');
-                }
-
-                function copyToClipboard(text) {
-                    navigator.clipboard.writeText(text).then(
-                        () => showMessage('已复制地址：' + text, 'success'),
-                        () => showMessage("复制失败", 'error')
-                    );
-                }
-
-                function showMessage(message, type = 'info') {
-                    // 为"无新数据"消息添加自定义配置，确保它不会滚动
-                    if (message === '无新数据') {
-                        ElementPlus.ElMessage({ 
-                            showClose: true, 
-                            message: String(message), 
-                            type, 
-                            placement: "bottom",
-                            duration: 2000, // 减少显示时间
-                            offset: 40 // 调整位置，避免与其他消息重叠
-                        });
-                    } else {
-                        ElementPlus.ElMessage({ showClose: true, message: String(message), type, placement: "bottom" });
-                    }
-                }
-
-                // 窗口自适应和最大化
-                function maximizeWindow() {
-                    try {
-                        if (window.eel) {
-                            // 尝试最大化窗口（如果eel支持）
-                            window.resizeTo(screen.width, screen.height);
-                            window.moveTo(0, 0);
-                        }
-                    } catch (e) {
-                        console.log('窗口最大化功能不可用');
-                    }
-                }
-
-                // 监听窗口大小变化
-                window.addEventListener('resize', () => {
-                    // 确保界面自适应
-                });
-
-                // 页面加载完成后最大化窗口
-                window.addEventListener('load', () => {
-                    setTimeout(maximizeWindow, 100);
-                });
-
-                getLocalIps();
-
-                return {
-                    getLocalIps,
-                    switchPasteState,
-                    buildLocaLinkQRcode,
-                    localLinkList,
-                    qrdataList,
-                    onpaste,
-                    copyQrdata,
-                    deleteItem,
-                    exportData,
-                    copyToClipboard,
-                    tableColumns,
-                    searchQuery,
-                    currentPage,
-                    pageSize,
-                    sortKey,
-                    sortOrder,
-                    filteredData,
-                    filteredAndPagedData,
-                    totalItems,
-                    handleSearch,
-                    handlePageSizeChange,
-                    handleCurrentPageChange,
-                    handleSort,
-                    getItemIndex,
-                    clearAllData,
-                    refreshData
-                };
+        const filteredData = computed(() => {
+            if (!searchQuery.value) {
+                return sortData(qrdataList.value);
             }
-        }).use(ElementPlus).mount('#app');
+            const query = searchQuery.value.toLowerCase();
+            return sortData(
+                qrdataList.value.filter((item) => {
+                    return Object.values(item || {}).some((value) => String(value).toLowerCase().includes(query));
+                })
+            );
+        });
+
+        const filteredAndPagedData = computed(() => {
+            const start = (currentPage.value - 1) * pageSize.value;
+            const end = start + pageSize.value;
+            return filteredData.value.slice(start, end);
+        });
+
+        const totalItems = computed(() => qrdataList.value.length);
+
+        const clientConnectionRows = computed(() => {
+            const list = Array.isArray(activeConnections.value) ? activeConnections.value : [];
+            return list.map((item, index) => {
+                const ip = item && item.ip ? String(item.ip) : '--';
+                const mac = item && item.mac ? String(item.mac) : '--';
+                const idleSeconds = Number(item?.idle_seconds ?? item?.idleSeconds ?? 0);
+                return {
+                    key: item?.key || `${ip}_${mac}_${index}`,
+                    ip,
+                    mac,
+                    online: item?.online !== false,
+                    idleSeconds: Number.isFinite(idleSeconds) ? idleSeconds : 0,
+                };
+            });
+        });
+
+        const kickedConnectionRows = computed(() => {
+            const list = Array.isArray(kickedConnections.value) ? kickedConnections.value : [];
+            return list.map((item, index) => {
+                const ip = item && item.ip ? String(item.ip) : '--';
+                const mac = item && item.mac ? String(item.mac) : '--';
+                return {
+                    key: item?.key || `${ip}_${mac}_${index}`,
+                    ip,
+                    mac,
+                    kickedAt: item?.kicked_at || item?.kickedAt || '',
+                };
+            });
+        });
+
+        function sortData(data) {
+            if (!sortKey.value) return data;
+            return [...data].sort((a, b) => {
+                const aVal = a[sortKey.value];
+                const bVal = b[sortKey.value];
+                if (aVal < bVal) return sortOrder.value === 'asc' ? -1 : 1;
+                if (aVal > bVal) return sortOrder.value === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        function handleSort(key) {
+            if (key === '__index__') return;
+            if (sortKey.value === key) {
+                sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortKey.value = key;
+                sortOrder.value = 'asc';
+            }
+            currentPage.value = 1;
+        }
+
+        function handleSearch() {
+            currentPage.value = 1;
+        }
+
+        function handlePageSizeChange(size) {
+            pageSize.value = size;
+            currentPage.value = 1;
+        }
+
+        function handleCurrentPageChange(page) {
+            currentPage.value = page;
+        }
+
+        function getItemIndex(idx) {
+            return (currentPage.value - 1) * pageSize.value + idx;
+        }
+
+        async function getLocalIps() {
+            try {
+                const res = await eel.getLocalIps()();
+                localLinkList.value = Array.isArray(res) ? res : [];
+            } catch (err) {
+                showMessage('读取本机地址失败: ' + (err?.message || err), 'error');
+            }
+        }
+
+        async function refreshClientConnections(silent = true) {
+            try {
+                if (!eel.getClientConnections) return;
+                const res = await eel.getClientConnections()();
+                if (Array.isArray(res)) {
+                    activeConnections.value = res;
+                    kickedConnections.value = [];
+                    return;
+                }
+                activeConnections.value = Array.isArray(res?.active) ? res.active : [];
+                kickedConnections.value = Array.isArray(res?.kicked) ? res.kicked : [];
+            } catch (err) {
+                if (!silent) {
+                    showMessage('读取连接信息失败: ' + (err?.message || err), 'error');
+                }
+            }
+        }
+
+        async function kickClient(client) {
+            if (!client) {
+                showMessage('无效客户端', 'warning');
+                return;
+            }
+            const payload = {
+                ip: client.ip && client.ip !== '--' ? client.ip : '',
+                mac: client.mac && client.mac !== '--' ? client.mac : '',
+            };
+            if (!payload.ip && !payload.mac) {
+                showMessage('无法踢出未知客户端', 'warning');
+                return;
+            }
+            try {
+                if (eel.kickClient) {
+                    const res = await eel.kickClient(payload)();
+                    if (res && Number(res.code || 200) !== 200) {
+                        throw new Error(res.msg || 'kick failed');
+                    }
+                }
+
+                qrdataList.value = qrdataList.value.filter((item) => {
+                    const itemIp = String(item?.clientIp || item?.ip || '');
+                    const itemMac = String(item?.clientMac || item?.mac || '');
+                    if (payload.ip && itemIp === payload.ip) return false;
+                    if (payload.mac && itemMac === payload.mac) return false;
+                    return true;
+                });
+
+                await refreshClientConnections(false);
+                showMessage('已踢出客户端: ' + (payload.ip || payload.mac), 'success');
+            } catch (err) {
+                showMessage('踢出失败: ' + (err?.message || err), 'error');
+            }
+        }
+
+        async function restoreClient(client) {
+            if (!client) {
+                showMessage('无效客户端', 'warning');
+                return;
+            }
+            const payload = {
+                ip: client.ip && client.ip !== '--' ? client.ip : '',
+                mac: client.mac && client.mac !== '--' ? client.mac : '',
+            };
+            if (!payload.ip && !payload.mac) {
+                showMessage('无法恢复未知客户端', 'warning');
+                return;
+            }
+            try {
+                if (eel.restoreClient) {
+                    const res = await eel.restoreClient(payload)();
+                    if (res && Number(res.code || 200) !== 200) {
+                        throw new Error(res.msg || 'restore failed');
+                    }
+                }
+
+                await refreshClientConnections(false);
+                showMessage('已恢复客户端: ' + (payload.ip || payload.mac), 'success');
+            } catch (err) {
+                showMessage('恢复失败: ' + (err?.message || err), 'error');
+            }
+        }
+
+        function updateQrData(res) {
+            try {
+                if (!res) throw new Error('无数据');
+                const newData = Array.isArray(res) ? res : [res];
+
+                const incoming = newData.filter((newItem) => {
+                    if (!newItem || typeof newItem !== 'object') return false;
+                    const action = String(newItem.action || 'add').toLowerCase();
+
+                    if (newItem.heartbeat === true || action === 'heartbeat') {
+                        return false;
+                    }
+
+                    if (action === 'delete') {
+                        if (newItem.id) {
+                            qrdataList.value = qrdataList.value.filter((item) => item.id !== newItem.id);
+                        } else if (newItem.qrdata) {
+                            qrdataList.value = qrdataList.value.filter((item) => item.qrdata !== newItem.qrdata);
+                        }
+                        return false;
+                    }
+
+                    if (newItem.id) {
+                        const byIdIndex = qrdataList.value.findIndex((item) => item.id === newItem.id);
+                        if (byIdIndex !== -1) {
+                            qrdataList.value[byIdIndex] = { ...qrdataList.value[byIdIndex], ...newItem };
+                            return false;
+                        }
+                        if (pendingData.some((item) => item.id === newItem.id)) return false;
+                    }
+
+                    if (newItem.qrdata) {
+                        const byQrIndex = qrdataList.value.findIndex((item) => item.qrdata === newItem.qrdata);
+                        if (byQrIndex !== -1) {
+                            qrdataList.value[byQrIndex] = { ...qrdataList.value[byQrIndex], ...newItem };
+                            return false;
+                        }
+                        if (pendingData.some((item) => item.qrdata === newItem.qrdata)) return false;
+                    } else if (!newItem.id) {
+                        return false;
+                    }
+
+                    return true;
+                });
+
+                if (!incoming.length) return;
+
+                incoming.forEach((item) => {
+                    if (onpaste.value && item.qrdata) {
+                        eel.type_chinese_with_pynput(item.qrdata + '\n');
+                    }
+                });
+
+                pendingData = [...pendingData, ...incoming];
+
+                if (debounceTimer) {
+                    clearTimeout(debounceTimer);
+                }
+
+                debounceTimer = setTimeout(() => {
+                    if (!pendingData.length) return;
+                    qrdataList.value = [...pendingData, ...qrdataList.value];
+                    showMessage(`新增数据 ${pendingData.length} 条`, 'success');
+                    pendingData = [];
+                }, 800);
+            } catch (err) {
+                showMessage('处理数据失败: ' + (err?.message || err), 'error');
+            }
+        }
+        eel.expose(updateQrData);
+
+        function switchPasteState() {
+            onpaste.value = !onpaste.value;
+            showMessage(onpaste.value ? '自动输入已开启' : '自动输入已关闭', 'success');
+        }
+
+        function buildLocaLinkQRcode(locaLink) {
+            try {
+                const el = document.getElementById('qrcode-container');
+                if (!el) return;
+                el.innerHTML = '';
+                new QRCode(el, {
+                    text: 'winClientLink:' + locaLink,
+                    width: 200,
+                    height: 200,
+                    colorDark: '#000000',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.H,
+                });
+                showMessage('二维码已生成', 'success');
+            } catch (err) {
+                showMessage('生成二维码失败: ' + (err?.message || err), 'error');
+            }
+        }
+
+        function copyQrdata(idx) {
+            const item = filteredAndPagedData.value[idx];
+            const text = (item && (item.qrdata != null ? item.qrdata : item.msg)) || JSON.stringify(item || {});
+            navigator.clipboard.writeText(text).then(
+                () => showMessage('已复制', 'success'),
+                () => showMessage('复制失败', 'error')
+            );
+        }
+
+        function deleteItem(idx) {
+            if (idx < 0 || idx >= qrdataList.value.length) return;
+            qrdataList.value.splice(idx, 1);
+            if (filteredAndPagedData.value.length === 0 && currentPage.value > 1) {
+                currentPage.value -= 1;
+            }
+            showMessage('已删除 1 条数据', 'success');
+        }
+
+        function clearAllData() {
+            if (!qrdataList.value.length) {
+                showMessage('暂无数据可清空', 'warning');
+                return;
+            }
+            ElementPlus.ElMessageBox.confirm(
+                `确认清空全部 ${qrdataList.value.length} 条数据？`,
+                '清空确认',
+                {
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                }
+            )
+                .then(() => {
+                    qrdataList.value = [];
+                    pendingData = [];
+                    showMessage('数据已清空', 'success');
+                })
+                .catch(() => {});
+        }
+
+        function refreshData() {
+            getLocalIps();
+            refreshClientConnections(false);
+            showMessage('已刷新', 'success');
+        }
+
+        function exportData() {
+            if (!qrdataList.value.length) {
+                showMessage('暂无数据可导出', 'warning');
+                return;
+            }
+            const cols = tableColumns.value;
+            const headers = cols.map((c) => c.label);
+            const escapeCsv = (v) => /[,"\n\r]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : String(v);
+            const rows = qrdataList.value.map((item, idx) =>
+                cols.map((c) => escapeCsv(c.key === '__index__' ? idx + 1 : item[c.key] ?? ''))
+            );
+            const csv = '\uFEFF' + [headers.map(escapeCsv).join(','), ...rows.map((r) => r.join(','))].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'catscan_' + new Date().toISOString().slice(0, 10) + '.csv';
+            link.click();
+            URL.revokeObjectURL(link.href);
+            showMessage('CSV 导出完成', 'success');
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(String(text || '')).then(
+                () => showMessage('地址已复制', 'success'),
+                () => showMessage('复制失败', 'error')
+            );
+        }
+
+        function showMessage(message, type = 'info') {
+            ElementPlus.ElMessage({
+                showClose: true,
+                message: String(message),
+                type,
+            });
+        }
+
+        function maximizeWindow() {
+            try {
+                window.resizeTo(screen.width, screen.height);
+                window.moveTo(0, 0);
+            } catch (err) {
+                // no-op
+            }
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(maximizeWindow, 100);
+        });
+
+        window.addEventListener('beforeunload', () => {
+            if (clientPollTimer) clearInterval(clientPollTimer);
+            if (debounceTimer) clearTimeout(debounceTimer);
+        });
+
+        getLocalIps();
+        refreshClientConnections(true);
+        clientPollTimer = setInterval(() => refreshClientConnections(true), CLIENT_POLL_INTERVAL_MS);
+
+        return {
+            getLocalIps,
+            switchPasteState,
+            buildLocaLinkQRcode,
+            localLinkList,
+            clientConnectionRows,
+            kickedConnectionRows,
+            qrdataList,
+            onpaste,
+            copyQrdata,
+            deleteItem,
+            exportData,
+            copyToClipboard,
+            tableColumns,
+            searchQuery,
+            currentPage,
+            pageSize,
+            sortKey,
+            sortOrder,
+            filteredData,
+            filteredAndPagedData,
+            totalItems,
+            handleSearch,
+            handlePageSizeChange,
+            handleCurrentPageChange,
+            handleSort,
+            getItemIndex,
+            kickClient,
+            restoreClient,
+            clearAllData,
+            refreshData,
+        };
+    },
+}).use(ElementPlus).mount('#app');
+
     </script>
 </body>
 
 </html>
+
+
+

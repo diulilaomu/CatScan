@@ -1,181 +1,389 @@
-import eel
-import os
-import sys
+﻿import datetime
 import json
-from fastapi import FastAPI
-import threading
-import uvicorn
-import time, datetime
 import logging
+import os
+import re
 import socket
+import sys
+import threading
+import time
+
+import eel
+import uvicorn
+from fastapi import FastAPI, Request
 from pynput.keyboard import Controller
 
 
-
-
-# ---------------------
-# config 路径使用 get_base_path()
-# ---------------------
 def get_base_path():
     if getattr(sys, "frozen", False):
-        # ✅ 打包后，返回 exe 所在目录（不是临时解压目录）
         return os.path.dirname(sys.executable)
-    else:
-        # ✅ 开发环境下，返回当前脚本目录
-        return os.path.dirname(os.path.abspath(__file__))
+    return os.path.dirname(os.path.abspath(__file__))
 
 
-
-
-# ---------------------
-# eel 初始化 web 页面
-# ---------------------
 def get_web_path():
     if getattr(sys, "frozen", False):
-        # web 被打包在 _MEIPASS 里
         return os.path.join(sys._MEIPASS, "web")
-    else:
-        return os.path.join(os.path.dirname(os.path.abspath(__file__)), "web")
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "web")
 
 
-
-# ---------------------
-# 日志服务初始化
-# ---------------------
 def init_logging():
-    """初始化日志服务"""
     log_dir = os.path.join(get_base_path(), "log")
     os.makedirs(log_dir, exist_ok=True)
-    
-    filename = f'qrdata_{datetime.datetime.now().strftime("%Y-%m-%d")}.log'
+
+    filename = f"qrdata_{datetime.datetime.now().strftime('%Y-%m-%d')}.log"
     log_file = os.path.join(log_dir, filename)
-    
+
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s-%(levelname)s: %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
         handlers=[
             logging.StreamHandler(),
-            logging.FileHandler(log_file, encoding="utf-8")
+            logging.FileHandler(log_file, encoding="utf-8"),
         ],
-        force=True  # 强制重新配置，避免重复初始化
+        force=True,
     )
-    
-    # 在无控制台模式中创建一个日志文件用来承接所有 print
+
     if getattr(sys, "frozen", False):
         fastapi_log_path = os.path.join(log_dir, "fastapi.log")
         try:
             sys.stdout = open(fastapi_log_path, "a", encoding="utf-8")
             sys.stderr = open(fastapi_log_path, "a", encoding="utf-8")
-        except Exception as e:
-            logging.error(f"无法重定向stdout/stderr: {e}")
+        except Exception as exc:
+            logging.error("failed to redirect stdout/stderr: %s", exc)
 
-# 初始化日志
+
 init_logging()
 
-# ---------------------
-# 键盘输入服务
-# ---------------------
+
+CLIENT_STALE_SECONDS = 15
+CLIENT_RETENTION_SECONDS = 24 * 60 * 60
+KICK_RETENTION_SECONDS = 0
+
+_connections_lock = threading.Lock()
+_client_connections = {}
+_blocked_clients = set()
+_kicked_clients = {}
+
+
+app = FastAPI()
+
+
 def _type_chinese_with_pynput_impl(text):
-    """使用pynput模拟键盘输入中文（内部实现）"""
     try:
         keyboard = Controller()
         keyboard.type(str(text))
-    except Exception as e:
-        logging.error(f"键盘输入失败: {e}")
+    except Exception as exc:
+        logging.error("keyboard input failed: %s", exc)
+
 
 def getTime():
-    return time.strftime('%F %R', time.localtime())
+    return time.strftime("%F %R", time.localtime())
+
 
 def get_local_ips():
-    """获取本机所有IP地址"""
-    ipAddresses = []
+    ip_addresses = []
     hostname = socket.gethostname()
     try:
         for addr_info in socket.getaddrinfo(hostname, None):
             ip = addr_info[4][0]
-            # 过滤掉回环地址
-            if ip and not ip.startswith("127."):
-                ipAddresses.append(f"http://{ip}:29027/postqrdata")
-        
-        # 去重
-        ipAddresses = list(dict.fromkeys(ipAddresses))
-        
-        for ip in ipAddresses:
-            logging.info(f"本机地址：{ip}")
-        return ipAddresses
-    except socket.gaierror as e:
-        logging.error(f"获取地址信息错误: {e}")
+            if not ip:
+                continue
+            if ":" in ip:
+                continue
+            if ip.startswith("127."):
+                continue
+            ip_addresses.append(f"http://{ip}:29027/postqrdata")
+
+        ip_addresses = list(dict.fromkeys(ip_addresses))
+        for ip in ip_addresses:
+            logging.info("local endpoint: %s", ip)
+        return ip_addresses
+    except socket.gaierror as exc:
+        logging.error("get local ips failed: %s", exc)
         return []
-    except Exception as e:
-        logging.error(f"获取IP地址失败: {e}")
+    except Exception as exc:
+        logging.error("get local ips failed: %s", exc)
         return []
 
 
 def readJsonFile(file_path):
-    """读取JSON文件"""
     try:
         with open(file_path, "r", encoding="utf-8") as file:
-            data = json.load(file)
-            return data
+            return json.load(file)
     except FileNotFoundError:
-        logging.warning(f"文件 {file_path} 不存在！")
+        logging.warning("file not found: %s", file_path)
     except json.JSONDecodeError:
-        logging.error(f"文件 {file_path} 不是有效的 JSON 格式！")
-    except Exception as e:
-        logging.error(f"读取文件 {file_path} 失败：{e}")
+        logging.error("invalid json: %s", file_path)
+    except Exception as exc:
+        logging.error("read file failed: %s (%s)", file_path, exc)
     return None
 
 
-# FastAPI服务 接收29027端口数据
-app = FastAPI()
+def _normalize_ip(value):
+    if value is None:
+        return ""
+    ip = str(value).strip().replace("[", "").replace("]", "")
+    if "%" in ip:
+        ip = ip.split("%", 1)[0]
+    return ip
+
+
+def _normalize_mac(value):
+    if value is None:
+        return ""
+    mac = str(value).strip().lower().replace("-", ":")
+    if not mac:
+        return ""
+    if re.fullmatch(r"[0-9a-f]{12}", mac):
+        mac = ":".join([mac[i : i + 2] for i in range(0, 12, 2)])
+    return mac
+
+
+def _extract_client_network_info(payload, fallback_ip=""):
+    if not isinstance(payload, dict):
+        return _normalize_ip(fallback_ip), ""
+
+    ip = ""
+    for key in ("clientIp", "ip", "sourceIp", "remoteIp", "deviceIp", "senderIp"):
+        if payload.get(key):
+            ip = _normalize_ip(payload.get(key))
+            break
+    if not ip:
+        ip = _normalize_ip(fallback_ip)
+
+    mac = ""
+    for key in ("clientMac", "mac", "deviceMac", "macAddress"):
+        if payload.get(key):
+            mac = _normalize_mac(payload.get(key))
+            break
+
+    return ip, mac
+
+
+def _connection_key(ip, mac):
+    if mac:
+        return f"mac:{mac}"
+    if ip:
+        return f"ip:{ip}"
+    return ""
+
+
+def _client_blocked(ip, mac):
+    if ip and f"ip:{ip}" in _blocked_clients:
+        return True
+    if mac and f"mac:{mac}" in _blocked_clients:
+        return True
+    return False
+
+
+def _blocked_response():
+    return {
+        "status": "forbidden",
+        "msg": "client blocked",
+        "reason": "kicked",
+        "code": 403,
+        "timestamp": getTime(),
+    }
+
+
+def _prune_old_connections(now_ts):
+    stale_keys = []
+    for key, info in _client_connections.items():
+        if now_ts - info.get("last_seen_ts", 0) > CLIENT_RETENTION_SECONDS:
+            stale_keys.append(key)
+    for key in stale_keys:
+        _client_connections.pop(key, None)
+
+
+def _prune_old_kicked(now_ts):
+    if KICK_RETENTION_SECONDS <= 0:
+        return
+    stale_keys = []
+    for key, info in _kicked_clients.items():
+        if now_ts - info.get("kicked_ts", 0) > KICK_RETENTION_SECONDS:
+            stale_keys.append(key)
+    for key in stale_keys:
+        _kicked_clients.pop(key, None)
+
+
+def _touch_client_connection(payload, fallback_ip=""):
+    ip, mac = _extract_client_network_info(payload, fallback_ip=fallback_ip)
+    if not ip and not mac:
+        return True, ip, mac
+
+    key = _connection_key(ip, mac)
+    if not key:
+        return True, ip, mac
+
+    now_ts = time.time()
+    last_seen = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    with _connections_lock:
+        if _client_blocked(ip, mac):
+            return False, ip, mac
+
+        existing = _client_connections.get(key, {})
+        if mac and ip and key.startswith("mac:"):
+            legacy_ip_key = f"ip:{ip}"
+            if legacy_ip_key != key and legacy_ip_key in _client_connections:
+                legacy = _client_connections.pop(legacy_ip_key, {})
+                existing = {**legacy, **existing}
+
+        _client_connections[key] = {
+            "key": key,
+            "ip": ip or existing.get("ip", ""),
+            "mac": mac or existing.get("mac", ""),
+            "last_seen": last_seen,
+            "last_seen_ts": now_ts,
+        }
+        _prune_old_connections(now_ts)
+
+    return True, ip, mac
+
+
+def _build_client_connection_rows():
+    now_ts = time.time()
+    with _connections_lock:
+        rows = []
+        for key, info in _client_connections.items():
+            idle_seconds = max(0, int(now_ts - info.get("last_seen_ts", 0)))
+            rows.append(
+                {
+                    "key": key,
+                    "ip": info.get("ip") or "--",
+                    "mac": info.get("mac") or "--",
+                    "last_seen": info.get("last_seen") or "",
+                    "idle_seconds": idle_seconds,
+                    "online": idle_seconds <= CLIENT_STALE_SECONDS,
+                }
+            )
+
+    rows.sort(key=lambda row: (row["online"], -row["idle_seconds"]), reverse=True)
+    return rows
+
+
+def _build_kicked_client_rows():
+    now_ts = time.time()
+    with _connections_lock:
+        rows = []
+        for key, info in _kicked_clients.items():
+            rows.append(
+                {
+                    "key": key,
+                    "ip": info.get("ip") or "--",
+                    "mac": info.get("mac") or "--",
+                    "kicked_at": info.get("kicked_at") or "",
+                    "kicked_ts": info.get("kicked_ts") or 0,
+                }
+            )
+        _prune_old_kicked(now_ts)
+
+    rows.sort(key=lambda row: row.get("kicked_ts", 0), reverse=True)
+    return rows
 
 
 @app.post("/postqrdata")
-async def receive_json(data: dict):
+async def receive_json(data: dict, request: Request):
+    client_ip = _normalize_ip(request.client.host if request and request.client else "")
+    base_ip, base_mac = _extract_client_network_info(data, fallback_ip=client_ip)
+
+    if _client_blocked(base_ip, base_mac):
+        logging.info("Blocked client request rejected: ip=%s mac=%s", base_ip, base_mac)
+        return _blocked_response()
+
     if "batch" in data and data["batch"] is True and "data" in data:
-        # 处理批量上传数据
         batch_data = data["data"]
-        if isinstance(batch_data, list):
-            logging.info("接收到批量数据，共 %d 条", len(batch_data))
-            # 处理每条数据
-            for item in batch_data:
-                if "qrdata" in item:
-                    # 合并请求体全部字段，并补充 status/code/timestamp（后者优先）
-                    payload = {**item, "status": "received", "code": 200, "timestamp": getTime()}
-                    # 处理action字段
-                    action = item.get("action", "add")
-                    # 无论什么操作，都需要传递给前端处理
-                    pushqrdata(payload)
-                    if action == "delete":
-                        # 处理删除操作
-                        logging.info("删除数据: %s", item["qrdata"])
-                    else:
-                        # 处理添加或更新操作
-                        logging.info("处理批量数据: %s", item["qrdata"])
-            return {"status": "received", "code": 200, "timestamp": getTime(), "msg": f"成功处理 {len(batch_data)} 条数据"}
-        else:
-            logging.error("接收到的批量数据格式错误: %s", data)
-            return {"status": "error", "msg": "批量数据格式错误", "data": data, "code": 500, "timestamp": getTime()}
-    elif "qrdata" in data:
-        # 处理单条数据
+        if not isinstance(batch_data, list):
+            logging.error("Invalid batch payload: %s", data)
+            return {"status": "error", "msg": "batch data format error", "data": data, "code": 500, "timestamp": getTime()}
+
+        accepted_count = 0
+        pushed_count = 0
+
+        for item in batch_data:
+            if not isinstance(item, dict):
+                continue
+
+            reported_ip = _normalize_ip(item.get("clientIp") or base_ip)
+            if reported_ip and reported_ip != client_ip:
+                item["reportedClientIp"] = reported_ip
+
+            item["clientIp"] = client_ip or reported_ip
+            item["clientMac"] = item.get("clientMac") or item.get("mac") or base_mac
+
+            allowed, resolved_ip, resolved_mac = _touch_client_connection(item, fallback_ip=client_ip)
+            if not allowed:
+                logging.info("Blocked client payload ignored: ip=%s mac=%s", resolved_ip, resolved_mac)
+                continue
+
+            accepted_count += 1
+            action = str(item.get("action", "add")).lower()
+            if item.get("heartbeat") is True or action == "heartbeat":
+                continue
+            if "qrdata" not in item:
+                continue
+
+            payload = {
+                **item,
+                "clientIp": client_ip or item.get("clientIp") or resolved_ip,
+                "clientMac": item.get("clientMac") or item.get("mac") or resolved_mac or "",
+                "status": "received",
+                "code": 200,
+                "timestamp": getTime(),
+            }
+            pushqrdata(payload)
+            pushed_count += 1
+
+        return {
+            "status": "received",
+            "code": 200,
+            "timestamp": getTime(),
+            "msg": f"accepted={accepted_count}, pushed={pushed_count}",
+        }
+
+    reported_ip = _normalize_ip(data.get("clientIp"))
+    if reported_ip and reported_ip != client_ip:
+        data["reportedClientIp"] = reported_ip
+    data["clientIp"] = client_ip or reported_ip
+
+    allowed, resolved_ip, resolved_mac = _touch_client_connection(data, fallback_ip=client_ip)
+    if not allowed:
+        logging.info("Blocked client payload ignored: ip=%s mac=%s", resolved_ip, resolved_mac)
+        return _blocked_response()
+
+    action = str(data.get("action", "add")).lower()
+    if data.get("heartbeat") is True or action == "heartbeat":
+        return {"status": "heartbeat", "code": 200, "timestamp": getTime()}
+
+    if "qrdata" in data:
         qrdata = data["qrdata"]
-        # 合并请求体全部字段，并补充 status/code/timestamp（后者优先）
-        payload = {**data, "status": "received", "code": 200, "timestamp": getTime()}
-        # 处理action字段
-        action = data.get("action", "add")
-        # 无论什么操作，都需要传递给前端处理
+        payload = {
+            **data,
+            "clientIp": client_ip or data.get("clientIp") or resolved_ip,
+            "clientMac": data.get("clientMac") or data.get("mac") or resolved_mac or "",
+            "status": "received",
+            "code": 200,
+            "timestamp": getTime(),
+        }
         pushqrdata(payload)
         if action == "delete":
-            # 处理删除操作
-            logging.info("删除数据: %s", qrdata)
+            logging.info("Delete data: %s", qrdata)
         else:
-            # 处理添加或更新操作
-            logging.info("接收到的 qrdata 数据: %s", qrdata)
+            logging.info("Received qrdata: %s", qrdata)
         return payload
-    else:
-        logging.error("接收到的数据: %s", data)
-        return {"status": "error", "msg": "缺少 qrdata 字段", "data": data, "code": 500, "timestamp": getTime()}
+
+    if resolved_ip or resolved_mac:
+        return {
+            "status": "received",
+            "code": 200,
+            "timestamp": getTime(),
+            "clientIp": resolved_ip,
+            "clientMac": resolved_mac,
+        }
+
+    logging.error("Invalid payload: %s", data)
+    return {"status": "error", "msg": "missing qrdata field", "data": data, "code": 500, "timestamp": getTime()}
 
 
 @app.get("/postqrdata")
@@ -184,108 +392,206 @@ async def health_check():
 
 
 def run_fastapi():
-    """在后台线程中运行FastAPI服务"""
     max_retries = 3
     retry_count = 0
-    
+
     while retry_count < max_retries:
         try:
             uvicorn.run(
-                app, 
-                host="0.0.0.0", 
-                port=29027, 
+                app,
+                host="0.0.0.0",
+                port=29027,
                 log_level="info",
-                access_log=False  # 禁用访问日志以减少输出
+                access_log=False,
             )
-            break  # 正常启动则退出循环
-        except OSError as e:
-            if "Address already in use" in str(e) or "10048" in str(e):
+            break
+        except OSError as exc:
+            if "Address already in use" in str(exc) or "10048" in str(exc):
                 retry_count += 1
                 if retry_count < max_retries:
-                    logging.warning(f"端口 29027 已被占用，{retry_count}/{max_retries} 次重试中...")
-                    import time
-                    time.sleep(2)  # 等待2秒后重试
+                    logging.warning("port 29027 is in use, retry %s/%s", retry_count, max_retries)
+                    time.sleep(2)
                 else:
-                    logging.error("端口 29027 已被占用，请关闭占用该端口的程序后重试")
-                    # 尝试弹出提示框（如果可能）
+                    logging.error("port 29027 is in use, please free it and restart")
                     try:
                         import ctypes
-                        ctypes.windll.user32.MessageBoxW(0, "端口 29027 已被占用\n请关闭占用该端口的程序后重新启动", "猫头枪 - 端口占用错误", 0x10)
+
+                        ctypes.windll.user32.MessageBoxW(
+                            0,
+                            "Port 29027 is already in use.\nPlease close the process using this port and restart.",
+                            "CatScan - Port In Use",
+                            0x10,
+                        )
                     except Exception:
                         pass
             else:
-                logging.error(f"FastAPI 服务启动失败: {e}")
+                logging.error("FastAPI start failed: %s", exc)
                 break
-        except Exception as e:
-            logging.error(f"FastAPI 服务启动失败: {e}")
+        except Exception as exc:
+            logging.error("FastAPI start failed: %s", exc)
             break
 
 
-# 获取IP地址
 @eel.expose
 def getLocalIps():
     return get_local_ips()
 
-# 推送历史记录列表
+
+@eel.expose
+def getClientConnections():
+    return {
+        "active": _build_client_connection_rows(),
+        "kicked": _build_kicked_client_rows(),
+    }
+
+
+@eel.expose
+def kickClient(client):
+    ip = ""
+    mac = ""
+
+    if isinstance(client, dict):
+        ip = _normalize_ip(client.get("ip"))
+        mac = _normalize_mac(client.get("mac"))
+    elif isinstance(client, str):
+        ip = _normalize_ip(client)
+
+    if not ip and not mac:
+        return {"status": "error", "msg": "invalid client", "code": 400}
+
+    with _connections_lock:
+        now_ts = time.time()
+        kicked_at = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        if ip:
+            _blocked_clients.add(f"ip:{ip}")
+        if mac:
+            _blocked_clients.add(f"mac:{mac}")
+
+        remove_keys = []
+        last_seen = ""
+        for key, info in _client_connections.items():
+            if ip and info.get("ip") == ip:
+                remove_keys.append(key)
+                last_seen = info.get("last_seen") or last_seen
+                continue
+            if mac and info.get("mac") == mac:
+                remove_keys.append(key)
+                last_seen = info.get("last_seen") or last_seen
+
+        for key in remove_keys:
+            _client_connections.pop(key, None)
+
+        kicked_key = _connection_key(ip, mac)
+        if kicked_key:
+            existing = _kicked_clients.get(kicked_key, {})
+            _kicked_clients[kicked_key] = {
+                "key": kicked_key,
+                "ip": ip or existing.get("ip", ""),
+                "mac": mac or existing.get("mac", ""),
+                "kicked_at": kicked_at,
+                "kicked_ts": now_ts,
+                "last_seen": last_seen or existing.get("last_seen", ""),
+            }
+
+    logging.info("Client kicked: ip=%s mac=%s", ip or "-", mac or "-")
+    return {"status": "ok", "code": 200}
+
+
+@eel.expose
+def restoreClient(client):
+    ip = ""
+    mac = ""
+
+    if isinstance(client, dict):
+        ip = _normalize_ip(client.get("ip"))
+        mac = _normalize_mac(client.get("mac"))
+    elif isinstance(client, str):
+        ip = _normalize_ip(client)
+
+    if not ip and not mac:
+        return {"status": "error", "msg": "invalid client", "code": 400}
+
+    with _connections_lock:
+        if ip:
+            _blocked_clients.discard(f"ip:{ip}")
+        if mac:
+            _blocked_clients.discard(f"mac:{mac}")
+
+        kicked_key = _connection_key(ip, mac)
+        if kicked_key:
+            _kicked_clients.pop(kicked_key, None)
+
+        remove_keys = []
+        for key, info in _kicked_clients.items():
+            if ip and info.get("ip") == ip:
+                remove_keys.append(key)
+                continue
+            if mac and info.get("mac") == mac:
+                remove_keys.append(key)
+
+        for key in remove_keys:
+            _kicked_clients.pop(key, None)
+
+    logging.info("Client restored: ip=%s mac=%s", ip or "-", mac or "-")
+    return {"status": "ok", "code": 200}
+
+
 @eel.expose
 def pushqrdata(qrdata):
     eel.updateQrData(qrdata)()
 
-# 键盘输入服务（暴露给前端）
+
 @eel.expose
 def type_chinese_with_pynput(text):
-    """前端调用的键盘输入服务"""
     _type_chinese_with_pynput_impl(text)
 
+
 def maximize_window():
-    """最大化窗口（Windows系统）"""
     try:
-        import win32gui
         import win32con
+        import win32gui
+
         hwnd = win32gui.GetForegroundWindow()
         if hwnd:
             win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
     except ImportError:
-        logging.warning("win32gui模块未安装，无法自动最大化窗口")
-    except Exception as e:
-        logging.warning(f"最大化窗口失败: {e}")
+        logging.warning("win32gui not installed, skip maximize")
+    except Exception as exc:
+        logging.warning("maximize window failed: %s", exc)
 
 
 if __name__ == "__main__":
     try:
-        # 启动 FastAPI 在后台线程
         fastapi_thread = threading.Thread(target=run_fastapi, daemon=True)
         fastapi_thread.start()
-        logging.info("FastAPI 服务已在后台启动，端口 29027")
-        
-        # 启动 UDP 发现服务
+        logging.info("FastAPI started on port 29027")
+
         try:
             from udp_discovery import run_discovery_in_thread
-            run_discovery_in_thread()
-            logging.info("UDP 发现服务已启动，端口 29028")
-        except ImportError:
-            logging.warning("UDP 发现服务模块未找到，跳过启动")
-        except Exception as e:
-            logging.error(f"启动 UDP 发现服务失败: {e}")
 
-        # 启动 Eel 在主线程
-        logging.info("启动 Eel 界面...")
+            run_discovery_in_thread()
+            logging.info("UDP discovery started on port 29028")
+        except ImportError:
+            logging.warning("UDP discovery module not found, skip")
+        except Exception as exc:
+            logging.error("failed to start UDP discovery: %s", exc)
+
+        logging.info("Starting Eel UI...")
         web_path = get_web_path()
         if not os.path.exists(web_path):
-            logging.error(f"Web目录不存在: {web_path}")
+            logging.error("web directory not found: %s", web_path)
             sys.exit(1)
-        
+
         eel.init(web_path)
-        
-        # Windows系统下尝试最大化窗口
+
         import platform
-        if platform.system() == 'Windows':
-            # 延迟执行最大化，确保窗口已创建
+
+        if platform.system() == "Windows":
             threading.Timer(0.5, maximize_window).start()
-        
+
         eel.start("index.html", size=(1400, 900), position=(50, 50), disable_cache=True)
     except KeyboardInterrupt:
-        logging.info("程序被用户中断")
-    except Exception as e:
-        logging.error(f"程序启动失败: {e}", exc_info=True)
+        logging.info("program interrupted by user")
+    except Exception as exc:
+        logging.error("startup failed: %s", exc, exc_info=True)
         sys.exit(1)

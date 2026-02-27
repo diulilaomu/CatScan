@@ -15,9 +15,27 @@ class CatScanClient {
         .connectTimeout(10, TimeUnit.SECONDS)
         .readTimeout(10, TimeUnit.SECONDS)
         .build()
+    private val heartbeatClient = client.newBuilder()
+        .connectTimeout(1, TimeUnit.SECONDS)
+        .readTimeout(1, TimeUnit.SECONDS)
+        .callTimeout(2, TimeUnit.SECONDS)
+        .build()
 
-    // 添加主线程 Handler
+    // 娣诲姞涓荤嚎?Handler
     private val mainHandler = Handler(Looper.getMainLooper())
+
+    companion object {
+        const val CLIENT_BLOCKED_FLAG = "CLIENT_BLOCKED"
+    }
+
+    private fun isBlockedResponse(httpCode: Int, bodyStr: String): Boolean {
+        if (httpCode == 403) return true
+        if (bodyStr.isBlank()) return false
+        val text = bodyStr.lowercase()
+        return text.contains("client blocked") ||
+            text.contains("\"code\":403") ||
+            text.contains("\"status\":\"forbidden\"")
+    }
 
     fun uploadToComputer(
         url: String,
@@ -30,11 +48,13 @@ class CatScanClient {
         room: String? = null,
         id: String? = null,
         action: String? = null,
+        clientIp: String? = null,
+        clientMac: String? = null,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     ) {
         if (url.isEmpty()) {
-            mainHandler.post { onFailure("目标地址为空") }
+            mainHandler.post { onFailure("鐩爣鍦板潃涓虹┖") }
             return
         }
 
@@ -48,32 +68,44 @@ class CatScanClient {
             put("room", room ?: "")
             put("id", id ?: "")
             put("action", action ?: "add")
+            if (!clientIp.isNullOrBlank()) put("clientIp", clientIp)
+            if (!clientMac.isNullOrBlank()) put("clientMac", clientMac)
         }
         val body = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
         val request = Request.Builder().url(url).post(body).build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                mainHandler.post { onFailure(e.message ?: "网络连接失败") }
+                mainHandler.post { onFailure(e.message ?: "缃戠粶杩炴帴澶辫触") }
             }
 
             override fun onResponse(call: Call, response: Response) {
                 response.use {
+                    val bodyStr = it.body?.string() ?: ""
                     if (!it.isSuccessful) {
-                        mainHandler.post { onFailure("HTTP ${it.code}") }
+                        if (isBlockedResponse(it.code, bodyStr)) {
+                            mainHandler.post { onFailure(CLIENT_BLOCKED_FLAG) }
+                        } else {
+                            mainHandler.post { onFailure("HTTP ${it.code}") }
+                        }
                         return
                     }
                     try {
-                        val bodyStr = it.body?.string() ?: ""
                         val obj = JSONObject(bodyStr)
                         val code = obj.optInt("code", -1)
                         if (code == 200) {
                             mainHandler.post(onSuccess)
+                        } else if (code == 403 || obj.optString("status") == "forbidden" || isBlockedResponse(0, bodyStr)) {
+                            mainHandler.post { onFailure(CLIENT_BLOCKED_FLAG) }
                         } else {
-                            mainHandler.post { onFailure("服务器返回错误: $code") }
+                            mainHandler.post { onFailure("Server error $code") }
                         }
                     } catch (e: Exception) {
-                        mainHandler.post { onFailure("解析响应失败: ${e.message}") }
+                        if (isBlockedResponse(it.code, bodyStr)) {
+                            mainHandler.post { onFailure(CLIENT_BLOCKED_FLAG) }
+                        } else {
+                            mainHandler.post { onFailure("Parse response failed: ${e.message}") }
+                        }
                     }
                 }
             }
@@ -81,7 +113,7 @@ class CatScanClient {
     }
 
     /**
-     * 批量上传数据
+     * 鎵归噺涓婁紶鏁版嵁
      */
     fun uploadBatchToComputer(
         url: String,
@@ -90,7 +122,7 @@ class CatScanClient {
         onFailure: (String) -> Unit
     ) {
         if (url.isEmpty()) {
-            mainHandler.post { onFailure("目标地址为空") }
+            mainHandler.post { onFailure("鐩爣鍦板潃涓虹┖") }
             return
         }
 
@@ -108,6 +140,8 @@ class CatScanClient {
                 itemJson.put("room", it["room"] ?: "")
                 itemJson.put("id", it["id"] ?: "")
                 itemJson.put("action", it["action"] ?: "add")
+                itemJson.put("clientIp", it["clientIp"] ?: "")
+                itemJson.put("clientMac", it["clientMac"] ?: "")
                 dataArray.put(itemJson)
             }
             put("data", dataArray)
@@ -117,27 +151,84 @@ class CatScanClient {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                mainHandler.post { onFailure(e.message ?: "网络连接失败") }
+                mainHandler.post { onFailure(e.message ?: "缃戠粶杩炴帴澶辫触") }
             }
 
             override fun onResponse(call: Call, response: Response) {
                 response.use {
+                    val bodyStr = it.body?.string() ?: ""
                     if (!it.isSuccessful) {
-                        mainHandler.post { onFailure("HTTP ${it.code}") }
+                        if (isBlockedResponse(it.code, bodyStr)) {
+                            mainHandler.post { onFailure(CLIENT_BLOCKED_FLAG) }
+                        } else {
+                            mainHandler.post { onFailure("HTTP ${it.code}") }
+                        }
                         return
                     }
                     try {
-                        val bodyStr = it.body?.string() ?: ""
                         val obj = JSONObject(bodyStr)
                         val code = obj.optInt("code", -1)
                         if (code == 200) {
                             mainHandler.post(onSuccess)
+                        } else if (code == 403 || obj.optString("status") == "forbidden" || isBlockedResponse(0, bodyStr)) {
+                            mainHandler.post { onFailure(CLIENT_BLOCKED_FLAG) }
                         } else {
-                            mainHandler.post { onFailure("服务器返回错误: $code") }
+                            mainHandler.post { onFailure("Server error $code") }
                         }
                     } catch (e: Exception) {
-                        mainHandler.post { onFailure("解析响应失败: ${e.message}") }
+                        if (isBlockedResponse(it.code, bodyStr)) {
+                            mainHandler.post { onFailure(CLIENT_BLOCKED_FLAG) }
+                        } else {
+                            mainHandler.post { onFailure("Parse response failed: ${e.message}") }
+                        }
                     }
+                }
+            }
+        })
+    }
+
+    fun uploadHeartbeatToComputer(
+        url: String,
+        clientIp: String? = null,
+        clientMac: String? = null,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        if (url.isEmpty()) {
+            mainHandler.post { onFailure("Target URL is empty") }
+            return
+        }
+
+        val json = JSONObject().apply {
+            put("heartbeat", true)
+            put("action", "heartbeat")
+            if (!clientIp.isNullOrBlank()) put("clientIp", clientIp)
+            if (!clientMac.isNullOrBlank()) put("clientMac", clientMac)
+        }
+        val body = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+        val request = Request.Builder().url(url).post(body).build()
+
+        heartbeatClient.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                mainHandler.post { onFailure(e.message ?: "Network connection failed") }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    val bodyStr = it.body?.string() ?: ""
+                    if (!it.isSuccessful) {
+                        if (isBlockedResponse(it.code, bodyStr)) {
+                            mainHandler.post { onFailure(CLIENT_BLOCKED_FLAG) }
+                        } else {
+                            mainHandler.post { onFailure("HTTP ${it.code}") }
+                        }
+                        return
+                    }
+                    if (isBlockedResponse(it.code, bodyStr)) {
+                        mainHandler.post { onFailure(CLIENT_BLOCKED_FLAG) }
+                        return
+                    }
+                    mainHandler.post(onSuccess)
                 }
             }
         })

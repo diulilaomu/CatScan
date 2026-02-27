@@ -1,6 +1,7 @@
 package com.example.catscandemo.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.example.catscandemo.data.network.CatScanClient
 import com.example.catscandemo.data.network.NetworkDiscovery
 import com.example.catscandemo.domain.model.NetworkScanData
@@ -13,14 +14,17 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import java.net.DatagramSocket
 import java.net.HttpURLConnection
+import java.net.Inet4Address
+import java.net.InetAddress
+import java.net.InetSocketAddress
+import java.net.NetworkInterface
 import java.net.URL
+import kotlin.coroutines.resume
 
-/**
- * 默认网络仓库实现
- * 负责网络通信逻辑
- */
 class DefaultNetworkRepository(
     private val context: Context,
     private val catScanClient: CatScanClient
@@ -29,8 +33,24 @@ class DefaultNetworkRepository(
     private var networkDiscovery: NetworkDiscovery? = null
     private var heartbeatJob: Job? = null
     private val heartbeatScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    private val HEARTBEAT_INTERVAL_MS = 2000L // 2秒检测一次
-    private val HEARTBEAT_TIMEOUT_MS = 1000L // 1秒超时
+
+    private val heartbeatIntervalMs = 2000L
+    private val heartbeatTimeoutMs = 1000L
+
+    companion object {
+        private const val TAG = "DefaultNetworkRepository"
+    }
+
+    private data class ClientNetworkInfo(
+        val ip: String,
+        val mac: String
+    )
+
+    private sealed class HeartbeatResult {
+        object Connected : HeartbeatResult()
+        object Disconnected : HeartbeatResult()
+        data class Blocked(val message: String) : HeartbeatResult()
+    }
 
     init {
         networkDiscovery = NetworkDiscovery(context)
@@ -43,6 +63,7 @@ class DefaultNetworkRepository(
         onError: (String) -> Unit
     ) {
         withContext(Dispatchers.IO) {
+            val networkInfo = collectClientNetworkInfo(url)
             catScanClient.uploadToComputer(
                 url = url,
                 qrData = data.qrdata,
@@ -54,6 +75,8 @@ class DefaultNetworkRepository(
                 room = data.room,
                 id = data.id,
                 action = data.action,
+                clientIp = networkInfo.ip,
+                clientMac = networkInfo.mac,
                 onSuccess = onSuccess,
                 onFailure = onError
             )
@@ -67,6 +90,7 @@ class DefaultNetworkRepository(
         onError: (String) -> Unit
     ) {
         withContext(Dispatchers.IO) {
+            val networkInfo = collectClientNetworkInfo(url)
             val batchData = dataList.map {
                 mapOf(
                     "qrdata" to it.qrdata,
@@ -77,10 +101,12 @@ class DefaultNetworkRepository(
                     "floor" to it.floor,
                     "room" to it.room,
                     "id" to it.id,
-                    "action" to it.action
+                    "action" to it.action,
+                    "clientIp" to networkInfo.ip,
+                    "clientMac" to networkInfo.mac
                 )
             }
-            
+
             catScanClient.uploadBatchToComputer(
                 url = url,
                 dataList = batchData,
@@ -93,17 +119,16 @@ class DefaultNetworkRepository(
     override suspend fun checkConnectivity(url: String): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                val urlObj = URL(url)
-                val connection = urlObj.openConnection() as HttpURLConnection
-                connection.connectTimeout = HEARTBEAT_TIMEOUT_MS.toInt()
-                connection.readTimeout = HEARTBEAT_TIMEOUT_MS.toInt()
-                connection.requestMethod = "GET"
-                
+                val connection = (URL(url).openConnection() as HttpURLConnection).apply {
+                    connectTimeout = heartbeatTimeoutMs.toInt()
+                    readTimeout = heartbeatTimeoutMs.toInt()
+                    requestMethod = "GET"
+                }
                 val responseCode = connection.responseCode
                 connection.disconnect()
-                return@withContext responseCode == 200
+                responseCode == 200
             } catch (e: Exception) {
-                return@withContext false
+                false
             }
         }
     }
@@ -114,13 +139,14 @@ class DefaultNetworkRepository(
     ) {
         networkDiscovery?.startDiscovery(
             onServerFound = { server ->
-                val discoveredServer = DiscoveredServer(
-                    ip = server.ip,
-                    port = server.port,
-                    url = server.url,
-                    name = server.name
+                onServerFound(
+                    DiscoveredServer(
+                        ip = server.ip,
+                        port = server.port,
+                        url = server.url,
+                        name = server.name
+                    )
                 )
-                onServerFound(discoveredServer)
             },
             onDiscoveryComplete = onDiscoveryComplete
         )
@@ -131,25 +157,35 @@ class DefaultNetworkRepository(
     }
 
     override fun selectServer(server: DiscoveredServer) {
-        // 这里可以添加服务器选择的逻辑，比如保存服务器信息等
+        // keep interface compatibility; no local persistence required here.
     }
 
     override fun startHeartbeatDetection(
         serverUrl: String,
-        onConnectivityChanged: (Boolean) -> Unit
+        onConnectivityChanged: (Boolean) -> Unit,
+        onBlocked: (String) -> Unit
     ) {
-        stopHeartbeatDetection() // 先停止之前的心跳检测
-
-        // 用可取消的 Job 管理心跳（避免 GlobalScope 泄漏、避免 stopHeartbeatDetection 无效）
+        stopHeartbeatDetection()
         heartbeatJob = heartbeatScope.launch {
             while (isActive) {
-                if (serverUrl.isNotEmpty()) {
-                    val isConnected = checkConnectivity(serverUrl)
-                    withContext(Dispatchers.Main) {
-                        onConnectivityChanged(isConnected)
+                val result = if (serverUrl.isNotEmpty()) {
+                    val networkInfo = collectClientNetworkInfo(serverUrl)
+                    sendHeartbeat(serverUrl, networkInfo)
+                } else {
+                    HeartbeatResult.Disconnected
+                }
+
+                withContext(Dispatchers.Main) {
+                    when (result) {
+                        is HeartbeatResult.Connected -> onConnectivityChanged(true)
+                        is HeartbeatResult.Disconnected -> onConnectivityChanged(false)
+                        is HeartbeatResult.Blocked -> {
+                            onConnectivityChanged(false)
+                            onBlocked(result.message)
+                        }
                     }
                 }
-                delay(HEARTBEAT_INTERVAL_MS)
+                delay(heartbeatIntervalMs)
             }
         }
     }
@@ -159,18 +195,126 @@ class DefaultNetworkRepository(
         heartbeatJob = null
     }
 
-    /**
-     * 启动被动监听服务
-     */
     fun startPassiveListener() {
         networkDiscovery?.startPassiveListener()
     }
 
-    /**
-     * 清理资源
-     */
     fun cleanup() {
         networkDiscovery?.cleanup()
         stopHeartbeatDetection()
+    }
+
+    private suspend fun sendHeartbeat(serverUrl: String, networkInfo: ClientNetworkInfo): HeartbeatResult {
+        return suspendCancellableCoroutine { cont ->
+            catScanClient.uploadHeartbeatToComputer(
+                url = serverUrl,
+                clientIp = networkInfo.ip,
+                clientMac = networkInfo.mac,
+                onSuccess = {
+                    if (cont.isActive) cont.resume(HeartbeatResult.Connected)
+                },
+                onFailure = { err ->
+                    if (cont.isActive) {
+                        if (isClientBlockedError(err)) {
+                            cont.resume(HeartbeatResult.Blocked(err))
+                        } else {
+                            cont.resume(HeartbeatResult.Disconnected)
+                        }
+                    }
+                }
+            )
+        }
+    }
+
+    private fun isClientBlockedError(error: String?): Boolean {
+        if (error.isNullOrBlank()) return false
+        return error.contains(CatScanClient.CLIENT_BLOCKED_FLAG) ||
+            error.contains("client blocked", ignoreCase = true) ||
+            error.contains("HTTP 403")
+    }
+
+    private fun collectClientNetworkInfo(serverUrl: String? = null): ClientNetworkInfo {
+        val routedAddress = resolveLocalAddressForServer(serverUrl)
+        if (routedAddress != null) {
+            val routedIp = (routedAddress.hostAddress ?: "").substringBefore("%")
+            val routedMac = resolveMacByAddress(routedAddress)
+            if (routedIp.isNotEmpty()) {
+                return ClientNetworkInfo(
+                    ip = routedIp,
+                    mac = routedMac
+                )
+            }
+        }
+
+        var ip = ""
+        var mac = ""
+        try {
+            val interfaces = NetworkInterface.getNetworkInterfaces() ?: return ClientNetworkInfo(ip, mac)
+            while (interfaces.hasMoreElements()) {
+                val networkInterface = interfaces.nextElement()
+                if (networkInterface.isLoopback || !networkInterface.isUp) continue
+
+                if (mac.isEmpty()) {
+                    val hardware = networkInterface.hardwareAddress
+                    if (hardware != null && hardware.isNotEmpty()) {
+                        mac = hardware.joinToString(":") { b -> "%02x".format(b.toInt() and 0xff) }
+                    }
+                }
+
+                val addresses = networkInterface.inetAddresses
+                while (addresses.hasMoreElements()) {
+                    val address = addresses.nextElement()
+                    if (address is Inet4Address && !address.isLoopbackAddress) {
+                        ip = address.hostAddress ?: ""
+                        break
+                    }
+                }
+
+                if (ip.isNotEmpty() && mac.isNotEmpty()) break
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "collectClientNetworkInfo failed: ${e.message}", e)
+        }
+        return ClientNetworkInfo(ip = ip, mac = mac)
+    }
+
+    private fun resolveLocalAddressForServer(serverUrl: String?): InetAddress? {
+        if (serverUrl.isNullOrBlank()) return null
+        return try {
+            val target = URL(serverUrl)
+            val targetHost = target.host
+            val targetPort = if (target.port > 0) {
+                target.port
+            } else if (target.protocol.equals("https", ignoreCase = true)) {
+                443
+            } else {
+                80
+            }
+
+            DatagramSocket().use { socket ->
+                socket.connect(InetSocketAddress(targetHost, targetPort))
+                val local = socket.localAddress
+                if (local != null && !local.isLoopbackAddress && !local.isAnyLocalAddress) {
+                    local
+                } else {
+                    null
+                }
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "resolveLocalAddressForServer failed: ${e.message}")
+            null
+        }
+    }
+
+    private fun resolveMacByAddress(address: InetAddress): String {
+        return try {
+            val networkInterface = NetworkInterface.getByInetAddress(address) ?: return ""
+            val hardwareAddress = networkInterface.hardwareAddress ?: return ""
+            if (hardwareAddress.isEmpty()) return ""
+            hardwareAddress.joinToString(":") { b -> "%02x".format(b.toInt() and 0xff) }
+        } catch (e: Exception) {
+            Log.w(TAG, "resolveMacByAddress failed: ${e.message}")
+            ""
+        }
     }
 }

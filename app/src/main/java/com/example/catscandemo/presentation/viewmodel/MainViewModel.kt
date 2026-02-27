@@ -28,11 +28,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import java.net.URL
 import kotlin.math.max
 
 /**
- * 主 ViewModel
- * 负责管理应用的状态和业务逻辑
+ * MainViewModel
+ * 璐熻矗绠＄悊搴旂敤鐨勭姸鎬佸拰涓氬姟閫昏緫
  */
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -43,32 +44,33 @@ class MainViewModel @Inject constructor(
 
     companion object {
         private const val TAG = "MainViewModel"
+        private const val CLIENT_BLOCKED_FLAG = "CLIENT_BLOCKED"
+        private const val CLIENT_BLOCKED_MESSAGE = "鐢佃剳瀹㈡埛绔凡闃绘姝よ澶?
     }
 
-    // 数据管理中心
+    // 鏁版嵁绠＄悊涓績
     private val dataManager = DataManager(scanUseCases, templateUseCases)
 
-    // --- 模板存储 ---  
+    // --- 妯℃澘瀛樺偍 ---
     val templates get() = dataManager.templates
     var activeTemplateId by mutableStateOf<String?>(null)
     var activeTemplate by mutableStateOf<TemplateModel?>(null)
 
-    // 主界面“识别结果”行：楼层选择
+    // 涓荤晫闈㈣瘑鍒粨鏋滆锛氭ゼ灞傞€夋嫨
     var scanSelectedFloor by mutableStateOf(1)
-    
-    // 扫描结果StateFlow，用于UI层观察
-    private val _scanResults = MutableStateFlow<List<ScanResult>>(emptyList())
+
+    // 鎵弿缁撴灉StateFlow锛岀敤浜嶶I灞傝瀵?    private val _scanResults = MutableStateFlow<List<ScanResult>>(emptyList())
     val scanResults: StateFlow<List<ScanResult>> = _scanResults.asStateFlow()
 
-    // 每个模板 + 每层的房间轮询游标（运行态，不做持久化）
+    // 姣忎釜妯℃澘 + 姣忓眰鐨勬埧闂磋疆璇㈡父鏍囷紙杩愯鎬侊紝涓嶅仛鎸佷箙鍖栵級
     private val cursorByTemplateFloor: MutableMap<String, MutableMap<Int, Int>> = HashMap()
 
-    // 初始化/持久化
+    // 鍒濆鍖栨寔涔呭寲
     private var storeReady = false
     private var appContext: Context? = null
-    // --- 识别结果离线存储 ---
+    // --- 璇嗗埆缁撴灉绂荤嚎瀛樺偍 ---
     private var historyReady = false
-    // --- 设置离线存储 ---
+    // --- 璁剧疆绂荤嚎瀛樺偍 ---
     private var settingsReady = false
 
     fun initHistoryStore(context: Context) {
@@ -90,14 +92,12 @@ class MainViewModel @Inject constructor(
         storeReady = true
         appContext = context.applicationContext
 
-        // 使用数据管理中心初始化数据
-        dataManager.initializeData()
-        
-        // 同步ViewModel的状态
-        activeTemplateId = dataManager.activeTemplateId
+        // 浣跨敤鏁版嵁绠＄悊涓績鍒濆鍖栨暟鎹?        dataManager.initializeData()
+
+        // 鍚屾ViewModel鐨勭姸鎬?        activeTemplateId = dataManager.activeTemplateId
         activeTemplate = dataManager.activeTemplate
-        
-        // 初始化结果列表，确保数据同步
+
+        // 鍒濆鍖栫粨鏋滃垪琛紝纭繚鏁版嵁鍚屾
         if (activeTemplateId != null) {
             dataManager.scanUseCases.setCurrentTemplateId(activeTemplateId)
         } else {
@@ -108,60 +108,52 @@ class MainViewModel @Inject constructor(
 
     fun getAllScans(): List<ScanResult> {
         val scans = dataManager.getAllScans()
-        // 确保每次都创建一个新的列表对象，触发StateFlow值变化
-        _scanResults.value = scans.toList()
+        // 纭繚姣忔閮藉垱寤轰竴涓柊鐨勫垪琛ㄥ璞★紝瑙﹀彂StateFlow鍊煎彉鍖?        _scanResults.value = scans.toList()
         return scans
     }
 
     fun setActiveTemplate(id: String) {
-        // 使用数据管理中心设置激活模板
-        dataManager.setActiveTemplate(id)
-        
-        // ✅ 切换模板时默认回到 1 层（避免上一模板的楼层残留）
+        // 浣跨敤鏁版嵁绠＄悊涓績璁剧疆婵€娲绘ā鏉?        dataManager.setActiveTemplate(id)
+
+        // 鍒囨崲妯℃澘鏃堕粯璁ゅ洖鍒?灞傦紙閬垮厤涓婁竴妯℃澘鐨勬ゼ灞傛畫鐣欙級
         scanSelectedFloor = 1
 
-        // 同步ViewModel的状态
-        activeTemplateId = dataManager.activeTemplateId
+        // 鍚屾ViewModel鐨勭姸鎬?        activeTemplateId = dataManager.activeTemplateId
         activeTemplate = dataManager.activeTemplate
-        
+
         val t = activeTemplate
         if (t != null) {
             clampSelectedFloor(scanSelectedFloor, t.maxFloor)
         }
-        
-        // 初始化结果列表，确保数据同步
+
+        // 鍒濆鍖栫粨鏋滃垪琛紝纭繚鏁版嵁鍚屾
         dataManager.scanUseCases.setCurrentTemplateId(id)
-        // 立即更新UI的扫描结果
-        getAllScans()
+        // 绔嬪嵆鏇存柊UI鐨勬壂鎻忕粨鏋?        getAllScans()
     }
-    
+
     /**
-     * 清除激活模板（设置为无模板）
-     */
+     * 娓呴櫎婵€娲绘ā鏉匡紙璁剧疆涓烘棤妯℃澘锛?     */
     fun clearActiveTemplate() {
-        // 使用数据管理中心清除激活模板
-        dataManager.clearActiveTemplate()
-        
-        // 同步ViewModel的状态
-        activeTemplateId = dataManager.activeTemplateId
+        // 浣跨敤鏁版嵁绠＄悊涓績娓呴櫎婵€娲绘ā鏉?        dataManager.clearActiveTemplate()
+
+        // 鍚屾ViewModel鐨勭姸鎬?        activeTemplateId = dataManager.activeTemplateId
         activeTemplate = dataManager.activeTemplate
-        
-        // 初始化结果列表，确保数据同步
+
+        // 鍒濆鍖栫粨鏋滃垪琛紝纭繚鏁版嵁鍚屾
         dataManager.scanUseCases.setCurrentTemplateId(null)
         getAllScans()
     }
 
     fun addTemplate(name: String) {
-        // 使用数据管理中心添加模板
+        // 浣跨敤鏁版嵁绠＄悊涓績娣诲姞妯℃澘
         val template = dataManager.addTemplate(name)
-        
-        // 同步ViewModel的状态
-        activeTemplateId = dataManager.activeTemplateId
+
+        // 鍚屾ViewModel鐨勭姸鎬?        activeTemplateId = dataManager.activeTemplateId
         activeTemplate = dataManager.activeTemplate
-        
-        // ✅ 切换模板时默认回到 1 层（避免上一模板的楼层残留）
+
+        // 鍒囨崲妯℃澘鏃堕粯璁ゅ洖鍒?灞傦紙閬垮厤涓婁竴妯℃澘鐨勬ゼ灞傛畫鐣欙級
         scanSelectedFloor = 1
-        
+
         val t = activeTemplate
         if (t != null) {
             clampSelectedFloor(scanSelectedFloor, t.maxFloor)
@@ -172,22 +164,20 @@ class MainViewModel @Inject constructor(
         val wasActive = (activeTemplateId == id)
         val deletedTemplate = dataManager.deleteTemplate(id)
 
-        // 同步ViewModel的状态
-        activeTemplateId = dataManager.activeTemplateId
+        // 鍚屾ViewModel鐨勭姸鎬?        activeTemplateId = dataManager.activeTemplateId
         activeTemplate = dataManager.activeTemplate
 
         if (wasActive) {
-            // 清空游标缓存（避免残留）
+            // 娓呯┖娓告爣缂撳瓨锛堥伩鍏嶆畫鐣欙級
             cursorByTemplateFloor.remove(id)
         }
-        
-        // 更新扫描结果StateFlow，触发UI更新
+
+        // 鏇存柊鎵弿缁撴灉StateFlow锛岃Е鍙慤I鏇存柊
         getAllScans()
-        
-        // 自动同步到PC客户端
-        if (uploadEnabled && serverUrl.isNotEmpty() && deletedTemplate != null) {
+
+        // 鑷姩鍚屾鍒癙C瀹㈡埛绔?        if (uploadEnabled && serverUrl.isNotEmpty() && deletedTemplate != null) {
             viewModelScope.launch(Dispatchers.IO) {
-                // 准备删除同步数据
+                // 鍑嗗鍒犻櫎鍚屾鏁版嵁
                 val batchData = deletedTemplate.scans.map {
                     ScanData(
                         id = it.id,
@@ -203,17 +193,17 @@ class MainViewModel @Inject constructor(
                         uploaded = it.uploaded
                     )
                 }
-                
-                // 批量上传删除同步数据
+
+                // 鎵归噺涓婁紶鍒犻櫎鍚屾鏁版嵁
                 if (batchData.isNotEmpty()) {
                     networkUseCases.uploadBatchScanData(
                         scanDataList = batchData,
                         serverUrl = serverUrl,
                         onSuccess = {
-                            Log.d(TAG, "批量同步删除模板数据成功: ${batchData.size} 条数据")
+                            Log.d(TAG, "Batch template-delete sync succeeded: ${batchData.size} items")
                         },
                         onError = { error ->
-                            Log.e(TAG, "批量同步删除模板数据失败: $error")
+                            Log.e(TAG, "鎵归噺鍚屾鍒犻櫎妯℃澘鏁版嵁澶辫触: $error")
                         }
                     )
                 }
@@ -222,22 +212,19 @@ class MainViewModel @Inject constructor(
     }
 
     fun updateTemplate(updated: TemplateModel) {
-        // 使用数据管理中心更新模板
+        // 浣跨敤鏁版嵁绠＄悊涓績鏇存柊妯℃澘
         dataManager.updateTemplate(updated)
-        
-        // 同步ViewModel的状态
-        activeTemplateId = dataManager.activeTemplateId
+
+        // 鍚屾ViewModel鐨勭姸鎬?        activeTemplateId = dataManager.activeTemplateId
         activeTemplate = dataManager.activeTemplate
-        
-        // 如果更新的是当前活动模板，更新activeTemplate状态
-        if (activeTemplateId == updated.id) {
+
+        // 濡傛灉鏇存柊鐨勬槸褰撳墠娲诲姩妯℃澘锛屾洿鏂癮ctiveTemplate鐘舵€?        if (activeTemplateId == updated.id) {
             clampSelectedFloor(scanSelectedFloor, updated.maxFloor)
         }
-        
-        // 自动同步到PC客户端
-        if (uploadEnabled && serverUrl.isNotEmpty()) {
+
+        // 鑷姩鍚屾鍒癙C瀹㈡埛绔?        if (uploadEnabled && serverUrl.isNotEmpty()) {
             viewModelScope.launch(Dispatchers.IO) {
-                // 批量上传数据
+                // 鎵归噺涓婁紶鏁版嵁
                 if (updated.scans.isNotEmpty()) {
                     try {
                         networkUseCases.uploadTemplateData(
@@ -246,14 +233,14 @@ class MainViewModel @Inject constructor(
                             scanDataList = updated.scans,
                             serverUrl = serverUrl,
                             onSuccess = {
-                                Log.d(TAG, "批量同步模板数据成功: ${updated.scans.size} 条数据")
+                                Log.d(TAG, "Batch template sync succeeded: ${updated.scans.size} items")
                             },
                             onError = {
-                                Log.e(TAG, "批量同步模板数据失败: $it")
+                                Log.e(TAG, "鎵归噺鍚屾妯℃澘鏁版嵁澶辫触: $it")
                             }
                         )
                     } catch (e: Exception) {
-                        Log.e(TAG, "同步模板数据异常: ${e.message}", e)
+                        Log.e(TAG, "鍚屾妯℃澘鏁版嵁寮傚父: ${e.message}", e)
                     }
                 }
             }
@@ -261,54 +248,143 @@ class MainViewModel @Inject constructor(
     }
 
     fun clearTemplateScans(id: String) {
-        // 使用数据管理中心清空模板扫描数据
+        // 浣跨敤鏁版嵁绠＄悊涓績娓呯┖妯℃澘鎵弿鏁版嵁
         dataManager.clearTemplateScans(id)
-        
-        // 同步ViewModel的状态
-        activeTemplateId = dataManager.activeTemplateId
+
+        // 鍚屾ViewModel鐨勭姸鎬?        activeTemplateId = dataManager.activeTemplateId
         activeTemplate = dataManager.activeTemplate
-        
-        // 更新扫描结果StateFlow，触发UI更新
+
+        // 鏇存柊鎵弿缁撴灉StateFlow锛岃Е鍙慤I鏇存柊
         getAllScans()
     }
 
     fun deleteTemplateScan(id: String, scanId: String) {
-        // 使用数据管理中心删除模板扫描数据
+        // 浣跨敤鏁版嵁绠＄悊涓績鍒犻櫎妯℃澘鎵弿鏁版嵁
         dataManager.deleteTemplateScan(id, scanId)
-        
-        // 同步ViewModel的状态
-        activeTemplateId = dataManager.activeTemplateId
+
+        // 鍚屾ViewModel鐨勭姸鎬?        activeTemplateId = dataManager.activeTemplateId
         activeTemplate = dataManager.activeTemplate
-        
-        // 更新扫描结果StateFlow，触发UI更新
+
+        // 鏇存柊鎵弿缁撴灉StateFlow锛岃Е鍙慤I鏇存柊
         getAllScans()
     }
 
-    // --- 运行状态 ---
+    // --- 杩愯鐘舵€?---
     var isFlashOn by mutableStateOf(false)
     var serverUrl by mutableStateOf("")
     var uploadEnabled by mutableStateOf(false)
-    
-    // --- 网络发现 ---
+    private var lastHeartbeatConnected: Boolean? = null
+    private var kickedNotified: Boolean = false
+
+    // --- 缃戠粶鍙戠幇 ---
     private var networkDiscovery: NetworkDiscovery? = null
     val discoveredServers = mutableStateListOf<com.example.catscandemo.data.network.DiscoveredServer>()
     var isDiscovering by mutableStateOf(false)
-    
-    // --- 被动发现 PC：每 1 秒扫描，发现后弹窗 ---
+
+    // --- 琚姩鍙戠幇 PC锛氭瘡 1 绉掓壂鎻忥紝鍙戠幇鍚庡脊绐?---
     var discoveredPcToNotify by mutableStateOf<com.example.catscandemo.data.network.DiscoveredServer?>(null)
     private var lastDismissedPcUrl: String? = null
     private var lastDismissedPcTime: Long = 0
-    
+
     private val _clipboardEnabled = mutableStateOf(true)
     var clipboardEnabled: Boolean
         get() = _clipboardEnabled.value
         set(value) {
             _clipboardEnabled.value = value
         }
-    
+
     var showUrlChangeDialog by mutableStateOf(false)
     var pendingNewUrl by mutableStateOf("")
     var camera by mutableStateOf<Camera?>(null)
+
+    fun updateServerUrl(rawUrl: String) {
+        val normalized = normalizeServerUrl(rawUrl)
+        if (serverUrl == normalized) return
+        serverUrl = normalized
+        kickedNotified = false
+        if (serverUrl.isEmpty()) {
+            uploadEnabled = false
+            lastHeartbeatConnected = null
+            stopHeartbeatDetection()
+            return
+        }
+        if (uploadEnabled) {
+            lastHeartbeatConnected = null
+            startHeartbeatDetection()
+        }
+    }
+
+    fun setUploadEnabledByUser(enabled: Boolean) {
+        if (!enabled) {
+            uploadEnabled = false
+            lastHeartbeatConnected = null
+            kickedNotified = false
+            stopHeartbeatDetection()
+            return
+        }
+        if (serverUrl.isEmpty()) {
+            uploadEnabled = false
+            kickedNotified = false
+            return
+        }
+        lastHeartbeatConnected = null
+        kickedNotified = false
+        uploadEnabled = true
+        stopNetworkDiscovery()
+        startHeartbeatDetection()
+    }
+
+    private fun normalizeServerUrl(rawUrl: String): String {
+        var value = rawUrl.trim()
+        if (value.isEmpty()) return ""
+        if (value.startsWith("winClientLink:")) {
+            value = value.removePrefix("winClientLink:")
+        }
+        if (!value.startsWith("http://") && !value.startsWith("https://")) {
+            value = "http://$value"
+        }
+        return try {
+            val parsed = URL(value)
+            val host = parsed.host?.trim().orEmpty()
+            if (host.isEmpty()) return value
+            val protocol = if (parsed.protocol.isNullOrBlank()) "http" else parsed.protocol
+            val portPart = if (parsed.port > 0) ":${parsed.port}" else ""
+            val path = parsed.path?.trim().orEmpty()
+            val normalizedPath = if (path.isEmpty() || path == "/") "/postqrdata" else path
+            "$protocol://$host$portPart$normalizedPath"
+        } catch (_: Exception) {
+            value
+        }
+    }
+
+    private fun isClientBlockedError(error: String?): Boolean {
+        if (error.isNullOrBlank()) return false
+        return error.contains(CLIENT_BLOCKED_FLAG) ||
+            error.contains("client blocked", ignoreCase = true) ||
+            error.contains("HTTP 403")
+    }
+
+    private fun notifyClientBlocked(showToast: ((String) -> Unit)? = null) {
+        lastHeartbeatConnected = false
+        uploadEnabled = false
+        if (kickedNotified) return
+        kickedNotified = true
+        val message = CLIENT_BLOCKED_MESSAGE
+        if (showToast != null) {
+            showToast(message)
+            return
+        }
+        val ctx = appContext ?: return
+        viewModelScope.launch(Dispatchers.Main) {
+            android.widget.Toast.makeText(ctx, message, android.widget.Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun handleClientBlocked(error: String?, showToast: ((String) -> Unit)? = null): Boolean {
+        if (!isClientBlockedError(error)) return false
+        notifyClientBlocked(showToast)
+        return true
+    }
 
     private val _duplicateScanEnabled = mutableStateOf(true)
     var duplicateScanEnabled: Boolean
@@ -317,7 +393,7 @@ class MainViewModel @Inject constructor(
             _duplicateScanEnabled.value = value
         }
 
-    // 是否显示条码检测框
+    // 鏄惁鏄剧ず鏉＄爜妫€娴嬫
     private val _showBarcodeOverlay = mutableStateOf(true)
     var showBarcodeOverlay: Boolean
         get() = _showBarcodeOverlay.value
@@ -363,14 +439,14 @@ class MainViewModel @Inject constructor(
 
     var showTemplateEditor by mutableStateOf(false)
 
-    // 当前一次扫码写入的字段（每次扫码前会被模板刷新）
-    var currentOperator by mutableStateOf("猫头枪")
-    var currentCampus by mutableStateOf("天河校区")
+    // 褰撳墠涓嬫鎵爜鍐欏叆鐨勫瓧娈碉紙姣忔鎵爜鍓嶄細琚ā鏉垮埛鏂帮級
+    var currentOperator by mutableStateOf("unknown")
+    var currentCampus by mutableStateOf("澶╂渤鏍″尯")
     var currentBuilding by mutableStateOf("")
-    var currentFloor by mutableStateOf("1层")
+    var currentFloor by mutableStateOf("1F")
     var currentRoom by mutableStateOf("")
 
-    // =============== “按楼层顺序读模板房间号” ===============
+    // =============== "鎸夋ゼ灞傞『搴忚妯℃澘鎴块棿鍙?===============
 
     fun selectScanFloor(floor: Int) {
         val maxF = activeTemplate?.maxFloor ?: 1
@@ -383,7 +459,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun floorOfRoomCode(code: String): Int? {
-        // 约定：房间号最后两位为房间序号（01~99），前面为楼层号
+        // 绾﹀畾锛氭埧闂村彿鏈€鍚庝袱浣嶄负鎴块棿搴忓彿锛?~99锛夛紝鍓嶉潰涓烘ゼ灞傚彿
         if (code.length < 3) return null
         val floorPart = code.dropLast(2)
         return floorPart.toIntOrNull()
@@ -401,19 +477,22 @@ class MainViewModel @Inject constructor(
         val idx = map[floor] ?: 0
         return rooms[idx % rooms.size]
     }
+
     private fun parseFloorNumber(floorStr: String): Int? {
-        // "3层" / "3" / "3F" 都能取到 3
+        // "3妤? / "3" / "3F" 閮借兘鍙栧埌 3
         return Regex("\\d+").find(floorStr)?.value?.toIntOrNull()
     }
+
     private fun rebuildCursorAfterDelete(floor: Int) {
         val t = activeTemplate ?: return
-        val rooms = roomsForFloor(t, floor) // 你已有的方法：返回该楼层房间号列表（已排序）
+
+        val rooms = roomsForFloor(t, floor) // 浣犲凡鏈夌殑鏂规硶锛氳繑鍥炶妤煎眰鎴块棿鍙峰垪琛紙宸叉帓搴忥級
+
         if (rooms.isEmpty()) return
 
-        // 删除后，该楼层已识别数量（以识别结果列表为准）
-        val usedCount = dataManager.getAllScans().count { parseFloorNumber(it.scanData.floor) == floor }
+        // 鍒犻櫎鍚庯紝璇ユゼ灞傚凡璇嗗埆鏁伴噺锛堜互璇嗗埆缁撴灉鍒楄〃涓哄噯锛?        val usedCount = dataManager.getAllScans().count { parseFloorNumber(it.scanData.floor) == floor }
 
-        // 游标=已使用数量 % 房间数（保证下一次扫描取“正确的下一个”）
+        // 娓告爣=宸蹭娇鐢ㄦ暟閲?% 鎴块棿鏁帮紙淇濊瘉涓嬩竴娆℃壂鎻忓彇"姝ｇ‘鐨勪笅涓€涓?)
         val map = cursorByTemplateFloor.getOrPut(t.id) { HashMap() }
         map[floor] = usedCount % rooms.size
     }
@@ -429,15 +508,14 @@ class MainViewModel @Inject constructor(
 
     private fun findNextFloorWithRooms(t: TemplateModel, fromFloor: Int): Int? {
         val maxF = max(1, t.maxFloor)
-        // 从下一层开始找，循环一圈
-        for (step in 1..maxF) {
+        // 浠庝笅涓€灞傚紑濮嬫壘锛屽惊鐜竴鍛?        for (step in 1..maxF) {
             val nf = ((fromFloor - 1 + step) % maxF) + 1
             if (roomsForFloor(t, nf).isNotEmpty()) return nf
         }
         return null
     }
 
-    /** 推进游标，返回：是否“刚好用完本层一轮”(即下次会回到本层第一个房间) */
+    /** 鎺ㄨ繘娓告爣锛岃繑鍥烇細鏄惁"鍒氬ソ鐢ㄥ畬鏈眰涓€杞?锛堝嵆涓嬫浼氬洖鍒版湰灞傜涓€涓埧闂达級 */
     private fun advanceRoomCursorAndCheckWrapped(t: TemplateModel, floor: Int): Boolean {
         val rooms = roomsForFloor(t, floor)
         if (rooms.isEmpty()) return false
@@ -447,8 +525,7 @@ class MainViewModel @Inject constructor(
         val nextIdx = idx + 1
         map[floor] = nextIdx % rooms.size
 
-        // 如果 nextIdx 刚好是 rooms.size 的倍数，说明本层一轮用完
-        return (nextIdx % rooms.size) == 0
+        // 濡傛灉 nextIdx 鍒氬ソ鏄?rooms.size 鐨勫€嶆暟锛岃鏄庢湰灞備竴杞敤瀹?        return (nextIdx % rooms.size) == 0
     }
 
     private fun applyTemplateForNextScan(showToast: (String) -> Unit): Triple<TemplateModel, Int, String?>? {
@@ -457,37 +534,29 @@ class MainViewModel @Inject constructor(
         val f = scanSelectedFloor.coerceIn(1, max(1, t.maxFloor))
         val room = peekRoom(t, f)
 
-        if (room == null) {
-            showToast("模板「${t.name}」${f}层未选择房间号")
-        }
-
         currentOperator = t.operator.ifBlank { "unknown" }
         currentCampus = t.campus
         currentBuilding = t.building
-        currentFloor = "${f}层"
+        currentFloor = "${f}F"
         currentRoom = room ?: currentRoom
 
         return Triple(t, f, room)
     }
 
-
     /**
-     * 往当前模板追加一条扫码，与识别结果同步。
-     * @param scanData 扫描数据对象，必须与识别结果中的对象一致，确保数据同步。
+     * 鍚戝綋鍓嶆ā鏉胯拷鍔?鏉℃壂鐮侊紝涓庤瘑鍒粨鏋滃悓姝?     * @param scanData 鎵爜鏁版嵁瀵硅薄锛屽繀椤讳笌璇嗗埆缁撴灉涓殑瀵硅薄涓€鑷达紝纭繚鏁版嵁鍚屾
      */
     private fun appendScanToActiveTemplate(scanData: ScanData) {
-        // 使用数据管理中心添加扫描数据到当前模板
-        dataManager.addScanToActiveTemplate(scanData)
-        
-        // 同步ViewModel的状态
-        activeTemplateId = dataManager.activeTemplateId
+        // 浣跨敤鏁版嵁绠＄悊涓績娣诲姞鎵弿鏁版嵁鍒板綋鍓嶆ā鏉?        dataManager.addScanToActiveTemplate(scanData)
+
+        // 鍚屾ViewModel鐨勭姸鎬?        activeTemplateId = dataManager.activeTemplateId
         activeTemplate = dataManager.activeTemplate
-        
-        // 更新扫描结果StateFlow，确保UI同步
+
+        // 鏇存柊鎵弿缁撴灉StateFlow锛岀‘淇漊I鍚屾
         getAllScans()
     }
 
-    // ===================== 扫码入口 =====================
+    // ===================== 鎵爜鍏ュ彛 =====================
 
     fun onBarcodeScanned(
         code: String,
@@ -501,8 +570,7 @@ class MainViewModel @Inject constructor(
                     showUrlChangeDialog = true
                 }
                 else -> {
-                    // 扫描前：先按模板预填字段（不推进游标）
-                    val applied = applyTemplateForNextScan(showToast)
+                    // 鎵弿鍓嶏細鍏堟寜妯℃澘棰勫～瀛楁锛堜笉鎺ㄨ繘娓告爣锛?                    val applied = applyTemplateForNextScan(showToast)
 
                     val activeTemplate = this.activeTemplate
                     val scanData = dataManager.addScan(
@@ -518,44 +586,41 @@ class MainViewModel @Inject constructor(
                     )
 
                     if (scanData != null) {
-                        // 关键：只有真正写入成功才推进游标，避免跳号
-                        applied?.let { (t, f, room) ->
+                        // 鍏抽敭锛氬彧鏈夌湡姝ｅ啓鍏ユ垚鍔熸墠鎺ㄨ繘娓告爣锛岄伩鍏嶈烦鍙?                        applied?.let { (t, f, room) ->
                             if (room != null) {
                                 val wrapped = advanceRoomCursorAndCheckWrapped(t, f)
 
-                                // ✅ 本层用完：自动切到下一层
-                                if (wrapped) {
+                                // 濡傛灉鏈眰鐢ㄥ畬锛氳嚜鍔ㄥ垏鎹㈠埌涓嬩竴灞?                                if (wrapped) {
                                     val nextFloor = findNextFloorWithRooms(t, f)
                                     if (nextFloor != null && nextFloor != f) {
-                                        // 直接更新选中楼层，UI 会跟着变
-                                        clampSelectedFloor(nextFloor, t.maxFloor)
+                                        // 鐩存帴鏇存柊閫変腑妤煎眰锛孶I 浼氳窡涓?                                        clampSelectedFloor(nextFloor, t.maxFloor)
                                     }
                                 }
                             }
                         }
 
-                        // 只有有模板时才写入模板离线扫码列表
-                        if (activeTemplate != null) {
-                            // 写入模板离线扫码列表（直接使用返回的scanData对象，确保数据同步）
+                        // 鍙湁鏈夋ā鏉挎椂鎵嶅啓鍏ユā鏉跨绾挎壂鐮佸垪琛?                        if (activeTemplate != null) {
+                            // 鍐欏叆妯℃澘绂荤嚎鎵爜鍒楄〃锛堢洿鎺ヤ娇鐢ㄨ繑鍥炵殑scanData瀵硅薄锛岀‘淇濇暟鎹悓姝ワ級
                             appendScanToActiveTemplate(scanData)
                         }
 
                         if (clipboardEnabled) {
                             copyToClipboard(code)
-                            showToast("已复制: $code")
+                            showToast("宸插鍒? $code")
                         }
+
                         if (uploadEnabled && serverUrl.isNotEmpty()) {
                             uploadData(scanData, showToast)
                         }
-                        // 更新扫描结果StateFlow，触发UI更新
-                        getAllScans()
 
+                        // 鏇存柊鎵弿缁撴灉StateFlow锛岃Е鍙慤I鏇存柊
+                        getAllScans()
                     }
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "扫码处理异常: ${e.message}", e)
-            showToast("处理扫码数据失败：${e.message ?: "未知错误"}")
+            Log.e(TAG, "鎵爜澶勭悊寮傚父: ${e.message}", e)
+            showToast("Failed to process scan: ${e.message ?: "Unknown error"}")
         }
     }
 
@@ -571,11 +636,14 @@ class MainViewModel @Inject constructor(
                 serverUrl = serverUrl,
                 action = "add",
                 onSuccess = {
-                    // 切换到主线程显示Toast
-                    viewModelScope.launch(Dispatchers.Main) { showToast("上传成功: ${scanData.text}") }
+                    // 鍒囨崲鍒颁富绾跨▼鏄剧ずToast
+                    viewModelScope.launch(Dispatchers.Main) { showToast("涓婁紶鎴愬姛: ${scanData.text}") }
                 },
                 onError = { err ->
-                    viewModelScope.launch(Dispatchers.Main) { showToast("上传失败: $err") }
+                    viewModelScope.launch(Dispatchers.Main) {
+                        if (handleClientBlocked(err, showToast)) return@launch
+                        showToast("涓婁紶澶辫触: $err")
+                    }
                 }
             )
         }
@@ -587,16 +655,15 @@ class MainViewModel @Inject constructor(
         copyToClipboard: (String) -> Unit,
         showToast: (String) -> Unit
     ) {
-        // 使用默认扫描器，自动检测所有条码格式
-        val scanner = BarcodeScanning.getClient()
+        // 浣跨敤榛樿鎵弿鍣紝鑷姩妫€娴嬫墍鏈夋潯鐮佹牸寮?        val scanner = BarcodeScanning.getClient()
 
-        // 首先尝试直接扫描原图
+        // 棣栧厛灏濊瘯鐩存帴鎵弿鍘熷浘
         val originalImage = try {
             InputImage.fromFilePath(context, uri)
         } catch (e: Exception) {
             Log.e("CatScan", "InputImage.fromFilePath failed, uri=$uri", e)
-            showToast("图片读取失败：${e.message ?: e.javaClass.simpleName}")
-            scanner.close()  // 确保异常时关闭 scanner
+            showToast("Failed to read image: ${e.message ?: e.javaClass.simpleName}")
+            scanner.close()  // 纭繚寮傚父鏃跺叧闂璼canner
             return
         }
 
@@ -604,24 +671,23 @@ class MainViewModel @Inject constructor(
             .addOnSuccessListener { barcodes ->
                 val result = barcodes.firstOrNull()?.rawValue
                 if (result != null) {
-                    // 原图扫描成功
+                    // 鍘熷浘鎵弿鎴愬姛
                     onBarcodeScanned(result, copyToClipboard, showToast)
                     scanner.close()
                 } else {
-                    // 原图扫描失败，尝试图像增强后再扫描
-                    Log.d("CatScan", "原图扫描失败，尝试增强图像...")
+                    // 鍘熷浘鎵弿澶辫触锛屽皾璇曞浘鍍忓寮哄悗鍐嶆壂鎻?                    Log.d("CatScan", "鍘熷浘鎵弿澶辫触锛屽皾璇曞寮哄浘鍍?..")
                     tryEnhancedScan(uri, context, scanner, copyToClipboard, showToast)
                 }
             }
             .addOnFailureListener { e ->
                 Log.e("CatScan", "Barcode scan failed, uri=$uri", e)
-                showToast("识别失败")
+                showToast("璇嗗埆澶辫触")
                 scanner.close()
             }
     }
-    
+
     /**
-     * 使用增强图像进行二次扫描
+     * 浣跨敤澧炲己鍥惧儚杩涜浜屾鎵弿
      */
     private fun tryEnhancedScan(
         uri: Uri,
@@ -639,49 +705,49 @@ class MainViewModel @Inject constructor(
                 Log.e("CatScan", "Failed to decode bitmap for enhancement", e)
                 null
             }
-            
+
             if (bitmap == null) {
                 launch(Dispatchers.Main) {
-                    showToast("未识别到条码")
+                    showToast("鏈瘑鍒埌鏉＄爜")
                     scanner.close()
                 }
                 return@launch
             }
-            
-            // 使用增强配置处理图像
+
+            // 浣跨敤澧炲己閰嶇疆澶勭悊鍥惧儚
             val enhancedBitmap = buildCenterCroppedBitmap(bitmap, 0.7f)
-            
+
             val enhancedImage = InputImage.fromBitmap(enhancedBitmap, 0)
-            
+
             launch(Dispatchers.Main) {
                 scanner.process(enhancedImage)
                     .addOnSuccessListener { enhancedBarcodes ->
                         val enhancedResult = enhancedBarcodes.firstOrNull()?.rawValue
-                        
-                        // 回收bitmap
+
+                        // 鍥炴敹bitmap
                         if (enhancedBitmap != bitmap) {
                             enhancedBitmap.recycle()
                         }
                         bitmap.recycle()
-                        
+
                         if (enhancedResult != null) {
-                            Log.d("CatScan", "增强图像扫描成功")
+                            Log.d("CatScan", "澧炲己鍥惧儚鎵弿鎴愬姛")
                             onBarcodeScanned(enhancedResult, copyToClipboard, showToast)
                         } else {
-                            showToast("未识别到条码")
+                            showToast("鏈瘑鍒埌鏉＄爜")
                         }
                         scanner.close()
                     }
                     .addOnFailureListener { e ->
                         Log.e("CatScan", "Enhanced scan failed", e)
-                        
-                        // 回收bitmap
+
+                        // 鍥炴敹bitmap
                         if (enhancedBitmap != bitmap) {
                             enhancedBitmap.recycle()
                         }
                         bitmap.recycle()
-                        
-                        showToast("识别失败")
+
+                        showToast("璇嗗埆澶辫触")
                         scanner.close()
                     }
             }
@@ -698,23 +764,21 @@ class MainViewModel @Inject constructor(
     }
 
     fun deleteItemById(id: Long) {
-        // 使用数据管理中心删除扫描数据
+        // 浣跨敤鏁版嵁绠＄悊涓績鍒犻櫎鎵弿鏁版嵁
         val deleted = dataManager.deleteScan(id)
 
         val floor = deleted?.let { parseFloorNumber(it.scanData.floor) }
         if (floor != null) {
             rebuildCursorAfterDelete(floor)
         }
-        
-        // 同步ViewModel的状态
-        activeTemplateId = dataManager.activeTemplateId
+
+        // 鍚屾ViewModel鐨勭姸鎬?        activeTemplateId = dataManager.activeTemplateId
         activeTemplate = dataManager.activeTemplate
-        
-        // 更新扫描结果StateFlow，触发UI更新
+
+        // 鏇存柊鎵弿缁撴灉StateFlow锛岃Е鍙慤I鏇存柊
         getAllScans()
-        
-        // 自动同步到PC客户端
-        if (uploadEnabled && serverUrl.isNotEmpty() && deleted != null) {
+
+        // 鑷姩鍚屾鍒癙C瀹㈡埛绔?        if (uploadEnabled && serverUrl.isNotEmpty() && deleted != null) {
             viewModelScope.launch(Dispatchers.IO) {
                 val scanData = deleted.scanData.copy(
                     templateName = dataManager.activeTemplate?.name ?: ""
@@ -724,10 +788,10 @@ class MainViewModel @Inject constructor(
                     serverUrl = serverUrl,
                     action = "delete",
                     onSuccess = {
-                        Log.d(TAG, "同步删除结果列表数据成功")
+                        Log.d(TAG, "鍚屾鍒犻櫎缁撴灉鍒楄〃鏁版嵁鎴愬姛")
                     },
                     onError = {
-                        Log.e(TAG, "同步删除结果列表数据失败: $it")
+                        Log.e(TAG, "鍚屾鍒犻櫎缁撴灉鍒楄〃鏁版嵁澶辫触: $it")
                     }
                 )
             }
@@ -735,18 +799,16 @@ class MainViewModel @Inject constructor(
     }
 
     fun updateItemById(id: Long, updated: ScanResult) {
-        // 使用数据管理中心更新扫描数据
+        // 浣跨敤鏁版嵁绠＄悊涓績鏇存柊鎵弿鏁版嵁
         dataManager.updateScan(id, updated.scanData)
-        
-        // 同步ViewModel的状态
-        activeTemplateId = dataManager.activeTemplateId
+
+        // 鍚屾ViewModel鐨勭姸鎬?        activeTemplateId = dataManager.activeTemplateId
         activeTemplate = dataManager.activeTemplate
-        
-        // 更新扫描结果StateFlow，触发UI更新
+
+        // 鏇存柊鎵弿缁撴灉StateFlow锛岃Е鍙慤I鏇存柊
         getAllScans()
-        
-        // 自动同步到PC客户端
-        if (uploadEnabled && serverUrl.isNotEmpty()) {
+
+        // 鑷姩鍚屾鍒癙C瀹㈡埛绔?        if (uploadEnabled && serverUrl.isNotEmpty()) {
             viewModelScope.launch(Dispatchers.IO) {
                 val scanData = updated.scanData.copy(
                     templateName = dataManager.activeTemplate?.name ?: ""
@@ -756,76 +818,76 @@ class MainViewModel @Inject constructor(
                     serverUrl = serverUrl,
                     action = "update",
                     onSuccess = {
-                        Log.d(TAG, "同步修改结果列表数据成功")
+                        Log.d(TAG, "鍚屾淇敼缁撴灉鍒楄〃鏁版嵁鎴愬姛")
                     },
                     onError = {
-                        Log.e(TAG, "同步修改结果列表数据失败: $it")
+                        Log.e(TAG, "鍚屾淇敼缁撴灉鍒楄〃鏁版嵁澶辫触: $it")
                     }
                 )
             }
         }
     }
-    
+
     /**
-     * 清空所有扫描结果
-     */
+     * 娓呯┖鎵€鏈夋壂鎻忕粨鏋?     */
     fun clearAllScans(showToast: (String) -> Unit) {
-        // 使用数据管理中心清空所有扫描数据
-        dataManager.clearAllScans()
-        
-        // 同步ViewModel的状态
-        activeTemplateId = dataManager.activeTemplateId
+        // 浣跨敤鏁版嵁绠＄悊涓績娓呯┖鎵€鏈夋壂鎻忔暟鎹?        dataManager.clearAllScans()
+
+        // 鍚屾ViewModel鐨勭姸鎬?        activeTemplateId = dataManager.activeTemplateId
         activeTemplate = dataManager.activeTemplate
-        
-        // 更新扫描结果StateFlow，触发UI更新
+
+        // 鏇存柊鎵弿缁撴灉StateFlow锛岃Е鍙慤I鏇存柊
         getAllScans()
-        
-        // 显示清空成功提示
-        showToast("已清空所有扫描结果")
+
+        // 鏄剧ず娓呯┖鎴愬姛鎻愮ず
+        showToast("Cleared all scan results")
     }
-    
-    // ===================== 网络发现 =====================
-    
+
+    // ===================== 缃戠粶鍙戠幇 =====================
+
     fun startNetworkDiscovery(context: Context, onDiscoveryComplete: () -> Unit = {}) {
         if (isDiscovering) return
-        
+
         isDiscovering = true
         discoveredServers.clear()
-        
+
         if (networkDiscovery == null) {
             networkDiscovery = NetworkDiscovery(context.applicationContext)
-            // 启动被动监听服务
+            // 鍚姩琚姩鐩戝惉鏈嶅姟
             networkDiscovery?.startPassiveListener()
         }
-        
-        networkUseCases.startNetworkDiscovery(
-            onServerFound = {
-                // 转换为 data 层的 DiscoveredServer 类型
-                val dataServer = com.example.catscandemo.data.network.DiscoveredServer(
-                    ip = it.ip,
-                    port = it.port,
-                    url = it.url,
-                    name = it.name
-                )
-                if (discoveredServers.none { server -> server.url == dataServer.url }) {
-                    discoveredServers.add(dataServer)
-                }
-            },
-            onDiscoveryComplete = {
-                isDiscovering = false
-                onDiscoveryComplete()
-                startPassivePcDiscovery(context) // 手动发现结束后重启被动发现
+
+        networkDiscovery?.startContinuousDiscovery { server ->
+            // 杞崲涓篸ata灞傜殑 DiscoveredServer 绫诲瀷
+            val dataServer = com.example.catscandemo.data.network.DiscoveredServer(
+                ip = server.ip,
+                port = server.port,
+                url = server.url,
+                name = server.name
+            )
+            if (discoveredServers.none { s -> s.url == dataServer.url }) {
+                discoveredServers.add(dataServer)
             }
-        )
+
+            if (lastHeartbeatConnected == true || serverUrl.isNotEmpty()) {
+                return@startContinuousDiscovery
+            }
+
+            selectDiscoveredServer(dataServer)
+            stopNetworkDiscovery()
+            isDiscovering = false
+            onDiscoveryComplete()
+        }
     }
-    
+
     fun stopNetworkDiscovery() {
         networkUseCases.stopNetworkDiscovery()
+        networkDiscovery?.stopDiscovery()
         isDiscovering = false
     }
-    
+
     fun selectDiscoveredServer(server: com.example.catscandemo.data.network.DiscoveredServer) {
-        // 转换为 domain 层的 DiscoveredServer 类型
+        // 杞崲涓篸omain灞傜殑 DiscoveredServer 绫诲瀷
         val domainServer = com.example.catscandemo.domain.use_case.DiscoveredServer(
             ip = server.ip,
             port = server.port,
@@ -833,15 +895,12 @@ class MainViewModel @Inject constructor(
             name = server.name
         )
         networkUseCases.selectDiscoveredServer(domainServer)
-        serverUrl = server.url
-        uploadEnabled = true
-        startHeartbeatDetection() // 启动心跳检测
+        updateServerUrl(server.url)
+        setUploadEnabledByUser(true)
     }
-    
+
     /**
-     * 启动被动发现 PC 客户端：每 1 秒扫描一次，发现后主动弹窗。
-     * 同时启动被动监听（响应其他设备的发现请求）。
-     */
+     * 鍚姩琚姩鍙戠幇 PC 瀹㈡埛绔細姣?绉掓壂鎻忎竴娆★紝鍙戠幇鍚庝富鍔ㄥ脊绐?     * 鍚屾椂鍚姩琚姩鐩戝惉锛堝搷搴斿叾浠栬澶囩殑鍙戠幇璇锋眰锛?     */
     fun startPassivePcDiscovery(context: Context) {
         if (networkDiscovery == null) {
             networkDiscovery = NetworkDiscovery(context.applicationContext)
@@ -849,16 +908,16 @@ class MainViewModel @Inject constructor(
         networkDiscovery?.startPassiveListener()
         networkDiscovery?.startContinuousDiscovery(onServerFound = {
             if (discoveredPcToNotify != null) return@startContinuousDiscovery
-            if (uploadEnabled && serverUrl.isNotEmpty()) return@startContinuousDiscovery  // 已连接则不再弹窗
+            if (lastHeartbeatConnected == true && serverUrl.isNotEmpty()) return@startContinuousDiscovery  // 宸茶繛鎺ュ垯涓嶅啀寮圭獥
             if (lastDismissedPcUrl == it.url &&
                 (System.currentTimeMillis() - lastDismissedPcTime) < 5 * 60 * 1000
             ) return@startContinuousDiscovery
             discoveredPcToNotify = it
         })
     }
-    
+
     /**
-     * 关闭「发现 PC」弹窗。若为忽略（传入 server），5 分钟内同一 PC 不再弹窗。
+     * 鍏抽棴銆屽彂鐜癙C銆嶅脊绐楄嫢涓哄拷鐣ワ紙浼犲叆 server锛夛紝5 鍒嗛挓鍐呭悓1鍙?PC 涓嶅啀寮圭獥
      */
     fun dismissDiscoveredPcDialog(ignoredServer: com.example.catscandemo.data.network.DiscoveredServer? = null) {
         ignoredServer?.let {
@@ -867,139 +926,139 @@ class MainViewModel @Inject constructor(
         }
         discoveredPcToNotify = null
     }
-    
+
     /**
-     * 使用发现的 PC 作为上传目标，并关闭弹窗。
+     * 浣跨敤鍙戠幇鐨?PC 浣滀负涓婁紶鐩爣锛屽苟鍏抽棴寮圭獥
      */
     fun onUseDiscoveredPc(server: com.example.catscandemo.data.network.DiscoveredServer) {
         selectDiscoveredServer(server)
         discoveredPcToNotify = null
     }
-    
+
     /**
-     * 启动被动网络发现监听服务（响应其他设备的发现请求）
-     */
+     * 鍚姩琚姩缃戠粶鍙戠幇鐩戝惉鏈嶅姟锛堝搷搴斿叾浠栬澶囩殑鍙戠幇璇锋眰锛?     */
     fun startPassiveDiscovery(context: Context) {
         if (networkDiscovery == null) {
             networkDiscovery = NetworkDiscovery(context.applicationContext)
         }
         networkDiscovery?.startPassiveListener()
     }
-    
+
     /**
-     * 启动心跳检测：定期检查PC客户端是否在线
-     */
+     * 鍚姩蹇冭烦妫€娴嬶細瀹氭湡妫€娴婸C瀹㈡埛绔槸鍚﹀湪绾?     */
     fun startHeartbeatDetection() {
-        stopHeartbeatDetection() // 先停止之前的心跳检测
-        
+        stopHeartbeatDetection() // 鍏堝仠姝箣鍓嶇殑蹇冭烦妫€娴?
         try {
             networkUseCases.startHeartbeatDetection(
                 serverUrl = serverUrl,
                 onConnectivityChanged = { isConnected ->
+                    val previous = lastHeartbeatConnected
+                    lastHeartbeatConnected = isConnected
                     uploadEnabled = isConnected
                     if (isConnected) {
-                        // 服务器连接正常，上传未上传的数据
+                        kickedNotified = false
+                        // 鏈嶅姟鍣ㄨ繛鎺ユ甯革紝涓婁紶鏈笂浼犵殑鏁版嵁
                         viewModelScope.launch {
                             try {
                                 uploadPendingData()
                             } catch (e: Exception) {
-                                Log.e(TAG, "心跳检测上传数据异常: ${e.message}", e)
+                                Log.e(TAG, "蹇冭烦妫€娴嬩笂浼犳暟鎹紓甯? ${e.message}", e)
                             }
                         }
-                    } else {
-                        // 断开连接后重新启动被动发现
-                        appContext?.let { 
+                    } else if (previous != false) {
+                        // 鏂紑杩炴帴鍚庤繘鍏ヤ富鍔ㄥ彂鐜?                        appContext?.let {
                             try {
-                                startPassivePcDiscovery(it)
+                                startNetworkDiscovery(it)
                             } catch (e: Exception) {
-                                Log.e(TAG, "心跳检测重启被动发现异常: ${e.message}", e)
+                                Log.e(TAG, "蹇冭烦妫€娴嬮噸鍚富鍔ㄥ彂鐜板紓甯? ${e.message}", e)
                             }
                         }
                     }
+                },
+                onBlocked = { err ->
+                    handleClientBlocked(err)
                 }
             )
         } catch (e: Exception) {
-            Log.e(TAG, "启动心跳检测异常: ${e.message}", e)
+            Log.e(TAG, "鍚姩蹇冭烦妫€娴嬪紓甯? ${e.message}", e)
         }
     }
-    
+
     /**
-     * 停止心跳检测
-     */
+     * 鍋滄蹇冭烦妫€娴?     */
     fun stopHeartbeatDetection() {
         networkUseCases.stopHeartbeatDetection()
+        lastHeartbeatConnected = null
+        kickedNotified = false
     }
-    
+
     /**
-     * 检查服务器连接状态
-     */
+     * 妫€鏌ユ湇鍔″櫒杩炴帴鐘舵€?     */
     private suspend fun checkServerConnectivity() {
         if (serverUrl.isEmpty()) return
-        
+
         val isConnected = networkUseCases.checkServerConnectivity(serverUrl)
         if (isConnected) {
-            // 服务器连接正常，标记为已连接
+            // 鏈嶅姟鍣ㄨ繛鎺ユ甯革紝鏍囪涓哄凡杩炴帴
             uploadEnabled = true
-            // 检查是否有未上传的数据需要上传
-            uploadPendingData()
+            // 妫€鏌ユ槸鍚︽湁鏈笂浼犵殑鏁版嵁闇€瑕佷笂浼?            uploadPendingData()
         } else {
-            // 服务器响应异常，标记为未连接
+            // 鏈嶅姟鍣ㄥ搷搴斿紓甯革紝鏍囪涓烘湭杩炴帴
             uploadEnabled = false
-            Log.w(TAG, "服务器连接异常")
-            // 断开连接后重新启动被动发现
-            appContext?.let { startPassivePcDiscovery(it) }
+            Log.w(TAG, "Server connectivity check failed")
+            // 鏂紑杩炴帴鍚庨噸鏂板惎鍔ㄨ鍔ㄥ彂鐜?            appContext?.let { startPassivePcDiscovery(it) }
         }
     }
-    
+
     /**
-     * 上传未上传的数据
+     * 涓婁紶鏈笂浼犵殑鏁版嵁
      */
     private suspend fun uploadPendingData() {
-        // 只上传当前选中模板的数据
+        // 鍙笂浼犲綋鍓嶆ā鏉跨殑鏁版嵁
         val activeTemplate = this.activeTemplate
         if (activeTemplate != null) {
             try {
-                // 获取模板的扫描数据
-                val templateScans = dataManager.getAllScans().filter { it.scanData.templateId == activeTemplate.id }
+                // 鑾峰彇妯℃澘鐨勬壂鎻忔暟鎹?                val templateScans = dataManager.getAllScans().filter { it.scanData.templateId == activeTemplate.id }
+
                 if (templateScans.isNotEmpty()) {
-                    Log.d(TAG, "上传模板 ${activeTemplate.name} 的 ${templateScans.size} 条数据...")
-                    
-                    // 转换为ScanData列表
+                    Log.d(TAG, "涓婁紶妯℃澘 ${activeTemplate.name} 鐨?${templateScans.size} 鏉℃暟鎹?..")
+
+                    // 杞崲涓篠canData鍒楄〃
                     val scanDataList = templateScans.map { it.scanData }
-                    
+
                     networkUseCases.uploadTemplateData(
                         templateId = activeTemplate.id,
                         templateName = activeTemplate.name,
                         scanDataList = scanDataList,
                         serverUrl = serverUrl,
                         onSuccess = {
-                            Log.d(TAG, "批量上传成功: ${scanDataList.size} 条数据")
+                            Log.d(TAG, "Batch upload succeeded: ${scanDataList.size} items")
                         },
                         onError = { err ->
-                            Log.e(TAG, "批量上传失败: $err")
+                            Log.e(TAG, "鎵归噺涓婁紶澶辫触: $err")
                         }
                     )
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "上传未上传数据异常: ${e.message}", e)
+                Log.e(TAG, "涓婁紶鏈笂浼犳暟鎹紓甯? ${e.message}", e)
             }
         }
     }
-    
+
     /**
-     * 上传模板数据到电脑
-     */
+     * 涓婁紶妯℃澘鏁版嵁鍒扮數鑴?     */
     fun uploadTemplateData(template: TemplateModel, showToast: (String) -> Unit) {
         if (!uploadEnabled || serverUrl.isEmpty()) {
-            showToast("请先连接电脑")
+            showToast("璇峰厛杩炴帴鐢佃剳")
             return
         }
-        
+
         if (template.scans.isEmpty()) {
-            showToast("模板内暂无数据")
+            val name = template.name.ifBlank { "Unnamed" }
+            showToast("Template $name has no data")
             return
         }
-        
+
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 networkUseCases.uploadTemplateData(
@@ -1008,33 +1067,35 @@ class MainViewModel @Inject constructor(
                     scanDataList = template.scans,
                     serverUrl = serverUrl,
                     onSuccess = {
-                        Log.d(TAG, "批量上传成功: ${template.scans.size} 条数据")
-                        // 在UI线程中显示Toast
+                        Log.d(TAG, "Batch upload succeeded: ${template.scans.size} items")
+
+                        // 鍦║I绾跨▼涓樉绀篢oast
                         viewModelScope.launch(Dispatchers.Main) {
-                            showToast("上传完成：成功 ${template.scans.size} 条，失败 0 条")
+                            showToast("Upload complete: success ${template.scans.size}, failed 0")
                         }
                     },
                     onError = { err ->
-                        Log.e(TAG, "批量上传失败: $err")
-                        // 在UI线程中显示Toast
+                        Log.e(TAG, "鎵归噺涓婁紶澶辫触: $err")
+
+                        // 鍦║I绾跨▼涓樉绀篢oast
                         viewModelScope.launch(Dispatchers.Main) {
-                            showToast("上传失败：请检查网络连接")
+                            showToast("Upload failed: check network connection")
                         }
                     }
                 )
             } catch (e: Exception) {
-                Log.e(TAG, "上传异常: ${e.message}", e)
-                // 在UI线程中显示Toast
+                Log.e(TAG, "涓婁紶寮傚父: ${e.message}", e)
+
+                // 鍦║I绾跨▼涓樉绀篢oast
                 viewModelScope.launch(Dispatchers.Main) {
-                    showToast("上传失败：请检查网络连接")
+                    showToast("Upload failed: check network connection")
                 }
             }
         }
     }
-    
+
     override fun onCleared() {
         super.onCleared()
         networkDiscovery?.cleanup()
-        stopHeartbeatDetection() // 停止心跳检测
-    }
+        stopHeartbeatDetection() // 鍋滄蹇冭烦妫€娴?    }
 }

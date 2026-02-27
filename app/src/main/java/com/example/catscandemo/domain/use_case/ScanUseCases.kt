@@ -5,7 +5,7 @@ import com.example.catscandemo.domain.model.ScanResult
 import com.example.catscandemo.domain.model.TemplateModel
 
 /**
- * 扫描数据管理相关的 Use Case
+ * 鎵弿鏁版嵁绠＄悊鐩稿叧鐨?Use Case
  */
 class ScanUseCases(
     val addScan: AddScanUseCase,
@@ -26,7 +26,7 @@ class ScanUseCases(
 }
 
 /**
- * 清空所有扫描数据的 Use Case
+ * 娓呯┖鎵€鏈夋壂鎻忔暟鎹殑 Use Case
  */
 class ClearAllScansUseCase(
     private val scanRepository: ScanRepository
@@ -37,7 +37,7 @@ class ClearAllScansUseCase(
 }
 
 /**
- * 替换所有扫描数据的 Use Case
+ * 鏇挎崲鎵€鏈夋壂鎻忔暟鎹殑 Use Case
  */
 class ReplaceAllScansUseCase(
     private val scanRepository: ScanRepository
@@ -48,7 +48,7 @@ class ReplaceAllScansUseCase(
 }
 
 /**
- * 添加扫描数据的 Use Case
+ * 娣诲姞鎵弿鏁版嵁鐨?Use Case
  */
 class AddScanUseCase(
     private val scanRepository: ScanRepository
@@ -79,7 +79,7 @@ class AddScanUseCase(
 }
 
 /**
- * 删除扫描数据的 Use Case
+ * 鍒犻櫎鎵弿鏁版嵁鐨?Use Case
  */
 class DeleteScanUseCase(
     private val scanRepository: ScanRepository
@@ -90,7 +90,7 @@ class DeleteScanUseCase(
 }
 
 /**
- * 更新扫描数据的 Use Case
+ * 鏇存柊鎵弿鏁版嵁鐨?Use Case
  */
 class UpdateScanUseCase(
     private val scanRepository: ScanRepository
@@ -101,7 +101,7 @@ class UpdateScanUseCase(
 }
 
 /**
- * 根据 ID 获取扫描数据的 Use Case
+ * 鏍规嵁 ID 鑾峰彇鎵弿鏁版嵁鐨?Use Case
  */
 class GetScanByIdUseCase(
     private val scanRepository: ScanRepository
@@ -112,7 +112,7 @@ class GetScanByIdUseCase(
 }
 
 /**
- * 获取所有扫描数据的 Use Case
+ * 鑾峰彇鎵€鏈夋壂鎻忔暟鎹殑 Use Case
  */
 class GetAllScansUseCase(
     private val scanRepository: ScanRepository
@@ -123,7 +123,7 @@ class GetAllScansUseCase(
 }
 
 /**
- * 获取未上传扫描数据的 Use Case
+ * 鑾峰彇鏈笂浼犳壂鎻忔暟鎹殑 Use Case
  */
 class GetPendingScansUseCase(
     private val scanRepository: ScanRepository
@@ -134,7 +134,7 @@ class GetPendingScansUseCase(
 }
 
 /**
- * 标记扫描数据为已上传的 Use Case
+ * 鏍囪鎵弿鏁版嵁涓哄凡涓婁紶鐨?Use Case
  */
 class MarkScanAsUploadedUseCase(
     private val scanRepository: ScanRepository
@@ -145,7 +145,7 @@ class MarkScanAsUploadedUseCase(
 }
 
 /**
- * 向模板添加扫描数据的 Use Case
+ * 鍚戞ā鏉挎坊鍔犳壂鎻忔暟鎹殑 Use Case
  */
 class AddScanToTemplateUseCase(
     private val templateRepository: TemplateRepository,
@@ -161,7 +161,7 @@ class AddScanToTemplateUseCase(
 }
 
 /**
- * 扫描数据仓库接口
+ * 鎵弿鏁版嵁浠撳簱鎺ュ彛
  */
 interface ScanRepository {
     fun setCurrentTemplateId(templateId: String?)
