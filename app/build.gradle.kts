@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -32,11 +35,21 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("D:/keys/catscan")
+            storePassword = "@Zhang164"
+            keyAlias = "catscan"
+            keyPassword = "@Zhang164"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true  // 移除未使用资源
             isDebuggable = false       // 禁用调试
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
