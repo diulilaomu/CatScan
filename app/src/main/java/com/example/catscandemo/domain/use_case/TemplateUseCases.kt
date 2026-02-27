@@ -4,7 +4,7 @@ import com.example.catscandemo.domain.model.ScanData
 import com.example.catscandemo.domain.model.TemplateModel
 
 /**
- * 妯℃澘绠＄悊鐩稿叧鐨?Use Case
+ * 模板管理相关的 Use Case
  */
 class TemplateUseCases(
     val addTemplate: AddTemplateUseCase,
@@ -20,7 +20,7 @@ class TemplateUseCases(
 )
 
 /**
- * 鍔犺浇妯℃澘鐨?Use Case
+ * 加载模板的 Use Case
  */
 class LoadTemplatesUseCase(
     private val templateRepository: TemplateRepository
@@ -31,7 +31,7 @@ class LoadTemplatesUseCase(
 }
 
 /**
- * 淇濆瓨妯℃澘鐨?Use Case
+ * 保存模板的 Use Case
  */
 class SaveTemplatesUseCase(
     private val templateRepository: TemplateRepository
@@ -42,16 +42,16 @@ class SaveTemplatesUseCase(
 }
 
 /**
- * 娣诲姞妯℃澘鐨?Use Case
+ * 添加模板的 Use Case
  */
 class AddTemplateUseCase(
     private val templateRepository: TemplateRepository
 ) {
     operator fun invoke(name: String): TemplateModel {
         val template = TemplateModel(
-            name = name.trim().ifBlank { "鏈懡鍚嶆ā鏉? },
-            operator = "鐚ご鏋?,
-            campus = "鐚ご鏍″尯",
+            name = name.trim().ifBlank { "未命名模板" },
+            operator = "猫头枪",
+            campus = "猫头校区",
             building = "",
             maxFloor = 1,
             roomCountPerFloor = 1,
@@ -64,7 +64,7 @@ class AddTemplateUseCase(
 }
 
 /**
- * 鍒犻櫎妯℃澘鐨?Use Case
+ * 删除模板的 Use Case
  */
 class DeleteTemplateUseCase(
     private val templateRepository: TemplateRepository
@@ -75,7 +75,7 @@ class DeleteTemplateUseCase(
 }
 
 /**
- * 鏇存柊妯℃澘鐨?Use Case
+ * 更新模板的 Use Case
  */
 class UpdateTemplateUseCase(
     private val templateRepository: TemplateRepository
@@ -86,7 +86,7 @@ class UpdateTemplateUseCase(
 }
 
 /**
- * 鏍规嵁 ID 鑾峰彇妯℃澘鐨?Use Case
+ * 根据 ID 获取模板的 Use Case
  */
 class GetTemplateByIdUseCase(
     private val templateRepository: TemplateRepository
@@ -97,7 +97,7 @@ class GetTemplateByIdUseCase(
 }
 
 /**
- * 鑾峰彇褰撳墠婵€娲绘ā鏉跨殑 Use Case
+ * 获取当前激活模板的 Use Case
  */
 class GetActiveTemplateUseCase(
     private val templateRepository: TemplateRepository
@@ -108,7 +108,7 @@ class GetActiveTemplateUseCase(
 }
 
 /**
- * 璁剧疆婵€娲绘ā鏉跨殑 Use Case
+ * 设置激活模板的 Use Case
  */
 class SetActiveTemplateUseCase(
     private val templateRepository: TemplateRepository
@@ -119,7 +119,7 @@ class SetActiveTemplateUseCase(
 }
 
 /**
- * 娓呯┖妯℃澘鎵弿鏁版嵁鐨?Use Case
+ * 清空模板扫描数据的 Use Case
  */
 class ClearTemplateScansUseCase(
     private val templateRepository: TemplateRepository,
@@ -134,7 +134,7 @@ class ClearTemplateScansUseCase(
 }
 
 /**
- * 鍒犻櫎妯℃澘涓寚瀹氭壂鎻忔暟鎹殑 Use Case
+ * 删除模板中指定扫描数据的 Use Case
  */
 class DeleteTemplateScanUseCase(
     private val templateRepository: TemplateRepository,
@@ -150,7 +150,7 @@ class DeleteTemplateScanUseCase(
 }
 
 /**
- * 妯℃澘浠撳簱鎺ュ彛
+ * 模板仓库接口
  */
 interface TemplateRepository {
     fun addTemplate(template: TemplateModel)

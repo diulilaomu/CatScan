@@ -32,7 +32,8 @@ fun NetworkSettingsScreen(
     }
     
     Column(modifier = modifier.fillMaxSize()) {
-        // 椤堕儴鏍囬鏍?        Surface(
+        // 顶部标题栏
+        Surface(
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.surface
         ) {
@@ -45,12 +46,12 @@ fun NetworkSettingsScreen(
                 IconButton(onClick = onBack) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack, 
-                        contentDescription = "杩斿洖",
+                        contentDescription = "返回",
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
                 Text(
-                    text = "缃戠粶璁剧疆",
+                    text = "网络设置",
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -61,14 +62,14 @@ fun NetworkSettingsScreen(
             color = MaterialTheme.colorScheme.outlineVariant
         )
         
-        // 鍐呭鍖哄煙
+        // 内容区域
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // 缃戠粶鍙戠幇鍖哄煙
+            // 网络发现区域
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -86,7 +87,7 @@ fun NetworkSettingsScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "缃戠粶鍙戠幇",
+                            text = "网络发现",
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -94,9 +95,9 @@ fun NetworkSettingsScreen(
                             onClick = {
                                 viewModel.startNetworkDiscovery(context) {
                                     if (viewModel.discoveredServers.isEmpty()) {
-                                        showToast("鏈彂鐜版湇鍔″櫒")
+                                        showToast("未发现服务器")
                                     } else {
-                                        showToast("鍙戠幇 ${viewModel.discoveredServers.size} 涓湇鍔″櫒")
+                                        showToast("发现 ${viewModel.discoveredServers.size} 个服务器")
                                     }
                                 }
                             },
@@ -107,7 +108,7 @@ fun NetworkSettingsScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Refresh,
-                                contentDescription = "鍙戠幇鏈嶅姟鍣?,
+                                contentDescription = "发现服务器",
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -119,7 +120,7 @@ fun NetworkSettingsScreen(
                             color = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            text = "姝ｅ湪鎼滅储鏈嶅姟鍣?..",
+                            text = "正在搜索服务器...",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -127,7 +128,7 @@ fun NetworkSettingsScreen(
                     
                     if (viewModel.discoveredServers.isNotEmpty()) {
                         Text(
-                            text = "鍙戠幇鐨勬湇鍔″櫒锛?,
+                            text = "发现的服务器：",
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -143,7 +144,7 @@ fun NetworkSettingsScreen(
                                         .fillMaxWidth()
                                         .clickable {
                                             viewModel.selectDiscoveredServer(server)
-                                            showToast("宸查€夋嫨: ${server.url}")
+                                            showToast("已选择: ${server.url}")
                                         },
                                     colors = CardDefaults.cardColors(
                                         containerColor = if (serverUrl == server.url) {
@@ -182,7 +183,7 @@ fun NetworkSettingsScreen(
                         }
                     } else if (!viewModel.isDiscovering) {
                         Text(
-                            text = "鐐瑰嚮鍒锋柊鎸夐挳鎼滅储鍚屼竴缃戠粶涓嬬殑Windows瀹㈡埛绔?,
+                            text = "点击刷新按钮搜索同一网络下的Windows客户端",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -190,7 +191,8 @@ fun NetworkSettingsScreen(
                 }
             }
             
-            // 鏈嶅姟鍣ㄩ厤缃尯鍩?            Card(
+            // 服务器配置区域
+            Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surface
@@ -202,7 +204,7 @@ fun NetworkSettingsScreen(
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     Text(
-                        text = "鏈嶅姟鍣ㄩ厤缃?,
+                        text = "服务器配置",
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -212,7 +214,7 @@ fun NetworkSettingsScreen(
                         onValueChange = onServerUrlChange,
                         label = { 
                             Text(
-                                "鐢佃剳绔湴鍧€",
+                                "电脑端地址",
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             ) 
                         },
@@ -239,12 +241,12 @@ fun NetworkSettingsScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "鍚敤涓婁紶鍒扮數鑴?,
+                                text = "启用上传到电脑",
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "鎵弿缁撴灉灏嗚嚜鍔ㄤ笂浼犲埌鏈嶅姟鍣?,
+                                text = "扫描结果将自动上传到服务器",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -255,7 +257,7 @@ fun NetworkSettingsScreen(
                                 if (serverUrl.isNotEmpty()) {
                                     onUploadEnabledChange(it)
                                 } else {
-                                    showToast("璇峰厛璁剧疆鏈嶅姟鍣ㄥ湴鍧€")
+                                    showToast("请先设置服务器地址")
                                 }
                             },
                             colors = SwitchDefaults.colors(

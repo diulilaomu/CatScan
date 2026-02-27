@@ -13,19 +13,19 @@ fun DiscoveredPcDialog(
     onDismiss: () -> Unit
 ) {
     AlertDialog(
-        onDismissRequest = onDismiss, // 鐐瑰嚮澶栭儴鎴栬繑鍥為敭鏃跺叧闂紝绛夊悓蹇界暐
-        title = { Text("鍙戠幇鐢佃剳绔?) },
+        onDismissRequest = onDismiss, // 点击外部或返回键时关闭，等同忽略
+        title = { Text("发现电脑端") },
         text = {
-            Text("鍙戠幇 Windows 瀹㈡埛绔細\n${server.url}\n\n鏄惁璁句负涓婁紶鐩爣锛?)
+            Text("发现 Windows 客户端：\n${server.url}\n\n是否设为上传目标？")
         },
         confirmButton = {
             TextButton(onClick = onUse) {
-                Text("浣跨敤")
+                Text("使用")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("蹇界暐")
+                Text("忽略")
             }
         }
     )

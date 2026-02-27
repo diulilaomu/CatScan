@@ -83,7 +83,7 @@ object TemplateStorage {
 
         return TemplateModel(
             id = obj.optString("id", ""),
-            name = obj.optString("name", "鏈懡鍚嶆ā鏉?),
+            name = obj.optString("name", "未命名模板"),
             operator = obj.optString("operator", ""),
             campus = obj.optString("campus", ""),
             building = obj.optString("building", ""),
@@ -96,7 +96,7 @@ object TemplateStorage {
 
     private fun scanToJson(s: ScanData): JSONObject {
         val obj = JSONObject()
-        obj.put("id", s.id)  // 鉁?淇锛氭坊鍔爄d瀛楁搴忓垪鍖栵紝纭繚鏁版嵁鍙拷韪?
+        obj.put("id", s.id)  // ✅ 修复：添加id字段序列化，确保数据可追踪
         obj.put("text", s.text)
         obj.put("timestamp", s.timestamp)
         obj.put("operator", s.operator)
@@ -104,15 +104,15 @@ object TemplateStorage {
         obj.put("building", s.building)
         obj.put("floor", s.floor)
         obj.put("room", s.room)
-        obj.put("templateId", s.templateId)  // 鉁?娣诲姞templateId瀛楁
-        obj.put("templateName", s.templateName)  // 鉁?娣诲姞templateName瀛楁
-        obj.put("uploaded", s.uploaded)  // 鉁?娣诲姞uploaded鐘舵€佸瓧娈?
+        obj.put("templateId", s.templateId)  // ✅ 添加templateId字段
+        obj.put("templateName", s.templateName)  // ✅ 添加templateName字段
+        obj.put("uploaded", s.uploaded)  // ✅ 添加uploaded状态字段
         return obj
     }
 
     private fun scanFromJson(obj: JSONObject): ScanData {
         return ScanData(
-            id = obj.optString("id", java.util.UUID.randomUUID().toString()),  // 鉁?淇锛氳鍙杋d瀛楁锛屾彁渚涢粯璁ゅ€?
+            id = obj.optString("id", java.util.UUID.randomUUID().toString()),  // ✅ 修复：读取id字段，提供默认值
             text = obj.optString("text", ""),
             timestamp = obj.optLong("timestamp", System.currentTimeMillis()),
             operator = obj.optString("operator", ""),
@@ -120,13 +120,13 @@ object TemplateStorage {
             building = obj.optString("building", ""),
             floor = obj.optString("floor", ""),
             room = obj.optString("room", ""),
-            templateId = obj.optString("templateId", ""),  // 鉁?璇诲彇templateId瀛楁
-            templateName = obj.optString("templateName", ""),  // 鉁?璇诲彇templateName瀛楁
-            uploaded = obj.optBoolean("uploaded", false)  // 鉁?璇诲彇uploaded鐘舵€佸瓧娈?
+            templateId = obj.optString("templateId", ""),  // ✅ 读取templateId字段
+            templateName = obj.optString("templateName", ""),  // ✅ 读取templateName字段
+            uploaded = obj.optBoolean("uploaded", false)  // ✅ 读取uploaded状态字段
         )
     }
 }
-// ===================== 璇嗗埆缁撴灉锛圫canResult锛夌绾垮瓨鍌?=====================
+// ===================== 识别结果（ScanResult）离线存储 =====================
 object ScanHistoryStorage {
     private const val BASE_FILE_NAME = "scan_history_"
     private const val FILE_EXTENSION = ".json"
@@ -179,16 +179,13 @@ object ScanHistoryStorage {
 
     private fun toJson(item: ScanResult): JSONObject {
         val obj = JSONObject()
-        val uploaded = item.uploaded || item.scanData.uploaded
         obj.put("id", item.id)
         obj.put("index", item.index)
-        obj.put("scanDataId", item.scanData.id)
         obj.put("text", item.scanData.text)
         obj.put("operator", item.scanData.operator)
         obj.put("timestamp", item.scanData.timestamp)
-        obj.put("uploaded", uploaded)
-        obj.put("templateId", item.scanData.templateId) // 鉁?鏂板
-        obj.put("templateName", item.scanData.templateName)
+        obj.put("uploaded", item.uploaded)
+        obj.put("templateId", item.scanData.templateId) // ✅ 新增
 
         val area = JSONObject()
         area.put("campus", item.scanData.campus)
@@ -202,9 +199,7 @@ object ScanHistoryStorage {
 
     private fun fromJson(obj: JSONObject): ScanResult {
         val areaObj = obj.optJSONObject("area") ?: JSONObject()
-        val uploaded = obj.optBoolean("uploaded", false)
         val scanData = ScanData(
-            id = obj.optString("scanDataId", java.util.UUID.randomUUID().toString()),
             text = obj.optString("text", ""),
             timestamp = obj.optLong("timestamp", System.currentTimeMillis()),
             operator = obj.optString("operator", "unknown"),
@@ -212,21 +207,19 @@ object ScanHistoryStorage {
             building = areaObj.optString("building", ""),
             floor = areaObj.optString("floor", ""),
             room = areaObj.optString("room", ""),
-            templateId = obj.optString("templateId", ""), // 鉁?鏂板
-            templateName = obj.optString("templateName", ""),
-            uploaded = uploaded
+            templateId = obj.optString("templateId", "") // ✅ 新增
         )
 
         return ScanResult(
             id = obj.optLong("id", System.currentTimeMillis()),
             index = obj.optInt("index", 0),
             scanData = scanData,
-            uploaded = uploaded
+            uploaded = obj.optBoolean("uploaded", false)
         )
     }
 }
 
-// ===================== 璁剧疆绂荤嚎瀛樺偍 =====================
+// ===================== 设置离线存储 =====================
 object SettingsStorage {
     private const val FILE_NAME = "settings.json"
 
@@ -261,7 +254,7 @@ object SettingsStorage {
 
             File(context.filesDir, FILE_NAME).writeText(root.toString(), Charsets.UTF_8)
         } catch (_: Exception) {
-            // 淇濆瓨澶辫触鏃堕潤榛樺鐞?
+            // 保存失败时静默处理
         }
     }
 }

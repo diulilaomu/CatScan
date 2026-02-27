@@ -162,28 +162,20 @@ class DefaultNetworkRepository(
 
     override fun startHeartbeatDetection(
         serverUrl: String,
-        onConnectivityChanged: (Boolean) -> Unit,
-        onBlocked: (String) -> Unit
+        onConnectivityChanged: (Boolean) -> Unit
     ) {
         stopHeartbeatDetection()
         heartbeatJob = heartbeatScope.launch {
             while (isActive) {
-                val result = if (serverUrl.isNotEmpty()) {
+                val isConnected = if (serverUrl.isNotEmpty()) {
                     val networkInfo = collectClientNetworkInfo(serverUrl)
-                    sendHeartbeat(serverUrl, networkInfo)
+                    sendHeartbeat(serverUrl, networkInfo) is HeartbeatResult.Connected
                 } else {
-                    HeartbeatResult.Disconnected
+                    false
                 }
 
                 withContext(Dispatchers.Main) {
-                    when (result) {
-                        is HeartbeatResult.Connected -> onConnectivityChanged(true)
-                        is HeartbeatResult.Disconnected -> onConnectivityChanged(false)
-                        is HeartbeatResult.Blocked -> {
-                            onConnectivityChanged(false)
-                            onBlocked(result.message)
-                        }
-                    }
+                    onConnectivityChanged(isConnected)
                 }
                 delay(heartbeatIntervalMs)
             }
