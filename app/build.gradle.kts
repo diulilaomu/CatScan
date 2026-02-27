@@ -22,13 +22,22 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    splits {
+        // CPU 架构拆分：为不同架构生成独立 APK
+        abi {
+            isEnable = true
+            reset()
+            include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+            isUniversalApk = true  // 同时生成一个包含所有架构的通用 APK
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
-            isShrinkResources = true  // 绉婚櫎鏈娇鐢ㄨ祫婧?
-            isDebuggable = false       // 绂佺敤璋冭瘯
+            isShrinkResources = true  // 移除未使用资源
+            isDebuggable = false       // 禁用调试
             proguardFiles(
-
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
