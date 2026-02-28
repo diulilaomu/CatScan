@@ -17,49 +17,49 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 
 
-//鏉冮檺鐢宠
-@Composable
-fun AutoRequestCameraPermission(
-    onGranted: @Composable () -> Unit,
-) {
-    val context = LocalContext.current
-
-    // 鏄惁宸叉巿鏉?
-    var hasPermission by remember {
-        mutableStateOf(
-            ContextCompat.checkSelfPermission(
-                context, Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_GRANTED
-        )
-    }
-    // 鏉冮檺璇锋眰鍣?
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { granted ->
-            hasPermission = granted
-        }
-    )
-    LaunchedEffect(Unit) {
-        if (!hasPermission) {
-            launcher.launch(Manifest.permission.CAMERA)
-        }
-    }
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        if (hasPermission) {
-            onGranted() // 宸叉巿鏉?鈫?鎵撳紑鐩告満鐣岄潰
-        } else {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("璇锋巿浜堢浉鏈烘潈闄愪互缁х画浣跨敤搴旂敤")
-                Spacer(Modifier.height(8.dp))
-                Button(onClick = {
-                    launcher.launch(Manifest.permission.CAMERA)
-                }) {
-                    Text("閲嶆柊鐢宠鏉冮檺")
-                }
-            }
-        }
-    }
+//权限请求
+@Composable
+fun AutoRequestCameraPermission(
+    onGranted: @Composable () -> Unit,
+) {
+    val context = LocalContext.current
+
+    // 是否已授权？
+    var hasPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context, Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+    }
+    // 权限请求器
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { granted ->
+            hasPermission = granted
+        }
+    )
+    LaunchedEffect(Unit) {
+        if (!hasPermission) {
+            launcher.launch(Manifest.permission.CAMERA)
+        }
+    }
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        if (hasPermission) {
+            onGranted() // 已授权 → 打开相机界面
+        } else {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("请授予相机权限以继续使用应用")
+                Spacer(Modifier.height(8.dp))
+                Button(onClick = {
+                    launcher.launch(Manifest.permission.CAMERA)
+                }) {
+                    Text("重新请求权限")
+                }
+            }
+        }
+    }
 }
