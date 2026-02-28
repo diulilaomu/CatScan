@@ -650,29 +650,6 @@ fun MainScreen(viewModel: MainViewModel) {
                                 }
                             }
 
-                            // 清空按钮（始终显示）
-                            Box(modifier = Modifier.width(70.dp)) {
-                                AssistChip(
-                                    onClick = { viewModel.clearAllScans(showToast) },
-                                    enabled = true,
-                                    modifier = Modifier.fillMaxWidth(),
-                                    label = {
-                                        Text(
-                                            text = "清空",
-                                            style = MaterialTheme.typography.bodySmall,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.fillMaxWidth()
-                                        )
-                                    },
-                                    colors = AssistChipDefaults.assistChipColors(
-                                        containerColor = MaterialTheme.colorScheme.errorContainer,
-                                        labelColor = MaterialTheme.colorScheme.onErrorContainer
-                                    )
-                                )
-                            }
-
                             // 计数牌 - 改成3位
                             val count = displayItems.size
                             Box(
@@ -695,6 +672,29 @@ fun MainScreen(viewModel: MainViewModel) {
                                         .width(48.dp)
                                         .height(24.dp)
                                         .wrapContentSize()
+                                )
+                            }
+
+                            // 清空按钮（始终显示）
+                            Box(modifier = Modifier.width(70.dp)) {
+                                AssistChip(
+                                    onClick = { viewModel.clearAllScans(showToast) },
+                                    enabled = true,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    label = {
+                                        Text(
+                                            text = "清空",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
+                                    },
+                                    colors = AssistChipDefaults.assistChipColors(
+                                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                                        labelColor = MaterialTheme.colorScheme.onErrorContainer
+                                    )
                                 )
                             }
 
