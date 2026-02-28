@@ -1,4 +1,4 @@
-package com.example.catscandemo.ui.main
+﻿package com.example.catscandemo.ui.main
 
 import android.annotation.SuppressLint
 import android.net.Uri
@@ -569,7 +569,7 @@ fun FlashlightButton(
     Box(
         modifier = modifier
             .shadow(elevation, CircleShape)
-            .size(56.dp)
+            .size(51.dp)
             .background(
                 color = if (isOn) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.surfaceVariant,
                 shape = CircleShape
@@ -630,7 +630,7 @@ fun AlbumButton(
     Box(
         modifier = modifier
             .shadow(elevation, CircleShape)
-            .size(56.dp)
+            .size(51.dp)
             .background(
                 color = MaterialTheme.colorScheme.surfaceVariant,
                 shape = CircleShape
