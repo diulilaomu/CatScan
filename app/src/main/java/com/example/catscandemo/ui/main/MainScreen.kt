@@ -607,7 +607,7 @@ fun MainScreen(viewModel: MainViewModel) {
                                     modifier = Modifier.fillMaxWidth(),
                                     label = {
                                         Text(
-                                            text = "${selectedFloor}层",
+                                            text = if (hasTemplate) "${selectedFloor}层" else "无",
                                             style = MaterialTheme.typography.bodySmall,
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis
