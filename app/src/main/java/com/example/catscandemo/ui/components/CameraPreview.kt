@@ -69,21 +69,36 @@ import java.util.concurrent.atomic.AtomicInteger
 
  */
 
-class BarcodeStabilizer {
+class BarcodeStabilizer(
+    private val nowMs: () -> Long = { android.os.SystemClock.elapsedRealtime() },
+    private val absenceResetMs: Long = 1_500L
+) {
 
     private var stableText: String? = null
 
-    private var stableCount = 0
-
-    private val stableThreshold = 2
+    private var stableCount = 0
+
+    private val stableThreshold = 2
+    private var suppressedText: String? = null
+    private var lastSeenAtMs = 0L
 
     
 
-    @Synchronized
-
-    fun stabilize(text: String, onStable: (String) -> Unit) {
-
-        if (text == stableText) {
+    @Synchronized
+
+    fun stabilize(text: String, onStable: (String) -> Unit) {
+        val now = nowMs()
+        if (lastSeenAtMs > 0L && now - lastSeenAtMs > absenceResetMs) {
+            suppressedText = null
+            stableText = null
+            stableCount = 0
+        }
+        lastSeenAtMs = now
+
+        // 同一个码持续停留在镜头中时只触发一次；离开镜头后才允许再次识别。
+        if (text == suppressedText) return
+
+        if (text == stableText) {
 
             stableCount++
 
@@ -97,13 +112,14 @@ class BarcodeStabilizer {
 
         
 
-        if (stableCount >= stableThreshold) {
-
-            onStable(text)
-
-            reset()
-
-        }
+        if (stableCount >= stableThreshold) {
+
+            onStable(text)
+            suppressedText = text
+            stableText = null
+            stableCount = 0
+
+        }
 
     }
 
@@ -111,13 +127,15 @@ class BarcodeStabilizer {
 
     @Synchronized
 
-    fun reset() {
-
-        stableText = null
-
-        stableCount = 0
-
-    }
+    fun reset() {
+
+        stableText = null
+
+        stableCount = 0
+        suppressedText = null
+        lastSeenAtMs = 0L
+
+    }
 
 }
 

@@ -3,6 +3,7 @@ package com.example.catscandemo.ui.main
 import android.content.Context
 import com.example.catscandemo.domain.model.ScanData
 import com.example.catscandemo.domain.model.ScanResult
+import com.example.catscandemo.domain.model.TemplateMode
 import com.example.catscandemo.domain.model.TemplateModel
 import org.json.JSONArray
 import org.json.JSONObject
@@ -59,6 +60,8 @@ object TemplateStorage {
         obj.put("building", t.building)
         obj.put("maxFloor", t.maxFloor)
         obj.put("roomCountPerFloor", t.roomCountPerFloor)
+        obj.put("mode", t.mode.name)
+        obj.put("lastSelectedFloor", t.lastSelectedFloor)
 
         val rooms = JSONArray()
         t.selectedRooms.forEach { rooms.put(it) }
@@ -75,6 +78,20 @@ object TemplateStorage {
         val rooms = buildList {
             for (i in 0 until roomsArr.length()) add(roomsArr.getString(i))
         }
+        val maxFloor = obj.optInt("maxFloor", 1).coerceAtLeast(1)
+        val roomCountPerFloor = obj.optInt("roomCountPerFloor", 1).coerceIn(1, 99)
+        val validRooms = rooms.filter { code ->
+            if (code.length < 3) {
+                false
+            } else {
+                val floor = code.dropLast(2).toIntOrNull()
+                val room = code.takeLast(2).toIntOrNull()
+                floor != null &&
+                        room != null &&
+                        floor in 1..maxFloor &&
+                        room in 1..roomCountPerFloor
+            }
+        }.distinct()
 
         val scansArr = obj.optJSONArray("scans") ?: JSONArray()
         val scans = buildList {
@@ -87,9 +104,14 @@ object TemplateStorage {
             operator = obj.optString("operator", ""),
             campus = obj.optString("campus", ""),
             building = obj.optString("building", ""),
-            maxFloor = obj.optInt("maxFloor", 1).coerceAtLeast(1),
-            roomCountPerFloor = obj.optInt("roomCountPerFloor", 1).coerceAtLeast(1),
-            selectedRooms = rooms,
+            maxFloor = maxFloor,
+            roomCountPerFloor = roomCountPerFloor,
+            mode = runCatching {
+                TemplateMode.valueOf(obj.optString("mode", TemplateMode.LINEAR.name))
+            }.getOrDefault(TemplateMode.LINEAR),
+            lastSelectedFloor = obj.optInt("lastSelectedFloor", 1)
+                .coerceIn(1, maxFloor),
+            selectedRooms = validRooms,
             scans = scans
         )
     }

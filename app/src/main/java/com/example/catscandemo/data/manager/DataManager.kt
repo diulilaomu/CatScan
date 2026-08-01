@@ -6,7 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.catscandemo.domain.model.ScanData
 import com.example.catscandemo.domain.model.ScanResult
-import com.example.catscandemo.domain.model.TemplateModel
+import com.example.catscandemo.domain.model.TemplateMode
+
+import com.example.catscandemo.domain.model.TemplateModel
 import com.example.catscandemo.domain.use_case.ScanUseCases
 import com.example.catscandemo.domain.use_case.TemplateUseCases
 import kotlinx.coroutines.CoroutineScope
@@ -96,8 +98,11 @@ class DataManager(
     /**
      * 添加模板
      */
-    fun addTemplate(name: String): TemplateModel {
-        val template = templateUseCases.addTemplate(name)
+    fun addTemplate(
+        name: String,
+        mode: TemplateMode = TemplateMode.LINEAR
+    ): TemplateModel {
+        val template = templateUseCases.addTemplate(name, mode)
         templates.add(0, template)
         setActiveTemplate(template.id)
         saveTemplates()
@@ -219,7 +224,22 @@ class DataManager(
     /**
      * 删除模板中的扫描数据
      */
-    fun deleteTemplateScan(id: String, scanId: String) {
+    fun clearTemplateFloorScans(id: String, floor: Int): List<ScanData> {
+        val template = templates.firstOrNull { it.id == id } ?: return emptyList()
+        val validFloor = floor.coerceIn(1, template.maxFloor.coerceAtLeast(1))
+        val deletedScans = template.scans.filter {
+            Regex("\\d+").find(it.floor)?.value?.toIntOrNull() == validFloor
+        }
+        if (deletedScans.isEmpty()) return emptyList()
+
+        val deletedIds = deletedScans.mapTo(HashSet()) { it.id }
+        updateTemplate(
+            template.copy(scans = template.scans.filterNot { it.id in deletedIds })
+        )
+        return deletedScans
+    }
+
+    fun deleteTemplateScan(id: String, scanId: String) {
         templateUseCases.deleteTemplateScan(id, scanId)
         
         // 同时从扫描结果中删除该数据

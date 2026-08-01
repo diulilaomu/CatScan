@@ -220,7 +220,7 @@ fun NetworkSettingsScreen(
                         },
                         placeholder = { 
                             Text(
-                                "http://192.168.1.100:29027/postqrdata",
+                                "http://192.168.1.100:29027/postqrdata?token=配对令牌",
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             ) 
                         },

@@ -18,6 +18,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 
 import androidx.compose.foundation.lazy.grid.items as gridItems
 
+import androidx.compose.foundation.shape.RoundedCornerShape
+
 import androidx.compose.foundation.text.KeyboardOptions
 
 import androidx.compose.material.icons.Icons
@@ -49,10 +51,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 
 import androidx.compose.ui.unit.dp
 
 import com.example.catscandemo.presentation.viewmodel.MainViewModel
+
+import com.example.catscandemo.domain.model.TemplateMode
 
 import com.example.catscandemo.domain.model.TemplateModel
 
@@ -63,6 +68,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 import android.content.ContentValues
+
+import android.os.Build
 
 import android.os.Environment
 
@@ -76,6 +83,8 @@ import org.json.JSONObject
 
 import java.text.SimpleDateFormat
 
+import java.io.File
+
 import java.util.Date
 
 import java.util.Locale
@@ -84,7 +93,50 @@ import java.util.Locale
 
 private enum class DrawerPage { MANAGER, EDITOR, ROOMS }
 
-
+@Composable
+private fun TemplateModeSelector(
+    selectedMode: TemplateMode,
+    onModeSelected: (TemplateMode) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = "模板类型",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(Modifier.height(6.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            FilterChip(
+                selected = selectedMode == TemplateMode.DISCRETE,
+                onClick = { onModeSelected(TemplateMode.DISCRETE) },
+                label = {
+                    Text(
+                        text = "离散模板",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                },
+                modifier = Modifier.weight(1f)
+            )
+            FilterChip(
+                selected = selectedMode == TemplateMode.LINEAR,
+                onClick = { onModeSelected(TemplateMode.LINEAR) },
+                label = {
+                    Text(
+                        text = "线性模板",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                },
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
 
 @Composable
 
@@ -128,7 +180,7 @@ fun TemplateEditorNavigator(
 
                 onSelect = { id -> viewModel.setActiveTemplate(id) },
 
-                onAdd = { name -> viewModel.addTemplate(name) },
+                onAdd = { name, mode -> viewModel.addTemplate(name, mode) },
 
                 onDelete = { id -> viewModel.deleteTemplate(id) },
 
@@ -184,7 +236,13 @@ fun TemplateEditorNavigator(
 
                 onDeleteScan = { ts -> viewModel.deleteTemplateScan(t.id, ts) },
 
-                onClearScans = { viewModel.clearTemplateScans(t.id) },
+                onClearScans = {
+                    viewModel.clearTemplateFloorScans(
+                        id = t.id,
+                        floor = viewModel.scanSelectedFloor,
+                        showToast = showToast
+                    )
+                },
 
                 onUploadTemplateData = { templateData, toastCallback -> viewModel.uploadTemplateData(templateData, toastCallback) },
 
@@ -215,6 +273,8 @@ fun TemplateEditorNavigator(
             }
 
             RoomPickerPage(
+
+                templateId = t.id,
 
                 maxFloor = t.maxFloor,
 
@@ -256,7 +316,7 @@ private fun TemplateManagerPage(
 
     onSelect: (String) -> Unit,
 
-    onAdd: (String) -> Unit,
+    onAdd: (String, TemplateMode) -> Unit,
 
     onDelete: (String) -> Unit,
 
@@ -273,6 +333,7 @@ private fun TemplateManagerPage(
     var showDeleteId by remember { mutableStateOf<String?>(null) }
 
     var newName by remember { mutableStateOf("") }
+    var newMode by remember { mutableStateOf(TemplateMode.LINEAR) }
 
     var isBatchMode by remember { mutableStateOf(false) }
 
@@ -285,6 +346,13 @@ private fun TemplateManagerPage(
     fun saveTextToDownloads(fileName: String, mime: String, content: String): Boolean {
 
         return try {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                val downloadsDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+                    ?: return false
+                val catScanDir = File(downloadsDir, "CatScan").apply { mkdirs() }
+                File(catScanDir, fileName).writeText(content, Charsets.UTF_8)
+                return true
+            }
 
             val resolver = context.contentResolver
 
@@ -421,6 +489,8 @@ private fun TemplateManagerPage(
             obj.put("maxFloor", t.maxFloor)
 
             obj.put("roomCountPerFloor", t.roomCountPerFloor)
+            obj.put("mode", t.mode.name)
+            obj.put("lastSelectedFloor", t.lastSelectedFloor)
 
 
 
@@ -638,88 +708,117 @@ private fun TemplateManagerPage(
 
                             },
 
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (isActive) {
+                                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.72f)
+                                } else {
+                                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.62f)
+                                }
+                            )
 
                         ) {
 
-                            Row(
+                            Column(
 
                                 modifier = Modifier
 
                                     .fillMaxWidth()
 
-                                    .padding(12.dp),
-
-                                verticalAlignment = Alignment.CenterVertically
+                                    .padding(horizontal = 14.dp, vertical = 12.dp)
 
                             ) {
 
                                 if (isBatchMode) {
-
-                                    IconButton(
-
-                                        onClick = {
-
-                                            selectedTemplateIds = if (isChecked) {
-
-                                                selectedTemplateIds - t.id
-
-                                            } else {
-
-                                                selectedTemplateIds + t.id
-
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        IconButton(
+                                            onClick = {
+                                                selectedTemplateIds = if (isChecked) {
+                                                    selectedTemplateIds - t.id
+                                                } else {
+                                                    selectedTemplateIds + t.id
+                                                }
                                             }
-
+                                        ) {
+                                            Icon(
+                                                imageVector = if (isChecked) {
+                                                    Icons.Default.CheckBox
+                                                } else {
+                                                    Icons.Default.CheckBoxOutlineBlank
+                                                },
+                                                contentDescription = if (isChecked) "取消选择" else "选择"
+                                            )
                                         }
 
+                                        Text(
+                                            text = t.name,
+                                            modifier = Modifier.weight(1f),
+                                            style = MaterialTheme.typography.titleMedium
+                                        )
+                                    }
+                                } else {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
-
-                                        Icon(
-
-                                            imageVector = if (isChecked) Icons.Default.CheckBox else Icons.Default.CheckBoxOutlineBlank,
-
-                                            contentDescription = if (isChecked) "取消选择" else "选择"
-
+                                        Text(
+                                            text = t.name,
+                                            modifier = Modifier.weight(6f),
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                            style = MaterialTheme.typography.titleMedium
                                         )
 
+                                        Row(
+                                            modifier = Modifier.weight(4f),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            if (isActive) {
+                                                Surface(
+                                                    shape = RoundedCornerShape(16.dp),
+                                                    color = MaterialTheme.colorScheme.primary
+                                                ) {
+                                                    Text(
+                                                        text = "当前",
+                                                        modifier = Modifier.padding(
+                                                            horizontal = 8.dp,
+                                                            vertical = 4.dp
+                                                        ),
+                                                        style = MaterialTheme.typography.labelMedium,
+                                                        color = MaterialTheme.colorScheme.onPrimary
+                                                    )
+                                                }
+                                            }
+
+                                            IconButton(
+                                                onClick = { onOpen(t.id) },
+                                                modifier = Modifier.size(40.dp)
+                                            ) {
+                                                Icon(
+                                                    Icons.Default.Edit,
+                                                    contentDescription = "查看/编辑",
+                                                    modifier = Modifier.size(22.dp)
+                                                )
+                                            }
+
+                                            IconButton(
+                                                onClick = { showDeleteId = t.id },
+                                                modifier = Modifier.size(40.dp)
+                                            ) {
+                                                Icon(
+                                                    Icons.Default.Delete,
+                                                    contentDescription = "删除",
+                                                    modifier = Modifier.size(22.dp)
+                                                )
+                                            }
+                                        }
                                     }
-
-                                }
-
-                                Column(Modifier.weight(1f)) {
-
-                                    Text(t.name, style = MaterialTheme.typography.titleMedium)
-
-                                    Text(
-
-                                        "${t.campus} / ${t.building}  | 楼层:${t.maxFloor} 房间/层:${t.roomCountPerFloor}  | 已选房间:${t.selectedRooms.size}  | 扫码:${t.scans.size}",
-
-                                        style = MaterialTheme.typography.bodySmall
-
-                                    )
-
-                                }
-
-                                if (!isBatchMode) {
-
-                                    if (isActive) {
-
-                                        AssistChip(onClick = {}, label = { Text("已选") })
-
-                                    }
-
-                                    IconButton(onClick = { onOpen(t.id) }) {
-
-                                        Icon(Icons.Default.Edit, contentDescription = "查看/编辑")
-
-                                    }
-
-                                    IconButton(onClick = { showDeleteId = t.id }) {
-
-                                        Icon(Icons.Default.Delete, contentDescription = "删除")
-
-                                    }
-
                                 }
 
                             }
@@ -780,7 +879,7 @@ private fun TemplateManagerPage(
 
                         )
 
-                        toast(if (ok) "已导出 ${selectedTemplateIds.size} 个模板：下载/CatScan/$fileName" else "导出TXT失败")
+                        toast(if (ok) "已导出 ${selectedTemplateIds.size} 个模板：$fileName" else "导出TXT失败")
 
                         isBatchMode = false
 
@@ -823,7 +922,7 @@ private fun TemplateManagerPage(
 
                         )
 
-                        toast(if (ok) "已导出：下载/CatScan/$fileName" else "导出TXT失败")
+                        toast(if (ok) "已导出：$fileName" else "导出TXT失败")
 
                     },
 
@@ -872,7 +971,7 @@ private fun TemplateManagerPage(
 
                         )
 
-                        toast(if (ok) "已导出 ${selectedTemplateIds.size} 个模板：下载/CatScan/$fileName" else "导出JSON失败")
+                        toast(if (ok) "已导出 ${selectedTemplateIds.size} 个模板：$fileName" else "导出JSON失败")
 
                         isBatchMode = false
 
@@ -915,7 +1014,7 @@ private fun TemplateManagerPage(
 
                         )
 
-                        toast(if (ok) "已导出：下载/CatScan/$fileName" else "导出JSON失败")
+                        toast(if (ok) "已导出：$fileName" else "导出JSON失败")
 
                     },
 
@@ -956,9 +1055,13 @@ private fun TemplateManagerPage(
 
                     onClick = {
 
-                        onAdd(newName.trim().ifBlank { "未命名模板" })
+                        onAdd(
+                            newName.trim().ifBlank { "未命名模板" },
+                            newMode
+                        )
 
                         newName = ""
+                        newMode = TemplateMode.LINEAR
 
                         showAdd = false
 
@@ -978,17 +1081,21 @@ private fun TemplateManagerPage(
 
             text = {
 
-                OutlinedTextField(
-
-                    value = newName,
-
-                    onValueChange = { newName = it },
-
-                    label = { Text("模板名称") },
-
-                    singleLine = true
-
-                )
+                Column {
+                    OutlinedTextField(
+                        value = newName,
+                        onValueChange = { newName = it },
+                        label = { Text("模板名称") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    TemplateModeSelector(
+                        selectedMode = newMode,
+                        onModeSelected = { newMode = it },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
 
             }
 
@@ -1071,6 +1178,7 @@ fun TemplateEditorSheet(
 ) {
 
     var name by rememberSaveable(template.id) { mutableStateOf(template.name) }
+    var templateMode by rememberSaveable(template.id) { mutableStateOf(template.mode) }
 
     var op by rememberSaveable(template.id) { mutableStateOf(template.operator) }
 
@@ -1096,7 +1204,7 @@ fun TemplateEditorSheet(
 
         val mf = maxFloor.coerceAtLeast(1)
 
-        val rc = roomCount.coerceAtLeast(1)
+        val rc = roomCount.coerceIn(1, 99)
 
         return (1..mf).flatMap { f ->
 
@@ -1128,7 +1236,7 @@ fun TemplateEditorSheet(
 
             val f = floorText.toIntOrNull()?.takeIf { it > 0 } ?: return@launch
 
-            val r = roomText.toIntOrNull()?.takeIf { it > 0 } ?: return@launch
+            val r = roomText.toIntOrNull()?.takeIf { it in 1..99 } ?: return@launch
 
 
 
@@ -1145,6 +1253,8 @@ fun TemplateEditorSheet(
                     maxFloor = f,
 
                     roomCountPerFloor = r,
+
+                    lastSelectedFloor = template.lastSelectedFloor.coerceIn(1, f),
 
                     selectedRooms = newSelected
 
@@ -1233,6 +1343,14 @@ fun TemplateEditorSheet(
             }
 
             item {
+                TemplateModeSelector(
+                    selectedMode = templateMode,
+                    onModeSelected = { templateMode = it },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            item {
 
                 OutlinedTextField(value = op, onValueChange = { op = it }, label = { Text("操作人") }, modifier = Modifier.fillMaxWidth())
 
@@ -1282,7 +1400,11 @@ fun TemplateEditorSheet(
 
                     onValueChange = {
 
-                        roomText = it.filter(Char::isDigit)
+                        val digits = it.filter(Char::isDigit)
+                        roomText = digits.toIntOrNull()
+                            ?.coerceAtMost(99)
+                            ?.toString()
+                            ?: ""
 
                         scheduleAutoSaveCounts()
 
@@ -1324,9 +1446,15 @@ fun TemplateEditorSheet(
 
             item {
 
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
 
-                    OutlinedButton(onClick = onClearScans) { Text("清空扫码数据") }
+                    OutlinedButton(
+                        onClick = onClearScans,
+                        modifier = Modifier.weight(1f)
+                    ) { Text("清空当前楼层") }
 
                     Button(
 
@@ -1334,7 +1462,15 @@ fun TemplateEditorSheet(
 
                             val f = parsePositiveInt(floorText, 1).coerceAtLeast(1)
 
-                            val r = parsePositiveInt(roomText, 1).coerceAtLeast(1)
+                            val r = parsePositiveInt(roomText, 1).coerceIn(1, 99)
+                            val selectedRooms = if (
+                                templateMode == TemplateMode.DISCRETE &&
+                                template.selectedRooms.isEmpty()
+                            ) {
+                                buildAllRooms(f, r)
+                            } else {
+                                template.selectedRooms
+                            }
 
                             onSave(
 
@@ -1350,7 +1486,13 @@ fun TemplateEditorSheet(
 
                                     maxFloor = f,
 
-                                    roomCountPerFloor = r
+                                    roomCountPerFloor = r,
+
+                                    mode = templateMode,
+
+                                    lastSelectedFloor = template.lastSelectedFloor.coerceIn(1, f),
+
+                                    selectedRooms = selectedRooms
 
                                 )
 
@@ -1360,7 +1502,8 @@ fun TemplateEditorSheet(
 
                             onBack()
 
-                        }
+                        },
+                        modifier = Modifier.weight(1f)
 
                     ) { Text("保存模板") }
 
@@ -1496,6 +1639,8 @@ fun TemplateEditorSheet(
 
 private fun RoomPickerPage(
 
+    templateId: String,
+
     maxFloor: Int,
 
     roomCountPerFloor: Int,
@@ -1514,7 +1659,7 @@ private fun RoomPickerPage(
 
 
 
-    var selectedFloor by rememberSaveable { mutableStateOf(1) }
+    var selectedFloor by rememberSaveable(templateId) { mutableStateOf(1) }
 
     if (selectedFloor > maxFloor) selectedFloor = maxFloor.coerceAtLeast(1)
 
@@ -1528,7 +1673,7 @@ private fun RoomPickerPage(
 
         val mf = maxFloor.coerceAtLeast(1)
 
-        val rc = roomCountPerFloor.coerceAtLeast(1)
+        val rc = roomCountPerFloor.coerceIn(1, 99)
 
         (1..mf).flatMap { f ->
 
@@ -1542,7 +1687,17 @@ private fun RoomPickerPage(
 
     // ✅ 用 rememberSaveable 保存“List<String>”（可保存），避免 Set 的保存/委托问题
 
-    val selectedRoomsState = rememberSaveable {
+    val selectedRoomsState = rememberSaveable(
+
+        templateId,
+
+        maxFloor,
+
+        roomCountPerFloor,
+
+        initialSelected
+
+    ) {
 
         mutableStateOf(
 
@@ -1588,7 +1743,7 @@ private fun RoomPickerPage(
 
     val roomsOfFloor = remember(selectedFloor, roomCountPerFloor) {
 
-        (1..roomCountPerFloor.coerceAtLeast(1)).map { r -> "$selectedFloor${roomSuffix(r)}" }
+        (1..roomCountPerFloor.coerceIn(1, 99)).map { r -> "$selectedFloor${roomSuffix(r)}" }
 
     }
 
@@ -1730,7 +1885,39 @@ private fun RoomPickerPage(
 
                     colors = CardDefaults.cardColors(
 
-                        containerColor = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
+                        containerColor = if (selected) {
+
+                            MaterialTheme.colorScheme.primary
+
+                        } else {
+
+                            MaterialTheme.colorScheme.surface
+
+                        }
+
+                    ),
+
+                    elevation = CardDefaults.cardElevation(
+
+                        defaultElevation = 0.dp,
+
+                        pressedElevation = 0.dp
+
+                    ),
+
+                    border = BorderStroke(
+
+                        width = 1.dp,
+
+                        color = if (selected) {
+
+                            MaterialTheme.colorScheme.primary
+
+                        } else {
+
+                            MaterialTheme.colorScheme.outlineVariant
+
+                        }
 
                     ),
 
@@ -1758,7 +1945,15 @@ private fun RoomPickerPage(
 
                             code,
 
-                            color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                            color = if (selected) {
+
+                                MaterialTheme.colorScheme.onPrimary
+
+                            } else {
+
+                                MaterialTheme.colorScheme.onSurface
+
+                            }
 
                         )
 

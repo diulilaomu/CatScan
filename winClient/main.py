@@ -1,17 +1,20 @@
 ﻿import datetime
+import hmac
 import json
 import logging
 import os
 import re
+import secrets
 import socket
 import sys
 import threading
 import time
+from urllib.parse import urlencode
 
 import eel
 import uvicorn
-from fastapi import FastAPI, Request
-from pynput.keyboard import Controller
+from fastapi import FastAPI, HTTPException, Request
+from pynput.keyboard import Controller, Key
 
 
 def get_base_path():
@@ -59,6 +62,7 @@ init_logging()
 CLIENT_STALE_SECONDS = 15
 CLIENT_RETENTION_SECONDS = 24 * 60 * 60
 KICK_RETENTION_SECONDS = 0
+PAIRING_TOKEN = os.environ.get("CATSCAN_PAIRING_TOKEN") or secrets.token_urlsafe(24)
 
 _connections_lock = threading.Lock()
 _client_connections = {}
@@ -69,10 +73,39 @@ _kicked_clients = {}
 app = FastAPI()
 
 
+def _request_is_authorized(request):
+    if request is None:
+        return False
+    supplied_token = request.query_params.get("token", "")
+    if not supplied_token:
+        supplied_token = request.headers.get("X-CatScan-Token", "")
+    return bool(supplied_token) and hmac.compare_digest(supplied_token, PAIRING_TOKEN)
+
+
+def _require_authorized(request):
+    if not _request_is_authorized(request):
+        raise HTTPException(status_code=401, detail="invalid pairing token")
+
+
+def _build_server_url(ip):
+    query = urlencode({"token": PAIRING_TOKEN})
+    return f"http://{ip}:29027/postqrdata?{query}"
+
+
 def _type_chinese_with_pynput_impl(text):
     try:
+        raw_text = str(text)
+        submit_after_typing = raw_text.endswith(("\r", "\n"))
+        content = raw_text.rstrip("\r\n")
+        safe_content = "".join(char for char in content if char.isprintable())[:4096]
+        if not safe_content:
+            return
+
         keyboard = Controller()
-        keyboard.type(str(text))
+        keyboard.type(safe_content)
+        if submit_after_typing:
+            keyboard.press(Key.enter)
+            keyboard.release(Key.enter)
     except Exception as exc:
         logging.error("keyboard input failed: %s", exc)
 
@@ -93,11 +126,10 @@ def get_local_ips():
                 continue
             if ip.startswith("127."):
                 continue
-            ip_addresses.append(f"http://{ip}:29027/postqrdata")
+            ip_addresses.append(_build_server_url(ip))
 
         ip_addresses = list(dict.fromkeys(ip_addresses))
-        for ip in ip_addresses:
-            logging.info("local endpoint: %s", ip)
+        logging.info("local endpoints available: %s", len(ip_addresses))
         return ip_addresses
     except socket.gaierror as exc:
         logging.error("get local ips failed: %s", exc)
@@ -285,6 +317,7 @@ def _build_kicked_client_rows():
 
 @app.post("/postqrdata")
 async def receive_json(data: dict, request: Request):
+    _require_authorized(request)
     client_ip = _normalize_ip(request.client.host if request and request.client else "")
     base_ip, base_mac = _extract_client_network_info(data, fallback_ip=client_ip)
 
@@ -387,7 +420,8 @@ async def receive_json(data: dict, request: Request):
 
 
 @app.get("/postqrdata")
-async def health_check():
+async def health_check(request: Request):
+    _require_authorized(request)
     return {"status": "received", "code": 200, "timestamp": getTime()}
 
 
@@ -569,7 +603,7 @@ if __name__ == "__main__":
         try:
             from udp_discovery import run_discovery_in_thread
 
-            run_discovery_in_thread()
+            run_discovery_in_thread(PAIRING_TOKEN)
             logging.info("UDP discovery started on port 29028")
         except ImportError:
             logging.warning("UDP discovery module not found, skip")

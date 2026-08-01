@@ -929,12 +929,12 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="(item, idx) in filteredAndPagedData" :key="idx" @click="copyQrdata(idx)">
+                                        <tr v-for="(item, idx) in filteredAndPagedData" :key="item.id || item.qrdata || idx" @click="copyQrdata(idx)">
                                             <td v-for="col in tableColumns" :key="col.key" :data-col="col.key">
                                                 {{ col.key === '__index__' ? (getItemIndex(idx) + 1) : (item[col.key] ?? '') }}
                                             </td>
                                             <td @click.stop>
-                                                <button class="delete-btn" @click="deleteItem(getItemIndex(idx))" title="删除">
+                                                <button class="delete-btn" @click="deleteItem(item)" title="删除">
                                                     ×
                                                 </button>
                                             </td>
@@ -1255,8 +1255,10 @@ createApp({
                     if (action === 'delete') {
                         if (newItem.id) {
                             qrdataList.value = qrdataList.value.filter((item) => item.id !== newItem.id);
+                            pendingData = pendingData.filter((item) => item.id !== newItem.id);
                         } else if (newItem.qrdata) {
                             qrdataList.value = qrdataList.value.filter((item) => item.qrdata !== newItem.qrdata);
+                            pendingData = pendingData.filter((item) => item.qrdata !== newItem.qrdata);
                         }
                         return false;
                     }
@@ -1267,16 +1269,24 @@ createApp({
                             qrdataList.value[byIdIndex] = { ...qrdataList.value[byIdIndex], ...newItem };
                             return false;
                         }
-                        if (pendingData.some((item) => item.id === newItem.id)) return false;
+                        const pendingByIdIndex = pendingData.findIndex((item) => item.id === newItem.id);
+                        if (pendingByIdIndex !== -1) {
+                            pendingData[pendingByIdIndex] = { ...pendingData[pendingByIdIndex], ...newItem };
+                            return false;
+                        }
                     }
 
-                    if (newItem.qrdata) {
+                    if (!newItem.id && newItem.qrdata) {
                         const byQrIndex = qrdataList.value.findIndex((item) => item.qrdata === newItem.qrdata);
                         if (byQrIndex !== -1) {
                             qrdataList.value[byQrIndex] = { ...qrdataList.value[byQrIndex], ...newItem };
                             return false;
                         }
-                        if (pendingData.some((item) => item.qrdata === newItem.qrdata)) return false;
+                        const pendingByQrIndex = pendingData.findIndex((item) => item.qrdata === newItem.qrdata);
+                        if (pendingByQrIndex !== -1) {
+                            pendingData[pendingByQrIndex] = { ...pendingData[pendingByQrIndex], ...newItem };
+                            return false;
+                        }
                     } else if (!newItem.id) {
                         return false;
                     }
@@ -1343,7 +1353,10 @@ createApp({
             );
         }
 
-        function deleteItem(idx) {
+        function deleteItem(item) {
+            const idx = item?.id
+                ? qrdataList.value.findIndex((candidate) => candidate.id === item.id)
+                : qrdataList.value.indexOf(item);
             if (idx < 0 || idx >= qrdataList.value.length) return;
             qrdataList.value.splice(idx, 1);
             if (filteredAndPagedData.value.length === 0 && currentPage.value > 1) {

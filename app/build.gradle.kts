@@ -9,6 +9,38 @@ plugins {
     kotlin("kapt")
 }
 
+val releaseSigningProperties = Properties()
+val releaseSigningFile = rootProject.file("keystore.properties")
+if (releaseSigningFile.isFile) {
+    FileInputStream(releaseSigningFile).use(releaseSigningProperties::load)
+}
+
+fun releaseSigningValue(propertyName: String, environmentName: String): String? {
+    return providers.gradleProperty(propertyName).orNull
+        ?: providers.environmentVariable(environmentName).orNull
+        ?: releaseSigningProperties.getProperty(propertyName)
+}
+
+val releaseStoreFile = releaseSigningValue("CATSCAN_STORE_FILE", "CATSCAN_STORE_FILE")
+val releaseStorePassword = releaseSigningValue("CATSCAN_STORE_PASSWORD", "CATSCAN_STORE_PASSWORD")
+val releaseKeyAlias = releaseSigningValue("CATSCAN_KEY_ALIAS", "CATSCAN_KEY_ALIAS")
+val releaseKeyPassword = releaseSigningValue("CATSCAN_KEY_PASSWORD", "CATSCAN_KEY_PASSWORD")
+val hasReleaseSigning = listOf(
+    releaseStoreFile,
+    releaseStorePassword,
+    releaseKeyAlias,
+    releaseKeyPassword
+).all { !it.isNullOrBlank() }
+val releaseTaskRequested = gradle.startParameter.taskNames.any {
+    it.contains("release", ignoreCase = true)
+}
+if (releaseTaskRequested && !hasReleaseSigning) {
+    throw GradleException(
+        "Release signing is not configured. Copy keystore.properties.example " +
+            "to keystore.properties and provide the real values, or set the CATSCAN_* environment variables."
+    )
+}
+
 android {
     namespace = "com.example.catscandemo"
     compileSdk {
@@ -36,11 +68,13 @@ android {
     }
 
     signingConfigs {
-        create("release") {
-            storeFile = file("D:/keys/catscan")
-            storePassword = "@Zhang164"
-            keyAlias = "catscan"
-            keyPassword = "@Zhang164"
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = file(requireNotNull(releaseStoreFile))
+                storePassword = requireNotNull(releaseStorePassword)
+                keyAlias = requireNotNull(releaseKeyAlias)
+                keyPassword = requireNotNull(releaseKeyPassword)
+            }
         }
     }
 
@@ -49,7 +83,9 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true  // 移除未使用资源
             isDebuggable = false       // 禁用调试
-            signingConfig = signingConfigs.getByName("release")
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

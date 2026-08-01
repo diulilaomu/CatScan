@@ -76,6 +76,8 @@ import com.example.catscandemo.ui.components.ChangeServerUrlDialog
 
 import com.example.catscandemo.ui.components.DiscoveredPcDialog
 
+import com.example.catscandemo.ui.components.DiscreteRoomSelectionDialog
+
 import com.example.catscandemo.ui.components.ResultItemController
 
 import com.example.catscandemo.ui.components.SettingsDrawer
@@ -196,13 +198,13 @@ fun MainScreen(viewModel: MainViewModel) {
 
 
 
-    val activeId by derivedStateOf { viewModel.activeTemplateId }
+    val activeId = viewModel.activeTemplateId
 
-    val selectedFloor by derivedStateOf { viewModel.scanSelectedFloor }
+    val selectedFloor = viewModel.scanSelectedFloor
 
 
 
-    val displayItems by derivedStateOf {
+    val displayItems = remember(activeId, selectedFloor, scanItems) {
 
         val result = if (activeId.isNullOrBlank()) {
 
@@ -234,7 +236,7 @@ fun MainScreen(viewModel: MainViewModel) {
 
 
 
-    val duplicateTextSet by derivedStateOf {
+    val duplicateTextSet = remember(displayItems) {
 
         displayItems.groupBy { it.scanData.text }
 
@@ -250,27 +252,20 @@ fun MainScreen(viewModel: MainViewModel) {
 
 
 
-    // TopBar title：校区 + 楼栋（实时，字体更小）
+    // TopBar title：校区 + 楼栋 + 当前房间号
 
-    val titleText by derivedStateOf {
+    val titleTemplate = viewModel.activeTemplate
+    val titleRoom = viewModel.currentRoom.trim()
+    val titleText = remember(titleTemplate, titleRoom) {
 
-        val t = viewModel.activeTemplate
+        val campus = titleTemplate?.campus?.trim().orEmpty()
 
-        val campus = t?.campus?.trim().orEmpty()
+        val building = titleTemplate?.building?.trim().orEmpty()
 
-        val building = t?.building?.trim().orEmpty()
-
-        when {
-
-            campus.isNotBlank() && building.isNotBlank() -> "$campus · $building"
-
-            campus.isNotBlank() -> campus
-
-            building.isNotBlank() -> building
-
-            else -> "CatScan"
-
-        }
+        listOf(campus, building, titleRoom)
+            .filter { it.isNotBlank() }
+            .joinToString(" · ")
+            .ifBlank { "CatScan" }
 
     }
 
@@ -683,7 +678,7 @@ fun MainScreen(viewModel: MainViewModel) {
                                     modifier = Modifier.fillMaxWidth(),
                                     label = {
                                         Text(
-                                            text = "清空",
+                                            text = "清空本层",
                                             style = MaterialTheme.typography.bodySmall,
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis,
@@ -811,6 +806,24 @@ fun MainScreen(viewModel: MainViewModel) {
     }
 
 
+
+    if (viewModel.pendingDiscreteScanCode != null) {
+        viewModel.activeTemplate?.let { template ->
+            DiscreteRoomSelectionDialog(
+                template = template,
+                initialFloor = viewModel.preferredDiscreteFloor(template),
+                onConfirm = { floor, room ->
+                    viewModel.confirmDiscreteScan(
+                        floor = floor,
+                        room = room,
+                        copyToClipboard = copyToClipboard,
+                        showToast = showToast
+                    )
+                },
+                onDismiss = viewModel::cancelPendingDiscreteScan
+            )
+        }
+    }
 
     if (viewModel.showUrlChangeDialog) {
 

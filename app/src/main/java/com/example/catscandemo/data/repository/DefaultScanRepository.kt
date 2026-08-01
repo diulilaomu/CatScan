@@ -123,7 +123,11 @@ class DefaultScanRepository(
     override fun markScanAsUploaded(id: Long) {
         val index = scanResults.indexOfFirst { it.id == id }
         if (index != -1) {
-            val updatedResult = scanResults[index].copy(uploaded = true)
+            val current = scanResults[index]
+            val updatedResult = current.copy(
+                scanData = current.scanData.copy(uploaded = true),
+                uploaded = true
+            )
             scanResults[index] = updatedResult
             saveScanResults()
         }

@@ -1,6 +1,11 @@
 package com.example.catscandemo.domain.model
 
-import java.util.UUID
+import java.util.UUID
+
+enum class TemplateMode {
+    LINEAR,
+    DISCRETE
+}
 
 /**
  * 基础扫描数据模型
@@ -32,7 +37,11 @@ data class TemplateModel(
     val building: String = "",
     val maxFloor: Int = 1,
     val roomCountPerFloor: Int = 1,
-    val selectedRooms: List<String> = emptyList(),
+    val mode: TemplateMode = TemplateMode.LINEAR,
+
+    val lastSelectedFloor: Int = 1,
+
+    val selectedRooms: List<String> = emptyList(),
     val scans: List<ScanData> = emptyList()
 )
 

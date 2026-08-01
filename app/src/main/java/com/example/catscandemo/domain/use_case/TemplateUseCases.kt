@@ -1,7 +1,9 @@
 package com.example.catscandemo.domain.use_case
 
 import com.example.catscandemo.domain.model.ScanData
-import com.example.catscandemo.domain.model.TemplateModel
+import com.example.catscandemo.domain.model.TemplateMode
+
+import com.example.catscandemo.domain.model.TemplateModel
 
 /**
  * 模板管理相关的 Use Case
@@ -47,7 +49,10 @@ class SaveTemplatesUseCase(
 class AddTemplateUseCase(
     private val templateRepository: TemplateRepository
 ) {
-    operator fun invoke(name: String): TemplateModel {
+    operator fun invoke(
+        name: String,
+        mode: TemplateMode = TemplateMode.LINEAR
+    ): TemplateModel {
         val template = TemplateModel(
             name = name.trim().ifBlank { "未命名模板" },
             operator = "猫头枪",
@@ -55,7 +60,13 @@ class AddTemplateUseCase(
             building = "",
             maxFloor = 1,
             roomCountPerFloor = 1,
-            selectedRooms = emptyList(),
+            mode = mode,
+
+            selectedRooms = if (mode == TemplateMode.DISCRETE) {
+                listOf("101")
+            } else {
+                emptyList()
+            },
             scans = emptyList()
         )
         templateRepository.addTemplate(template)

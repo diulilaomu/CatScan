@@ -187,10 +187,6 @@ class DefaultNetworkRepository(
         heartbeatJob = null
     }
 
-    fun startPassiveListener() {
-        networkDiscovery?.startPassiveListener()
-    }
-
     fun cleanup() {
         networkDiscovery?.cleanup()
         stopHeartbeatDetection()

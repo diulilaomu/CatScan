@@ -59,9 +59,9 @@ sequenceDiagram
 
 ### 3.2 API 设计
 
-#### POST /postqrdata
+#### POST /postqrdata?token=&lt;配对令牌&gt;
 
-**功能**：接收Android客户端发送的数据
+**功能**：接收 Android 客户端发送的数据。PC 启动时生成配对令牌，HTTP 请求和 UDP 发现结果均携带该令牌；可通过 `CATSCAN_PAIRING_TOKEN` 环境变量固定令牌。
 
 **请求体**：
 

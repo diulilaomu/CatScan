@@ -17,7 +17,6 @@ data class DiscoveredServer(
 class NetworkDiscovery(private val context: Context) {
     private val discoveryScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var discoveryJob: Job? = null
-    private var listenerJob: Job? = null // 被动监听任务
     private var isContinuous = false
     
     companion object {
@@ -136,7 +135,7 @@ class NetworkDiscovery(private val context: Context) {
                                     withContext(Dispatchers.Main) {
                                         onServerFound(server)
                                     }
-                                    Log.d(TAG, "发现服务器: ${server.url}")
+                                    Log.d(TAG, "发现服务器: ${server.ip}:${server.port}")
                                 }
                             }
                         }
@@ -170,75 +169,6 @@ class NetworkDiscovery(private val context: Context) {
     fun stopDiscovery() {
         discoveryJob?.cancel()
         discoveryJob = null
-    }
-    
-    /**
-     * 启动被动监听服务（响应其他设备的发现请求）
-     */
-    fun startPassiveListener() {
-        stopPassiveListener()
-        
-        listenerJob = discoveryScope.launch {
-            try {
-                val socket = DatagramSocket(DISCOVERY_PORT).apply {
-                    broadcast = true
-                    reuseAddress = true
-                }
-                
-                Log.d(TAG, "被动监听服务已启动，端口 $DISCOVERY_PORT")
-                
-                while (isActive) {
-                    try {
-                        val buffer = ByteArray(1024)
-                        val packet = DatagramPacket(buffer, buffer.size)
-                        socket.receive(packet)
-                        
-                        val request = String(
-                            packet.data,
-                            0,
-                            packet.length,
-                            StandardCharsets.UTF_8
-                        )
-                        
-                        if (request == DISCOVERY_MESSAGE) {
-                            // 获取本机IP地址
-                            val localIp = getLocalIpAddress()
-                            if (localIp != null) {
-                                // 构造响应（虽然Android客户端不提供HTTP服务，但可以响应发现请求）
-                                val responseUrl = "http://$localIp:29027/postqrdata"
-                                val response = "${DISCOVERY_RESPONSE_PREFIX}$responseUrl"
-                                
-                                val responseData = response.toByteArray(StandardCharsets.UTF_8)
-                                val responsePacket = DatagramPacket(
-                                    responseData,
-                                    responseData.size,
-                                    packet.address,
-                                    packet.port
-                                )
-                                socket.send(responsePacket)
-                                Log.d(TAG, "响应发现请求: ${packet.address.hostAddress} -> $responseUrl")
-                            }
-                        }
-                    } catch (e: Exception) {
-                        if (isActive) {
-                            Log.e(TAG, "被动监听错误: ${e.message}")
-                        }
-                    }
-                }
-                
-                socket.close()
-            } catch (e: Exception) {
-                Log.e(TAG, "启动被动监听服务失败: ${e.message}", e)
-            }
-        }
-    }
-    
-    /**
-     * 停止被动监听服务
-     */
-    fun stopPassiveListener() {
-        listenerJob?.cancel()
-        listenerJob = null
     }
     
     /**
@@ -379,7 +309,6 @@ class NetworkDiscovery(private val context: Context) {
      */
     fun cleanup() {
         stopDiscovery()
-        stopPassiveListener()
         discoveryScope.cancel()
     }
 }

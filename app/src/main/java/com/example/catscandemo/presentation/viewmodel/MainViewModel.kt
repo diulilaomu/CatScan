@@ -38,6 +38,8 @@ import com.example.catscandemo.domain.model.ScanData
 
 import com.example.catscandemo.domain.model.ScanResult
 
+import com.example.catscandemo.domain.model.TemplateMode
+
 import com.example.catscandemo.domain.model.TemplateModel
 
 import com.example.catscandemo.domain.use_case.*
@@ -60,7 +62,26 @@ import kotlinx.coroutines.launch
 
 import javax.inject.Inject
 
+import java.util.concurrent.atomic.AtomicBoolean
+
 import kotlin.math.max
+
+
+internal fun nextLinearRoomIndex(template: TemplateModel, floor: Int): Int {
+    val rooms = template.selectedRooms
+        .filter { code ->
+            code.length >= 3 && code.dropLast(2).toIntOrNull() == floor
+        }
+        .sorted()
+    if (rooms.isEmpty()) return 0
+
+    val lastRoom = template.scans.firstOrNull { scan ->
+        scan.room in rooms &&
+                (Regex("\\d+").find(scan.floor)?.value?.toIntOrNull() == floor)
+    }?.room ?: return 0
+
+    return (rooms.indexOf(lastRoom) + 1) % rooms.size
+}
 
 
 
@@ -97,6 +118,7 @@ class MainViewModel @Inject constructor(
     // 数据管理中心
 
     private val dataManager = DataManager(scanUseCases, templateUseCases)
+    private val pendingUploadInProgress = AtomicBoolean(false)
 
 
 
@@ -210,6 +232,16 @@ class MainViewModel @Inject constructor(
 
         activeTemplate = dataManager.activeTemplate
 
+        activeTemplate?.let { template ->
+            val initialFloor = if (template.mode == TemplateMode.DISCRETE) {
+                template.lastSelectedFloor
+            } else {
+                1
+            }
+            clampSelectedFloor(initialFloor, template.maxFloor)
+            restoreLinearCursor(template)
+        }
+
         
 
         // 初始化结果列表，确保数据同步
@@ -246,17 +278,13 @@ class MainViewModel @Inject constructor(
 
     fun setActiveTemplate(id: String) {
 
+        cancelPendingDiscreteScan()
+
         // 使用数据管理中心设置激活模板
 
         dataManager.setActiveTemplate(id)
 
         
-
-        // ✅ 切换模板时默认回到 1 层（避免上一模板的楼层残留）
-
-        scanSelectedFloor = 1
-
-
 
         // 同步ViewModel的状态
 
@@ -269,8 +297,13 @@ class MainViewModel @Inject constructor(
         val t = activeTemplate
 
         if (t != null) {
-
-            clampSelectedFloor(scanSelectedFloor, t.maxFloor)
+            val initialFloor = if (t.mode == TemplateMode.DISCRETE) {
+                t.lastSelectedFloor
+            } else {
+                1
+            }
+            clampSelectedFloor(initialFloor, t.maxFloor)
+            restoreLinearCursor(t)
 
         }
 
@@ -296,6 +329,8 @@ class MainViewModel @Inject constructor(
 
     fun clearActiveTemplate() {
 
+        cancelPendingDiscreteScan()
+
         // 使用数据管理中心清除激活模板
 
         dataManager.clearActiveTemplate()
@@ -320,11 +355,16 @@ class MainViewModel @Inject constructor(
 
 
 
-    fun addTemplate(name: String) {
+    fun addTemplate(
+        name: String,
+        mode: TemplateMode = TemplateMode.LINEAR
+    ) {
+
+        cancelPendingDiscreteScan()
 
         // 使用数据管理中心添加模板
 
-        val template = dataManager.addTemplate(name)
+        val template = dataManager.addTemplate(name, mode)
 
         
 
@@ -347,6 +387,7 @@ class MainViewModel @Inject constructor(
         if (t != null) {
 
             clampSelectedFloor(scanSelectedFloor, t.maxFloor)
+            restoreLinearCursor(t)
 
         }
 
@@ -430,25 +471,19 @@ class MainViewModel @Inject constructor(
 
                 if (batchData.isNotEmpty()) {
 
-                    networkUseCases.uploadBatchScanData(
-
-                        scanDataList = batchData,
-
-                        serverUrl = serverUrl,
-
-                        onSuccess = {
-
-                            Log.d(TAG, "批量同步删除模板数据成功: ${batchData.size} 条数据")
-
-                        },
-
-                        onError = { error ->
-
-                            Log.e(TAG, "批量同步删除模板数据失败: $error")
-
-                        }
-
-                    )
+                    batchData.forEach { scanData ->
+                        networkUseCases.uploadScanData(
+                            scanData = scanData,
+                            serverUrl = serverUrl,
+                            action = "delete",
+                            onSuccess = {
+                                Log.d(TAG, "同步删除模板数据成功: ${scanData.id}")
+                            },
+                            onError = { error ->
+                                Log.e(TAG, "同步删除模板数据失败: ${scanData.id}, $error")
+                            }
+                        )
+                    }
 
                 }
 
@@ -461,6 +496,10 @@ class MainViewModel @Inject constructor(
 
 
     fun updateTemplate(updated: TemplateModel) {
+
+        if (pendingDiscreteTemplateId == updated.id) {
+            cancelPendingDiscreteScan()
+        }
 
         // 使用数据管理中心更新模板
 
@@ -481,6 +520,7 @@ class MainViewModel @Inject constructor(
         if (activeTemplateId == updated.id) {
 
             clampSelectedFloor(scanSelectedFloor, updated.maxFloor)
+            restoreLinearCursor(updated)
 
         }
 
@@ -538,26 +578,51 @@ class MainViewModel @Inject constructor(
 
 
 
-    fun clearTemplateScans(id: String) {
+    fun clearTemplateFloorScans(
+        id: String,
+        floor: Int,
+        showToast: (String) -> Unit
+    ) {
+        val template = templates.firstOrNull { it.id == id }
+        if (template == null) {
+            showToast("模板不存在")
+            return
+        }
 
-        // 使用数据管理中心清空模板扫描数据
-
-        dataManager.clearTemplateScans(id)
-
-        
-
-        // 同步ViewModel的状态
+        val validFloor = floor.coerceIn(1, template.maxFloor.coerceAtLeast(1))
+        val deletedScans = dataManager.clearTemplateFloorScans(id, validFloor)
 
         activeTemplateId = dataManager.activeTemplateId
-
         activeTemplate = dataManager.activeTemplate
-
-        
-
-        // 更新扫描结果StateFlow，触发UI更新
-
+        if (activeTemplateId == id) {
+            rebuildCursorAfterDelete(validFloor)
+        }
         getAllScans()
 
+        if (deletedScans.isEmpty()) {
+            showToast("${validFloor}层暂无扫描数据")
+            return
+        }
+
+        if (uploadEnabled && serverUrl.isNotEmpty()) {
+            viewModelScope.launch(Dispatchers.IO) {
+                deletedScans.forEach { scanData ->
+                    networkUseCases.uploadScanData(
+                        scanData = scanData,
+                        serverUrl = serverUrl,
+                        action = "delete",
+                        onSuccess = {
+                            Log.d(TAG, "同步清空楼层数据成功: ${scanData.id}")
+                        },
+                        onError = { error ->
+                            Log.e(TAG, "同步清空楼层数据失败: ${scanData.id}, $error")
+                        }
+                    )
+                }
+            }
+        }
+
+        showToast("已清空${validFloor}层 ${deletedScans.size} 条扫描数据")
     }
 
 
@@ -756,6 +821,13 @@ class MainViewModel @Inject constructor(
 
     var currentRoom by mutableStateOf("")
 
+    var pendingDiscreteScanCode by mutableStateOf<String?>(null)
+        private set
+    private var pendingDiscreteTemplateId: String? = null
+    fun preferredDiscreteFloor(template: TemplateModel): Int {
+        return template.lastSelectedFloor.coerceIn(1, max(1, template.maxFloor))
+    }
+
 
 
     // =============== “按楼层顺序读模板房间号” ===============
@@ -767,6 +839,16 @@ class MainViewModel @Inject constructor(
         val maxF = activeTemplate?.maxFloor ?: 1
 
         clampSelectedFloor(floor, maxF)
+
+        val template = activeTemplate
+        if (
+            template?.mode == TemplateMode.DISCRETE &&
+            template.lastSelectedFloor != scanSelectedFloor
+        ) {
+            val updated = template.copy(lastSelectedFloor = scanSelectedFloor)
+            dataManager.updateTemplate(updated)
+            activeTemplate = dataManager.activeTemplate
+        }
 
     }
 
@@ -828,27 +910,31 @@ class MainViewModel @Inject constructor(
 
     }
 
+    private fun restoreLinearCursor(template: TemplateModel) {
+        if (template.mode != TemplateMode.LINEAR) {
+            cursorByTemplateFloor.remove(template.id)
+            return
+        }
+
+        val floorCursors = cursorByTemplateFloor.getOrPut(template.id) { HashMap() }
+        floorCursors.clear()
+        for (floor in 1..template.maxFloor.coerceAtLeast(1)) {
+            if (roomsForFloor(template, floor).isNotEmpty()) {
+                floorCursors[floor] = nextLinearRoomIndex(template, floor)
+            }
+        }
+    }
+
     private fun rebuildCursorAfterDelete(floor: Int) {
 
-        val t = activeTemplate ?: return
-
-        val rooms = roomsForFloor(t, floor) // 你已有的方法：返回该楼层房间号列表（已排序）
-
-        if (rooms.isEmpty()) return
-
-
-
-        // 删除后，该楼层已识别数量（以识别结果列表为准）
-
-        val usedCount = dataManager.getAllScans().count { parseFloorNumber(it.scanData.floor) == floor }
-
-
-
-        // 游标=已使用数量 % 房间数（保证下一次扫描取“正确的下一个”）
-
+        val t = dataManager.activeTemplate ?: activeTemplate ?: return
         val map = cursorByTemplateFloor.getOrPut(t.id) { HashMap() }
 
-        map[floor] = usedCount % rooms.size
+        if (roomsForFloor(t, floor).isEmpty()) {
+            map.remove(floor)
+        } else {
+            map[floor] = nextLinearRoomIndex(t, floor)
+        }
 
     }
 
@@ -994,7 +1080,81 @@ class MainViewModel @Inject constructor(
 
     // ===================== 扫码入口 =====================
 
+    fun cancelPendingDiscreteScan() {
+        pendingDiscreteScanCode = null
+        pendingDiscreteTemplateId = null
+    }
 
+    fun confirmDiscreteScan(
+        floor: Int,
+        room: String,
+        copyToClipboard: (String) -> Unit,
+        showToast: (String) -> Unit
+    ) {
+        val code = pendingDiscreteScanCode ?: return
+        val template = activeTemplate
+
+        if (
+            template == null ||
+            template.id != pendingDiscreteTemplateId ||
+            template.mode != TemplateMode.DISCRETE
+        ) {
+            cancelPendingDiscreteScan()
+            showToast("当前离散模板已发生变化，请重新扫码")
+            return
+        }
+
+        val validFloor = floor.coerceIn(1, max(1, template.maxFloor))
+        val isValidRoom = room in template.selectedRooms &&
+                floorOfRoomCode(room) == validFloor
+        if (!isValidRoom) {
+            showToast("请选择有效的楼层和房间号")
+            return
+        }
+
+        currentOperator = template.operator.ifBlank { "unknown" }
+        currentCampus = template.campus
+        currentBuilding = template.building
+        currentFloor = "${validFloor}层"
+        currentRoom = room
+        clampSelectedFloor(validFloor, template.maxFloor)
+        if (template.lastSelectedFloor != validFloor) {
+            val updated = template.copy(lastSelectedFloor = validFloor)
+            dataManager.updateTemplate(updated)
+            activeTemplate = dataManager.activeTemplate
+        }
+        cancelPendingDiscreteScan()
+
+        try {
+            val scanData = dataManager.addScan(
+                text = code,
+                templateId = template.id,
+                templateName = template.name,
+                operator = currentOperator,
+                campus = currentCampus,
+                building = currentBuilding,
+                floor = currentFloor,
+                room = currentRoom,
+                allowDuplicate = duplicateScanEnabled
+            )
+
+            if (scanData != null) {
+                appendScanToActiveTemplate(scanData)
+
+                if (clipboardEnabled) {
+                    copyToClipboard(code)
+                    showToast("已复制: $code")
+                }
+                if (uploadEnabled && serverUrl.isNotEmpty()) {
+                    uploadData(scanData, showToast)
+                }
+                getAllScans()
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "离散模板扫码处理异常: ${e.message}", e)
+            showToast("处理扫码数据失败：${e.message ?: "未知错误"}")
+        }
+    }
 
     fun onBarcodeScanned(
 
@@ -1019,6 +1179,27 @@ class MainViewModel @Inject constructor(
                 }
 
                 else -> {
+
+                    val selectedTemplate = activeTemplate
+                    if (selectedTemplate?.mode == TemplateMode.DISCRETE) {
+                        if (pendingDiscreteScanCode != null) {
+                            return
+                        }
+
+                        val availableRooms = selectedTemplate.selectedRooms.filter {
+                            floorOfRoomCode(it)?.let { floor ->
+                                floor in 1..max(1, selectedTemplate.maxFloor)
+                            } == true
+                        }
+                        if (availableRooms.isEmpty()) {
+                            showToast("模板「${selectedTemplate.name}」未配置可选房间号")
+                            return
+                        }
+
+                        pendingDiscreteTemplateId = selectedTemplate.id
+                        pendingDiscreteScanCode = code
+                        return
+                    }
 
                     // 扫描前：先按模板预填字段（不推进游标）
 
@@ -1149,6 +1330,9 @@ class MainViewModel @Inject constructor(
     private fun uploadData(scanData: ScanData, showToast: (String) -> Unit) {
 
         viewModelScope.launch(Dispatchers.IO) {
+            val resultId = dataManager.getAllScans()
+                .firstOrNull { it.scanData.id == scanData.id }
+                ?.id
 
             networkUseCases.uploadScanData(
 
@@ -1160,9 +1344,13 @@ class MainViewModel @Inject constructor(
 
                 onSuccess = {
 
+                    resultId?.let(scanUseCases.markScanAsUploaded::invoke)
                     // 切换到主线程显示Toast
 
-                    viewModelScope.launch(Dispatchers.Main) { showToast("上传成功: ${scanData.text}") }
+                    viewModelScope.launch(Dispatchers.Main) {
+                        getAllScans()
+                        showToast("上传成功: ${scanData.text}")
+                    }
 
                 },
 
@@ -1557,30 +1745,17 @@ class MainViewModel @Inject constructor(
      */
 
     fun clearAllScans(showToast: (String) -> Unit) {
+        val template = activeTemplate
+        if (template == null) {
+            showToast("请先选择模板")
+            return
+        }
 
-        // 使用数据管理中心清空所有扫描数据
-
-        dataManager.clearAllScans()
-
-        
-
-        // 同步ViewModel的状态
-
-        activeTemplateId = dataManager.activeTemplateId
-
-        activeTemplate = dataManager.activeTemplate
-
-        
-
-        // 更新扫描结果StateFlow，触发UI更新
-
-        getAllScans()
-
-        
-
-        // 显示清空成功提示
-
-        showToast("已清空所有扫描结果")
+        clearTemplateFloorScans(
+            id = template.id,
+            floor = scanSelectedFloor,
+            showToast = showToast
+        )
 
     }
 
@@ -1606,9 +1781,8 @@ class MainViewModel @Inject constructor(
 
             networkDiscovery = NetworkDiscovery(context.applicationContext)
 
-            // 启动被动监听服务
+            // 初始化周期性发现器
 
-            networkDiscovery?.startPassiveListener()
 
         }
 
@@ -1698,7 +1872,6 @@ class MainViewModel @Inject constructor(
 
      * 启动被动发现 PC 客户端：每 1 秒扫描一次，发现后主动弹窗。
 
-     * 同时启动被动监听（响应其他设备的发现请求）。
 
      */
 
@@ -1710,7 +1883,6 @@ class MainViewModel @Inject constructor(
 
         }
 
-        networkDiscovery?.startPassiveListener()
 
         networkDiscovery?.startContinuousDiscovery(onServerFound = {
 
@@ -1772,20 +1944,12 @@ class MainViewModel @Inject constructor(
 
     /**
 
-     * 启动被动网络发现监听服务（响应其他设备的发现请求）
+     * 启动周期性 PC 发现。
 
      */
 
     fun startPassiveDiscovery(context: Context) {
-
-        if (networkDiscovery == null) {
-
-            networkDiscovery = NetworkDiscovery(context.applicationContext)
-
-        }
-
-        networkDiscovery?.startPassiveListener()
-
+        startPassivePcDiscovery(context)
     }
 
     
@@ -1933,22 +2097,24 @@ class MainViewModel @Inject constructor(
         val activeTemplate = this.activeTemplate
 
         if (activeTemplate != null) {
+            if (!pendingUploadInProgress.compareAndSet(false, true)) return
 
             try {
 
                 // 获取模板的扫描数据
 
-                val templateScans = dataManager.getAllScans().filter { it.scanData.templateId == activeTemplate.id }
+                val pendingScans = scanUseCases.getPendingScans()
+                    .filter { it.scanData.templateId == activeTemplate.id }
 
-                if (templateScans.isNotEmpty()) {
+                if (pendingScans.isNotEmpty()) {
 
-                    Log.d(TAG, "上传模板 ${activeTemplate.name} 的 ${templateScans.size} 条数据...")
+                    Log.d(TAG, "补传模板 ${activeTemplate.name} 的 ${pendingScans.size} 条数据...")
 
                     
 
                     // 转换为ScanData列表
 
-                    val scanDataList = templateScans.map { it.scanData }
+                    val scanDataList = pendingScans.map { it.scanData }
 
                     
 
@@ -1964,22 +2130,29 @@ class MainViewModel @Inject constructor(
 
                         onSuccess = {
 
+                            pendingScans.forEach { scanUseCases.markScanAsUploaded(it.id) }
+                            getAllScans()
+                            pendingUploadInProgress.set(false)
                             Log.d(TAG, "批量上传成功: ${scanDataList.size} 条数据")
 
                         },
 
                         onError = { err ->
 
+                            pendingUploadInProgress.set(false)
                             Log.e(TAG, "批量上传失败: $err")
 
                         }
 
                     )
 
+                } else {
+                    pendingUploadInProgress.set(false)
                 }
 
             } catch (e: Exception) {
 
+                pendingUploadInProgress.set(false)
                 Log.e(TAG, "上传未上传数据异常: ${e.message}", e)
 
             }

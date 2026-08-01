@@ -4,6 +4,7 @@ import logging
 import socket
 import threading
 import time
+from urllib.parse import urlencode
 
 DISCOVERY_PORT = 29028
 DISCOVERY_REQUEST = "CATSCAN_DISCOVERY_REQUEST"
@@ -53,7 +54,12 @@ def build_response_ips(peer_ip):
     return get_local_ips()
 
 
-def start_udp_discovery():
+def build_server_url(ip, pairing_token):
+    query = urlencode({"token": pairing_token})
+    return f"http://{ip}:{SERVER_PORT}/postqrdata?{query}"
+
+
+def start_udp_discovery(pairing_token):
     """Start UDP discovery responder loop with retry."""
     sock = None
     max_retries = 3
@@ -80,10 +86,10 @@ def start_udp_discovery():
 
                     response_ips = build_response_ips(addr[0])
                     for ip in response_ips:
-                        server_url = f"http://{ip}:{SERVER_PORT}/postqrdata"
+                        server_url = build_server_url(ip, pairing_token)
                         response = f"{DISCOVERY_RESPONSE_PREFIX}{server_url}"
                         sock.sendto(response.encode("utf-8"), addr)
-                        logging.info("Discovery response: %s -> %s", addr[0], server_url)
+                        logging.info("Discovery response sent to %s via %s", addr[0], ip)
                 except socket.timeout:
                     continue
                 except Exception as exc:
@@ -119,9 +125,13 @@ def start_udp_discovery():
             sock = None
 
 
-def run_discovery_in_thread():
+def run_discovery_in_thread(pairing_token):
     """Run UDP discovery in a daemon thread."""
-    thread = threading.Thread(target=start_udp_discovery, daemon=True)
+    thread = threading.Thread(
+        target=start_udp_discovery,
+        args=(pairing_token,),
+        daemon=True,
+    )
     thread.start()
     logging.info("UDP discovery thread started")
     return thread
@@ -129,5 +139,4 @@ def run_discovery_in_thread():
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    print("Starting UDP discovery...")
-    start_udp_discovery()
+    raise SystemExit("Run winClient/main.py so UDP discovery shares its pairing token.")
