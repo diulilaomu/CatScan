@@ -81,4 +81,4 @@ python main.py
 .\gradlew.bat :app:assembleDebug
 ```
 
-当前 Android 版本：`3.5.2`。
+当前 Android 版本：`3.5.3`。
