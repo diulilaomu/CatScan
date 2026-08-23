@@ -1088,6 +1088,7 @@ class MainViewModel @Inject constructor(
     fun confirmDiscreteScan(
         floor: Int,
         room: String,
+        tag: String,
         copyToClipboard: (String) -> Unit,
         showToast: (String) -> Unit
     ) {
@@ -1118,8 +1119,12 @@ class MainViewModel @Inject constructor(
         currentFloor = "${validFloor}层"
         currentRoom = room
         clampSelectedFloor(validFloor, template.maxFloor)
-        if (template.lastSelectedFloor != validFloor) {
-            val updated = template.copy(lastSelectedFloor = validFloor)
+        val validTag = tag.takeIf { it in template.tags } ?: ""
+        if (template.lastSelectedFloor != validFloor || template.lastSelectedTag != validTag) {
+            val updated = template.copy(
+                lastSelectedFloor = validFloor,
+                lastSelectedTag = validTag
+            )
             dataManager.updateTemplate(updated)
             activeTemplate = dataManager.activeTemplate
         }
@@ -1135,6 +1140,7 @@ class MainViewModel @Inject constructor(
                 building = currentBuilding,
                 floor = currentFloor,
                 room = currentRoom,
+                tag = validTag,
                 allowDuplicate = duplicateScanEnabled
             )
 

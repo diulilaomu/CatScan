@@ -47,6 +47,8 @@ class DiscreteModeTest {
 
         assertEquals(TemplateMode.DISCRETE, template.mode)
         assertEquals(1, template.lastSelectedFloor)
+        assertEquals("", template.lastSelectedTag)
+        assertEquals(emptyList<String>(), template.tags)
         assertEquals(listOf("101"), template.selectedRooms)
         assertEquals(template, repository.addedTemplate)
     }

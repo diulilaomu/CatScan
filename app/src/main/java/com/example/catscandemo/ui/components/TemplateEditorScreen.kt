@@ -2,6 +2,7 @@ package com.example.catscandemo.ui.components
 
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 
 import androidx.compose.foundation.BorderStroke
@@ -18,6 +19,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 
 import androidx.compose.foundation.lazy.grid.items as gridItems
 
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 
 import androidx.compose.foundation.text.KeyboardOptions
@@ -1190,6 +1192,11 @@ fun TemplateEditorSheet(
 
     var roomText by rememberSaveable(template.id) { mutableStateOf(template.roomCountPerFloor.toString()) }
 
+    // 离散模板标签：最多 4 个、每个最多 4 个字
+    var tagsState by rememberSaveable(template.id) { mutableStateOf(template.tags) }
+    var showTagEditor by remember(template.id) { mutableStateOf(false) }
+    var tagInput by remember(template.id) { mutableStateOf("") }
+
     val scope = rememberCoroutineScope()
 
     var autoSaveJob by remember { mutableStateOf<Job?>(null) }
@@ -1256,6 +1263,8 @@ fun TemplateEditorSheet(
 
                     lastSelectedFloor = template.lastSelectedFloor.coerceIn(1, f),
 
+                    tags = tagsState,
+
                     selectedRooms = newSelected
 
                 )
@@ -1319,6 +1328,58 @@ fun TemplateEditorSheet(
         }
 
 
+
+        if (showTagEditor) {
+
+            AlertDialog(
+
+                onDismissRequest = { showTagEditor = false },
+
+                title = { Text("添加标签") },
+
+                text = {
+
+                    OutlinedTextField(
+
+                        value = tagInput,
+
+                        onValueChange = { tagInput = it.take(4) },
+
+                        label = { Text("标签名（最多4个字）") },
+
+                        singleLine = true
+
+                    )
+
+                },
+
+                confirmButton = {
+
+                    TextButton(onClick = {
+
+                        val newTag = tagInput.trim()
+
+                        if (newTag.isNotBlank() && newTag.length <= 4 && newTag !in tagsState && tagsState.size < 4) {
+
+                            tagsState = tagsState + newTag
+
+                        }
+
+                        showTagEditor = false
+
+                    }) { Text("确定") }
+
+                },
+
+                dismissButton = {
+
+                    TextButton(onClick = { showTagEditor = false }) { Text("取消") }
+
+                }
+
+            )
+
+        }
 
         // 关键：用 LazyColumn 承载所有内容，避免 verticalScroll + LazyColumn 嵌套崩溃
 
@@ -1444,6 +1505,100 @@ fun TemplateEditorSheet(
 
 
 
+            if (templateMode == TemplateMode.DISCRETE) {
+
+                item {
+
+                    Column(modifier = Modifier.fillMaxWidth()) {
+
+                        Row(
+
+                            modifier = Modifier.fillMaxWidth(),
+
+                            verticalAlignment = Alignment.CenterVertically
+
+                        ) {
+
+                            Text("标签(${tagsState.size}/4)", style = MaterialTheme.typography.labelLarge)
+
+                            Spacer(Modifier.weight(1f))
+
+                            if (tagsState.size < 4) {
+
+                                TextButton(onClick = {
+
+                                    tagInput = ""
+
+                                    showTagEditor = true
+
+                                }) { Text("添加") }
+
+                            }
+
+                        }
+
+                        if (tagsState.isEmpty()) {
+
+                            Text("未设置标签，扫码选房时将统一高亮", style = MaterialTheme.typography.bodySmall)
+
+                        } else {
+
+                            LazyRow(
+
+                                modifier = Modifier.fillMaxWidth(),
+
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+
+                            ) {
+
+                                items(tagsState) { tag ->
+
+                                    val tagIndex = tagsState.indexOf(tag)
+
+                                    InputChip(
+
+                                        selected = false,
+
+                                        onClick = { tagsState = tagsState.filterNot { it == tag } },
+
+                                        label = { Text(tag) },
+
+                                        leadingIcon = {
+
+                                            Box(
+
+                                                Modifier
+
+                                                    .size(10.dp)
+
+                                                    .background(tagContainerColor(tagIndex), CircleShape)
+
+                                            )
+
+                                        },
+
+                                        trailingIcon = {
+
+                                            Icon(Icons.Default.Close, contentDescription = "删除标签")
+
+                                        }
+
+                                    )
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+
+
             item {
 
                 Row(
@@ -1491,6 +1646,8 @@ fun TemplateEditorSheet(
                                     mode = templateMode,
 
                                     lastSelectedFloor = template.lastSelectedFloor.coerceIn(1, f),
+
+                                    tags = tagsState,
 
                                     selectedRooms = selectedRooms
 
@@ -1581,7 +1738,7 @@ fun TemplateEditorSheet(
 
             } else {
 
-                items(template.scans, key = { it.timestamp }) { s ->
+                items(template.scans, key = { "${it.timestamp}_${it.id}" }) { s ->
 
                     Card(Modifier.fillMaxWidth()) {
 
@@ -1603,7 +1760,8 @@ fun TemplateEditorSheet(
 
                                 Text(
 
-                                    "${df.format(java.util.Date(s.timestamp))} | ${s.operator} | ${s.campus}/${s.building} | ${s.floor} ${s.room}",
+                                    "${df.format(java.util.Date(s.timestamp))} | ${s.operator} | ${s.campus}/${s.building} | ${s.floor} ${s.room}" +
+                                            if (s.tag.isNotBlank()) " | ${s.tag}" else "",
 
                                     style = MaterialTheme.typography.bodySmall
 

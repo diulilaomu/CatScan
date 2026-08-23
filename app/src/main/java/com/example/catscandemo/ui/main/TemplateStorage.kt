@@ -62,6 +62,11 @@ object TemplateStorage {
         obj.put("roomCountPerFloor", t.roomCountPerFloor)
         obj.put("mode", t.mode.name)
         obj.put("lastSelectedFloor", t.lastSelectedFloor)
+        obj.put("lastSelectedTag", t.lastSelectedTag)
+
+        val tags = JSONArray()
+        t.tags.forEach { tags.put(it) }
+        obj.put("tags", tags)
 
         val rooms = JSONArray()
         t.selectedRooms.forEach { rooms.put(it) }
@@ -93,10 +98,20 @@ object TemplateStorage {
             }
         }.distinct()
 
+        // 标签：最多 4 个、每个最多 4 个字符，超出部分丢弃
+        val tagsArr = obj.optJSONArray("tags") ?: JSONArray()
+        val tags = buildList {
+            for (i in 0 until tagsArr.length()) add(tagsArr.getString(i))
+        }.map { it.trim() }
+            .filter { it.isNotBlank() && it.length <= 4 }
+            .distinct()
+            .take(4)
+
         val scansArr = obj.optJSONArray("scans") ?: JSONArray()
         val scans = buildList {
             for (i in 0 until scansArr.length()) add(scanFromJson(scansArr.getJSONObject(i)))
         }
+
 
         return TemplateModel(
             id = obj.optString("id", ""),
@@ -111,6 +126,9 @@ object TemplateStorage {
             }.getOrDefault(TemplateMode.LINEAR),
             lastSelectedFloor = obj.optInt("lastSelectedFloor", 1)
                 .coerceIn(1, maxFloor),
+            lastSelectedTag = obj.optString("lastSelectedTag", "")
+                .takeIf { it in tags } ?: "",
+            tags = tags,
             selectedRooms = validRooms,
             scans = scans
         )
@@ -126,6 +144,7 @@ object TemplateStorage {
         obj.put("building", s.building)
         obj.put("floor", s.floor)
         obj.put("room", s.room)
+        obj.put("tag", s.tag)
         obj.put("templateId", s.templateId)
         obj.put("templateName", s.templateName)
         obj.put("uploaded", s.uploaded)
@@ -142,6 +161,7 @@ object TemplateStorage {
             building = obj.optString("building", ""),
             floor = obj.optString("floor", ""),
             room = obj.optString("room", ""),
+            tag = obj.optString("tag", ""),
             templateId = obj.optString("templateId", ""),
             templateName = obj.optString("templateName", ""),
             uploaded = obj.optBoolean("uploaded", false)
@@ -200,6 +220,7 @@ object ScanHistoryStorage {
         val obj = JSONObject()
         obj.put("id", item.id)
         obj.put("index", item.index)
+        obj.put("scanDataId", item.scanData.id)
         obj.put("text", item.scanData.text)
         obj.put("operator", item.scanData.operator)
         obj.put("timestamp", item.scanData.timestamp)
@@ -212,6 +233,7 @@ object ScanHistoryStorage {
         area.put("building", item.scanData.building)
         area.put("floor", item.scanData.floor)
         area.put("room", item.scanData.room)
+        area.put("tag", item.scanData.tag)
         obj.put("area", area)
 
         return obj
@@ -223,6 +245,10 @@ object ScanHistoryStorage {
             id = obj.optLong("id", System.currentTimeMillis()),
             index = obj.optInt("index", 0),
             scanData = ScanData(
+                // scanDataId 是模板 scans 里的记录 id（UUID）；旧文件没有该字段，
+                // 退回 "id"（结果序号）仅为兼容，删除同步会走兜底匹配
+                id = obj.optString("scanDataId", "")
+                    .ifBlank { obj.optString("id", java.util.UUID.randomUUID().toString()) },
                 text = obj.optString("text", ""),
                 timestamp = obj.optLong("timestamp", System.currentTimeMillis()),
                 operator = obj.optString("operator", "unknown"),
@@ -230,6 +256,7 @@ object ScanHistoryStorage {
                 building = areaObj.optString("building", ""),
                 floor = areaObj.optString("floor", ""),
                 room = areaObj.optString("room", ""),
+                tag = areaObj.optString("tag", ""),
                 templateId = obj.optString("templateId", ""),
                 templateName = obj.optString("templateName", ""),
                 uploaded = obj.optBoolean("uploaded", false)

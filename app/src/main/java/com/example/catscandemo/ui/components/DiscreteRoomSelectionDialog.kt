@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.grid.items as gridItems
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +35,8 @@ import com.example.catscandemo.domain.model.TemplateModel
 fun DiscreteRoomSelectionDialog(
     template: TemplateModel,
     initialFloor: Int,
-    onConfirm: (floor: Int, room: String) -> Unit,
+    initialTag: String,
+    onConfirm: (floor: Int, room: String, tag: String) -> Unit,
     onDismiss: () -> Unit
 ) {
     fun floorOfRoom(code: String): Int? {
@@ -53,12 +55,41 @@ fun DiscreteRoomSelectionDialog(
             .mapValues { (_, rooms) -> rooms.sorted() }
             .toSortedMap()
     }
+
     val floors = roomsByFloor.keys.toList()
     val firstFloor = initialFloor.takeIf { it in floors } ?: floors.firstOrNull() ?: 1
-    var selectedFloor by remember(template.id) { mutableIntStateOf(firstFloor) }
-    var selectedRoom by remember(template.id) {
-        mutableStateOf(roomsByFloor[firstFloor]?.firstOrNull())
+    var selectedFloor by remember(template.id, template.selectedRooms) {
+        mutableIntStateOf(firstFloor)
     }
+
+    // 标签选择：默认回到上次选中的标签，无记录时取第一个（与楼层策略一致）
+    var selectedTag by remember(template.id, template.tags) {
+        mutableStateOf(initialTag.takeIf { it in template.tags } ?: template.tags.firstOrNull() ?: "")
+    }
+
+    // 已选择（已扫过）的房间：配置了标签时只统计当前标签下的扫描记录
+    val scannedRooms = remember(template.id, template.scans, selectedTag) {
+        val source = if (template.tags.isEmpty()) {
+            template.scans
+        } else {
+            template.scans.filter { it.tag == selectedTag }
+        }
+        source.mapNotNull { scan -> scan.room.takeIf(String::isNotBlank) }.toSet()
+    }
+
+    // 高亮配色：配置了标签时用该标签的淡色，否则沿用主题色
+    val activeTagIndex = template.tags.indexOf(selectedTag)
+    val highlightBg = if (activeTagIndex >= 0) {
+        tagContainerColor(activeTagIndex)
+    } else {
+        MaterialTheme.colorScheme.primary
+    }
+    val highlightFg = if (activeTagIndex >= 0) {
+        tagContentColor(activeTagIndex)
+    } else {
+        MaterialTheme.colorScheme.onPrimary
+    }
+
     val rooms = roomsByFloor[selectedFloor].orEmpty()
 
     AlertDialog(
@@ -72,12 +103,29 @@ fun DiscreteRoomSelectionDialog(
                     items(floors) { floor ->
                         FilterChip(
                             selected = selectedFloor == floor,
-                            onClick = {
-                                selectedFloor = floor
-                                selectedRoom = roomsByFloor[floor]?.firstOrNull()
-                            },
+                            onClick = { selectedFloor = floor },
                             label = { Text("${floor}层") }
                         )
+                    }
+                }
+
+                if (template.tags.isNotEmpty()) {
+                    Spacer(Modifier.height(14.dp))
+                    Text("选择标签", style = MaterialTheme.typography.labelLarge)
+                    Spacer(Modifier.height(6.dp))
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        items(template.tags) { tag ->
+                            val tagIndex = template.tags.indexOf(tag)
+                            FilterChip(
+                                selected = selectedTag == tag,
+                                onClick = { selectedTag = tag },
+                                label = { Text(tag) },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = tagContainerColor(tagIndex),
+                                    selectedLabelColor = tagContentColor(tagIndex)
+                                )
+                            )
+                        }
                     }
                 }
 
@@ -92,34 +140,25 @@ fun DiscreteRoomSelectionDialog(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    gridItems(rooms) { room ->
-                        val isSelected = selectedRoom == room
+                    gridItems(rooms, key = { it }) { room ->
+                        val isSelected = room in scannedRooms
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(48.dp)
                                 .background(
-                                    color = if (isSelected) {
-                                        MaterialTheme.colorScheme.primary
-                                    } else {
-                                        MaterialTheme.colorScheme.surfaceVariant
-                                    },
+                                    color = if (isSelected) highlightBg else MaterialTheme.colorScheme.surfaceVariant,
                                     shape = RoundedCornerShape(12.dp)
                                 )
                                 .clickable {
-                                    selectedRoom = room
-                                    onConfirm(selectedFloor, room)
+                                    onConfirm(selectedFloor, room, selectedTag)
                                 },
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = room,
                                 style = MaterialTheme.typography.labelLarge,
-                                color = if (isSelected) {
-                                    MaterialTheme.colorScheme.onPrimary
-                                } else {
-                                    MaterialTheme.colorScheme.onSurfaceVariant
-                                }
+                                color = if (isSelected) highlightFg else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }

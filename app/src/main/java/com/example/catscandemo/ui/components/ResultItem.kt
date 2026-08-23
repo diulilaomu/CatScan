@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.catscandemo.domain.model.ScanResult
 import androidx.compose.ui.text.style.TextOverflow
 
@@ -67,7 +68,7 @@ class ResultItemController(
      * Composable 渲染函数
      */
     @Composable
-    fun Render(highlight: Boolean = false) {
+    fun Render(highlight: Boolean = false, templateTags: List<String> = emptyList()) {
         val bgColor = if (highlight) Color(0xFFFFF59D) else Color.White
         val deleteColor = Color(0xFFF44336)
         val expandColor = Color(0xFF2196F3)
@@ -82,6 +83,7 @@ class ResultItemController(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
+                // 第一列：扫描数据
                 Text(
                     text = item.scanData.text,
                     modifier = Modifier
@@ -92,6 +94,41 @@ class ResultItemController(
                     style = MaterialTheme.typography.bodyLarge
                 )
 
+                // 第二列：标签、房间号徽标（左右并排，各占独立徽标）
+                val tagIndex = templateTags.indexOf(item.scanData.tag)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(horizontal = 6.dp)
+                ) {
+                    if (item.scanData.tag.isNotBlank()) {
+                        Text(
+                            text = item.scanData.tag,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontSize = 9.sp,
+                            color = if (tagIndex >= 0) tagContentColor(tagIndex) else Color(0xFF616161),
+                            modifier = Modifier
+                                .background(
+                                    if (tagIndex >= 0) tagContainerColor(tagIndex) else Color(0xFFE0E0E0)
+                                )
+                                .padding(horizontal = 5.dp, vertical = 1.dp)
+                        )
+                    }
+
+                    if (item.scanData.room.isNotBlank()) {
+                        Text(
+                            text = item.scanData.room,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontSize = 9.sp,
+                            color = Color(0xFF616161),
+                            modifier = Modifier
+                                .background(Color(0xFFE0E0E0))
+                                .padding(horizontal = 5.dp, vertical = 1.dp)
+                        )
+                    }
+                }
+
+                // 第三列：操作按钮
                 IconButton(onClick = { expanded = !expanded }) {
                     Icon(
                         imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,

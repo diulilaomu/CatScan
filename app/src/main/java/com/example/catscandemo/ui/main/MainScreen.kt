@@ -765,7 +765,10 @@ fun MainScreen(viewModel: MainViewModel) {
 
                                 LaunchedEffect(item) { controller.syncItem(item) }
 
-                                controller.Render(highlight = isDuplicate)
+                                controller.Render(
+                                    highlight = isDuplicate,
+                                    templateTags = viewModel.activeTemplate?.tags.orEmpty()
+                                )
 
 
 
@@ -812,10 +815,12 @@ fun MainScreen(viewModel: MainViewModel) {
             DiscreteRoomSelectionDialog(
                 template = template,
                 initialFloor = viewModel.preferredDiscreteFloor(template),
-                onConfirm = { floor, room ->
+                initialTag = template.lastSelectedTag,
+                onConfirm = { floor, room, tag ->
                     viewModel.confirmDiscreteScan(
                         floor = floor,
                         room = room,
+                        tag = tag,
                         copyToClipboard = copyToClipboard,
                         showToast = showToast
                     )
