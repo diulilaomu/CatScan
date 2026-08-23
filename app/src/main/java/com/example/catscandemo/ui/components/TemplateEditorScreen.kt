@@ -3,6 +3,7 @@ package com.example.catscandemo.ui.components
 
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 
 import androidx.compose.foundation.BorderStroke
@@ -18,6 +19,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 
 import androidx.compose.foundation.lazy.grid.items as gridItems
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -51,8 +54,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 
 import androidx.compose.ui.unit.dp
@@ -63,11 +68,10 @@ import com.example.catscandemo.domain.model.TemplateMode
 
 import com.example.catscandemo.domain.model.TemplateModel
 
-import kotlinx.coroutines.Job
-
 import kotlinx.coroutines.delay
-
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 import android.content.ContentValues
 
@@ -414,7 +418,7 @@ private fun TemplateManagerPage(
 
 
 
-        val header = "序号\t模板名称\t校区名称\t楼栋\t楼层\t房间号\t操作人\t时间\t扫码内容"
+        val header = "序号\t模板名称\t校区名称\t楼栋\t楼层\t房间号\t标签\t操作人\t时间\t扫码内容"
 
         val lines = ArrayList<String>()
 
@@ -434,7 +438,7 @@ private fun TemplateManagerPage(
 
                 // 如果你希望“没有扫码也导出一行”，取消注释下面这行即可：
 
-                lines.add("${seq++}\t${t.name}\t${t.campus}\t${t.building}\t\t\t${t.operator}\t\t")
+                lines.add("${seq++}\t${t.name}\t${t.campus}\t${t.building}\t\t\t\t${t.operator}\t\t")
 
             } else {
 
@@ -444,7 +448,7 @@ private fun TemplateManagerPage(
 
                     lines.add(
 
-                        "${seq++}\t${t.name}\t${t.campus}\t${t.building}\t${s.floor}\t${s.room}\t${s.operator}\t$time\t${s.text}"
+                        "${seq++}\t${t.name}\t${t.campus}\t${t.building}\t${s.floor}\t${s.room}\t${s.tag}\t${s.operator}\t$time\t${s.text}"
 
                     )
 
@@ -493,6 +497,11 @@ private fun TemplateManagerPage(
             obj.put("roomCountPerFloor", t.roomCountPerFloor)
             obj.put("mode", t.mode.name)
             obj.put("lastSelectedFloor", t.lastSelectedFloor)
+            obj.put("lastSelectedTag", t.lastSelectedTag)
+
+            val tags = JSONArray()
+            t.tags.forEach { tags.put(it) }
+            obj.put("tags", tags)
 
 
 
@@ -523,6 +532,8 @@ private fun TemplateManagerPage(
                 so.put("floor", s.floor)
 
                 so.put("room", s.room)
+
+                so.put("tag", s.tag)
 
                 scans.put(so)
 
@@ -1147,7 +1158,7 @@ private fun TemplateManagerPage(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 
 @Composable
 
@@ -1190,18 +1201,17 @@ fun TemplateEditorSheet(
 
     var floorText by rememberSaveable(template.id) { mutableStateOf(template.maxFloor.toString()) }
 
-    var roomText by rememberSaveable(template.id) { mutableStateOf(template.roomCountPerFloor.toString()) }
+    var roomValue by rememberSaveable(template.id, stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(template.roomCountPerFloor.toString()))
+    }
+    var countInputsEdited by remember(template.id) { mutableStateOf(false) }
+    val roomBringIntoViewRequester = remember(template.id) { BringIntoViewRequester() }
+    val roomBringIntoViewScope = rememberCoroutineScope()
 
     // 离散模板标签：最多 4 个、每个最多 4 个字
     var tagsState by rememberSaveable(template.id) { mutableStateOf(template.tags) }
     var showTagEditor by remember(template.id) { mutableStateOf(false) }
     var tagInput by remember(template.id) { mutableStateOf("") }
-
-    val scope = rememberCoroutineScope()
-
-    var autoSaveJob by remember { mutableStateOf<Job?>(null) }
-
-
 
     fun roomSuffix(r: Int): String = if (r in 1..9) "0$r" else "$r"
 
@@ -1233,48 +1243,29 @@ fun TemplateEditorSheet(
 
      */
 
-    fun scheduleAutoSaveCounts() {
+    val latestTemplate by rememberUpdatedState(template)
+    val latestOnSave by rememberUpdatedState(onSave)
+    val latestTags by rememberUpdatedState(tagsState)
 
-        autoSaveJob?.cancel()
+    LaunchedEffect(floorText, roomValue.text, countInputsEdited) {
+        if (!countInputsEdited) return@LaunchedEffect
 
-        autoSaveJob = scope.launch {
+        delay(450) // 认为用户停止输入
+        val f = floorText.toIntOrNull()?.takeIf { it > 0 } ?: return@LaunchedEffect
+        val r = roomValue.text.toIntOrNull()?.takeIf { it in 1..99 } ?: return@LaunchedEffect
+        val allRooms = withContext(Dispatchers.Default) { buildAllRooms(f, r) }
+        val currentTemplate = latestTemplate
 
-            delay(450) // 认为用户停止输入
-
-            val f = floorText.toIntOrNull()?.takeIf { it > 0 } ?: return@launch
-
-            val r = roomText.toIntOrNull()?.takeIf { it in 1..99 } ?: return@launch
-
-
-
-            val allRooms = buildAllRooms(f, r)
-
-            val newSelected = allRooms
-
-
-
-            onSave(
-
-                template.copy(
-
-                    maxFloor = f,
-
-                    roomCountPerFloor = r,
-
-                    lastSelectedFloor = template.lastSelectedFloor.coerceIn(1, f),
-
-                    tags = tagsState,
-
-                    selectedRooms = newSelected
-
-                )
-
+        latestOnSave(
+            currentTemplate.copy(
+                maxFloor = f,
+                roomCountPerFloor = r,
+                lastSelectedFloor = currentTemplate.lastSelectedFloor.coerceIn(1, f),
+                tags = latestTags,
+                selectedRooms = allRooms
             )
-
-
-
-        }
-
+        )
+        countInputsEdited = false
     }
 
 
@@ -1439,7 +1430,7 @@ fun TemplateEditorSheet(
 
                         floorText = it.filter(Char::isDigit)
 
-                        scheduleAutoSaveCounts()
+                        countInputsEdited = true
 
                     },
 
@@ -1457,17 +1448,14 @@ fun TemplateEditorSheet(
 
                 OutlinedTextField(
 
-                    value = roomText,
+                    value = roomValue,
 
-                    onValueChange = {
-
-                        val digits = it.filter(Char::isDigit)
-                        roomText = digits.toIntOrNull()
-                            ?.coerceAtMost(99)
-                            ?.toString()
-                            ?: ""
-
-                        scheduleAutoSaveCounts()
+                    onValueChange = { candidate ->
+                        // 保留选区和光标，不再把每次按键立即转成 Int 再写回文本框。
+                        if (candidate.text.length <= 2 && candidate.text.all { it in '0'..'9' }) {
+                            roomValue = candidate
+                            countInputsEdited = true
+                        }
 
                     },
 
@@ -1475,7 +1463,18 @@ fun TemplateEditorSheet(
 
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
 
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .bringIntoViewRequester(roomBringIntoViewRequester)
+                        .onFocusChanged { focusState ->
+                            if (focusState.isFocused) {
+                                roomBringIntoViewScope.launch {
+                                    // 等输入法完成首轮布局后，再按缩短后的抽屉高度滚动。
+                                    delay(250)
+                                    roomBringIntoViewRequester.bringIntoView()
+                                }
+                            }
+                        }
 
                 )
 
@@ -1617,7 +1616,7 @@ fun TemplateEditorSheet(
 
                             val f = parsePositiveInt(floorText, 1).coerceAtLeast(1)
 
-                            val r = parsePositiveInt(roomText, 1).coerceIn(1, 99)
+                            val r = parsePositiveInt(roomValue.text, 1).coerceIn(1, 99)
                             val selectedRooms = if (
                                 templateMode == TemplateMode.DISCRETE &&
                                 template.selectedRooms.isEmpty()
