@@ -71,17 +71,17 @@ class DataManager(
             val currentTemplate = templateUseCases.getTemplateById(activeTemplateId!!)
             if (currentTemplate != null) {
                 val existing = scanUseCases.getAllScans.invoke()
+                val existingById = existing.associateBy { it.scanData.id }
+                val existingByLegacyKey = existing.associateBy {
+                    Triple(it.scanData.templateId, it.scanData.timestamp, it.scanData.text)
+                }
 
                 // 已上传标记以结果仓库为准（上传成功只标记仓库，模板记录不会更新），
                 // 匹配不到时按 模板+时间戳+内容 兜底（兼容旧数据的 scanData.id 缺失）
                 fun uploadedOf(scan: ScanData): Boolean {
                     if (scan.uploaded) return true
-                    val match = existing.firstOrNull { it.scanData.id == scan.id }
-                        ?: existing.firstOrNull {
-                            it.scanData.templateId == scan.templateId &&
-                                    it.scanData.timestamp == scan.timestamp &&
-                                    it.scanData.text == scan.text
-                        }
+                    val match = existingById[scan.id]
+                        ?: existingByLegacyKey[Triple(scan.templateId, scan.timestamp, scan.text)]
                     return match?.uploaded == true
                 }
 
@@ -123,7 +123,6 @@ class DataManager(
         val template = templateUseCases.addTemplate(name, mode)
         templates.add(0, template)
         setActiveTemplate(template.id)
-        saveTemplates()
         return template
     }
 
@@ -160,7 +159,7 @@ class DataManager(
     /**
      * 更新模板
      */
-    fun updateTemplate(updated: TemplateModel) {
+    fun updateTemplate(updated: TemplateModel, syncScanResults: Boolean = false) {
         templateUseCases.updateTemplate(updated)
 
         // 使用removeAt和add来触发状态更新
@@ -173,13 +172,11 @@ class DataManager(
         // 如果更新的是当前活动模板，更新activeTemplate状态并重新加载数据
         if (activeTemplateId == updated.id) {
             activeTemplate = updated
-            // 重新加载当前模板的数据，确保结果列表同步
             scanUseCases.setCurrentTemplateId(updated.id)
-            // 同步模板中的扫描数据到结果列表
-            syncTemplateScansToResults()
+            if (syncScanResults) {
+                syncTemplateScansToResults()
+            }
         }
-
-        saveTemplates()
     }
 
     /**
@@ -252,7 +249,8 @@ class DataManager(
 
         val deletedIds = deletedScans.mapTo(HashSet()) { it.id }
         updateTemplate(
-            template.copy(scans = template.scans.filterNot { it.id in deletedIds })
+            template.copy(scans = template.scans.filterNot { it.id in deletedIds }),
+            syncScanResults = true
         )
         return deletedScans
     }
@@ -319,9 +317,6 @@ class DataManager(
         
         // 同步当前激活模板的引用
         activeTemplate = updatedTemplate
-
-        // 保存数据，确保数据同步
-        saveTemplates()
 
         return updatedScanData
     }
@@ -401,8 +396,6 @@ class DataManager(
             }
         }
 
-        // 保存数据
-        saveTemplates()
     }
 
     /**

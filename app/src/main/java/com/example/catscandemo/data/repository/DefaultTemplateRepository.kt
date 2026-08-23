@@ -1,9 +1,15 @@
 package com.example.catscandemo.data.repository
 
-import android.content.Context
+import android.content.Context
+import android.util.Log
 import com.example.catscandemo.domain.model.TemplateModel
 import com.example.catscandemo.domain.use_case.TemplateRepository
-import com.example.catscandemo.ui.main.TemplateStorage
+import com.example.catscandemo.ui.main.TemplateStorage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 
 /**
  * 榛樿妯℃澘浠撳簱瀹炵幇
@@ -11,14 +17,30 @@ import com.example.catscandemo.ui.main.TemplateStorage
  */
 class DefaultTemplateRepository(
     private val context: Context
-) : TemplateRepository {
+) : TemplateRepository {
+
+    private data class SaveRequest(
+        val templates: List<TemplateModel>,
+        val activeTemplateId: String?
+    )
 
     private var templates: MutableList<TemplateModel> = mutableListOf()
     private var activeTemplateId: String? = null
-    private var initialized = false
+    private var initialized = false
+    private val persistenceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val saveRequests = Channel<SaveRequest>(Channel.CONFLATED)
 
     init {
-        initialize()
+        initialize()
+        persistenceScope.launch {
+            for (request in saveRequests) {
+                try {
+                    TemplateStorage.save(context, request.templates, request.activeTemplateId)
+                } catch (error: Exception) {
+                    Log.e("TemplateRepository", "保存模板失败", error)
+                }
+            }
+        }
     }
 
     private fun initialize() {
@@ -82,6 +104,7 @@ class DefaultTemplateRepository(
     }
 
     private fun saveTemplates() {
-        TemplateStorage.save(context, templates, activeTemplateId)
+        // JSON 序列化和文件写入移出主线程；同一文件只需保留最新快照。
+        saveRequests.trySend(SaveRequest(templates.toList(), activeTemplateId))
     }
 }

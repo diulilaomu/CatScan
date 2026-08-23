@@ -1,10 +1,16 @@
 package com.example.catscandemo.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.example.catscandemo.domain.model.ScanData
 import com.example.catscandemo.domain.model.ScanResult
 import com.example.catscandemo.domain.use_case.ScanRepository
 import com.example.catscandemo.ui.main.ScanHistoryStorage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 
 /**
  * 默认扫描数据仓库实现
@@ -14,14 +20,39 @@ class DefaultScanRepository(
     private val context: Context
 ) : ScanRepository {
 
+    private data class SaveRequest(
+        val templateId: String?,
+        val scanResults: List<ScanResult>
+    )
+
     private var scanResults: MutableList<ScanResult> = mutableListOf()
     private var nextId: Long = 1L
     private var nextIndex: Int = 1
     private var initialized = false
     private var currentTemplateId: String? = null
+    private val persistenceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val pendingSaveLock = Any()
+    private val pendingSaves = LinkedHashMap<String, SaveRequest>()
+    private val saveSignals = Channel<Unit>(Channel.CONFLATED)
 
     init {
         initialize()
+        persistenceScope.launch {
+            for (ignored in saveSignals) {
+                while (true) {
+                    val request = synchronized(pendingSaveLock) {
+                        val entry = pendingSaves.entries.firstOrNull()
+                            ?: return@synchronized null
+                        entry.value.also { pendingSaves.remove(entry.key) }
+                    } ?: break
+                    try {
+                        ScanHistoryStorage.save(context, request.templateId, request.scanResults)
+                    } catch (error: Exception) {
+                        Log.e("ScanRepository", "保存扫码历史失败", error)
+                    }
+                }
+            }
+        }
     }
 
     override fun setCurrentTemplateId(templateId: String?) {
@@ -158,6 +189,12 @@ class DefaultScanRepository(
     }
 
     private fun saveScanResults() {
-        ScanHistoryStorage.save(context, currentTemplateId, scanResults)
+        // 每个模板只保留最新快照，连续扫码不会堆积越来越大的历史列表副本。
+        val request = SaveRequest(currentTemplateId, scanResults.toList())
+        val key = currentTemplateId ?: "<no-template>"
+        synchronized(pendingSaveLock) {
+            pendingSaves[key] = request
+        }
+        saveSignals.trySend(Unit)
     }
 }

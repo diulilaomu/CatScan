@@ -59,7 +59,8 @@ import java.util.concurrent.Executors
 
 import java.util.concurrent.atomic.AtomicBoolean
 
-import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
 
 
 
@@ -933,7 +934,8 @@ fun CameraPreview(
 
     val frameCounter = remember { AtomicInteger(0) }
 
-    val channel2Processing = remember { AtomicBoolean(false) }
+    val channel2Processing = remember { AtomicBoolean(false) }
+    val lastChannel2FrameAt = remember { AtomicLong(0L) }
 
 
 
@@ -1027,9 +1029,17 @@ fun CameraPreview(
 
                             
 
-                            // 澶嶅埗YUV鏁版嵁鐢ㄤ簬閫氶亾2锛堝湪鍏抽棴imageProxy鍓嶏級
-
-                            val nv21Data = yuv420888ToNv21(mediaImage)
+                            // 仅在增强通道空闲且到达采样间隔时复制帧，避免每帧分配约 1.4 MB。
+                            val now = android.os.SystemClock.elapsedRealtime()
+                            val shouldProcessChannel2 =
+                                now - lastChannel2FrameAt.get() >= 60L &&
+                                    channel2Processing.compareAndSet(false, true)
+                            val channel2Frame = if (shouldProcessChannel2) {
+                                lastChannel2FrameAt.set(now)
+                                yuv420888ToNv21(mediaImage)
+                            } else {
+                                null
+                            }
 
                             
 
@@ -1115,9 +1125,8 @@ fun CameraPreview(
 
                             // ===== 閫氶亾2: 澶氬垎杈ㄧ巼澧炲己鎵弿锛堟瘡甯ч兘鎵ц锛屽叏閫熻繍琛岋級=====
 
-                            if (channel2Processing.compareAndSet(false, true)) {
-                                val channel2Frame = nv21Data.copyOf()
-                                enhanceExecutor.execute {
+                            channel2Frame?.let { channel2Frame ->
+                                enhanceExecutor.execute {
                                     try {
                                         val frameOutput = RealtimeFrameCropEngine.processNv21Frame(
                                             nv21 = channel2Frame,
@@ -1131,7 +1140,7 @@ fun CameraPreview(
                                                     minSolidityScore = channel2MinSolidityScoreState.value,
                                                     minGradScore = channel2MinGradScoreState.value
                                                 ),
-                                                minProcessIntervalMs = 0L,
+                                                minProcessIntervalMs = 60L,
                                                 maxOutputs = 8,
                                                 cropPaddingPx = 18,
                                                 enableStabilizer = true

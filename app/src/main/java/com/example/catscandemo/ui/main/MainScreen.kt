@@ -95,6 +95,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.style.TextAlign
 
 
+private val FLOOR_NUMBER_REGEX = Regex("\\d+")
+
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 
@@ -192,7 +194,7 @@ fun MainScreen(viewModel: MainViewModel) {
 
     fun parseFloorNumberLocal(floorStr: String): Int? {
 
-        return Regex("\\d+").find(floorStr)?.value?.toIntOrNull()
+        return FLOOR_NUMBER_REGEX.find(floorStr)?.value?.toIntOrNull()
 
     }
 
@@ -224,9 +226,7 @@ fun MainScreen(viewModel: MainViewModel) {
 
         }
 
-        // 确保每次都返回一个新的列表对象，触发LazyColumn更新
-
-        result.toList()
+        result
 
     }
 
@@ -238,11 +238,13 @@ fun MainScreen(viewModel: MainViewModel) {
 
     val duplicateTextSet = remember(displayItems) {
 
-        displayItems.groupBy { it.scanData.text }
-
-            .filterValues { it.size > 1 }
-
-            .keys
+        val seen = HashSet<String>()
+        buildSet {
+            displayItems.forEach { item ->
+                val text = item.scanData.text
+                if (!seen.add(text)) add(text)
+            }
+        }
 
     }
 
@@ -678,7 +680,7 @@ fun MainScreen(viewModel: MainViewModel) {
                                     modifier = Modifier.fillMaxWidth(),
                                     label = {
                                         Text(
-                                            text = "清空本层",
+                                            text = "清空",
                                             style = MaterialTheme.typography.bodySmall,
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis,

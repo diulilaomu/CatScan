@@ -11,7 +11,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxSize
+
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -58,7 +60,10 @@ fun TemplateEditorRightDrawer(
             visible = visible,
             enter = slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) + fadeIn(),
             exit = slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) + fadeOut(),
-            modifier = Modifier.align(Alignment.CenterEnd)
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                // 输入法出现时缩短整个抽屉，避免底部圆角和输入框被裁切。
+                .imePadding()
         ) {
             Surface(
                 modifier = Modifier
