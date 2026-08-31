@@ -23,3 +23,7 @@ winClient/dist/
 winClient/build/
 __pycache__/
 *.log
+# 构建产物与本地运行数据
+/app/release/
+winClient/log/
+winClient/web/js.7z
