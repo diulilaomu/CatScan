@@ -72,6 +72,8 @@ data class NetworkScanData(
     val building: String,
     val floor: String,
     val room: String,
+    val tag: String = "",
+    val scanTimestamp: Long = 0L,
     val id: String,
     val action: String = "add"
 )

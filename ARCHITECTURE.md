@@ -76,6 +76,8 @@ sequenceDiagram
   "building": "楼栋",
   "floor": "楼层",
   "room": "房间",
+  "tag": "标签（离散模板，可为空）",
+  "scanTimestamp": "扫码时间戳（epoch 毫秒，PC 端优先展示该时间）",
   "id": "唯一标识符",
   "action": "操作类型（add/update/delete）"
 }

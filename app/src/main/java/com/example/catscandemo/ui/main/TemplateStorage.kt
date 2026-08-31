@@ -1,6 +1,7 @@
 package com.example.catscandemo.ui.main
 
 import android.content.Context
+import android.util.Log
 import com.example.catscandemo.domain.model.ScanData
 import com.example.catscandemo.domain.model.ScanResult
 import com.example.catscandemo.domain.model.TemplateMode
@@ -8,6 +9,46 @@ import com.example.catscandemo.domain.model.TemplateModel
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
+
+/**
+ * 原子写入：先写临时文件再改名，进程被杀/断电时不会留下半截 JSON。
+ */
+private fun writeTextAtomically(file: File, text: String) {
+    val tmp = File(file.parentFile, file.name + ".tmp")
+    tmp.writeText(text, Charsets.UTF_8)
+    if (tmp.renameTo(file)) return
+    // 个别文件系统在目标已存在时 rename 失败，退回先删后改名
+    file.delete()
+    if (tmp.renameTo(file)) return
+    tmp.delete()
+    file.writeText(text, Charsets.UTF_8)
+}
+
+/**
+ * JSON 损坏时把原文件改名保留，避免下次保存把最后的恢复机会覆盖掉。
+ */
+private fun backupCorruptedFile(file: File) {
+    try {
+        if (file.exists()) {
+            val backup = File(file.parentFile, file.name + ".corrupt")
+            backup.delete()
+            if (!file.renameTo(backup)) {
+                Log.w("TemplateStorage", "备份损坏文件失败: ${file.name}")
+            }
+        }
+    } catch (e: Exception) {
+        Log.w("TemplateStorage", "备份损坏文件异常: ${file.name}, ${e.message}")
+    }
+}
+
+/**
+ * 旧版记录缺失 id 时的兜底：由关键字段确定性推导，
+ * 保证每次加载生成同一 id——否则 PC 端按 id 去重会失效（补传产生重复）。
+ */
+private fun legacyScanId(templateId: String, text: String, timestamp: Long): String {
+    val key = "$templateId|$text|$timestamp"
+    return "legacy-" + Integer.toHexString(key.hashCode())
+}
 
 object TemplateStorage {
     private const val FILE_NAME = "templates.json"
@@ -18,13 +59,18 @@ object TemplateStorage {
     )
 
     fun load(context: Context): Loaded {
-        return try {
-            val file = File(context.filesDir, FILE_NAME)
+        val file = File(context.filesDir, FILE_NAME)
+        val text = try {
             if (!file.exists()) return Loaded(emptyList(), null)
+            file.readText(Charsets.UTF_8)
+        } catch (e: Exception) {
+            Log.w("TemplateStorage", "读取模板文件失败: ${e.message}")
+            backupCorruptedFile(file)
+            return Loaded(emptyList(), null)
+        }
+        if (text.isBlank()) return Loaded(emptyList(), null)
 
-            val text = file.readText(Charsets.UTF_8)
-            if (text.isBlank()) return Loaded(emptyList(), null)
-
+        return try {
             val root = JSONObject(text)
             val activeId = root.optString("activeTemplateId", "").ifBlank { null }
 
@@ -35,7 +81,9 @@ object TemplateStorage {
                 }
             }
             Loaded(list, activeId)
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.w("TemplateStorage", "模板文件解析失败: ${e.message}")
+            backupCorruptedFile(file)
             Loaded(emptyList(), null)
         }
     }
@@ -48,7 +96,7 @@ object TemplateStorage {
         templates.forEach { arr.put(templateToJson(it)) }
         root.put("templates", arr)
 
-        File(context.filesDir, FILE_NAME).writeText(root.toString(), Charsets.UTF_8)
+        writeTextAtomically(File(context.filesDir, FILE_NAME), root.toString())
     }
 
     private fun templateToJson(t: TemplateModel): JSONObject {
@@ -152,17 +200,21 @@ object TemplateStorage {
     }
 
     private fun scanFromJson(obj: JSONObject): ScanData {
+        val templateId = obj.optString("templateId", "")
+        val text = obj.optString("text", "")
+        val timestamp = obj.optLong("timestamp", 0L)
         return ScanData(
-            id = obj.optString("id", java.util.UUID.randomUUID().toString()),
-            text = obj.optString("text", ""),
-            timestamp = obj.optLong("timestamp", System.currentTimeMillis()),
+            // 旧记录缺 id 时确定性推导，避免每次加载生成新 UUID 导致 PC 端重复
+            id = obj.optString("id", "").ifBlank { legacyScanId(templateId, text, timestamp) },
+            text = text,
+            timestamp = timestamp,
             operator = obj.optString("operator", ""),
             campus = obj.optString("campus", ""),
             building = obj.optString("building", ""),
             floor = obj.optString("floor", ""),
             room = obj.optString("room", ""),
             tag = obj.optString("tag", ""),
-            templateId = obj.optString("templateId", ""),
+            templateId = templateId,
             templateName = obj.optString("templateName", ""),
             uploaded = obj.optBoolean("uploaded", false)
         )
@@ -176,14 +228,18 @@ object ScanHistoryStorage {
     data class Loaded(val items: List<ScanResult>)
 
     fun load(context: Context, templateId: String?): Loaded {
-        return try {
-            val fileName = getFileNameForTemplate(templateId)
-            val file = File(context.filesDir, fileName)
+        val file = File(context.filesDir, getFileNameForTemplate(templateId))
+        val text = try {
             if (!file.exists()) return Loaded(emptyList())
+            file.readText(Charsets.UTF_8)
+        } catch (e: Exception) {
+            Log.w("ScanHistoryStorage", "读取扫码历史失败: ${file.name}, ${e.message}")
+            backupCorruptedFile(file)
+            return Loaded(emptyList())
+        }
+        if (text.isBlank()) return Loaded(emptyList())
 
-            val text = file.readText(Charsets.UTF_8)
-            if (text.isBlank()) return Loaded(emptyList())
-
+        return try {
             val root = JSONObject(text)
             val arr = root.optJSONArray("items") ?: JSONArray()
 
@@ -193,7 +249,9 @@ object ScanHistoryStorage {
                 }
             }
             Loaded(list)
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.w("ScanHistoryStorage", "扫码历史解析失败: ${file.name}, ${e.message}")
+            backupCorruptedFile(file)
             Loaded(emptyList())
         }
     }
@@ -205,7 +263,7 @@ object ScanHistoryStorage {
         items.forEach { arr.put(toJson(it)) }
         root.put("items", arr)
 
-        File(context.filesDir, fileName).writeText(root.toString(), Charsets.UTF_8)
+        writeTextAtomically(File(context.filesDir, fileName), root.toString())
     }
 
     private fun getFileNameForTemplate(templateId: String?): String {
@@ -241,23 +299,28 @@ object ScanHistoryStorage {
 
     private fun fromJson(obj: JSONObject): ScanResult {
         val areaObj = obj.optJSONObject("area") ?: JSONObject()
+        val templateId = obj.optString("templateId", "")
+        val text = obj.optString("text", "")
+        val timestamp = obj.optLong("timestamp", 0L)
         return ScanResult(
             id = obj.optLong("id", System.currentTimeMillis()),
             index = obj.optInt("index", 0),
             scanData = ScanData(
                 // scanDataId 是模板 scans 里的记录 id（UUID）；旧文件没有该字段，
-                // 退回 "id"（结果序号）仅为兼容，删除同步会走兜底匹配
+                // 退回 "id"（结果序号）仅为兼容，删除同步会走兜底匹配；
+                // 两者都没有时确定性推导，避免每次加载生成新 id 导致 PC 端重复
                 id = obj.optString("scanDataId", "")
-                    .ifBlank { obj.optString("id", java.util.UUID.randomUUID().toString()) },
-                text = obj.optString("text", ""),
-                timestamp = obj.optLong("timestamp", System.currentTimeMillis()),
+                    .ifBlank { obj.optString("id", "") }
+                    .ifBlank { legacyScanId(templateId, text, timestamp) },
+                text = text,
+                timestamp = timestamp,
                 operator = obj.optString("operator", "unknown"),
                 campus = areaObj.optString("campus", ""),
                 building = areaObj.optString("building", ""),
                 floor = areaObj.optString("floor", ""),
                 room = areaObj.optString("room", ""),
                 tag = areaObj.optString("tag", ""),
-                templateId = obj.optString("templateId", ""),
+                templateId = templateId,
                 templateName = obj.optString("templateName", ""),
                 uploaded = obj.optBoolean("uploaded", false)
             ),
@@ -281,13 +344,18 @@ object SettingsStorage {
     )
 
     fun load(context: Context): Settings {
-        return try {
-            val file = File(context.filesDir, FILE_NAME)
+        val file = File(context.filesDir, FILE_NAME)
+        val text = try {
             if (!file.exists()) return Settings()
+            file.readText(Charsets.UTF_8)
+        } catch (e: Exception) {
+            Log.w("SettingsStorage", "读取设置失败: ${e.message}")
+            backupCorruptedFile(file)
+            return Settings()
+        }
+        if (text.isBlank()) return Settings()
 
-            val text = file.readText(Charsets.UTF_8)
-            if (text.isBlank()) return Settings()
-
+        return try {
             val root = JSONObject(text)
             Settings(
                 clipboardEnabled = root.optBoolean("clipboardEnabled", true),
@@ -299,7 +367,9 @@ object SettingsStorage {
                 channel2MinSolidityScore = root.optDouble("channel2MinSolidityScore", 10.0),
                 channel2MinGradScore = root.optDouble("channel2MinGradScore", 8.0)
             )
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.w("SettingsStorage", "设置解析失败: ${e.message}")
+            backupCorruptedFile(file)
             Settings()
         }
     }
@@ -316,8 +386,9 @@ object SettingsStorage {
             root.put("channel2MinSolidityScore", settings.channel2MinSolidityScore)
             root.put("channel2MinGradScore", settings.channel2MinGradScore)
 
-            File(context.filesDir, FILE_NAME).writeText(root.toString(), Charsets.UTF_8)
-        } catch (_: Exception) {
+            writeTextAtomically(File(context.filesDir, FILE_NAME), root.toString())
+        } catch (e: Exception) {
+            Log.w("SettingsStorage", "保存设置失败: ${e.message}")
         }
     }
 }

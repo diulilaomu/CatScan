@@ -41,12 +41,15 @@ class ResultItemController(
 
     /**
      * 更新本地字段状态
+     * 展开编辑中不覆盖输入字段，避免后台上传回调清掉用户正在编辑的内容
      */
     fun syncItem(newItem: ScanResult) {
         item = newItem
-        operator = newItem.scanData.operator
-        room = newItem.scanData.room
-        content = newItem.scanData.text
+        if (!expanded) {
+            operator = newItem.scanData.operator
+            room = newItem.scanData.room
+            content = newItem.scanData.text
+        }
     }
 
     /**

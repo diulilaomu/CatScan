@@ -69,7 +69,7 @@ def start_udp_discovery(pairing_token):
     while retry_count < max_retries:
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            # Windows 上 SO_REUSEADDR 允许其他进程抢占同一 UDP 端口，不做端口复用
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
             sock.bind(("", DISCOVERY_PORT))
             sock.settimeout(1.0)

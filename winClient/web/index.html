@@ -1033,11 +1033,12 @@ const KEY_LABELS = {
     building: '楼栋',
     floor: '楼层',
     room: '房间',
+    tag: '标签',
     qrdata: '扫码结果',
     operator: '操作人',
     timestamp: '时间戳',
 };
-const TABLE_KEYS = ['__index__', 'templateName', 'campus', 'building', 'floor', 'room', 'qrdata', 'operator', 'timestamp'];
+const TABLE_KEYS = ['__index__', 'templateName', 'campus', 'building', 'floor', 'room', 'tag', 'qrdata', 'operator', 'timestamp'];
 const CLIENT_POLL_INTERVAL_MS = 2000;
 
 createApp({
@@ -1400,7 +1401,12 @@ createApp({
             }
             const cols = tableColumns.value;
             const headers = cols.map((c) => c.label);
-            const escapeCsv = (v) => /[,"\n\r]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : String(v);
+            // 公式注入防护：qrdata 是外部数据，以 = + - @ 等开头的单元格在 Excel 中会被当公式执行
+            const escapeCsv = (v) => {
+                let s = String(v ?? '');
+                if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+                return /[,"\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+            };
             const rows = qrdataList.value.map((item, idx) =>
                 cols.map((c) => escapeCsv(c.key === '__index__' ? idx + 1 : item[c.key] ?? ''))
             );

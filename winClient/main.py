@@ -1,4 +1,5 @@
-﻿import datetime
+﻿import asyncio
+import datetime
 import hmac
 import json
 import logging
@@ -30,25 +31,36 @@ def get_web_path():
 
 
 def init_logging():
-    log_dir = os.path.join(get_base_path(), "log")
-    os.makedirs(log_dir, exist_ok=True)
+    try:
+        log_dir = os.path.join(get_base_path(), "log")
+        os.makedirs(log_dir, exist_ok=True)
 
-    filename = f"qrdata_{datetime.datetime.now().strftime('%Y-%m-%d')}.log"
-    log_file = os.path.join(log_dir, filename)
+        filename = f"qrdata_{datetime.datetime.now().strftime('%Y-%m-%d')}.log"
+        log_file = os.path.join(log_dir, filename)
 
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s-%(levelname)s: %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-        handlers=[
-            logging.StreamHandler(),
-            logging.FileHandler(log_file, encoding="utf-8"),
-        ],
-        force=True,
-    )
+        logging.basicConfig(
+            level=logging.INFO,
+            format="%(asctime)s-%(levelname)s: %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+            handlers=[
+                logging.StreamHandler(),
+                logging.FileHandler(log_file, encoding="utf-8"),
+            ],
+            force=True,
+        )
+    except Exception as exc:
+        # 安装到受保护目录（如 Program Files）时文件日志不可用，退回控制台输出而不是启动崩溃
+        logging.basicConfig(
+            level=logging.INFO,
+            format="%(asctime)s-%(levelname)s: %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+            handlers=[logging.StreamHandler()],
+            force=True,
+        )
+        logging.error("file logging init failed: %s", exc)
 
     if getattr(sys, "frozen", False):
-        fastapi_log_path = os.path.join(log_dir, "fastapi.log")
+        fastapi_log_path = os.path.join(get_base_path(), "log", "fastapi.log")
         try:
             sys.stdout = open(fastapi_log_path, "a", encoding="utf-8")
             sys.stderr = open(fastapi_log_path, "a", encoding="utf-8")
@@ -79,7 +91,13 @@ def _request_is_authorized(request):
     supplied_token = request.query_params.get("token", "")
     if not supplied_token:
         supplied_token = request.headers.get("X-CatScan-Token", "")
-    return bool(supplied_token) and hmac.compare_digest(supplied_token, PAIRING_TOKEN)
+    if not supplied_token:
+        return False
+    # compare_digest 对含非 ASCII 的 str 会抛 TypeError（查询参数可被任意构造），必须按字节比较
+    return hmac.compare_digest(
+        supplied_token.encode("utf-8"),
+        PAIRING_TOKEN.encode("utf-8"),
+    )
 
 
 def _require_authorized(request):
@@ -209,6 +227,37 @@ def _client_blocked(ip, mac):
     return False
 
 
+def _log_value_preview(value, limit=100):
+    """日志里只记录截断后的预览，避免明文堆积完整扫码内容。"""
+    text = repr(value)
+    if len(text) > limit:
+        text = text[:limit] + "...(truncated)"
+    return text
+
+
+def _format_scan_timestamp(value):
+    """手机端上报的扫码时间（epoch 秒/毫秒）转展示格式；无效时返回空串。"""
+    try:
+        ts = int(value)
+    except (TypeError, ValueError):
+        return ""
+    if ts <= 0:
+        return ""
+    if ts > 10_000_000_000:  # 毫秒
+        ts /= 1000
+    return datetime.datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M:%S")
+
+
+async def _push_qrdata_to_ui(qrdata):
+    # eel 的 websocket 发送是阻塞 IO，且页面刷新瞬间会抛异常；
+    # 放到 executor 执行并兜底，避免拖住事件循环、或让 batch 循环中途断掉丢数据
+    loop = asyncio.get_running_loop()
+    try:
+        await loop.run_in_executor(None, lambda: eel.updateQrData(qrdata)())
+    except Exception as exc:
+        logging.error("push qrdata to UI failed: %s", exc)
+
+
 def _blocked_response():
     return {
         "status": "forbidden",
@@ -252,7 +301,9 @@ def _touch_client_connection(payload, fallback_ip=""):
     last_seen = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     with _connections_lock:
-        if _client_blocked(ip, mac):
+        # 封禁判定必须覆盖 socket 真实对端 IP（fallback_ip）：
+        # payload 里的 ip/mac 是客户端自报的，可被伪造用来绕过踢出
+        if _client_blocked(ip, mac) or _client_blocked(_normalize_ip(fallback_ip), ""):
             return False, ip, mac
 
         existing = _client_connections.get(key, {})
@@ -321,14 +372,15 @@ async def receive_json(data: dict, request: Request):
     client_ip = _normalize_ip(request.client.host if request and request.client else "")
     base_ip, base_mac = _extract_client_network_info(data, fallback_ip=client_ip)
 
-    if _client_blocked(base_ip, base_mac):
-        logging.info("Blocked client request rejected: ip=%s mac=%s", base_ip, base_mac)
+    # 封禁只认 socket 真实 IP 与 payload 的 MAC；payload 自报 IP 不参与判定，防伪造绕过
+    if _client_blocked(client_ip, "") or _client_blocked("", base_mac):
+        logging.info("Blocked client request rejected: ip=%s mac=%s", client_ip, base_mac)
         return _blocked_response()
 
     if "batch" in data and data["batch"] is True and "data" in data:
         batch_data = data["data"]
         if not isinstance(batch_data, list):
-            logging.error("Invalid batch payload: %s", data)
+            logging.error("Invalid batch payload: %s", _log_value_preview(data))
             return {"status": "error", "msg": "batch data format error", "data": data, "code": 500, "timestamp": getTime()}
 
         accepted_count = 0
@@ -363,9 +415,10 @@ async def receive_json(data: dict, request: Request):
                 "clientMac": item.get("clientMac") or item.get("mac") or resolved_mac or "",
                 "status": "received",
                 "code": 200,
-                "timestamp": getTime(),
+                # 优先用手机端的真实扫码时间，旧版本数据没有则退回 PC 接收时间
+                "timestamp": _format_scan_timestamp(item.get("scanTimestamp")) or getTime(),
             }
-            pushqrdata(payload)
+            await _push_qrdata_to_ui(payload)
             pushed_count += 1
 
         return {
@@ -397,13 +450,14 @@ async def receive_json(data: dict, request: Request):
             "clientMac": data.get("clientMac") or data.get("mac") or resolved_mac or "",
             "status": "received",
             "code": 200,
-            "timestamp": getTime(),
+            # 优先用手机端的真实扫码时间，旧版本数据没有则退回 PC 接收时间
+            "timestamp": _format_scan_timestamp(data.get("scanTimestamp")) or getTime(),
         }
-        pushqrdata(payload)
+        await _push_qrdata_to_ui(payload)
         if action == "delete":
-            logging.info("Delete data: %s", qrdata)
+            logging.info("Delete data: %s", _log_value_preview(qrdata))
         else:
-            logging.info("Received qrdata: %s", qrdata)
+            logging.info("Received qrdata: %s", _log_value_preview(qrdata))
         return payload
 
     if resolved_ip or resolved_mac:
@@ -415,7 +469,7 @@ async def receive_json(data: dict, request: Request):
             "clientMac": resolved_mac,
         }
 
-    logging.error("Invalid payload: %s", data)
+    logging.error("Invalid payload: %s", _log_value_preview(data))
     return {"status": "error", "msg": "missing qrdata field", "data": data, "code": 500, "timestamp": getTime()}
 
 
@@ -439,8 +493,11 @@ def run_fastapi():
                 access_log=False,
             )
             break
-        except OSError as exc:
-            if "Address already in use" in str(exc) or "10048" in str(exc):
+        except (OSError, SystemExit) as exc:
+            # uvicorn 端口绑定失败时在 Server.startup() 里 sys.exit(1)，
+            # 抛出的是 SystemExit 而非 OSError，不捕获的话本线程会静默死亡
+            is_bind_failure = isinstance(exc, SystemExit) or "Address already in use" in str(exc) or "10048" in str(exc)
+            if is_bind_failure:
                 retry_count += 1
                 if retry_count < max_retries:
                     logging.warning("port 29027 is in use, retry %s/%s", retry_count, max_retries)
@@ -568,11 +625,6 @@ def restoreClient(client):
 
     logging.info("Client restored: ip=%s mac=%s", ip or "-", mac or "-")
     return {"status": "ok", "code": 200}
-
-
-@eel.expose
-def pushqrdata(qrdata):
-    eel.updateQrData(qrdata)()
 
 
 @eel.expose

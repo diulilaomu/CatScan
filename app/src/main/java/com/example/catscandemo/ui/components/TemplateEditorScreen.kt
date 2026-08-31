@@ -418,6 +418,9 @@ private fun TemplateManagerPage(
 
 
 
+        // 扫码内容等字段来自外部，含制表符/换行会破坏 TXT 列结构，统一替换为空格
+        fun esc(v: String) = v.replace("\t", " ").replace("\n", " ").replace("\r", " ")
+
         val header = "序号\t模板名称\t校区名称\t楼栋\t楼层\t房间号\t标签\t操作人\t时间\t扫码内容"
 
         val lines = ArrayList<String>()
@@ -438,7 +441,7 @@ private fun TemplateManagerPage(
 
                 // 如果你希望“没有扫码也导出一行”，取消注释下面这行即可：
 
-                lines.add("${seq++}\t${t.name}\t${t.campus}\t${t.building}\t\t\t\t${t.operator}\t\t")
+                lines.add("${seq++}\t${esc(t.name)}\t${esc(t.campus)}\t${esc(t.building)}\t\t\t\t${esc(t.operator)}\t\t")
 
             } else {
 
@@ -448,7 +451,7 @@ private fun TemplateManagerPage(
 
                     lines.add(
 
-                        "${seq++}\t${t.name}\t${t.campus}\t${t.building}\t${s.floor}\t${s.room}\t${s.tag}\t${s.operator}\t$time\t${s.text}"
+                        "${seq++}\t${esc(t.name)}\t${esc(t.campus)}\t${esc(t.building)}\t${esc(s.floor)}\t${esc(s.room)}\t${esc(s.tag)}\t${esc(s.operator)}\t$time\t${esc(s.text)}"
 
                     )
 
@@ -1256,13 +1259,19 @@ fun TemplateEditorSheet(
         val allRooms = withContext(Dispatchers.Default) { buildAllRooms(f, r) }
         val currentTemplate = latestTemplate
 
+        // 与手动保存行为一致：保留仍然有效的已选房间；
+        // 只有全部失效（比如把楼层数改小了）时才回落为全选
+        val allRoomSet = allRooms.toHashSet()
+        val keptRooms = currentTemplate.selectedRooms.filter { it in allRoomSet }
+        val selectedRooms = keptRooms.ifEmpty { allRooms }
+
         latestOnSave(
             currentTemplate.copy(
                 maxFloor = f,
                 roomCountPerFloor = r,
                 lastSelectedFloor = currentTemplate.lastSelectedFloor.coerceIn(1, f),
                 tags = latestTags,
-                selectedRooms = allRooms
+                selectedRooms = selectedRooms
             )
         )
         countInputsEdited = false

@@ -117,6 +117,9 @@ fun SettingsDrawer(
 
                 SettingsPage.SCAN_PARAMS -> {
                     ScanParamsSettingsScreen(
+                        clipboardEnabled = clipboardEnabled,
+                        duplicateScanEnabled = duplicateScanEnabled,
+                        showBarcodeOverlay = showBarcodeOverlay,
                         channel1ScanFrameInterval = channel1ScanFrameInterval,
                         onChannel1ScanFrameIntervalChange = onChannel1ScanFrameIntervalChange,
                         channel2MinAreaScore = channel2MinAreaScore,
@@ -429,6 +432,9 @@ private fun toOneDecimal(value: Double): String {
 
 @Composable
 private fun ScanParamsSettingsScreen(
+    clipboardEnabled: Boolean,
+    duplicateScanEnabled: Boolean,
+    showBarcodeOverlay: Boolean,
     channel1ScanFrameInterval: Int,
     onChannel1ScanFrameIntervalChange: (Int) -> Unit,
     channel2MinAreaScore: Double,
@@ -443,8 +449,11 @@ private fun ScanParamsSettingsScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    
+
     LaunchedEffect(
+        clipboardEnabled,
+        duplicateScanEnabled,
+        showBarcodeOverlay,
         channel1ScanFrameInterval,
         channel2MinAreaScore,
         channel2MinAspectScore,
@@ -457,9 +466,9 @@ private fun ScanParamsSettingsScreen(
             channel2MinAspectScore = channel2MinAspectScore,
             channel2MinSolidityScore = channel2MinSolidityScore,
             channel2MinGradScore = channel2MinGradScore,
-            clipboardEnabled = true,
-            duplicateScanEnabled = true,
-            showBarcodeOverlay = true
+            clipboardEnabled = clipboardEnabled,
+            duplicateScanEnabled = duplicateScanEnabled,
+            showBarcodeOverlay = showBarcodeOverlay
         )
         SettingsStorage.save(context, settings)
     }

@@ -15,6 +15,9 @@ import kotlinx.coroutines.launch
 /**
  * 默认扫描数据仓库实现
  * 负责扫描数据的存储和管理
+ *
+ * 内存列表会被主线程（扫码/删除）和 IO 线程（上传回调读列表）并发访问，
+ * 所有读写都经由 stateLock 串行化，避免并发修改。
  */
 class DefaultScanRepository(
     private val context: Context
@@ -30,13 +33,16 @@ class DefaultScanRepository(
     private var nextIndex: Int = 1
     private var initialized = false
     private var currentTemplateId: String? = null
+    private val stateLock = Any()
     private val persistenceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val pendingSaveLock = Any()
     private val pendingSaves = LinkedHashMap<String, SaveRequest>()
     private val saveSignals = Channel<Unit>(Channel.CONFLATED)
 
     init {
-        initialize()
+        synchronized(stateLock) {
+            initializeLocked()
+        }
         persistenceScope.launch {
             for (ignored in saveSignals) {
                 while (true) {
@@ -56,15 +62,17 @@ class DefaultScanRepository(
     }
 
     override fun setCurrentTemplateId(templateId: String?) {
-        if (currentTemplateId != templateId) {
-            currentTemplateId = templateId
-            // 重新初始化，加载对应模板的数据
-            initialized = false
-            initialize()
+        synchronized(stateLock) {
+            if (currentTemplateId != templateId) {
+                currentTemplateId = templateId
+                // 重新初始化，加载对应模板的数据
+                initialized = false
+                initializeLocked()
+            }
         }
     }
 
-    private fun initialize() {
+    private fun initializeLocked() {
         if (!initialized) {
             val loaded = ScanHistoryStorage.load(context, currentTemplateId)
             scanResults = loaded.items.toMutableList()
@@ -89,15 +97,15 @@ class DefaultScanRepository(
         room: String,
         tag: String,
         allowDuplicate: Boolean
-    ): ScanData? {
+    ): ScanData? = synchronized(stateLock) {
         // 检查重复
         if (!allowDuplicate) {
             if (scanResults.any { it.scanData.text == text }) {
-                return null
+                return@synchronized null
             }
         } else {
             if (scanResults.isNotEmpty() && scanResults.first().scanData.text == text) {
-                return null
+                return@synchronized null
             }
         }
 
@@ -122,73 +130,81 @@ class DefaultScanRepository(
         )
 
         scanResults.add(0, scanResult)
-        saveScanResults()
-        return scanData
+        saveScanResultsLocked()
+        scanData
     }
 
-    override fun deleteScan(id: Long): ScanResult? {
+    override fun deleteScan(id: Long): ScanResult? = synchronized(stateLock) {
         val deleted = scanResults.firstOrNull { it.id == id }
         scanResults.removeAll { it.id == id }
-        saveScanResults()
-        return deleted
+        saveScanResultsLocked()
+        deleted
     }
 
     override fun updateScan(id: Long, scanData: ScanData) {
-        val index = scanResults.indexOfFirst { it.id == id }
-        if (index != -1) {
-            val updatedResult = scanResults[index].copy(scanData = scanData)
-            scanResults[index] = updatedResult
-            saveScanResults()
+        synchronized(stateLock) {
+            val index = scanResults.indexOfFirst { it.id == id }
+            if (index != -1) {
+                val updatedResult = scanResults[index].copy(scanData = scanData)
+                scanResults[index] = updatedResult
+                saveScanResultsLocked()
+            }
         }
     }
 
-    override fun getScanById(id: Long): ScanResult? {
-        return scanResults.firstOrNull { it.id == id }
+    override fun getScanById(id: Long): ScanResult? = synchronized(stateLock) {
+        scanResults.firstOrNull { it.id == id }
     }
 
-    override fun getAllScans(): List<ScanResult> {
-        return scanResults.toList()
+    override fun getAllScans(): List<ScanResult> = synchronized(stateLock) {
+        scanResults.toList()
     }
 
-    override fun getPendingScans(): List<ScanResult> {
-        return scanResults.filter { !it.uploaded }
+    override fun getPendingScans(): List<ScanResult> = synchronized(stateLock) {
+        scanResults.filter { !it.uploaded }
     }
 
     override fun markScanAsUploaded(id: Long) {
-        val index = scanResults.indexOfFirst { it.id == id }
-        if (index != -1) {
-            val current = scanResults[index]
-            val updatedResult = current.copy(
-                scanData = current.scanData.copy(uploaded = true),
-                uploaded = true
-            )
-            scanResults[index] = updatedResult
-            saveScanResults()
+        synchronized(stateLock) {
+            val index = scanResults.indexOfFirst { it.id == id }
+            if (index != -1) {
+                val current = scanResults[index]
+                val updatedResult = current.copy(
+                    scanData = current.scanData.copy(uploaded = true),
+                    uploaded = true
+                )
+                scanResults[index] = updatedResult
+                saveScanResultsLocked()
+            }
         }
     }
 
     override fun replaceAll(scans: List<ScanResult>) {
-        scanResults = scans.toMutableList()
-        // 恢复自增序号，避免新扫描 id/index 重复
-        // id 可能是稳定 hash（含负值），自增起点从非负最大值之后开始
-        val maxId = scanResults.maxOfOrNull { it.id } ?: 0L
-        val maxIndex = scanResults.maxOfOrNull { it.index } ?: 0
-        nextId = maxOf(maxId, 0L) + 1
-        nextIndex = maxIndex + 1
-        saveScanResults()
+        synchronized(stateLock) {
+            scanResults = scans.toMutableList()
+            // 恢复自增序号，避免新扫描 id/index 重复
+            // id 可能是稳定 hash（含负值），自增起点从非负最大值之后开始
+            val maxId = scanResults.maxOfOrNull { it.id } ?: 0L
+            val maxIndex = scanResults.maxOfOrNull { it.index } ?: 0
+            nextId = maxOf(maxId, 0L) + 1
+            nextIndex = maxIndex + 1
+            saveScanResultsLocked()
+        }
     }
 
     /**
      * 清空所有扫描数据
      */
     override fun clearAllScans() {
-        scanResults.clear()
-        nextId = 1L
-        nextIndex = 1
-        saveScanResults()
+        synchronized(stateLock) {
+            scanResults.clear()
+            nextId = 1L
+            nextIndex = 1
+            saveScanResultsLocked()
+        }
     }
 
-    private fun saveScanResults() {
+    private fun saveScanResultsLocked() {
         // 每个模板只保留最新快照，连续扫码不会堆积越来越大的历史列表副本。
         val request = SaveRequest(currentTemplateId, scanResults.toList())
         val key = currentTemplateId ?: "<no-template>"

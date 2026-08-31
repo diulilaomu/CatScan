@@ -737,25 +737,29 @@ fun MainScreen(viewModel: MainViewModel) {
 
 
 
+                                // 用最新状态读值：controller 只随 id 重建，
+                                // 闭包里不能捕获初始 item，否则复制/删除/保存拿到的是旧数据
+                                val latestItem by rememberUpdatedState(item)
+
                                 val controller = remember(item.id) {
 
                                     ResultItemController(
 
                                         initialItem = item,
 
-                                        onDelete = { viewModel.deleteItemById(item.id) },
+                                        onDelete = { viewModel.deleteItemById(latestItem.id) },
 
                                         onClickCopy = {
 
-                                            copyToClipboard(item.scanData.text)
+                                            copyToClipboard(latestItem.scanData.text)
 
-                                            showToast(item.scanData.text)
+                                            showToast(latestItem.scanData.text)
 
                                         },
 
                                         onUpdate = { updatedItem ->
 
-                                            viewModel.updateItemById(item.id, updatedItem)
+                                            viewModel.updateItemById(latestItem.id, updatedItem)
 
                                         }
 
@@ -839,15 +843,8 @@ fun MainScreen(viewModel: MainViewModel) {
             newUrl = viewModel.pendingNewUrl,
 
             onConfirm = {
-
-                viewModel.serverUrl = viewModel.pendingNewUrl
-
-                viewModel.uploadEnabled = true
-
-                viewModel.showUrlChangeDialog = false
-
-                showToast("已更新上传地址")
-
+                // 先探测目标确为 CatScan 服务端再切换，防止伪造二维码引流
+                viewModel.confirmServerUrlChange(viewModel.pendingNewUrl, showToast)
             },
 
             onDismiss = { viewModel.showUrlChangeDialog = false }

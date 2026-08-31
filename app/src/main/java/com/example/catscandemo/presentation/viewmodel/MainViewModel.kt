@@ -1323,6 +1323,37 @@ class MainViewModel @Inject constructor(
 
 
 
+    /**
+     * 扫码 winClientLink 后确认切换上传地址：
+     * 先探测目标是否真的是 CatScan 服务端（校验响应形状），
+     * 防止现场贴伪造二维码把后续扫码数据引到任意 HTTP 服务。
+     */
+    fun confirmServerUrlChange(newUrl: String, showToast: (String) -> Unit) {
+        if (newUrl.isBlank()) {
+            showUrlChangeDialog = false
+            return
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            val isCatScanServer = try {
+                networkUseCases.checkServerConnectivity(newUrl)
+            } catch (e: Exception) {
+                Log.e(TAG, "验证上传地址异常: ${e.message}", e)
+                false
+            }
+            launch(Dispatchers.Main) {
+                showUrlChangeDialog = false
+                if (isCatScanServer) {
+                    serverUrl = newUrl
+                    uploadEnabled = true
+                    startHeartbeatDetection()
+                    showToast("已更新上传地址")
+                } else {
+                    showToast("地址验证失败，未切换: $newUrl")
+                }
+            }
+        }
+    }
+
     fun onToggleFlash() {
 
         isFlashOn = !isFlashOn
@@ -1387,67 +1418,41 @@ class MainViewModel @Inject constructor(
     ) {
 
         // 使用默认扫描器，自动检测所有条码格式
-
         val scanner = BarcodeScanning.getClient()
 
-
-
-        // 首先尝试直接扫描原图
-
-        val originalImage = try {
-
-            InputImage.fromFilePath(context, uri)
-
-        } catch (e: Exception) {
-
-            Log.e("CatScan", "InputImage.fromFilePath failed, uri=$uri", e)
-
-            showToast("图片读取失败：${e.message ?: e.javaClass.simpleName}")
-
-            scanner.close()  // 确保异常时关闭 scanner
-
-            return
-
-        }
-
-
-
-        scanner.process(originalImage)
-
-            .addOnSuccessListener { barcodes ->
-
-                val result = barcodes.firstOrNull()?.rawValue
-
-                if (result != null) {
-
-                    // 原图扫描成功
-
-                    onBarcodeScanned(result, copyToClipboard, showToast)
-
-                    scanner.close()
-
-                } else {
-
-                    // 原图扫描失败，尝试图像增强后再扫描
-
-                    Log.d("CatScan", "原图扫描失败，尝试增强图像...")
-
-                    tryEnhancedScan(uri, context, scanner, copyToClipboard, showToast)
-
+        viewModelScope.launch(Dispatchers.IO) {
+            // 大图解码耗时，放 IO 线程；MLKit 的 process 可在任意线程调用，
+            // 监听回调默认仍回到主线程
+            val originalImage = try {
+                InputImage.fromFilePath(context, uri)
+            } catch (e: Exception) {
+                Log.e("CatScan", "InputImage.fromFilePath failed, uri=$uri", e)
+                launch(Dispatchers.Main) {
+                    showToast("图片读取失败：${e.message ?: e.javaClass.simpleName}")
+                    scanner.close()  // 确保异常时关闭 scanner
                 }
-
+                return@launch
             }
 
-            .addOnFailureListener { e ->
-
-                Log.e("CatScan", "Barcode scan failed, uri=$uri", e)
-
-                showToast("识别失败")
-
-                scanner.close()
-
-            }
-
+            scanner.process(originalImage)
+                .addOnSuccessListener { barcodes ->
+                    val result = barcodes.firstOrNull()?.rawValue
+                    if (result != null) {
+                        // 原图扫描成功
+                        onBarcodeScanned(result, copyToClipboard, showToast)
+                        scanner.close()
+                    } else {
+                        // 原图扫描失败，尝试图像增强后再扫描
+                        Log.d("CatScan", "原图扫描失败，尝试增强图像...")
+                        tryEnhancedScan(uri, context, scanner, copyToClipboard, showToast)
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("CatScan", "Barcode scan failed, uri=$uri", e)
+                    showToast("识别失败")
+                    scanner.close()
+                }
+        }
     }
 
     
