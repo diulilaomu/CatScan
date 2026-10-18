@@ -27,3 +27,7 @@ __pycache__/
 /app/release/
 winClient/log/
 winClient/web/js.7z
+
+# 签名密钥（密码在 keystore.properties，同样被忽略）
+*.jks
+*.keystore

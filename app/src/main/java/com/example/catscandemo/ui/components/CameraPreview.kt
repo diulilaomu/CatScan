@@ -1400,7 +1400,7 @@ fun CameraPreview(
 fun ScanMaskOverlay(
     modifier: Modifier = Modifier,
     maskColor: ComposeColor = ComposeColor.Black.copy(alpha = 0.5f),
-    cornerColor: ComposeColor = ComposeColor(0xFFB39DDB)
+    cornerColor: ComposeColor = ComposeColor(0xFF2196F3)
 ) {
     // 砂通2眉一
     val maskTopRatio = 0.40f

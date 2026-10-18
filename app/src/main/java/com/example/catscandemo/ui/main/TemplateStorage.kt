@@ -13,7 +13,7 @@ import java.io.File
 /**
  * 原子写入：先写临时文件再改名，进程被杀/断电时不会留下半截 JSON。
  */
-private fun writeTextAtomically(file: File, text: String) {
+internal fun writeTextAtomically(file: File, text: String) {
     val tmp = File(file.parentFile, file.name + ".tmp")
     tmp.writeText(text, Charsets.UTF_8)
     if (tmp.renameTo(file)) return
@@ -27,7 +27,7 @@ private fun writeTextAtomically(file: File, text: String) {
 /**
  * JSON 损坏时把原文件改名保留，避免下次保存把最后的恢复机会覆盖掉。
  */
-private fun backupCorruptedFile(file: File) {
+internal fun backupCorruptedFile(file: File) {
     try {
         if (file.exists()) {
             val backup = File(file.parentFile, file.name + ".corrupt")
@@ -333,14 +333,25 @@ object SettingsStorage {
     private const val FILE_NAME = "settings.json"
 
     data class Settings(
-        val clipboardEnabled: Boolean = true,
+        // 自动复制按模式独立：文本默认关、模板默认开（旧单键迁移到模板模式值）
+        val clipboardEnabledText: Boolean = false,
+        val clipboardEnabledTemplate: Boolean = true,
         val duplicateScanEnabled: Boolean = true,
         val showBarcodeOverlay: Boolean = true,
         val channel1ScanFrameInterval: Int = 3,
         val channel2MinAreaScore: Double = 3.5,
         val channel2MinAspectScore: Double = 28.0,
         val channel2MinSolidityScore: Double = 10.0,
-        val channel2MinGradScore: Double = 8.0
+        val channel2MinGradScore: Double = 8.0,
+        val workMode: String = "TEXT",
+        val splitRatio: Float = 0.45f,
+        val textAutoNewline: Boolean = true,
+        val cameraSleepEnabled: Boolean = true,
+        // 应用设置：主题（SYSTEM/LIGHT/DARK）与自定义导出目录（SAF 树 URI，空=默认下载目录）
+        val themeMode: String = "SYSTEM",
+        val exportTreeUri: String = "",
+        // 摄像头开关状态（默认开启），退出后下次启动保持
+        val cameraEnabled: Boolean = true
     )
 
     fun load(context: Context): Settings {
@@ -357,15 +368,32 @@ object SettingsStorage {
 
         return try {
             val root = JSONObject(text)
+            // v2 起镜头休眠默认开启；旧版本配置一律迁移为开启
+            val version = root.optInt("settingsVersion", 1)
+            // 自动复制迁移：旧单键"clipboardEnabled"的值归模板模式；文本模式固定默认关
+            val legacyClipboard = root.optBoolean("clipboardEnabled", true)
             Settings(
-                clipboardEnabled = root.optBoolean("clipboardEnabled", true),
+                clipboardEnabledText = root.optBoolean("clipboardEnabledText", false),
+                clipboardEnabledTemplate = root.optBoolean("clipboardEnabledTemplate", legacyClipboard),
                 duplicateScanEnabled = root.optBoolean("duplicateScanEnabled", true),
                 showBarcodeOverlay = root.optBoolean("showBarcodeOverlay", true),
                 channel1ScanFrameInterval = root.optInt("channel1ScanFrameInterval", 3),
                 channel2MinAreaScore = root.optDouble("channel2MinAreaScore", 3.5),
                 channel2MinAspectScore = root.optDouble("channel2MinAspectScore", 28.0),
                 channel2MinSolidityScore = root.optDouble("channel2MinSolidityScore", 10.0),
-                channel2MinGradScore = root.optDouble("channel2MinGradScore", 8.0)
+                channel2MinGradScore = root.optDouble("channel2MinGradScore", 8.0),
+                workMode = root.optString("workMode", "TEXT"),
+                splitRatio = root.optDouble("splitRatio", 0.45).toFloat()
+                    .coerceIn(0.2f, 0.75f),
+                textAutoNewline = root.optBoolean("textAutoNewline", true),
+                cameraSleepEnabled = if (version < 2) {
+                    true
+                } else {
+                    root.optBoolean("cameraSleepEnabled", true)
+                },
+                themeMode = root.optString("themeMode", "SYSTEM"),
+                exportTreeUri = root.optString("exportTreeUri", ""),
+                cameraEnabled = root.optBoolean("cameraEnabled", true)
             )
         } catch (e: Exception) {
             Log.w("SettingsStorage", "设置解析失败: ${e.message}")
@@ -377,7 +405,9 @@ object SettingsStorage {
     fun save(context: Context, settings: Settings) {
         try {
             val root = JSONObject()
-            root.put("clipboardEnabled", settings.clipboardEnabled)
+            root.put("settingsVersion", 2)
+            root.put("clipboardEnabledText", settings.clipboardEnabledText)
+            root.put("clipboardEnabledTemplate", settings.clipboardEnabledTemplate)
             root.put("duplicateScanEnabled", settings.duplicateScanEnabled)
             root.put("showBarcodeOverlay", settings.showBarcodeOverlay)
             root.put("channel1ScanFrameInterval", settings.channel1ScanFrameInterval)
@@ -385,6 +415,13 @@ object SettingsStorage {
             root.put("channel2MinAspectScore", settings.channel2MinAspectScore)
             root.put("channel2MinSolidityScore", settings.channel2MinSolidityScore)
             root.put("channel2MinGradScore", settings.channel2MinGradScore)
+            root.put("workMode", settings.workMode)
+            root.put("splitRatio", settings.splitRatio.toDouble())
+            root.put("textAutoNewline", settings.textAutoNewline)
+            root.put("cameraSleepEnabled", settings.cameraSleepEnabled)
+            root.put("themeMode", settings.themeMode)
+            root.put("exportTreeUri", settings.exportTreeUri)
+            root.put("cameraEnabled", settings.cameraEnabled)
 
             writeTextAtomically(File(context.filesDir, FILE_NAME), root.toString())
         } catch (e: Exception) {

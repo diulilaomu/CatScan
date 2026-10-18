@@ -35,7 +35,6 @@ class ResultItemController(
     var expanded by mutableStateOf(false)
 
     // 可编辑字段状态
-    var operator by mutableStateOf(initialItem.scanData.operator)
     var room by mutableStateOf(initialItem.scanData.room)
     var content by mutableStateOf(initialItem.scanData.text)
 
@@ -46,7 +45,6 @@ class ResultItemController(
     fun syncItem(newItem: ScanResult) {
         item = newItem
         if (!expanded) {
-            operator = newItem.scanData.operator
             room = newItem.scanData.room
             content = newItem.scanData.text
         }
@@ -57,7 +55,6 @@ class ResultItemController(
      */
     fun save() {
         val updatedScanData = item.scanData.copy(
-            operator = operator,
             text = content,
             room = room
         )
@@ -72,7 +69,9 @@ class ResultItemController(
      */
     @Composable
     fun Render(highlight: Boolean = false, templateTags: List<String> = emptyList()) {
-        val bgColor = if (highlight) Color(0xFFFFF59D) else Color.White
+        // 重复命中保持黄底（深字保证可读），普通项随暗色模式
+        val bgColor = if (highlight) Color(0xFFFFF59D) else MaterialTheme.colorScheme.surface
+        val contentColor = if (highlight) Color(0xFF4A4100) else MaterialTheme.colorScheme.onSurface
         val deleteColor = Color(0xFFF44336)
         val expandColor = Color(0xFF2196F3)
 
@@ -94,7 +93,8 @@ class ResultItemController(
                         .clickable { onClickCopy() },
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = contentColor
                 )
 
                 // 第二列：标签、房间号徽标（左右并排，各占独立徽标）
@@ -109,10 +109,18 @@ class ResultItemController(
                             text = item.scanData.tag,
                             style = MaterialTheme.typography.labelSmall,
                             fontSize = 9.sp,
-                            color = if (tagIndex >= 0) tagContentColor(tagIndex) else Color(0xFF616161),
+                            color = if (tagIndex >= 0) {
+                                tagContentColor(tagIndex)
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            },
                             modifier = Modifier
                                 .background(
-                                    if (tagIndex >= 0) tagContainerColor(tagIndex) else Color(0xFFE0E0E0)
+                                    if (tagIndex >= 0) {
+                                        tagContainerColor(tagIndex)
+                                    } else {
+                                        MaterialTheme.colorScheme.surfaceVariant
+                                    }
                                 )
                                 .padding(horizontal = 5.dp, vertical = 1.dp)
                         )
@@ -123,9 +131,9 @@ class ResultItemController(
                             text = item.scanData.room,
                             style = MaterialTheme.typography.labelSmall,
                             fontSize = 9.sp,
-                            color = Color(0xFF616161),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier
-                                .background(Color(0xFFE0E0E0))
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
                                 .padding(horizontal = 5.dp, vertical = 1.dp)
                         )
                     }
@@ -163,20 +171,10 @@ class ResultItemController(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFFF5F5F5), RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp))
                 .padding(12.dp)
         ) {
             Text(text = "序号：${item.index}", style = MaterialTheme.typography.bodyMedium)
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = operator,
-                onValueChange = { operator = it },
-                label = { Text("牛马") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
 
             Spacer(modifier = Modifier.height(8.dp))
 

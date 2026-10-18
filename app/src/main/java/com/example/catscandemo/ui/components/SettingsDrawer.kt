@@ -1,5 +1,8 @@
 package com.example.catscandemo.ui.components
 
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,10 +22,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -39,11 +44,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.catscandemo.domain.model.WorkMode
 import com.example.catscandemo.presentation.viewmodel.MainViewModel
-import com.example.catscandemo.ui.main.SettingsStorage
 import kotlin.math.roundToInt
 
 private enum class SettingsPage { MAIN, NETWORK, SCAN_PARAMS }
@@ -83,6 +89,7 @@ fun SettingsDrawer(
             when (currentPage) {
                 SettingsPage.MAIN -> {
                     MainSettingsPage(
+                        viewModel = viewModel,
                         clipboardEnabled = clipboardEnabled,
                         onClipboardEnabledChange = onClipboardEnabledChange,
                         duplicateScanEnabled = duplicateScanEnabled,
@@ -117,6 +124,7 @@ fun SettingsDrawer(
 
                 SettingsPage.SCAN_PARAMS -> {
                     ScanParamsSettingsScreen(
+                        viewModel = viewModel,
                         clipboardEnabled = clipboardEnabled,
                         duplicateScanEnabled = duplicateScanEnabled,
                         showBarcodeOverlay = showBarcodeOverlay,
@@ -138,17 +146,20 @@ fun SettingsDrawer(
         
         HorizontalDivider(
             color = MaterialTheme.colorScheme.outlineVariant,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
         )
-        
+
+        // 署名：点击跳转 GitHub 仓库
+        val uriHandler = LocalUriHandler.current
         Text(
-            text = "Wenhe x Rnzy 2025.11.1 CatScan MIT",
+            text = "Wenhe x Rnzhy 2025.11.1 CatScan MIT",
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp),
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                .clickable { uriHandler.openUri("https://github.com/diulilaomu/CatScan") }
+                .padding(vertical = 8.dp),
+            textAlign = TextAlign.Center,
             maxLines = 1
         )
     }
@@ -156,6 +167,7 @@ fun SettingsDrawer(
 
 @Composable
 private fun MainSettingsPage(
+    viewModel: MainViewModel,
     clipboardEnabled: Boolean,
     onClipboardEnabledChange: (Boolean) -> Unit,
     duplicateScanEnabled: Boolean,
@@ -176,8 +188,6 @@ private fun MainSettingsPage(
     onScanParamsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    
     LaunchedEffect(
         clipboardEnabled,
         duplicateScanEnabled,
@@ -188,32 +198,46 @@ private fun MainSettingsPage(
         channel2MinSolidityScore,
         channel2MinGradScore
     ) {
-        val settings = SettingsStorage.Settings(
-            clipboardEnabled = clipboardEnabled,
-            duplicateScanEnabled = duplicateScanEnabled,
-            showBarcodeOverlay = showBarcodeOverlay,
-            channel1ScanFrameInterval = channel1ScanFrameInterval,
-            channel2MinAreaScore = channel2MinAreaScore,
-            channel2MinAspectScore = channel2MinAspectScore,
-            channel2MinSolidityScore = channel2MinSolidityScore,
-            channel2MinGradScore = channel2MinGradScore
-        )
-        SettingsStorage.save(context, settings)
+        viewModel.persistSettings()
     }
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(top = 24.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+            .padding(top = 12.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
     ) {
         Text(
             text = "设置",
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
+
+        // 工作模式切换
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            WorkMode.entries.forEach { mode ->
+                val selected = viewModel.workMode == mode
+                FilterChip(
+                    selected = selected,
+                    onClick = { viewModel.onWorkModeChange(mode) },
+                    modifier = Modifier.weight(1f),
+                    label = {
+                        Text(
+                            text = if (mode == WorkMode.TEMPLATE) "模板模式" else "文本模式",
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                )
+            }
+        }
+
+        Spacer(Modifier.height(8.dp))
 
         Card(
             modifier = Modifier
@@ -225,13 +249,13 @@ private fun MainSettingsPage(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Wifi,
@@ -273,13 +297,13 @@ private fun MainSettingsPage(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.QrCodeScanner,
@@ -309,11 +333,11 @@ private fun MainSettingsPage(
             }
         }
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
 
         Text(
             text = "扫描设置",
@@ -352,6 +376,136 @@ private fun MainSettingsPage(
                     checked = showBarcodeOverlay,
                     onCheckedChange = onShowBarcodeOverlayChange
                 )
+                // 镜头休眠（仅文本模式显示并生效）：一分钟没扫到内容自动关闭摄像头
+                if (viewModel.workMode == WorkMode.TEXT) {
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.outlineVariant,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    ToggleSettingRow(
+                        title = "镜头休眠",
+                        checked = viewModel.cameraSleepEnabled,
+                        onCheckedChange = { viewModel.onCameraSleepEnabledChange(it) }
+                    )
+                }
+            }
+        }
+
+        Spacer(Modifier.height(8.dp))
+
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+        Spacer(Modifier.height(8.dp))
+
+        Text(
+            text = "应用设置",
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        Spacer(Modifier.height(8.dp))
+
+        // 主题与导出位置
+        val context = LocalContext.current
+        val exportTreeLauncher = rememberLauncherForActivityResult(
+            ActivityResultContracts.OpenDocumentTree()
+        ) { uri ->
+            if (uri != null) {
+                val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                runCatching {
+                    context.contentResolver.takePersistableUriPermission(uri, flags)
+                }
+                viewModel.onExportTreeUriChange(uri.toString())
+            }
+        }
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        ) {
+            Column {
+                // 主题：系统 / 日间 / 夜间
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Text(
+                        text = "主题",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(Modifier.height(6.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        listOf("SYSTEM" to "系统", "LIGHT" to "日间", "DARK" to "夜间")
+                            .forEach { (mode, label) ->
+                                FilterChip(
+                                    selected = viewModel.themeMode == mode,
+                                    onClick = { viewModel.onThemeModeChange(mode) },
+                                    modifier = Modifier.weight(1f),
+                                    label = {
+                                        Text(
+                                            text = label,
+                                            modifier = Modifier.fillMaxWidth(),
+                                            textAlign = TextAlign.Center,
+                                            style = MaterialTheme.typography.labelMedium,
+                                            maxLines = 1,
+                                            softWrap = false
+                                        )
+                                    }
+                                )
+                            }
+                    }
+                }
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+                // 导出文件位置
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { exportTreeLauncher.launch(null) }
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.FolderOpen,
+                            contentDescription = "导出文件位置",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(22.dp)
+                        )
+                        Column {
+                            Text(
+                                text = "导出文件位置",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = exportTreeDisplayPath(viewModel.exportTreeUri),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = "选择目录",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
         }
     }
@@ -366,7 +520,7 @@ private fun ToggleSettingRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(horizontal = 16.dp, vertical = 2.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -398,7 +552,7 @@ private fun SliderSettingRow(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .padding(horizontal = 16.dp, vertical = 4.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -432,6 +586,7 @@ private fun toOneDecimal(value: Double): String {
 
 @Composable
 private fun ScanParamsSettingsScreen(
+    viewModel: MainViewModel,
     clipboardEnabled: Boolean,
     duplicateScanEnabled: Boolean,
     showBarcodeOverlay: Boolean,
@@ -448,8 +603,6 @@ private fun ScanParamsSettingsScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-
     LaunchedEffect(
         clipboardEnabled,
         duplicateScanEnabled,
@@ -460,19 +613,9 @@ private fun ScanParamsSettingsScreen(
         channel2MinSolidityScore,
         channel2MinGradScore
     ) {
-        val settings = SettingsStorage.Settings(
-            channel1ScanFrameInterval = channel1ScanFrameInterval,
-            channel2MinAreaScore = channel2MinAreaScore,
-            channel2MinAspectScore = channel2MinAspectScore,
-            channel2MinSolidityScore = channel2MinSolidityScore,
-            channel2MinGradScore = channel2MinGradScore,
-            clipboardEnabled = clipboardEnabled,
-            duplicateScanEnabled = duplicateScanEnabled,
-            showBarcodeOverlay = showBarcodeOverlay
-        )
-        SettingsStorage.save(context, settings)
+        viewModel.persistSettings()
     }
-    
+
     Column(modifier = modifier.fillMaxSize()) {
         // 顶部标题栏 - 对齐网络设置样式
         Surface(
@@ -510,7 +653,7 @@ private fun ScanParamsSettingsScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Card(
                 modifier = Modifier.fillMaxWidth(),

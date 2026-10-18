@@ -1,4 +1,4 @@
-﻿package com.example.catscandemo.presentation.viewmodel
+package com.example.catscandemo.presentation.viewmodel
 
 import com.example.catscandemo.ui.main.SettingsStorage
 
@@ -34,6 +34,10 @@ import com.example.catscandemo.data.network.DiscoveredServer
 
 import com.example.catscandemo.data.network.NetworkDiscovery
 
+import androidx.compose.ui.text.TextRange
+
+import androidx.compose.ui.text.input.TextFieldValue
+
 import com.example.catscandemo.domain.model.ScanData
 
 import com.example.catscandemo.domain.model.ScanResult
@@ -42,7 +46,13 @@ import com.example.catscandemo.domain.model.TemplateMode
 
 import com.example.catscandemo.domain.model.TemplateModel
 
+import com.example.catscandemo.domain.model.WorkMode
+
 import com.example.catscandemo.domain.use_case.*
+
+import com.example.catscandemo.ui.main.TextDoc
+
+import com.example.catscandemo.ui.main.TextDocsStorage
 
 import com.google.mlkit.vision.barcode.BarcodeScanning
 
@@ -51,6 +61,10 @@ import com.google.mlkit.vision.common.InputImage
 import dagger.hilt.android.lifecycle.HiltViewModel
 
 import kotlinx.coroutines.Dispatchers
+
+import kotlinx.coroutines.Job
+
+import kotlinx.coroutines.delay
 
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -198,7 +212,8 @@ class MainViewModel @Inject constructor(
     private fun loadSavedSettings() {
         val context = appContext ?: return
         val settings = SettingsStorage.load(context)
-        clipboardEnabled = settings.clipboardEnabled
+        _clipboardEnabledText.value = settings.clipboardEnabledText
+        _clipboardEnabledTemplate.value = settings.clipboardEnabledTemplate
         duplicateScanEnabled = settings.duplicateScanEnabled
         showBarcodeOverlay = settings.showBarcodeOverlay
         channel1ScanFrameInterval = settings.channel1ScanFrameInterval
@@ -206,6 +221,45 @@ class MainViewModel @Inject constructor(
         channel2MinAspectScore = settings.channel2MinAspectScore
         channel2MinSolidityScore = settings.channel2MinSolidityScore
         channel2MinGradScore = settings.channel2MinGradScore
+        workMode = runCatching { WorkMode.valueOf(settings.workMode) }
+            .getOrDefault(WorkMode.TEXT)
+        val ratio = settings.splitRatio.coerceIn(0.2f, 0.75f)
+        expandedSplitRatio = ratio
+        splitRatio = ratio
+        textAutoNewline = settings.textAutoNewline
+        cameraSleepEnabled = settings.cameraSleepEnabled
+        themeMode = settings.themeMode
+        exportTreeUri = settings.exportTreeUri
+        cameraEnabled = settings.cameraEnabled
+        scheduleCameraSleep()
+    }
+
+    /** 集中持久化设置，供 ViewModel 内部各 setter 与设置界面调用 */
+    fun persistSettings() {
+        val context = appContext ?: return
+        viewModelScope.launch(Dispatchers.IO) {
+            SettingsStorage.save(
+                context,
+                SettingsStorage.Settings(
+                clipboardEnabledText = _clipboardEnabledText.value,
+                clipboardEnabledTemplate = _clipboardEnabledTemplate.value,
+                duplicateScanEnabled = duplicateScanEnabled,
+                showBarcodeOverlay = showBarcodeOverlay,
+                channel1ScanFrameInterval = channel1ScanFrameInterval,
+                channel2MinAreaScore = channel2MinAreaScore,
+                channel2MinAspectScore = channel2MinAspectScore,
+                channel2MinSolidityScore = channel2MinSolidityScore,
+                channel2MinGradScore = channel2MinGradScore,
+                    workMode = workMode.name,
+                    splitRatio = expandedSplitRatio,
+                    textAutoNewline = textAutoNewline,
+                    cameraSleepEnabled = cameraSleepEnabled,
+                    themeMode = themeMode,
+                    exportTreeUri = exportTreeUri,
+                    cameraEnabled = cameraEnabled
+                )
+            )
+        }
     }
 
 
@@ -681,17 +735,27 @@ class MainViewModel @Inject constructor(
 
     
 
-    private val _clipboardEnabled = mutableStateOf(true)
+    // 自动复制（扫到内容自动进剪贴板）：文本/模板模式各自独立记忆
+    // 文本模式默认关（避免大段文档反复覆盖剪贴板），模板模式默认开
+    private val _clipboardEnabledText = mutableStateOf(false)
 
-    var clipboardEnabled: Boolean
+    private val _clipboardEnabledTemplate = mutableStateOf(true)
 
-        get() = _clipboardEnabled.value
-
-        set(value) {
-
-            _clipboardEnabled.value = value
-
+    val clipboardEnabled: Boolean
+        get() = if (workMode == WorkMode.TEXT) {
+            _clipboardEnabledText.value
+        } else {
+            _clipboardEnabledTemplate.value
         }
+
+    fun onClipboardEnabledChange(enabled: Boolean) {
+        if (workMode == WorkMode.TEXT) {
+            _clipboardEnabledText.value = enabled
+        } else {
+            _clipboardEnabledTemplate.value = enabled
+        }
+        persistSettings()
+    }
 
     
 
@@ -809,11 +873,370 @@ class MainViewModel @Inject constructor(
 
 
 
+    // ===== 工作模式 =====
+
+    var workMode by mutableStateOf(WorkMode.TEMPLATE)
+        private set
+
+    fun onWorkModeChange(mode: WorkMode) {
+        if (workMode == mode) return
+        cancelPendingDiscreteScan()
+        workMode = mode
+        persistSettings()
+        scheduleCameraSleep()
+    }
+
+    // 扫描区/数据区分割比例（扫描区高度占比），拖动拉杆调节
+    var splitRatio by mutableStateOf(0.45f)
+        private set
+
+    // 摄像头开启时用户习惯的展开高度；关闭眼睛自动收起后，重新打开恢复到这里
+    var expandedSplitRatio by mutableStateOf(0.45f)
+        private set
+
+    fun onSplitRatioChange(ratio: Float) {
+        // 摄像头开启时保持最小可见高度；关闭后允许拉到顶完全盖住扫描区
+        val min = if (cameraEnabled) 0.2f else 0f
+        val clamped = ratio.coerceIn(min, 0.75f)
+        if (splitRatio == clamped) return
+        splitRatio = clamped
+        if (cameraEnabled) {
+            expandedSplitRatio = clamped
+            schedulePersistSettings()
+        }
+    }
+
+    /** 收起/展开相机动画逐帧设置：不更新记忆高度、不持久化 */
+    fun setSplitRatioAnimated(ratio: Float) {
+        splitRatio = ratio.coerceIn(0f, 0.75f)
+    }
+
+    private var persistSettingsJob: Job? = null
+
+    private fun schedulePersistSettings() {
+        persistSettingsJob?.cancel()
+        persistSettingsJob = viewModelScope.launch(Dispatchers.IO) {
+            delay(400)
+            persistSettings()
+        }
+    }
+
+    // 摄像头开关（扫码图标）：关闭后不绑定相机以省电；状态持久化，下次启动保持
+    var cameraEnabled by mutableStateOf(true)
+        private set
+
+    fun onToggleCameraEnabled() {
+        // 关闭前记住当前展开高度，重新打开时恢复
+        if (cameraEnabled && splitRatio > 0.05f) {
+            expandedSplitRatio = splitRatio
+        }
+        cameraEnabled = !cameraEnabled
+        if (!cameraEnabled) {
+            isFlashOn = false
+            camera = null
+        }
+        scheduleCameraSleep()
+        persistSettings()
+    }
+
+    // 禁用输入法开关（文本模式表头，运行态、默认不禁用）：
+    // 开启后点击编辑区/拖动光标均不弹出软键盘，便于纯扫码录入场景
+    var keyboardDisabled by mutableStateOf(false)
+
+    /** 从"摄像头已关闭"占位处点击重新开启：以当前 splitRatio 为准——
+     *  已≥扫描区最小比例(0.2f)则保持当前高度不动，不足才撑开至 0.2f。
+     *  （不再使用关闭前记忆的 expandedSplitRatio，避免"够高却被拉回旧高度"） */
+    fun reopenCameraWithMinHeight() {
+        if (cameraEnabled) return
+        val current = splitRatio
+        onToggleCameraEnabled()
+        expandedSplitRatio = if (current >= 0.2f) current else 0.2f
+        persistSettings()
+    }
+
+    // ===== 镜头休眠（仅文本模式）：一分钟没扫到内容自动关闭摄像头 =====
+    var cameraSleepEnabled by mutableStateOf(true)
+        private set
+
+    fun onCameraSleepEnabledChange(enabled: Boolean) {
+        cameraSleepEnabled = enabled
+        persistSettings()
+        scheduleCameraSleep()
+    }
+
+    // ===== 应用设置：主题 / 导出位置 =====
+
+    /** 主题模式：SYSTEM（系统）/ LIGHT（日间）/ DARK（夜间） */
+    var themeMode by mutableStateOf("SYSTEM")
+        private set
+
+    fun onThemeModeChange(mode: String) {
+        themeMode = mode
+        persistSettings()
+    }
+
+    /** 自定义导出目录（SAF 树 URI 字符串），空 = 默认系统下载目录/CatScan */
+    var exportTreeUri by mutableStateOf("")
+        private set
+
+    fun onExportTreeUriChange(uri: String) {
+        exportTreeUri = uri
+        persistSettings()
+    }
+
+    private var cameraSleepJob: Job? = null
+
+    private fun scheduleCameraSleep() {
+        cameraSleepJob?.cancel()
+        if (!cameraSleepEnabled || workMode != WorkMode.TEXT || !cameraEnabled) return
+        cameraSleepJob = viewModelScope.launch {
+            delay(60_000L)
+            if (cameraSleepEnabled && workMode == WorkMode.TEXT && cameraEnabled) {
+                onToggleCameraEnabled()
+            }
+        }
+    }
+
+    // ===== 文本模式 =====
+
+    // 自动换行：开启后扫码插入自动处理换行/光标移动
+    var textAutoNewline by mutableStateOf(true)
+        private set
+
+    fun onTextAutoNewlineChange(enabled: Boolean) {
+        textAutoNewline = enabled
+        persistSettings()
+    }
+
+    val textDocs = mutableStateListOf<TextDoc>()
+
+    var activeTextDocId by mutableStateOf<String?>(null)
+        private set
+
+    var showTextDocsManager by mutableStateOf(false)
+
+    // 当前文档编辑器内容（含光标选区）
+    var textFieldValue by mutableStateOf(TextFieldValue(""))
+        private set
+
+    var canUndoText by mutableStateOf(false)
+        private set
+
+    private val undoStacks = mutableMapOf<String, ArrayDeque<TextFieldValue>>()
+
+    private var lastUserEditAtMs = 0L
+
+    private var textDocsReady = false
+
+    private var persistDocsJob: Job? = null
+
+    fun initTextDocsStore(context: Context) {
+        if (textDocsReady) return
+        textDocsReady = true
+        if (appContext == null) {
+            appContext = context.applicationContext
+        }
+        val loaded = TextDocsStorage.load(context.applicationContext)
+        textDocs.clear()
+        textDocs.addAll(loaded.docs)
+        if (textDocs.isEmpty()) {
+            textDocs.add(TextDoc(name = "文档1"))
+        }
+        activeTextDocId = loaded.activeId
+            ?.takeIf { id -> textDocs.any { it.id == id } }
+            ?: textDocs.first().id
+        loadActiveDocIntoEditor()
+    }
+
+    private fun activeDocIndex(): Int = textDocs.indexOfFirst { it.id == activeTextDocId }
+
+    private fun loadActiveDocIntoEditor() {
+        val content = textDocs.getOrNull(activeDocIndex())?.content ?: ""
+        textFieldValue = TextFieldValue(content, TextRange(content.length))
+        lastUserEditAtMs = 0L
+        refreshCanUndo()
+    }
+
+    private fun refreshCanUndo() {
+        canUndoText = undoStacks[activeTextDocId]?.isNotEmpty() == true
+    }
+
+    private fun pushUndoSnapshot() {
+        val id = activeTextDocId ?: return
+        val stack = undoStacks.getOrPut(id) { ArrayDeque() }
+        stack.addLast(textFieldValue)
+        if (stack.size > 50) stack.removeFirst()
+        refreshCanUndo()
+    }
+
+    private fun syncEditorContentToDoc() {
+        val idx = activeDocIndex()
+        if (idx >= 0 && textDocs[idx].content != textFieldValue.text) {
+            textDocs[idx] = textDocs[idx].copy(content = textFieldValue.text)
+        }
+        schedulePersistTextDocs()
+    }
+
+    private fun schedulePersistTextDocs() {
+        val context = appContext ?: return
+        persistDocsJob?.cancel()
+        persistDocsJob = viewModelScope.launch(Dispatchers.IO) {
+            delay(500)
+            TextDocsStorage.save(context, textDocs.toList(), activeTextDocId)
+        }
+    }
+
+    /** 用户在编辑器中的手动输入：快速连续输入合并为一步撤回 */
+    fun onTextEditorChange(newValue: TextFieldValue) {
+        val now = System.currentTimeMillis()
+        if (now - lastUserEditAtMs > 800L) pushUndoSnapshot()
+        lastUserEditAtMs = now
+        textFieldValue = newValue
+        syncEditorContentToDoc()
+    }
+
+    /** 查找定位：仅移动选区/光标，不进撤回栈 */
+    fun selectTextRange(start: Int, end: Int) {
+        val text = textFieldValue.text
+        val s = start.coerceIn(0, text.length)
+        val e = end.coerceIn(0, text.length)
+        textFieldValue = textFieldValue.copy(
+            selection = TextRange(minOf(s, e), maxOf(s, e))
+        )
+    }
+
+    /** 扫码插入到光标处；自动换行开启时按规则补换行/移动光标 */
+    fun insertScannedText(code: String) {
+        scheduleCameraSleep()
+        pushUndoSnapshot()
+        lastUserEditAtMs = 0L
+        val current = textFieldValue
+        val text = current.text
+        val sel = current.selection
+        val start = sel.min.coerceIn(0, text.length)
+        val end = sel.max.coerceIn(0, text.length)
+        var replaced = text.replaceRange(start, end, code)
+        var cursor = start + code.length
+        if (textAutoNewline) {
+            if (end == text.length) {
+                // 插入位置在文档末尾：自动回车起下一行
+                replaced += "\n"
+                cursor = replaced.length
+            } else {
+                // 非末尾：光标移动到下一行的末尾
+                // 先找当前行结尾的换行符，再找下一行结尾的换行符
+                val curLineEnd = replaced.indexOf('\n', cursor)
+                cursor = if (curLineEnd < 0) {
+                    replaced.length
+                } else {
+                    val nextLineEnd = replaced.indexOf('\n', curLineEnd + 1)
+                    if (nextLineEnd >= 0) nextLineEnd else replaced.length
+                }
+            }
+        }
+        textFieldValue = TextFieldValue(replaced, TextRange(cursor.coerceIn(0, replaced.length)))
+        syncEditorContentToDoc()
+    }
+
+    fun undoText() {
+        val id = activeTextDocId ?: return
+        val stack = undoStacks[id] ?: return
+        if (stack.isEmpty()) return
+        textFieldValue = stack.removeLast()
+        lastUserEditAtMs = 0L
+        refreshCanUndo()
+        syncEditorContentToDoc()
+    }
+
+    fun setActiveTextDoc(id: String) {
+        if (id == activeTextDocId || textDocs.none { it.id == id }) return
+        syncEditorContentToDoc()
+        activeTextDocId = id
+        loadActiveDocIntoEditor()
+        schedulePersistTextDocs()
+    }
+
+    fun addTextDoc(): TextDoc {
+        syncEditorContentToDoc()
+        val names = textDocs.map { it.name }.toSet()
+        var n = 1
+        while ("文档$n" in names) n++
+        val doc = TextDoc(name = "文档$n")
+        textDocs.add(doc)
+        activeTextDocId = doc.id
+        loadActiveDocIntoEditor()
+        schedulePersistTextDocs()
+        return doc
+    }
+
+    /** 新建文档并写入预设内容（房间号等），创建后自动切换到新文档 */
+    fun createTextDocWithContent(name: String, content: String) {
+        syncEditorContentToDoc()
+        val finalName = name.trim().ifBlank {
+            val names = textDocs.map { it.name }.toSet()
+            var n = 1
+            while ("文档$n" in names) n++
+            "文档$n"
+        }
+        val doc = TextDoc(name = finalName, content = content)
+        textDocs.add(doc)
+        activeTextDocId = doc.id
+        loadActiveDocIntoEditor()
+        schedulePersistTextDocs()
+    }
+
+    /** 在指定文档末尾新建一行追加内容（不替换已有内容；当前文档走编辑器支持撤回） */
+    fun appendBlockToTextDoc(id: String, block: String) {
+        if (block.isEmpty()) return
+        val idx = textDocs.indexOfFirst { it.id == id }
+        if (idx < 0) return
+        val base = if (id == activeTextDocId) textFieldValue.text else textDocs[idx].content
+        val prefix = if (base.isEmpty() || base.endsWith("\n")) "" else "\n"
+        val newContent = base + prefix + block
+        if (id == activeTextDocId) {
+            pushUndoSnapshot()
+            lastUserEditAtMs = 0L
+            textFieldValue = TextFieldValue(newContent, TextRange(newContent.length))
+            syncEditorContentToDoc()
+        } else {
+            textDocs[idx] = textDocs[idx].copy(content = newContent)
+            schedulePersistTextDocs()
+        }
+    }
+
+    fun renameTextDoc(id: String, newName: String) {
+        val idx = textDocs.indexOfFirst { it.id == id }
+        if (idx < 0) return
+        val trimmed = newName.trim()
+        if (trimmed.isEmpty() || trimmed == textDocs[idx].name) return
+        textDocs[idx] = textDocs[idx].copy(name = trimmed)
+        schedulePersistTextDocs()
+    }
+
+    fun deleteTextDoc(id: String) {
+        val idx = textDocs.indexOfFirst { it.id == id }
+        if (idx < 0) return
+        textDocs.removeAt(idx)
+        undoStacks.remove(id)
+        if (textDocs.isEmpty()) {
+            textDocs.add(TextDoc(name = "文档1"))
+        }
+        if (activeTextDocId == id) {
+            activeTextDocId = textDocs.first().id
+            loadActiveDocIntoEditor()
+        } else {
+            refreshCanUndo()
+        }
+        schedulePersistTextDocs()
+    }
+
+
+
     // 当前一次扫码写入的字段（每次扫码前会被模板刷新）
 
-    var currentOperator by mutableStateOf("猫头枪")
+    var currentOperator by mutableStateOf("")
 
-    var currentCampus by mutableStateOf("天河校区")
+    var currentCampus by mutableStateOf("")
 
     var currentBuilding by mutableStateOf("")
 
@@ -1026,7 +1449,7 @@ class MainViewModel @Inject constructor(
 
 
 
-        currentOperator = t.operator.ifBlank { "unknown" }
+        currentOperator = t.operator
 
         currentCampus = t.campus
 
@@ -1113,7 +1536,7 @@ class MainViewModel @Inject constructor(
             return
         }
 
-        currentOperator = template.operator.ifBlank { "unknown" }
+        currentOperator = template.operator
         currentCampus = template.campus
         currentBuilding = template.building
         currentFloor = "${validFloor}层"
@@ -1181,6 +1604,22 @@ class MainViewModel @Inject constructor(
                     pendingNewUrl = code.removePrefix("winClientLink:")
 
                     showUrlChangeDialog = true
+
+                }
+
+                workMode == WorkMode.TEXT -> {
+
+                    // 文本模式：扫码内容直接插入文本文档光标处，不入识别结果/不上传
+
+                    insertScannedText(code)
+
+                    if (clipboardEnabled) {
+
+                        copyToClipboard(code)
+
+                        showToast("已复制: $code")
+
+                    }
 
                 }
 

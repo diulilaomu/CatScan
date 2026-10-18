@@ -53,10 +53,10 @@ class AddTemplateUseCase(
         name: String,
         mode: TemplateMode = TemplateMode.LINEAR
     ): TemplateModel {
-        val template = TemplateModel(
-            name = name.trim().ifBlank { "未命名模板" },
-            operator = "猫头枪",
-            campus = "猫头校区",
+        val template = TemplateModel(
+            name = name.trim().ifBlank { "未命名模板" },
+            operator = "",
+            campus = "",
             building = "",
             maxFloor = 1,
             roomCountPerFloor = 1,

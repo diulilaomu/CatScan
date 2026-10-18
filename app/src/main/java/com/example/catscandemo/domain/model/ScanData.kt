@@ -8,6 +8,14 @@ enum class TemplateMode {
 }
 
 /**
+ * 工作模式：模板模式（默认）/ 文本模式
+ */
+enum class WorkMode {
+    TEMPLATE,
+    TEXT
+}
+
+/**
  * 基础扫描数据模型
  * 包含所有扫描数据的通用字段
  */

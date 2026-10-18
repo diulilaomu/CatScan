@@ -350,50 +350,10 @@ private fun TemplateManagerPage(
 
 
     fun saveTextToDownloads(fileName: String, mime: String, content: String): Boolean {
-
-        return try {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-                val downloadsDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
-                    ?: return false
-                val catScanDir = File(downloadsDir, "CatScan").apply { mkdirs() }
-                File(catScanDir, fileName).writeText(content, Charsets.UTF_8)
-                return true
-            }
-
-            val resolver = context.contentResolver
-
-            val values = ContentValues().apply {
-
-                put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-
-                put(MediaStore.MediaColumns.MIME_TYPE, mime)
-
-                put(
-
-                    MediaStore.MediaColumns.RELATIVE_PATH,
-
-                    Environment.DIRECTORY_DOWNLOADS + "/CatScan"
-
-                )
-
-            }
-
-            val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values) ?: return false
-
-            resolver.openOutputStream(uri)?.use { os ->
-
-                os.write(content.toByteArray(Charsets.UTF_8))
-
-            } ?: return false
-
-            true
-
-        } catch (_: Exception) {
-
-            false
-
-        }
-
+        // 统一走共享导出（遵循设置里的自定义导出目录）
+        return com.example.catscandemo.ui.components.saveTextToDownloads(
+            context, fileName, mime, content
+        )
     }
 
 
@@ -421,7 +381,7 @@ private fun TemplateManagerPage(
         // 扫码内容等字段来自外部，含制表符/换行会破坏 TXT 列结构，统一替换为空格
         fun esc(v: String) = v.replace("\t", " ").replace("\n", " ").replace("\r", " ")
 
-        val header = "序号\t模板名称\t校区名称\t楼栋\t楼层\t房间号\t标签\t操作人\t时间\t扫码内容"
+        val header = "序号\t模板名称\t楼层\t房间号\t标签\t时间\t扫码内容"
 
         val lines = ArrayList<String>()
 
@@ -441,7 +401,7 @@ private fun TemplateManagerPage(
 
                 // 如果你希望“没有扫码也导出一行”，取消注释下面这行即可：
 
-                lines.add("${seq++}\t${esc(t.name)}\t${esc(t.campus)}\t${esc(t.building)}\t\t\t\t${esc(t.operator)}\t\t")
+                lines.add("${seq++}\t${esc(t.name)}\t\t\t\t\t")
 
             } else {
 
@@ -451,7 +411,7 @@ private fun TemplateManagerPage(
 
                     lines.add(
 
-                        "${seq++}\t${esc(t.name)}\t${esc(t.campus)}\t${esc(t.building)}\t${esc(s.floor)}\t${esc(s.room)}\t${esc(s.tag)}\t${esc(s.operator)}\t$time\t${esc(s.text)}"
+                        "${seq++}\t${esc(t.name)}\t${esc(s.floor)}\t${esc(s.room)}\t${esc(s.tag)}\t$time\t${esc(s.text)}"
 
                     )
 
@@ -489,12 +449,6 @@ private fun TemplateManagerPage(
 
             obj.put("name", t.name)
 
-            obj.put("operator", t.operator)
-
-            obj.put("campus", t.campus)
-
-            obj.put("building", t.building)
-
             obj.put("maxFloor", t.maxFloor)
 
             obj.put("roomCountPerFloor", t.roomCountPerFloor)
@@ -525,12 +479,6 @@ private fun TemplateManagerPage(
                 so.put("text", s.text)
 
                 so.put("timestamp", s.timestamp)
-
-                so.put("operator", s.operator)
-
-                so.put("campus", s.campus)
-
-                so.put("building", s.building)
 
                 so.put("floor", s.floor)
 
@@ -566,6 +514,14 @@ private fun TemplateManagerPage(
 
     }
 
+    // 默认模板名：猫猫1栋，重名则猫猫2栋，以此类推
+    fun suggestTemplateName(): String {
+        val names = templates.map { it.name }.toSet()
+        var n = 1
+        while ("猫猫${n}栋" in names) n++
+        return "猫猫${n}栋"
+    }
+
     fun safeFileNamePart(s: String): String {
 
         return s.trim()
@@ -596,9 +552,7 @@ private fun TemplateManagerPage(
 
             val name = safeFileNamePart(t?.name ?: "模板")
 
-            val campus = safeFileNamePart(t?.campus ?: "校区")
-
-            "${name}_${campus}_$time"
+            "${name}_$time"
 
         }
 
@@ -634,7 +588,10 @@ private fun TemplateManagerPage(
 
             if (!isBatchMode) {
 
-                IconButton(onClick = { showAdd = true }) {
+                IconButton(onClick = {
+                    newName = suggestTemplateName()
+                    showAdd = true
+                }) {
 
                     Icon(Icons.Default.Add, contentDescription = "新增模板")
 
@@ -784,16 +741,16 @@ private fun TemplateManagerPage(
                                     ) {
                                         Text(
                                             text = t.name,
-                                            modifier = Modifier.weight(6f),
+                                            modifier = Modifier.weight(1f),
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis,
                                             style = MaterialTheme.typography.titleMedium
                                         )
 
-                                        Row(
-                                            modifier = Modifier.weight(4f),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
+                                        // “当前”徽标固定占位，保证所有行的笔/垃圾桶位置一致
+                                        Box(
+                                            modifier = Modifier.width(52.dp),
+                                            contentAlignment = Alignment.Center
                                         ) {
                                             if (isActive) {
                                                 Surface(
@@ -811,28 +768,28 @@ private fun TemplateManagerPage(
                                                     )
                                                 }
                                             }
+                                        }
 
-                                            IconButton(
-                                                onClick = { onOpen(t.id) },
-                                                modifier = Modifier.size(40.dp)
-                                            ) {
-                                                Icon(
-                                                    Icons.Default.Edit,
-                                                    contentDescription = "查看/编辑",
-                                                    modifier = Modifier.size(22.dp)
-                                                )
-                                            }
+                                        IconButton(
+                                            onClick = { onOpen(t.id) },
+                                            modifier = Modifier.size(40.dp)
+                                        ) {
+                                            Icon(
+                                                Icons.Default.Edit,
+                                                contentDescription = "查看/编辑",
+                                                modifier = Modifier.size(22.dp)
+                                            )
+                                        }
 
-                                            IconButton(
-                                                onClick = { showDeleteId = t.id },
-                                                modifier = Modifier.size(40.dp)
-                                            ) {
-                                                Icon(
-                                                    Icons.Default.Delete,
-                                                    contentDescription = "删除",
-                                                    modifier = Modifier.size(22.dp)
-                                                )
-                                            }
+                                        IconButton(
+                                            onClick = { showDeleteId = t.id },
+                                            modifier = Modifier.size(40.dp)
+                                        ) {
+                                            Icon(
+                                                Icons.Default.Delete,
+                                                contentDescription = "删除",
+                                                modifier = Modifier.size(22.dp)
+                                            )
                                         }
                                     }
                                 }
@@ -1072,7 +1029,7 @@ private fun TemplateManagerPage(
                     onClick = {
 
                         onAdd(
-                            newName.trim().ifBlank { "未命名模板" },
+                            newName.trim().ifBlank { suggestTemplateName() },
                             newMode
                         )
 
@@ -1195,12 +1152,6 @@ fun TemplateEditorSheet(
 
     var name by rememberSaveable(template.id) { mutableStateOf(template.name) }
     var templateMode by rememberSaveable(template.id) { mutableStateOf(template.mode) }
-
-    var op by rememberSaveable(template.id) { mutableStateOf(template.operator) }
-
-    var campus by rememberSaveable(template.id) { mutableStateOf(template.campus) }
-
-    var building by rememberSaveable(template.id) { mutableStateOf(template.building) }
 
     var floorText by rememberSaveable(template.id) { mutableStateOf(template.maxFloor.toString()) }
 
@@ -1409,24 +1360,6 @@ fun TemplateEditorSheet(
                     onModeSelected = { templateMode = it },
                     modifier = Modifier.fillMaxWidth()
                 )
-            }
-
-            item {
-
-                OutlinedTextField(value = op, onValueChange = { op = it }, label = { Text("操作人") }, modifier = Modifier.fillMaxWidth())
-
-            }
-
-            item {
-
-                OutlinedTextField(value = campus, onValueChange = { campus = it }, label = { Text("校区") }, modifier = Modifier.fillMaxWidth())
-
-            }
-
-            item {
-
-                OutlinedTextField(value = building, onValueChange = { building = it }, label = { Text("楼栋") }, modifier = Modifier.fillMaxWidth())
-
             }
 
             item {
@@ -1641,12 +1574,6 @@ fun TemplateEditorSheet(
 
                                     name = name.trim().ifBlank { "未命名模板" },
 
-                                    operator = op,
-
-                                    campus = campus,
-
-                                    building = building,
-
                                     maxFloor = f,
 
                                     roomCountPerFloor = r,
@@ -1768,7 +1695,7 @@ fun TemplateEditorSheet(
 
                                 Text(
 
-                                    "${df.format(java.util.Date(s.timestamp))} | ${s.operator} | ${s.campus}/${s.building} | ${s.floor} ${s.room}" +
+                                    "${df.format(java.util.Date(s.timestamp))} | ${s.floor} ${s.room}" +
                                             if (s.tag.isNotBlank()) " | ${s.tag}" else "",
 
                                     style = MaterialTheme.typography.bodySmall
