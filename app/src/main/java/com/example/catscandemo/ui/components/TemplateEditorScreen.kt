@@ -76,9 +76,7 @@ import com.example.catscandemo.domain.model.SeqConfig
 import com.example.catscandemo.domain.model.TemplateModel
 import com.example.catscandemo.domain.model.formatSeqValue
 import com.example.catscandemo.presentation.viewmodel.MainViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -108,7 +106,21 @@ fun TemplateEditorNavigator(
             TemplateManagerPage(
                 templates = templates,
                 activeId = activeId,
-                onSelect = { id -> viewModel.setActiveTemplate(id) },
+                noTemplate = viewModel.noTemplateTemplate,
+                onRefreshNoTemplate = { viewModel.refreshNoTemplateTemplate() },
+                onClearNoTemplate = {
+                    viewModel.clearNoTemplateScans()
+                    // 清空后立即重读，让"无模板"行随数据消失/刷新
+                    viewModel.refreshNoTemplateTemplate()
+                },
+                onSelect = { id ->
+                    // 无模板伪模板行=切到无模板模式，不能把伪 id 传给模板仓库
+                    if (id == MainViewModel.NO_TEMPLATE_FAKE_ID) {
+                        viewModel.clearActiveTemplate()
+                    } else {
+                        viewModel.setActiveTemplate(id)
+                    }
+                },
                 onAdd = { name, markMode, seqConfig, maxFloor, roomCount, tags, tagColors ->
                     viewModel.addTemplate(
                         name, markMode, seqConfig, maxFloor, roomCount, tags, tagColors
@@ -176,11 +188,15 @@ fun TemplateEditorNavigator(
     }
 }
 
-/** 模板管理页：常驻勾选框（选中后底部变红色删除）+ 单一导出按钮（点击再选格式），紧凑列表 */
+/** 模板管理页：常驻勾选框（选中后底部变红色删除）+ 单一导出按钮（点击再选格式），紧凑列表。
+ *  noTemplate 伪模板（无模板扫码数据）会作为首行参与勾选导出/删除（删除=清空该桶） */
 @Composable
 private fun TemplateManagerPage(
     templates: List<TemplateModel>,
     activeId: String?,
+    noTemplate: TemplateModel?,
+    onRefreshNoTemplate: () -> Unit,
+    onClearNoTemplate: () -> Unit,
     onSelect: (String) -> Unit,
     onAdd: (String, MarkMode, SeqConfig?, Int?, Int?, List<String>, Map<String, Int>) -> Unit,
     onDelete: (String) -> Unit,
@@ -199,6 +215,14 @@ private fun TemplateManagerPage(
 
     val context = LocalContext.current
 
+    // 无模板数据伪模板参与展示/导出/删除，排在列表最前
+    val displayTemplates = remember(templates, noTemplate) {
+        if (noTemplate != null) listOf(noTemplate) + templates else templates
+    }
+    val noTemplateInSelection = MainViewModel.NO_TEMPLATE_FAKE_ID in selectedTemplateIds
+
+    LaunchedEffect(Unit) { onRefreshNoTemplate() }
+
     fun saveTextToDownloads(fileName: String, mime: String, content: String): Boolean {
         // 统一走共享导出（遵循设置里的自定义导出目录）
         return saveTextToDownloads(
@@ -206,7 +230,7 @@ private fun TemplateManagerPage(
         )
     }
 
-    fun buildExportTxt(selectedTemplates: List<TemplateModel> = templates): String {
+    fun buildExportTxt(selectedTemplates: List<TemplateModel> = displayTemplates): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
         // 扫码内容等字段来自外部，含制表符/换行会破坏 TXT 列结构，统一替换为空格
@@ -232,12 +256,30 @@ private fun TemplateManagerPage(
         return lines.joinToString("\n")
     }
 
-    fun buildExportJson(selectedTemplates: List<TemplateModel> = templates): String {
+    fun buildExportJson(selectedTemplates: List<TemplateModel> = displayTemplates): String {
         val root = JSONObject()
         root.put("activeTemplateId", activeId ?: "")
 
+        // 无模板数据不进 templates 数组（伪模板不是真模板，避免二次导入污染），单独存一份
+        val noTpl = selectedTemplates.firstOrNull {
+            it.id == MainViewModel.NO_TEMPLATE_FAKE_ID
+        }
+        if (noTpl != null) {
+            val noArr = JSONArray()
+            noTpl.scans.forEach { s ->
+                val so = JSONObject()
+                so.put("text", s.text)
+                so.put("timestamp", s.timestamp)
+                so.put("floor", s.floor)
+                so.put("room", s.room)
+                so.put("tag", s.tag)
+                noArr.put(so)
+            }
+            root.put("noTemplateScans", noArr)
+        }
+
         val arr = JSONArray()
-        selectedTemplates.forEach { t ->
+        selectedTemplates.filter { it.id != MainViewModel.NO_TEMPLATE_FAKE_ID }.forEach { t ->
             val obj = JSONObject()
             obj.put("id", t.id)
             obj.put("name", t.name)
@@ -302,7 +344,7 @@ private fun TemplateManagerPage(
     }
 
     fun doExportTxt() {
-        val picked = templates.filter { it.id in selectedTemplateIds }
+        val picked = displayTemplates.filter { it.id in selectedTemplateIds }
         if (picked.isNotEmpty()) {
             // 多选导出：每个勾选的模板各导出一个文件（不再只导出当前模板）
             val time = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
@@ -324,7 +366,7 @@ private fun TemplateManagerPage(
     }
 
     fun doExportJson() {
-        val picked = templates.filter { it.id in selectedTemplateIds }
+        val picked = displayTemplates.filter { it.id in selectedTemplateIds }
         if (picked.isNotEmpty()) {
             // 多选导出：每个勾选的模板各导出一个文件
             val time = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
@@ -377,7 +419,7 @@ private fun TemplateManagerPage(
             }
             IconButton(
                 onClick = { showExportFormat = true },
-                enabled = templates.isNotEmpty(),
+                enabled = displayTemplates.isNotEmpty(),
                 modifier = Modifier.size(36.dp)
             ) {
                 Icon(Icons.Default.Save, contentDescription = "导出")
@@ -391,8 +433,9 @@ private fun TemplateManagerPage(
         // 尾部固定一项"+ 新建模板"（样式与模板行一致，替代右上角加号）
         Box(modifier = Modifier.weight(1f, fill = true)) {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                items(templates, key = { it.id }) { t ->
-                    val isActive = (t.id == activeId)
+                items(displayTemplates, key = { it.id }) { t ->
+                    val isNoTemplate = t.id == MainViewModel.NO_TEMPLATE_FAKE_ID
+                    val isActive = if (isNoTemplate) activeId == null else (t.id == activeId)
                     val isChecked = t.id in selectedTemplateIds
                     Row(
                         modifier = Modifier
@@ -405,7 +448,10 @@ private fun TemplateManagerPage(
                                 },
                                 shape = RoundedCornerShape(10.dp)
                             )
-                            .clickable { onSelect(t.id) }
+                            .clickable {
+                                // 无模板行点击=切到无模板模式（与主页选择器"无模板"同义）
+                                onSelect(t.id)
+                            }
                             .padding(start = 6.dp, end = 2.dp, top = 4.dp, bottom = 4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -450,17 +496,30 @@ private fun TemplateManagerPage(
                             }
                         }
 
-                        TemplateTypeTag(markMode = t.markMode)
-
-                        IconButton(
-                            onClick = { onOpen(t.id) },
-                            modifier = Modifier.size(32.dp)
-                        ) {
-                            Icon(
-                                Icons.Default.Edit,
-                                contentDescription = "查看/编辑",
-                                modifier = Modifier.size(18.dp)
+                        if (isNoTemplate) {
+                            // 无模板行没有房间号/序号类型，展示数据条数代替类型tag
+                            Text(
+                                text = "${t.scans.size}条",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
+                        } else {
+                            TemplateTypeTag(markMode = t.markMode)
+                        }
+
+                        if (!isNoTemplate) {
+                            IconButton(
+                                onClick = { onOpen(t.id) },
+                                modifier = Modifier.size(32.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.Edit,
+                                    contentDescription = "查看/编辑",
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        } else {
+                            Spacer(Modifier.width(32.dp))
                         }
                     }
                 }
@@ -573,7 +632,8 @@ private fun TemplateManagerPage(
         )
     }
 
-    // 批量删除二次确认（垃圾桶已从列表行移除，删除统一走底部红色按钮）
+    // 批量删除二次确认（垃圾桶已从列表行移除，删除统一走底部红色按钮）。
+    // 勾选含无模板数据时，该项走"清空无模板数据"而非删模板
     if (showBatchDeleteConfirm) {
         AlertDialog(
             onDismissRequest = { showBatchDeleteConfirm = false },
@@ -583,7 +643,13 @@ private fun TemplateManagerPage(
                         val ids = selectedTemplateIds
                         selectedTemplateIds = emptySet()
                         showBatchDeleteConfirm = false
-                        ids.forEach { onDelete(it) }
+                        ids.forEach { id ->
+                            if (id == MainViewModel.NO_TEMPLATE_FAKE_ID) {
+                                onClearNoTemplate()
+                            } else {
+                                onDelete(id)
+                            }
+                        }
                     }
                 ) {
                     Text("删除", color = MaterialTheme.colorScheme.error)
@@ -592,8 +658,16 @@ private fun TemplateManagerPage(
             dismissButton = {
                 TextButton(onClick = { showBatchDeleteConfirm = false }) { Text("取消") }
             },
-            title = { Text("删除 ${selectedCount} 个模板") },
-            text = { Text("确认删除选中的 ${selectedCount} 个模板？它们的离线扫码数据也会一并删除，且不可恢复。") }
+            title = { Text("删除 ${selectedCount} 项") },
+            text = {
+                Text(
+                    if (noTemplateInSelection) {
+                        "确认删除选中的 ${selectedCount} 项？其中无模板数据的扫码记录将一并清空，且不可恢复。"
+                    } else {
+                        "确认删除选中的 ${selectedCount} 个模板？它们的离线扫码数据也会一并删除，且不可恢复。"
+                    }
+                )
+            }
         )
     }
 }

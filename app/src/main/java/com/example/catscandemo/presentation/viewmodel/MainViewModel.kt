@@ -207,6 +207,9 @@ class MainViewModel @Inject constructor(
 
         private const val TAG = "MainViewModel"
 
+        /** 无模板伪模板的保留 id：模板仓库不认识它，绝不落进 templates.json */
+        const val NO_TEMPLATE_FAKE_ID = "__no_template__"
+
     }
 
 
@@ -402,6 +405,79 @@ class MainViewModel @Inject constructor(
         _scanResults.value = scans.toList()
 
         return scans
+
+    }
+
+    // ===== 无模板数据（scan_history_no_template.json）=====
+    // 模板管理导出与文档"从模板导入"都通过这个伪模板访问无模板桶
+
+    var noTemplateTemplate by mutableStateOf<TemplateModel?>(null)
+        private set
+
+    /** 从磁盘读无模板桶并刷新伪模板（打开模板管理/导入对话框时调用，IO 线程） */
+    fun refreshNoTemplateTemplate() {
+
+        val context = appContext ?: return
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            // 无模板正激活时内存列表就是该桶的实时真身（落盘是异步的，读盘可能漏最后一扫）；
+            // 否则仓库指向别的模板，只能读 no_template 历史文件。
+            // 读盘结果同样滤掉带 templateId 的污染记录（与仓库加载规则一致）
+
+            val results = if (dataManager.activeTemplateId == null) {
+
+                dataManager.scanUseCases.getAllScans.invoke()
+
+            } else {
+
+                runCatching {
+
+                    com.example.catscandemo.ui.main.ScanHistoryStorage.load(context, null).items
+
+                }.getOrDefault(emptyList())
+
+                    .filter { it.scanData.templateId.isBlank() }
+
+            }
+
+            val template = TemplateModel(
+
+                id = NO_TEMPLATE_FAKE_ID,
+
+                name = "无模板",
+
+                markMode = MarkMode.ROOM,
+
+                scans = results.sortedByDescending { it.scanData.timestamp }.map { it.scanData }
+
+            )
+
+            kotlinx.coroutines.withContext(Dispatchers.Main) {
+
+                noTemplateTemplate = template.takeIf { it.scans.isNotEmpty() }
+
+            }
+
+        }
+
+    }
+
+    /** 清空无模板桶并刷新伪模板 */
+
+    fun clearNoTemplateScans() {
+
+        dataManager.scanUseCases.clearNoTemplateScans()
+
+        noTemplateTemplate = null
+
+        // 若当前正处在无模板模式，同步刷新主列表
+
+        if (activeTemplateId == null) {
+
+            getAllScans()
+
+        }
 
     }
 

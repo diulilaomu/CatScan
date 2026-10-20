@@ -989,10 +989,14 @@ fun MainScreen(viewModel: MainViewModel) {
 
     // 文档下拉菜单底部：快速新建文档
     // 与文档管理器的"新建文档"复用同一个对话框，保留"插入房间号"预设能力
+    LaunchedEffect(showNewDocDialog) {
+        if (showNewDocDialog) viewModel.refreshNoTemplateTemplate()
+    }
     if (showNewDocDialog) {
         com.example.catscandemo.ui.components.CreateDocDialog(
             isCreateMode = true,
             templates = viewModel.templates,
+            noTemplate = viewModel.noTemplateTemplate,
             onDismiss = { showNewDocDialog = false },
             onConfirm = { name, block ->
                 viewModel.createTextDocWithContent(name, block)

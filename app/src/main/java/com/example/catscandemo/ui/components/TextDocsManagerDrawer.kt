@@ -53,6 +53,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -145,6 +146,13 @@ private fun TextDocsManagerPage(
     var showCreateDialog by remember { mutableStateOf(false) }
     var insertTarget by remember { mutableStateOf<TextDoc?>(null) }
     var showExportAllConfirm by remember { mutableStateOf(false) }
+
+    // 打开新建/插入对话框时刷新无模板数据候选（扫码可能在抽屉外刚发生）
+    LaunchedEffect(showCreateDialog, insertTarget) {
+        if (showCreateDialog || insertTarget != null) {
+            viewModel.refreshNoTemplateTemplate()
+        }
+    }
 
     fun toast(msg: String) {
         android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
@@ -394,6 +402,7 @@ private fun TextDocsManagerPage(
         CreateDocDialog(
             isCreateMode = true,
             templates = viewModel.templates,
+            noTemplate = viewModel.noTemplateTemplate,
             onDismiss = { showCreateDialog = false },
             onConfirm = { name, block ->
                 viewModel.createTextDocWithContent(name, block)
@@ -408,6 +417,7 @@ private fun TextDocsManagerPage(
             isCreateMode = false,
             initialName = target.name,
             templates = viewModel.templates,
+            noTemplate = viewModel.noTemplateTemplate,
             onDismiss = { insertTarget = null },
             onConfirm = { name, block ->
                 val newName = name.trim()
@@ -439,8 +449,14 @@ internal fun CreateDocDialog(
     onConfirm: (name: String, block: String) -> Unit,
     initialName: String = "",
     // 从模板导入预设的候选：全部模板（在对话框里直接多选，不必回模板模式激活）
-    templates: List<TemplateModel> = emptyList()
+    templates: List<TemplateModel> = emptyList(),
+    // 无模板扫码数据（伪模板）；非空时作为候选首项，勾选即随模板一起按行导入
+    noTemplate: TemplateModel? = null
 ) {
+    // 候选列表：无模板伪模板排最前；导入路径统一按 TemplateModel 处理
+    val importCandidates = remember(templates, noTemplate) {
+        if (noTemplate != null) listOf(noTemplate) + templates else templates
+    }
     var name by remember { mutableStateOf(initialName) }
     // 预设形式：-1=未选（不插入） 0=序号 1=房间号 2=从模板导入；点了才展示对应选项
     var presetMode by remember { mutableStateOf(-1) }
@@ -469,7 +485,7 @@ internal fun CreateDocDialog(
                             roomsPerFloor = rooms.toIntOrNull() ?: 0,
                             tags = tags
                         )
-                        2 -> templates
+                        2 -> importCandidates
                             .filter { it.id in importPick && it.scans.isNotEmpty() }
                             .joinToString("\n\n") { buildTemplateImportBlock(it) }
                         0 -> buildSeqPreset(
@@ -528,10 +544,11 @@ internal fun CreateDocDialog(
                     }
 
                     if (presetMode == 2) {
-                        // 从模板导入：在对话框里直接多选模板（按列表顺序拼接，模板之间空一行）
-                        if (templates.isEmpty()) {
+                        // 从模板导入：在对话框里直接多选模板（按列表顺序拼接，模板之间空一行）；
+                        // 无模板扫码数据（伪模板）也参与候选
+                        if (importCandidates.isEmpty()) {
                             Text(
-                                "还没有模板，可先到模板模式创建",
+                                "还没有模板，也没有无模板扫码数据，可先到扫码页录入",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -540,7 +557,7 @@ internal fun CreateDocDialog(
                                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                                 verticalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
-                                templates.forEach { t ->
+                                importCandidates.forEach { t ->
                                     val picked = t.id in importPick
                                     Box(
                                         modifier = Modifier
@@ -594,7 +611,7 @@ internal fun CreateDocDialog(
                                     }
                                 }
                             }
-                            val pickedList = templates.filter { it.id in importPick }
+                            val pickedList = importCandidates.filter { it.id in importPick }
                             val totalLines = pickedList.sumOf { it.scans.size }
                             Text(
                                 text = "已选 ${pickedList.size} 个模板 · 共 $totalLines 条数据" +

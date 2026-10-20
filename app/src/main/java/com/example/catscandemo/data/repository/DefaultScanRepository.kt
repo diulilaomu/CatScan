@@ -215,6 +215,29 @@ class DefaultScanRepository(
     }
 
     /**
+     * 只清空无模板桶（scan_history_no_template.json）。
+     * 当前激活的可能是其他模板（内存列表不受影响），也可能正指向无模板文件——
+     * 后者必须同步清内存，否则未触发重载时列表里还留着已"删除"的记录。
+     * 落盘一律走异步保存队列，避免在调用线程写文件。
+     */
+    override fun clearNoTemplateScans() {
+        synchronized(stateLock) {
+            if (currentTemplateId == null) {
+                scanResults.clear()
+                nextId = 1L
+                nextIndex = 1
+                saveScanResultsLocked()
+            } else {
+                val request = SaveRequest(null, emptyList())
+                synchronized(pendingSaveLock) {
+                    pendingSaves["<no-template>"] = request
+                }
+                saveSignals.trySend(Unit)
+            }
+        }
+    }
+
+    /**
      * 清空所有扫描数据
      */
     override fun clearAllScans() {

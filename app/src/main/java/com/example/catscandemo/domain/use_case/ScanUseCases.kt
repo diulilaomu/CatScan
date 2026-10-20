@@ -25,6 +25,11 @@ class ScanUseCases(
     fun setCurrentTemplateId(templateId: String?) {
         scanRepository.setCurrentTemplateId(templateId)
     }
+
+    /** 清空无模板桶（scan_history_no_template.json），不影响任何模板的数据 */
+    fun clearNoTemplateScans() {
+        scanRepository.clearNoTemplateScans()
+    }
 }
 
 /**
@@ -215,6 +220,7 @@ interface ScanRepository {
     fun markScanAsUploadedByDataId(dataId: String)
     fun replaceAll(scans: List<ScanResult>)
     fun saveTemplateScans(templateId: String, scans: List<ScanResult>)
+    fun clearNoTemplateScans()
     fun clearAllScans()
 }
 
