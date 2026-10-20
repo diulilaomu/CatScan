@@ -770,6 +770,8 @@ fun MainScreen(viewModel: MainViewModel) {
                 initialRoom = nextPos?.room ?: "",
                 initialTag = nextPos?.tag ?: template.lastSelectedTag,
                 stickySelection = true,
+                // 已录面板按 UUID 对齐结果仓库真实 id，删除/编辑与首页同轨
+                scanResults = scanItems,
                 // 选中房间/切换标签立即生效（游标为内存态，可反复设置），不关闭弹窗
                 onConfirm = { floor, room, tag ->
                     viewModel.setScanCursorFromSelection(floor, room, tag)

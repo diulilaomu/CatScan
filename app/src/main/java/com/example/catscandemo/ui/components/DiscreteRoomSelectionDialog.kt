@@ -80,6 +80,9 @@ fun DiscreteRoomSelectionDialog(
     // 游标修改模式：选房间不关闭、改动即回调生效
     stickySelection: Boolean = false,
     initialRoom: String = "",
+    // 结果仓库当前列表（与首页同一份数据）：已录面板优先按 UUID 取其真实 Long id，
+    // 避免新扫码尚未重建为稳定 hash id 时点删除删不掉
+    scanResults: List<ScanResult> = emptyList(),
     // 游标模式下已录数据行的操作回调（与首页历史列表同一套）
     onCopyItem: (String) -> Unit = {},
     onDeleteItem: (Long) -> Unit = {},
@@ -177,6 +180,7 @@ fun DiscreteRoomSelectionDialog(
                         template = template,
                         floor = selectedFloor,
                         room = selectedRoom,
+                        scanResults = scanResults,
                         onCopyItem = onCopyItem,
                         onDeleteItem = onDeleteItem,
                         onUpdateItem = onUpdateItem,
@@ -413,6 +417,7 @@ private fun RoomHistoryPanel(
     template: TemplateModel,
     floor: Int,
     room: String,
+    scanResults: List<ScanResult>,
     onCopyItem: (String) -> Unit,
     onDeleteItem: (Long) -> Unit,
     onUpdateItem: (Long, ScanResult) -> Unit,
@@ -427,13 +432,20 @@ private fun RoomHistoryPanel(
         }
     }
 
-    // 稳定 Long id：与 DataManager 同规则（scanData.id 的 hash，冲突递增），
-    // 保证在弹窗里删除/编辑的就是首页列表里的同一条
-    val rows = remember(roomScans) {
+    // 行 Long id 解析：优先取结果仓库里的真实 id（按 scanData.id/UUID 匹配）——
+    // 刚扫入的记录在仓库里还是入库时的顺序自增 id，尚未重建为稳定 hash，
+    // 若这里自己按 hash 现算就会删不到（曾导致"最上面那条删不掉"）；
+    // 仓库里查不到时才回退到与 DataManager 同规则的稳定 hash id（冲突递增）
+    val rows = remember(roomScans, scanResults) {
+        val repoIdByDataId = scanResults.associate { it.scanData.id to it.id }
         val usedIds = HashSet<Long>()
         roomScans.map { scan ->
-            var id = scan.id.hashCode().toLong()
-            while (!usedIds.add(id)) id++
+            val id = repoIdByDataId[scan.id] ?: run {
+                var candidate = scan.id.hashCode().toLong()
+                while (!usedIds.add(candidate)) candidate++
+                candidate
+            }
+            usedIds.add(id)
             id to scan
         }
     }
@@ -470,7 +482,8 @@ private fun RoomHistoryPanel(
                     verticalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
                     rows.forEach { (longId, scan) ->
-                        val controller = remember(scan.id) {
+                        // key 含 longId：仓库 id 迟到/变化时重建控制器，回调始终用当前真实 id
+                        val controller = remember(scan.id, longId) {
                             ResultItemController(
                                 initialItem = ScanResult(id = longId, index = 0, scanData = scan),
                                 onDelete = { onDeleteItem(longId) },
