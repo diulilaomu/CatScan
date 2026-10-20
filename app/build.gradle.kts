@@ -52,8 +52,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = 34
-        // debug 验证期标识：房间圆点规则改版（无数据无点/无标签绿点），正式发布前改回纯版本号
-        versionName = "4.1.0-debug"
+        versionName = "4.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
