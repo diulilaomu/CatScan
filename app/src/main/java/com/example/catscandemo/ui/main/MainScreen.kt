@@ -6,25 +6,36 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.automirrored.filled.WrapText
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.EditLocationAlt
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Filter
 import androidx.compose.material.icons.filled.FlashlightOff
 import androidx.compose.material.icons.filled.FlashlightOn
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -58,16 +69,25 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.example.catscandemo.domain.model.MarkMode
 import com.example.catscandemo.domain.model.WorkMode
+import com.example.catscandemo.domain.model.formatSeqValue
+import com.example.catscandemo.domain.model.tagColorIndexFor
+import com.example.catscandemo.ui.components.tagContainerColor
+import com.example.catscandemo.ui.components.tagContentColor
 import com.example.catscandemo.presentation.viewmodel.MainViewModel
 import com.example.catscandemo.ui.components.CameraPreview
 import com.example.catscandemo.ui.components.ChangeServerUrlDialog
 import com.example.catscandemo.ui.components.DiscoveredPcDialog
 import com.example.catscandemo.ui.components.DiscreteRoomSelectionDialog
 import com.example.catscandemo.ui.components.LineNumberTextEditor
+import com.example.catscandemo.ui.components.NewTemplateFields
+import com.example.catscandemo.ui.components.NewTemplateParamsState
 import com.example.catscandemo.ui.components.ResultItemController
 import com.example.catscandemo.ui.components.SettingsDrawer
 import com.example.catscandemo.ui.components.TemplateEditorRightDrawer
+import com.example.catscandemo.ui.components.TemplateTypeDot
+import com.example.catscandemo.ui.components.TemplateTypeTag
 import com.example.catscandemo.ui.components.TextDocsManagerDrawer
 import com.example.catscandemo.ui.components.TextFindState
 import com.example.catscandemo.utils.AutoRequestCameraPermission
@@ -76,7 +96,7 @@ import kotlinx.coroutines.launch
 private val FLOOR_NUMBER_REGEX = Regex("\\d+")
 
 @SuppressLint("ConfigurationScreenWidthHeight")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
     val context = LocalContext.current
@@ -134,10 +154,18 @@ fun MainScreen(viewModel: MainViewModel) {
         } else {
             scanItems.filter {
                 // 兼容旧数据：templateId 为空的也暂时算到当前模板（可选）
+                // selectedFloor == 0 表示"所有楼层"，不做楼层过滤
                 (it.scanData.templateId == activeId || it.scanData.templateId.isBlank()) &&
-                        parseFloorNumberLocal(it.scanData.floor) == selectedFloor
+                        (selectedFloor == 0 ||
+                                parseFloorNumberLocal(it.scanData.floor) == selectedFloor)
             }
         }
+    }
+
+    // 行序号 = 该条数据是第几个进入模板历史的（列表为最新在先，最新一条 = 总条数）
+    val entryNumberById = remember(scanItems) {
+        val total = scanItems.size
+        scanItems.mapIndexed { index, item -> item.id to (total - index) }.toMap()
     }
 
     val duplicateTextSet = remember(displayItems) {
@@ -151,6 +179,14 @@ fun MainScreen(viewModel: MainViewModel) {
     }
 
     val isTextMode = viewModel.workMode == WorkMode.TEXT
+
+    // 模板模式表头弹窗：清空二次确认 / 快速新建模板 / 修改下次录入房号或序号
+    var showClearConfirm by remember { mutableStateOf(false) }
+    var showNewTemplateDialog by remember { mutableStateOf(false) }
+    var showNextRoomPicker by remember { mutableStateOf(false) }
+    var showSeqPicker by remember { mutableStateOf(false) }
+    // 文本模式表头：快速新建文档
+    var showNewDocDialog by remember { mutableStateOf(false) }
 
     // ===== 查找/替换（文本模式，VSCode Ctrl+F 风格）=====
     val textFindState = remember { TextFindState() }
@@ -588,7 +624,8 @@ fun MainScreen(viewModel: MainViewModel) {
                                     onCopyAll = {
                                         copyToClipboard(viewModel.textFieldValue.text)
                                         showToast("已复制全文")
-                                    }
+                                    },
+                                    onAddDoc = { showNewDocDialog = true }
                                 )
                                 // 查找/替换工具条（展开时文本输入框下移，不影响输入）
                                 AnimatedVisibility(visible = textFindState.visible) {
@@ -618,14 +655,33 @@ fun MainScreen(viewModel: MainViewModel) {
                         } else {
                             TemplateModeHeader(
                                 viewModel = viewModel,
-                                count = displayItems.size,
-                                onClear = { viewModel.clearAllScans(showToast) }
+                                onClearRequest = { showClearConfirm = true },
+                                onAddTemplate = { showNewTemplateDialog = true },
+                                onPickNextRoom = { showNextRoomPicker = true },
+                                onPickNextSeq = { showSeqPicker = true }
                             )
 
+                            // 新扫码进列表时带动画滚动到顶部展示最新一条；
+                            // 仅在"首条变化且条数增加"时触发（删除/筛选切换不滚动）
+                            val scanListState = rememberLazyListState()
+                            var prevFirstId by remember { mutableStateOf<Long?>(null) }
+                            var prevCount by remember { mutableStateOf(-1) }
+                            LaunchedEffect(displayItems) {
+                                val firstId = displayItems.firstOrNull()?.id
+                                if (firstId != null && firstId != prevFirstId &&
+                                    prevCount in 0 until displayItems.size
+                                ) {
+                                    scanListState.animateScrollToItem(0)
+                                }
+                                prevFirstId = firstId
+                                prevCount = displayItems.size
+                            }
+
                             LazyColumn(
+                                state = scanListState,
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                                    .padding(horizontal = 8.dp, vertical = 2.dp)
                             ) {
                                 items(
                                     items = displayItems,
@@ -647,21 +703,40 @@ fun MainScreen(viewModel: MainViewModel) {
                                             },
                                             onUpdate = { updatedItem ->
                                                 viewModel.updateItemById(latestItem.id, updatedItem)
-                                            }
+                                            },
+                                            // 行内标签管理直接落到模板（与模板编辑器同一套 VM 方法）
+                                            onAddTag = { viewModel.addTemplateTag(it) },
+                                            onRenameTag = { old, new, colorIdx ->
+                                                viewModel.updateTemplateTag(old, new, colorIdx)
+                                            },
+                                            onRemoveTag = { viewModel.removeTemplateTag(it) }
                                         )
                                     }
 
                                     LaunchedEffect(item) { controller.syncItem(item) }
 
-                                    controller.Render(
-                                        highlight = isDuplicate,
-                                        templateTags = viewModel.activeTemplate?.tags.orEmpty()
-                                    )
+                                    // animateItem：新条目插入时其余条目平滑下移；
+                                    // AnimatedVisibility：新条目自身从顶部滑入
+                                    Column(modifier = Modifier.animateItem()) {
+                                        val enterState = remember {
+                                            MutableTransitionState(false).apply { targetState = true }
+                                        }
+                                        AnimatedVisibility(
+                                            visibleState = enterState,
+                                            enter = slideInVertically(initialOffsetY = { -it }) + fadeIn()
+                                        ) {
+                                        controller.Render(
+                                            highlight = isDuplicate,
+                                            template = viewModel.activeTemplate,
+                                            lineNumber = entryNumberById[item.id]
+                                        )
+                                        }
 
-                                    HorizontalDivider(
-                                        thickness = DividerDefaults.Thickness,
-                                        color = MaterialTheme.colorScheme.outlineVariant
-                                    )
+                                        HorizontalDivider(
+                                            thickness = DividerDefaults.Thickness,
+                                            color = MaterialTheme.colorScheme.outlineVariant
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -685,24 +760,243 @@ fun MainScreen(viewModel: MainViewModel) {
         }
     }
 
-    if (viewModel.pendingDiscreteScanCode != null) {
+    // 房间号模式：表头徽标修改下次录入起点（楼层→房间→标签；改动即时生效，X 关闭）
+    if (showNextRoomPicker) {
         viewModel.activeTemplate?.let { template ->
+            val nextPos = viewModel.nextScanPosition
             DiscreteRoomSelectionDialog(
                 template = template,
-                initialFloor = viewModel.preferredDiscreteFloor(template),
-                initialTag = template.lastSelectedTag,
+                initialFloor = nextPos?.floor ?: 1,
+                initialRoom = nextPos?.room ?: "",
+                initialTag = nextPos?.tag ?: template.lastSelectedTag,
+                stickySelection = true,
+                // 选中房间/切换标签立即生效（游标为内存态，可反复设置），不关闭弹窗
                 onConfirm = { floor, room, tag ->
-                    viewModel.confirmDiscreteScan(
-                        floor = floor,
-                        room = room,
-                        tag = tag,
-                        copyToClipboard = copyToClipboard,
-                        showToast = showToast
-                    )
+                    viewModel.setScanCursorFromSelection(floor, room, tag)
                 },
-                onDismiss = viewModel::cancelPendingDiscreteScan
+                onDismiss = { showNextRoomPicker = false },
+                // 已录数据面板与首页历史列表共用同一套操作
+                onCopyItem = { text ->
+                    copyToClipboard(text)
+                    showToast(text)
+                },
+                onDeleteItem = { viewModel.deleteItemById(it) },
+                onUpdateItem = { id, updated -> viewModel.updateItemById(id, updated) },
+                onAddTag = { viewModel.addTemplateTag(it) },
+                onRenameTag = { old, new, colorIdx ->
+                    viewModel.updateTemplateTag(old, new, colorIdx)
+                },
+                onRemoveTag = { viewModel.removeTemplateTag(it) }
             )
         }
+    }
+
+    // 序号模式：表头徽标修改下次要录入的序号值与标签（选"无"后后续一直无标签）。
+    // 改动即时生效（无保存按钮），右上角 X 关闭
+    if (showSeqPicker) {
+        val template = viewModel.activeTemplate
+        if (template != null && template.markMode == MarkMode.SEQ) {
+            var seqValue by remember(template.id, template.nextSeq) {
+                mutableStateOf(template.nextSeq.toString())
+            }
+            // -1 = 固定无标签；>=0 = 下次录入该下标的标签（此后继续轮询）
+            var tagCursor by remember(template.id, template.seqTagCursor) {
+                mutableStateOf(template.seqTagCursor)
+            }
+            // 任何改动（序号/标签）立即落为下次录入位置；与模板当前值一致时不重复写盘
+            LaunchedEffect(seqValue, tagCursor) {
+                val v = seqValue.toIntOrNull() ?: return@LaunchedEffect
+                if (template.tags.isEmpty()) {
+                    if (v != template.nextSeq) viewModel.setNextSeq(v, null)
+                } else if (v != template.nextSeq || tagCursor != template.seqTagCursor) {
+                    viewModel.setNextSeq(v, tagCursor)
+                }
+            }
+            AlertDialog(
+                onDismissRequest = { showSeqPicker = false },
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("设置下一个序号")
+                        Spacer(Modifier.weight(1f))
+                        IconButton(
+                            onClick = { showSeqPicker = false },
+                            modifier = Modifier.size(28.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = "关闭",
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+                },
+                text = {
+                    Column {
+                        val previewValue = seqValue.toIntOrNull() ?: template.nextSeq
+                        // 空标签模板 tagCursor 仍为 0，直接取下标会越界崩溃
+                        val previewTag = if (tagCursor < 0 || template.tags.isEmpty()) {
+                            ""
+                        } else {
+                            template.tags[tagCursor % template.tags.size]
+                        }
+                        Text(
+                            text = "下次扫码将录入：" +
+                                    formatSeqValue(template.seq, previewValue, template.scans.size + 1) +
+                                    if (previewTag.isNotBlank()) "·$previewTag" else "",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(Modifier.height(10.dp))
+                        com.example.catscandemo.ui.components.LabeledCompactField(
+                            label = "下一个序号",
+                            value = seqValue,
+                            onValueChange = { seqValue = it.filter(Char::isDigit).take(9) },
+                            keyboardType = androidx.compose.ui.text.input.KeyboardType.Number,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        if (template.tags.isNotEmpty()) {
+                            Spacer(Modifier.height(10.dp))
+                            Text(
+                                "下一个标签（选「无」后一直无标签）",
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                            Spacer(Modifier.height(6.dp))
+                            // 标签自动换行
+                            androidx.compose.foundation.layout.FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                FilterChip(
+                                    selected = tagCursor < 0,
+                                    onClick = { tagCursor = -1 },
+                                    label = { Text("无") }
+                                )
+                                template.tags.forEachIndexed { index, t ->
+                                    FilterChip(
+                                        selected = tagCursor == index,
+                                        onClick = { tagCursor = index },
+                                        label = { Text(t) },
+                                        colors = FilterChipDefaults.filterChipColors(
+                                            selectedContainerColor = tagContainerColor(
+                                                tagColorIndexFor(template.tags, template.tagColors, t)
+                                            ),
+                                            selectedLabelColor = tagContentColor(
+                                                tagColorIndexFor(template.tags, template.tagColors, t)
+                                            )
+                                        )
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(Modifier.height(8.dp))
+                        val styleText = if (template.seq.chineseUpper) "中文大写数字" else "数字"
+                        val orderText = if (template.seq.descending) "倒序" else "正序"
+                        Text(
+                            text = "当前配置：前缀「${template.seq.prefix.ifBlank { "无" }}」 " +
+                                    "后缀「${template.seq.suffix.ifBlank { "无" }}」 " +
+                                    "$styleText · $orderText（可在模板编辑里修改）",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                },
+                confirmButton = {}
+            )
+        }
+    }
+
+    // 清空按钮二次确认
+    if (showClearConfirm) {
+        val scopeText = if (viewModel.scanSelectedFloor == 0) {
+            "当前模板的全部"
+        } else {
+            "当前模板 ${viewModel.scanSelectedFloor} 层的"
+        }
+        AlertDialog(
+            onDismissRequest = { showClearConfirm = false },
+            title = { Text("清空扫描数据") },
+            text = { Text("确认清空${scopeText}扫描数据？此操作不可撤回。") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showClearConfirm = false
+                        viewModel.clearAllScans(showToast)
+                    }
+                ) { Text("清空") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showClearConfirm = false }) { Text("取消") }
+            }
+        )
+    }
+
+    // 主界面快速新建模板（模板下拉菜单底部入口）：默认房间号模板；
+    // 参数区默认展开，新建时直接配置（与模板编辑器一致，不播展开动画）
+    if (showNewTemplateDialog) {
+        val paramsState = remember { NewTemplateParamsState() }
+        var newTemplateName by remember { mutableStateOf("") }
+        fun suggestTemplateName(): String {
+            val names = viewModel.templates.map { it.name }.toSet()
+            var n = 1
+            while ("猫猫${n}栋" in names) n++
+            return "猫猫${n}栋"
+        }
+        AlertDialog(
+            onDismissRequest = { showNewTemplateDialog = false },
+            title = { Text("新建模板") },
+            text = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    com.example.catscandemo.ui.components.LabeledCompactField(
+                        label = "模板名称",
+                        value = newTemplateName,
+                        onValueChange = { newTemplateName = it },
+                        placeholder = "默认 ${suggestTemplateName()}",
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    NewTemplateFields(state = paramsState)
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.addTemplate(
+                            name = newTemplateName.trim().ifBlank { suggestTemplateName() },
+                            markMode = paramsState.markMode,
+                            seqConfig = paramsState.buildSeqConfig(),
+                            maxFloor = paramsState.floorText.toIntOrNull(),
+                            roomCountPerFloor = paramsState.roomCountText.toIntOrNull(),
+                            tags = paramsState.tags,
+                            tagColors = paramsState.tagColors
+                        )
+                        showNewTemplateDialog = false
+                    }
+                ) { Text("创建") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showNewTemplateDialog = false }) { Text("取消") }
+            }
+        )
+    }
+
+    // 文档下拉菜单底部：快速新建文档
+    // 与文档管理器的"新建文档"复用同一个对话框，保留"插入房间号"预设能力
+    if (showNewDocDialog) {
+        com.example.catscandemo.ui.components.CreateDocDialog(
+            isCreateMode = true,
+            templates = viewModel.templates,
+            onDismiss = { showNewDocDialog = false },
+            onConfirm = { name, block ->
+                viewModel.createTextDocWithContent(name, block)
+                showNewDocDialog = false
+            }
+        )
     }
 
     if (viewModel.showUrlChangeDialog) {
@@ -729,12 +1023,14 @@ fun MainScreen(viewModel: MainViewModel) {
     }
 }
 
-/** 模板模式数据区表头：模板切换（加宽补位）+ 楼层 + 计数 + 清空 */
+/** 模板模式数据区表头：模板切换 + 楼层筛选(漏斗) + 下一个标记 + 清空(垃圾桶) */
 @Composable
 private fun TemplateModeHeader(
     viewModel: MainViewModel,
-    count: Int,
-    onClear: () -> Unit
+    onClearRequest: () -> Unit,
+    onAddTemplate: () -> Unit,
+    onPickNextRoom: () -> Unit,
+    onPickNextSeq: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -744,23 +1040,35 @@ private fun TemplateModeHeader(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // 模板选择器（调宽，占据原红点位置）
+        // 模板选择器（调宽，占据原红点位置）：名称旁显示模板类型 tag（序号/房间号）
         val templates = viewModel.templates
         val activeTemplateName = viewModel.activeTemplate?.name?.ifBlank { "未命名模板" } ?: "无模板"
+        val activeTemplateMark = viewModel.activeTemplate?.markMode
         var templateMenuExpanded by remember { mutableStateOf(false) }
 
-        Box(modifier = Modifier.weight(1f)) {
+        // 模板选择器（占剩余宽度，可压缩到约 3 个字符再省略——游标徽标完整显示优先）
+        Box(modifier = Modifier.weight(1f).widthIn(min = 64.dp)) {
             AssistChip(
-                onClick = { if (templates.isNotEmpty()) templateMenuExpanded = true },
-                enabled = templates.isNotEmpty(),
+                onClick = { templateMenuExpanded = true },
+                border = null,
                 modifier = Modifier.fillMaxWidth(),
                 label = {
-                    Text(
-                        text = activeTemplateName,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(
+                            text = activeTemplateName,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f, fill = false)
+                        )
+                        // 收起态只显示类型圆点（蓝=序号/绿=房间号），展开列表里才是完整类型徽标
+                        if (activeTemplateMark != null) {
+                            TemplateTypeDot(markMode = activeTemplateMark)
+                        }
+                    }
                 },
                 trailingIcon = {
                     Icon(
@@ -798,16 +1106,37 @@ private fun TemplateModeHeader(
 
                 HorizontalDivider()
 
-                // 模板列表
+                // 模板列表：名称 + 类型 tag；当前应用中的模板整行高亮
+                val currentTemplateId = viewModel.activeTemplateId
                 templates.forEach { t ->
+                    val isCurrent = t.id == currentTemplateId
                     DropdownMenuItem(
+                        modifier = Modifier.background(
+                            if (isCurrent) {
+                                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.65f)
+                            } else {
+                                Color.Transparent
+                            }
+                        ),
                         text = {
-                            Text(
-                                text = t.name.ifBlank { "未命名模板" },
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Text(
+                                    text = t.name.ifBlank { "未命名模板" },
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = if (isCurrent) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurface
+                                    },
+                                    modifier = Modifier.weight(1f, fill = false)
+                                )
+                                TemplateTypeTag(markMode = t.markMode)
+                            }
                         },
                         onClick = {
                             viewModel.setActiveTemplate(t.id)
@@ -815,102 +1144,165 @@ private fun TemplateModeHeader(
                         }
                     )
                 }
+
+                HorizontalDivider()
+
+                // 底部快捷入口：不进模板管理器直接新建
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = "新建模板",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    },
+                    onClick = {
+                        templateMenuExpanded = false
+                        onAddTemplate()
+                    }
+                )
             }
         }
 
-        // 楼层选择器（始终显示）
+        // 楼层筛选（0 = 所有楼层，只影响列表展示）：方形漏斗图标 + 角标显示当前筛选；
+        // 序号模式无楼层概念，不显示漏斗
         val hasTemplate = viewModel.activeTemplate != null
         var floorMenuExpanded by remember { mutableStateOf(false) }
 
-        Box(modifier = Modifier.width(70.dp)) {
-            AssistChip(
-                onClick = { if (hasTemplate) floorMenuExpanded = true },
-                enabled = hasTemplate,
-                modifier = Modifier.fillMaxWidth(),
-                label = {
-                    Text(
-                        text = if (hasTemplate) "${viewModel.scanSelectedFloor}层" else "无",
-                        style = MaterialTheme.typography.bodySmall,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = "选择楼层",
-                        modifier = Modifier.size(16.dp)
-                    )
-                },
-                colors = AssistChipDefaults.assistChipColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    labelColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            )
+        if (hasTemplate && !viewModel.isSeqMarkMode) {
+            Box {
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.secondaryContainer,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .clickable { floorMenuExpanded = true },
+                    contentAlignment = Alignment.Center
+                ) {
+                    BadgedBox(
+                        badge = {
+                            Text(
+                                text = if (viewModel.scanSelectedFloor == 0) "全" else "${viewModel.scanSelectedFloor}",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                modifier = Modifier
+                                    .background(
+                                        MaterialTheme.colorScheme.secondaryContainer,
+                                        RoundedCornerShape(6.dp)
+                                    )
+                                    .padding(horizontal = 3.dp)
+                            )
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Filter,
+                            contentDescription = "选择楼层",
+                            tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
 
-            DropdownMenu(
-                expanded = floorMenuExpanded,
-                onDismissRequest = { floorMenuExpanded = false }
-            ) {
-                val maxFloor = viewModel.activeTemplate?.maxFloor ?: 0
-                for (f in 1..maxFloor.coerceAtLeast(1)) {
+                DropdownMenu(
+                    expanded = floorMenuExpanded,
+                    onDismissRequest = { floorMenuExpanded = false }
+                ) {
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = "${f}层",
+                                text = "所有楼层",
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         },
                         onClick = {
-                            viewModel.selectScanFloor(f)
+                            viewModel.selectScanFloor(0)
                             floorMenuExpanded = false
                         }
                     )
+                    val maxFloor = viewModel.activeTemplate?.maxFloor ?: 0
+                    for (f in 1..maxFloor.coerceAtLeast(1)) {
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = "${f}层",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            },
+                            onClick = {
+                                viewModel.selectScanFloor(f)
+                                floorMenuExpanded = false
+                            }
+                        )
+                    }
                 }
             }
         }
 
-        // 计数牌
+        // 下一个标记徽标（自适应宽度，完整显示优先；极端长文本 200dp 封顶省略）：
+        // 房间号模式=房间(+标签)，序号模式=前缀+序号+后缀；点击可修改下次扫码的录入起点
+        val nextMark = viewModel.nextScanMark
         Box(
             modifier = Modifier
-                .width(56.dp)
+                .widthIn(max = 200.dp)
                 .height(32.dp)
                 .background(
                     color = MaterialTheme.colorScheme.primaryContainer,
                     shape = MaterialTheme.shapes.small
-                ),
+                )
+                .clickable(enabled = nextMark != null) {
+                    if (viewModel.isSeqMarkMode) onPickNextSeq() else onPickNextRoom()
+                }
+                .padding(horizontal = 8.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = String.format("%03d", count),
-                style = MaterialTheme.typography.bodySmall.copy(
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                ),
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
+                // 定位针+铅笔：点这里修改下次录入的游标（位置/序号）
+                Icon(
+                    imageVector = Icons.Filled.EditLocationAlt,
+                    contentDescription = "修改游标",
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.size(15.dp)
+                )
+                Text(
+                    text = nextMark ?: "无房号",
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    ),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
 
-        // 清空按钮
-        Box(modifier = Modifier.width(70.dp)) {
-            AssistChip(
-                onClick = onClear,
-                modifier = Modifier.fillMaxWidth(),
-                label = {
-                    Text(
-                        text = "清空",
-                        style = MaterialTheme.typography.bodySmall,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                },
-                colors = AssistChipDefaults.assistChipColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                    labelColor = MaterialTheme.colorScheme.onErrorContainer
+        // 清空按钮：方形垃圾桶图标（与徽标同高），点击弹二次确认
+        Box(
+            modifier = Modifier
+                .size(32.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.errorContainer,
+                    shape = RoundedCornerShape(8.dp)
                 )
+                .clickable { onClearRequest() },
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "清空",
+                tint = MaterialTheme.colorScheme.onErrorContainer,
+                modifier = Modifier.size(18.dp)
             )
         }
     }
@@ -922,7 +1314,8 @@ private fun TextModeHeader(
     viewModel: MainViewModel,
     findActive: Boolean,
     onToggleFind: () -> Unit,
-    onCopyAll: () -> Unit
+    onCopyAll: () -> Unit,
+    onAddDoc: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -997,6 +1390,29 @@ private fun TextModeHeader(
                         }
                     )
                 }
+
+                // 底部快捷入口：不进文档管理直接新建
+                HorizontalDivider()
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = "新建文档",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    },
+                    onClick = {
+                        docMenuExpanded = false
+                        onAddDoc()
+                    }
+                )
             }
         }
 

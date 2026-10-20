@@ -8,9 +8,12 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +29,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -33,20 +37,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -57,11 +59,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.example.catscandemo.domain.model.MarkMode
+import com.example.catscandemo.domain.model.TemplateModel
+import com.example.catscandemo.domain.model.toChineseUpper
 import com.example.catscandemo.presentation.viewmodel.MainViewModel
 import com.example.catscandemo.ui.main.TextDoc
 import java.text.SimpleDateFormat
@@ -353,11 +360,10 @@ private fun TextDocsManagerPage(
             },
             title = { Text("重命名文档") },
             text = {
-                OutlinedTextField(
+                LabeledCompactField(
+                    label = "文档名称",
                     value = renameInput,
                     onValueChange = { renameInput = it },
-                    label = { Text("文档名称") },
-                    singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -387,6 +393,7 @@ private fun TextDocsManagerPage(
     if (showCreateDialog) {
         CreateDocDialog(
             isCreateMode = true,
+            templates = viewModel.templates,
             onDismiss = { showCreateDialog = false },
             onConfirm = { name, block ->
                 viewModel.createTextDocWithContent(name, block)
@@ -400,6 +407,7 @@ private fun TextDocsManagerPage(
         CreateDocDialog(
             isCreateMode = false,
             initialName = target.name,
+            templates = viewModel.templates,
             onDismiss = { insertTarget = null },
             onConfirm = { name, block ->
                 val newName = name.trim()
@@ -417,23 +425,37 @@ private fun TextDocsManagerPage(
 }
 
 /**
- * 新建文档 / 插入房间号 对话框。
+ * 新建文档 / 插入预设 对话框。
  * 两种模式顶部都有文档名称输入（插入模式修改名称即重命名）；
- * “插入房间号”折叠框默认折叠，展开后有楼层数、每层房间数两个输入
- * （留空=不插入预设内容）和标签列表（点“添加标签”按钮弹窗输入确认）。
+ * 「插入预设」为文字提示 + 三个按钮（序号/房间号/从模板导入），
+ * 默认都不激活，点了哪个才展示其设置参数，都不点=空文档。
+ * 主界面文档选择器下拉的"新建文档"也复用本对话框，保持能力一致。
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun CreateDocDialog(
+internal fun CreateDocDialog(
     isCreateMode: Boolean,
     onDismiss: () -> Unit,
     onConfirm: (name: String, block: String) -> Unit,
-    initialName: String = ""
+    initialName: String = "",
+    // 从模板导入预设的候选：全部模板（在对话框里直接多选，不必回模板模式激活）
+    templates: List<TemplateModel> = emptyList()
 ) {
     var name by remember { mutableStateOf(initialName) }
-    var expandPreset by remember { mutableStateOf(false) }
+    // 预设形式：-1=未选（不插入） 0=序号 1=房间号 2=从模板导入；点了才展示对应选项
+    var presetMode by remember { mutableStateOf(-1) }
+    // 从模板导入：勾选的模板 id 集合（多选，按列表顺序拼接）
+    var importPick by remember { mutableStateOf<Set<String>>(emptySet()) }
     var floors by remember { mutableStateOf("") }
     var rooms by remember { mutableStateOf("") }
     var tags by remember { mutableStateOf(listOf<String>()) }
+    var seqCount by remember { mutableStateOf("") }
+    var seqPrefix by remember { mutableStateOf("") }
+    var seqSuffix by remember { mutableStateOf("") }
+    var seqChineseUpper by remember { mutableStateOf(false) }
+    var seqDescending by remember { mutableStateOf(false) }
+    // 自动补0（默认开启）：按总数位数补齐，如 100 个 → 001，10 个 → 01
+    var seqPad by remember { mutableStateOf(true) }
     var showTagDialog by remember { mutableStateOf(false) }
 
     AlertDialog(
@@ -441,11 +463,25 @@ private fun CreateDocDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    val block = buildRoomPreset(
-                        floors = floors.toIntOrNull() ?: 0,
-                        roomsPerFloor = rooms.toIntOrNull() ?: 0,
-                        tags = tags
-                    )
+                    val block = when (presetMode) {
+                        1 -> buildRoomPreset(
+                            floors = floors.toIntOrNull() ?: 0,
+                            roomsPerFloor = rooms.toIntOrNull() ?: 0,
+                            tags = tags
+                        )
+                        2 -> templates
+                            .filter { it.id in importPick && it.scans.isNotEmpty() }
+                            .joinToString("\n\n") { buildTemplateImportBlock(it) }
+                        0 -> buildSeqPreset(
+                            count = seqCount.toIntOrNull() ?: 0,
+                            prefix = seqPrefix,
+                            suffix = seqSuffix,
+                            chineseUpper = seqChineseUpper,
+                            descending = seqDescending,
+                            pad = seqPad
+                        )
+                        else -> ""
+                    }
                     onConfirm(name.trim(), block)
                 }
             ) { Text(if (isCreateMode) "创建" else "确认") }
@@ -460,116 +496,303 @@ private fun CreateDocDialog(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 // 两种模式都显示名称输入：插入模式下修改名称即重命名
-                OutlinedTextField(
+                LabeledCompactField(
+                    label = "文档名称",
                     value = name,
                     onValueChange = { name = it },
-                    label = {
-                        Text(if (isCreateMode) "文档名称" else "文档名称（修改即重命名）")
-                    },
-                    singleLine = true,
+                    placeholder = if (isCreateMode) "" else "修改即重命名",
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                // 折叠框：插入房间号
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { expandPreset = !expandPreset }
-                        .padding(vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Icon(
-                        imageVector = if (expandPreset) {
-                            Icons.Default.KeyboardArrowDown
+                // 插入预设：文字提示 + 三个预设按钮；点了哪个才展示哪个的选项（都不点=空文档）
+                Text(
+                    text = "插入预设（可选）",
+                    style = MaterialTheme.typography.labelMedium
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        FilterChip(
+                            selected = presetMode == 0,
+                            onClick = { presetMode = 0 },
+                            label = { Text("序号") }
+                        )
+                        FilterChip(
+                            selected = presetMode == 1,
+                            onClick = { presetMode = 1 },
+                            label = { Text("房间号") }
+                        )
+                        FilterChip(
+                            selected = presetMode == 2,
+                            onClick = { presetMode = 2 },
+                            label = { Text("从模板导入") }
+                        )
+                    }
+
+                    if (presetMode == 2) {
+                        // 从模板导入：在对话框里直接多选模板（按列表顺序拼接，模板之间空一行）
+                        if (templates.isEmpty()) {
+                            Text(
+                                "还没有模板，可先到模板模式创建",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         } else {
-                            Icons.Default.ChevronRight
-                        },
-                        contentDescription = if (expandPreset) "收起" else "展开",
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Text(
-                        text = "插入房间号（可选）",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-
-                if (expandPreset) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        OutlinedTextField(
-                            value = floors,
-                            onValueChange = { floors = it.filter(Char::isDigit).take(2) },
-                            label = { Text("楼层数") },
-                            singleLine = true,
-                            modifier = Modifier.weight(1f)
-                        )
-                        OutlinedTextField(
-                            value = rooms,
-                            onValueChange = { rooms = it.filter(Char::isDigit).take(2) },
-                            label = { Text("每层房间数") },
-                            singleLine = true,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-
-                    // 添加标签：按钮唤出弹窗确认，避免用户输入后忘记点“添加”
-                    OutlinedButton(
-                        onClick = { showTagDialog = true },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(Modifier.width(4.dp))
-                        Text("添加标签")
-                    }
-
-                    if (tags.isNotEmpty()) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(6.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            tags.forEach { tag ->
-                                Surface(
-                                    shape = RoundedCornerShape(14.dp),
-                                    color = MaterialTheme.colorScheme.primaryContainer
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        modifier = Modifier.padding(start = 10.dp, end = 2.dp)
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                templates.forEach { t ->
+                                    val picked = t.id in importPick
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(8.dp))
+                                            .background(
+                                                if (picked) {
+                                                    MaterialTheme.colorScheme.primaryContainer
+                                                } else {
+                                                    MaterialTheme.colorScheme.surfaceVariant
+                                                }
+                                            )
+                                            .border(
+                                                width = 1.dp,
+                                                color = if (picked) {
+                                                    MaterialTheme.colorScheme.primary
+                                                } else {
+                                                    MaterialTheme.colorScheme.outlineVariant
+                                                },
+                                                shape = RoundedCornerShape(8.dp)
+                                            )
+                                            .clickable {
+                                                importPick = if (picked) {
+                                                    importPick - t.id
+                                                } else {
+                                                    importPick + t.id
+                                                }
+                                            }
+                                            .padding(horizontal = 10.dp, vertical = 5.dp)
                                     ) {
-                                        Text(
-                                            text = tag,
-                                            style = MaterialTheme.typography.labelMedium,
-                                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                                        )
-                                        IconButton(
-                                            onClick = { tags = tags - tag },
-                                            modifier = Modifier.size(24.dp)
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(5.dp)
                                         ) {
-                                            Icon(
-                                                Icons.Default.Close,
-                                                contentDescription = "移除标签 $tag",
-                                                modifier = Modifier.size(14.dp),
-                                                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                            TemplateTypeDot(markMode = t.markMode)
+                                            Text(
+                                                text = t.name.ifBlank { "未命名模板" },
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = if (picked) {
+                                                    MaterialTheme.colorScheme.onPrimaryContainer
+                                                } else {
+                                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                                },
+                                                maxLines = 1
+                                            )
+                                            Text(
+                                                text = "${t.scans.size}条",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                                             )
                                         }
                                     }
                                 }
                             }
+                            val pickedList = templates.filter { it.id in importPick }
+                            val totalLines = pickedList.sumOf { it.scans.size }
+                            Text(
+                                text = "已选 ${pickedList.size} 个模板 · 共 $totalLines 条数据" +
+                                        if (pickedList.isEmpty()) "（未选则创建空文档）" else "",
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                            if (totalLines > 0) {
+                                val preview = pickedList
+                                    .filter { it.scans.isNotEmpty() }
+                                    .joinToString("\n\n") { buildTemplateImportBlock(it) }
+                                    .lines().take(3).joinToString("、")
+                                Text(
+                                    text = "预览：$preview" + if (totalLines > 3) " …" else "",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                            Text(
+                                text = "每行格式：序号-房间号-标签-数据（序号模板无房间号；" +
+                                        "空字段自动跳过；序号=按录入先后编号，最早为 1）",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
-                    }
+                    } else if (presetMode == 1) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            LabeledCompactField(
+                                label = "楼层数",
+                                value = floors,
+                                onValueChange = { floors = it.filter(Char::isDigit).take(2) },
+                                keyboardType = KeyboardType.Number,
+                                modifier = Modifier.weight(1f)
+                            )
+                            LabeledCompactField(
+                                label = "每层房间数",
+                                value = rooms,
+                                onValueChange = { rooms = it.filter(Char::isDigit).take(2) },
+                                keyboardType = KeyboardType.Number,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
 
-                    Text(
-                        text = "楼层/房间数留空则不插入预设内容；每层房间与标签按顺序一一配对，" +
-                                "标签不足时循环使用。例如 2 层 × 2 房间 + 标签[照明、空调]：" +
-                                "101照明-、102空调-，楼层之间空一行。",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                        // 添加标签：按钮唤出弹窗确认，避免用户输入后忘记点“添加”
+                        OutlinedButton(
+                            onClick = { showTagDialog = true },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Text("添加标签")
+                        }
+
+                        if (tags.isNotEmpty()) {
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                tags.forEach { tag ->
+                                    Surface(
+                                        shape = RoundedCornerShape(14.dp),
+                                        color = MaterialTheme.colorScheme.primaryContainer
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            modifier = Modifier.padding(start = 10.dp, end = 2.dp)
+                                        ) {
+                                            Text(
+                                                text = tag,
+                                                style = MaterialTheme.typography.labelMedium,
+                                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                                            )
+                                            IconButton(
+                                                onClick = { tags = tags - tag },
+                                                modifier = Modifier.size(24.dp)
+                                            ) {
+                                                Icon(
+                                                    Icons.Default.Close,
+                                                    contentDescription = "移除标签 $tag",
+                                                    modifier = Modifier.size(14.dp),
+                                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        Text(
+                            text = "楼层/房间数留空则不插入预设内容；每层房间与标签按顺序一一配对，" +
+                                    "标签不足时循环使用。例如 2 层 × 2 房间 + 标签[照明、空调]：" +
+                                    "101照明-、102空调-，楼层之间空一行。",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    } else if (presetMode == 0) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            LabeledCompactField(
+                                label = "前缀",
+                                value = seqPrefix,
+                                onValueChange = { seqPrefix = it.take(10) },
+                                placeholder = "可空",
+                                modifier = Modifier.weight(1f)
+                            )
+                            LabeledCompactField(
+                                label = "后缀",
+                                value = seqSuffix,
+                                onValueChange = { seqSuffix = it.take(10) },
+                                placeholder = "可空",
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            LabeledCompactField(
+                                label = "序号数量",
+                                value = seqCount,
+                                onValueChange = { seqCount = it.filter(Char::isDigit).take(4) },
+                                keyboardType = KeyboardType.Number,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+
+                        Text("数字样式", style = MaterialTheme.typography.labelMedium)
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            FilterChip(
+                                selected = !seqChineseUpper,
+                                onClick = { seqChineseUpper = false },
+                                label = { Text("数字", Modifier.fillMaxWidth(), textAlign = androidx.compose.ui.text.style.TextAlign.Center) },
+                                modifier = Modifier.weight(1f)
+                            )
+                            FilterChip(
+                                selected = seqChineseUpper,
+                                onClick = { seqChineseUpper = true },
+                                label = { Text("中文大写数字", Modifier.fillMaxWidth(), textAlign = androidx.compose.ui.text.style.TextAlign.Center) },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+
+                        Text("录入顺序", style = MaterialTheme.typography.labelMedium)
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            FilterChip(
+                                selected = !seqDescending,
+                                onClick = { seqDescending = false },
+                                label = { Text("正序", Modifier.fillMaxWidth(), textAlign = androidx.compose.ui.text.style.TextAlign.Center) },
+                                modifier = Modifier.weight(1f)
+                            )
+                            FilterChip(
+                                selected = seqDescending,
+                                onClick = { seqDescending = true },
+                                label = { Text("倒序", Modifier.fillMaxWidth(), textAlign = androidx.compose.ui.text.style.TextAlign.Center) },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+
+                        if (!seqChineseUpper) {
+                            Text("自动补0", style = MaterialTheme.typography.labelMedium)
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                FilterChip(
+                                    selected = seqPad,
+                                    onClick = { seqPad = true },
+                                    label = { Text("补0", Modifier.fillMaxWidth(), textAlign = androidx.compose.ui.text.style.TextAlign.Center) },
+                                    modifier = Modifier.weight(1f)
+                                )
+                                FilterChip(
+                                    selected = !seqPad,
+                                    onClick = { seqPad = false },
+                                    label = { Text("不补", Modifier.fillMaxWidth(), textAlign = androidx.compose.ui.text.style.TextAlign.Center) },
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                            Text(
+                                text = "按总数位数自动补齐：100 个序号 → 001 起，10 个 → 01 起。",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+
+                        val previewCount = (seqCount.toIntOrNull() ?: 0).coerceAtLeast(1)
+                        Text(
+                            text = "预览：${buildSeqPreset(3.coerceAtMost(previewCount), seqPrefix, seqSuffix, seqChineseUpper, seqDescending, seqPad, previewCount)
+                                .replace("\n", "、")}" +
+                                    if (previewCount > 3) " …" else "",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        Text(
+                            text = "从 1 开始生成 N 行“前缀+序号+后缀-”；倒序时首行为最大号。" +
+                                    "数量留空则不插入预设内容。",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
             }
         }
     )
@@ -599,18 +822,23 @@ private fun TagInputDialog(
         onDismissRequest = onDismiss,
         title = { Text("添加标签") },
         text = {
-            OutlinedTextField(
-                value = input,
-                onValueChange = { input = it },
-                label = { Text("标签（如：照明）") },
-                supportingText = {
-                    if (input.trim().isNotEmpty() && input.trim() in existingTags) {
-                        Text("该标签已存在")
-                    }
-                },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
+            Column {
+                LabeledCompactField(
+                    label = "标签",
+                    value = input,
+                    onValueChange = { input = it },
+                    placeholder = "如：照明",
+                    modifier = Modifier.fillMaxWidth()
+                )
+                if (input.trim().isNotEmpty() && input.trim() in existingTags) {
+                    Text(
+                        text = "该标签已存在",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(start = 4.dp, top = 2.dp)
+                    )
+                }
+            }
         },
         confirmButton = {
             TextButton(
@@ -622,6 +850,34 @@ private fun TagInputDialog(
             TextButton(onClick = onDismiss) { Text("取消") }
         }
     )
+}
+
+/**
+ * 生成序号预设内容：从 1 开始 N 行“前缀+序号+后缀-”，倒序时首行为最大号；
+ * 补0开启时按总数量级补齐（100 个 → 001 起，10 个 → 01 起）；
+ * 行尾固定 "-" 作为扫码内容追加点。
+ */
+private fun buildSeqPreset(
+    count: Int,
+    prefix: String,
+    suffix: String,
+    chineseUpper: Boolean,
+    descending: Boolean,
+    pad: Boolean,
+    padTotalHint: Int = count
+): String {
+    if (count <= 0) return ""
+    // 预览时用真实总数确定补零位数，避免只看前 3 条时位数来回跳
+    val padWidth = if (pad && !chineseUpper) padTotalHint.toString().length else 0
+    return (0 until count).joinToString("\n") { i ->
+        val v = if (descending) count - i else i + 1
+        val num = when {
+            chineseUpper -> toChineseUpper(v)
+            padWidth > 0 -> v.toString().padStart(padWidth, '0')
+            else -> v.toString()
+        }
+        "$prefix$num$suffix-"
+    }
 }
 
 /**
@@ -642,4 +898,24 @@ private fun buildRoomPreset(floors: Int, roomsPerFloor: Int, tags: List<String>)
             }
         }
     }
+}
+
+/**
+ * 把模板扫码数据导出为文档预设行：
+ * 房间号模板 = 序号-房间号-标签-数据；序号模板 = 序号-标签-数据（无房间号）。
+ * 序号 = 按录入先后编号（最早一条为 1）；房间号/标签为空的字段自动跳过，保持行干净。
+ */
+internal fun buildTemplateImportBlock(t: TemplateModel): String {
+    if (t.scans.isEmpty()) return ""
+    return t.scans.asReversed().mapIndexed { index, s ->
+        val middle = if (t.markMode == MarkMode.SEQ) {
+            listOfNotNull(s.tag.takeIf { it.isNotBlank() })
+        } else {
+            listOfNotNull(
+                s.room.takeIf { it.isNotBlank() },
+                s.tag.takeIf { it.isNotBlank() }
+            )
+        }
+        (listOf((index + 1).toString()) + middle + s.text).joinToString("-")
+    }.joinToString("\n")
 }

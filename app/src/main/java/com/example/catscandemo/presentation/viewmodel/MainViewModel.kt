@@ -24,6 +24,8 @@ import androidx.compose.runtime.mutableStateOf
 
 import androidx.compose.runtime.setValue
 
+import androidx.compose.runtime.snapshots.SnapshotStateMap
+
 import androidx.lifecycle.ViewModel
 
 import androidx.lifecycle.viewModelScope
@@ -38,15 +40,23 @@ import androidx.compose.ui.text.TextRange
 
 import androidx.compose.ui.text.input.TextFieldValue
 
+import com.example.catscandemo.domain.model.MarkMode
+
 import com.example.catscandemo.domain.model.ScanData
 
 import com.example.catscandemo.domain.model.ScanResult
+
+import com.example.catscandemo.domain.model.SeqConfig
 
 import com.example.catscandemo.domain.model.TemplateMode
 
 import com.example.catscandemo.domain.model.TemplateModel
 
 import com.example.catscandemo.domain.model.WorkMode
+
+import com.example.catscandemo.domain.model.formatSeqValue
+
+import com.example.catscandemo.domain.model.seqTagOf
 
 import com.example.catscandemo.domain.use_case.*
 
@@ -81,20 +91,92 @@ import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.max
 
 
-internal fun nextLinearRoomIndex(template: TemplateModel, floor: Int): Int {
-    val rooms = template.selectedRooms
-        .filter { code ->
-            code.length >= 3 && code.dropLast(2).toIntOrNull() == floor
-        }
+/** 下一次扫码要录入的地点（楼层 + 房间号 + 标签） */
+data class ScanPosition(val floor: Int, val room: String, val tag: String)
+
+/**
+ * 扫码录入游标：楼层序 → 房间序 → 标签序 三层嵌套，标签推进最快。
+ * 预设 2 层 2 房、标签[空调,照明]时依次录入 101空调→101照明→102空调→…→202照明→201空调(循环)。
+ */
+internal data class ScanCursor(val floorIdx: Int = 0, val roomIdx: Int = 0, val tagIdx: Int = 0)
+
+/** 有可选房间的楼层列表（升序） */
+internal fun floorsWithRooms(t: TemplateModel): List<Int> {
+    return (1..max(1, t.maxFloor)).filter { floor ->
+        t.selectedRooms.any { code -> code.length >= 3 && code.dropLast(2).toIntOrNull() == floor }
+    }
+}
+
+/** 全量房间号：1~9 补零两位（1层1号 → "101"），与模板编辑器的房间网格一致 */
+internal fun buildAllRoomCodes(maxFloor: Int, roomCount: Int): List<String> {
+    return (1..maxFloor.coerceAtLeast(1)).flatMap { f ->
+        (1..roomCount.coerceIn(1, 999)).map { r -> "$f${if (r in 1..9) "0$r" else "$r"}" }
+    }
+}
+
+/** 录入序列要轮询的标签：未配置标签时用空标签占位（等于跳过标签维度） */
+internal fun scanTagsOf(t: TemplateModel): List<String> {
+    return if (t.tags.isEmpty()) listOf("") else t.tags
+}
+
+internal fun peekScanPosition(t: TemplateModel, cursor: ScanCursor): ScanPosition? {
+    val floors = floorsWithRooms(t)
+    if (floors.isEmpty()) return null
+    val fi = cursor.floorIdx.coerceIn(0, floors.size - 1)
+    val floor = floors[fi]
+    val rooms = t.selectedRooms
+        .filter { code -> code.length >= 3 && code.dropLast(2).toIntOrNull() == floor }
         .sorted()
-    if (rooms.isEmpty()) return 0
+    if (rooms.isEmpty()) return null
+    val room = rooms[cursor.roomIdx.coerceIn(0, rooms.size - 1)]
+    val tags = scanTagsOf(t)
+    val tag = tags[cursor.tagIdx.coerceIn(0, tags.size - 1)]
+    return ScanPosition(floor, room, tag)
+}
 
-    val lastRoom = template.scans.firstOrNull { scan ->
-        scan.room in rooms &&
-                (Regex("\\d+").find(scan.floor)?.value?.toIntOrNull() == floor)
-    }?.room ?: return 0
+internal fun advanceScanCursor(t: TemplateModel, cursor: ScanCursor): ScanCursor {
+    val floors = floorsWithRooms(t)
+    if (floors.isEmpty()) return ScanCursor()
+    val tags = scanTagsOf(t)
+    var fi = cursor.floorIdx.coerceIn(0, floors.size - 1)
+    val rooms = t.selectedRooms
+        .filter { code -> code.length >= 3 && code.dropLast(2).toIntOrNull() == floors[fi] }
+        .sorted()
+    var ri = cursor.roomIdx.coerceIn(0, rooms.size - 1)
+    var ti = cursor.tagIdx + 1
+    if (ti >= tags.size) {
+        ti = 0
+        ri += 1
+    }
+    if (ri >= rooms.size) {
+        ri = 0
+        fi += 1
+    }
+    if (fi >= floors.size) fi = 0
+    return ScanCursor(fi, ri, ti)
+}
 
-    return (rooms.indexOf(lastRoom) + 1) % rooms.size
+/** 由最近一条扫码记录恢复游标：定位到该记录的位置后再前进一步；
+ *  没有任何记录时从头开始（不前进一步，否则新模板首扫会从 102 起） */
+internal fun restoredScanCursor(t: TemplateModel): ScanCursor {
+    val last = t.scans.firstOrNull() ?: return ScanCursor()
+    val floor = Regex("\\d+").find(last.floor)?.value?.toIntOrNull()
+        ?: floorsWithRooms(t).firstOrNull()
+        ?: return ScanCursor()
+    return advanceScanCursor(t, cursorFromSelection(t, floor, last.room, last.tag))
+}
+
+internal fun cursorFromSelection(t: TemplateModel, floor: Int, room: String, tag: String): ScanCursor {
+    val floors = floorsWithRooms(t)
+    if (floors.isEmpty()) return ScanCursor()
+    val fi = floors.indexOf(floor).takeIf { it >= 0 } ?: 0
+    val rooms = t.selectedRooms
+        .filter { code -> code.length >= 3 && code.dropLast(2).toIntOrNull() == floors[fi] }
+        .sorted()
+    val ri = rooms.indexOf(room).takeIf { it >= 0 } ?: 0
+    val tags = scanTagsOf(t)
+    val ti = tags.indexOf(tag).takeIf { it >= 0 } ?: 0
+    return ScanCursor(fi, ri, ti)
 }
 
 
@@ -160,9 +242,9 @@ class MainViewModel @Inject constructor(
 
 
 
-    // 每个模板 + 每层的房间轮询游标（运行态，不做持久化）
-
-    private val cursorByTemplateFloor: MutableMap<String, MutableMap<Int, Int>> = HashMap()
+    // 每个模板的扫码录入游标（楼层→房间→标签，标签推进最快；运行态，不做持久化，
+    // 由最近一条扫码记录恢复）。SnapshotStateMap 保证表头"下一个房号"实时重组。
+    private val scanCursorByTemplate = SnapshotStateMap<String, ScanCursor>()
 
 
 
@@ -287,13 +369,8 @@ class MainViewModel @Inject constructor(
         activeTemplate = dataManager.activeTemplate
 
         activeTemplate?.let { template ->
-            val initialFloor = if (template.mode == TemplateMode.DISCRETE) {
-                template.lastSelectedFloor
-            } else {
-                1
-            }
-            clampSelectedFloor(initialFloor, template.maxFloor)
-            restoreLinearCursor(template)
+            clampSelectedFloor(0, template.maxFloor)
+            restoreScanCursor(template)
         }
 
         
@@ -332,8 +409,6 @@ class MainViewModel @Inject constructor(
 
     fun setActiveTemplate(id: String) {
 
-        cancelPendingDiscreteScan()
-
         // 使用数据管理中心设置激活模板
 
         dataManager.setActiveTemplate(id)
@@ -351,13 +426,8 @@ class MainViewModel @Inject constructor(
         val t = activeTemplate
 
         if (t != null) {
-            val initialFloor = if (t.mode == TemplateMode.DISCRETE) {
-                t.lastSelectedFloor
-            } else {
-                1
-            }
-            clampSelectedFloor(initialFloor, t.maxFloor)
-            restoreLinearCursor(t)
+            clampSelectedFloor(0, t.maxFloor)
+            restoreScanCursor(t)
 
         }
 
@@ -382,8 +452,6 @@ class MainViewModel @Inject constructor(
      */
 
     fun clearActiveTemplate() {
-
-        cancelPendingDiscreteScan()
 
         // 使用数据管理中心清除激活模板
 
@@ -411,16 +479,49 @@ class MainViewModel @Inject constructor(
 
     fun addTemplate(
         name: String,
-        mode: TemplateMode = TemplateMode.LINEAR
+        markMode: MarkMode = MarkMode.ROOM,
+        seqConfig: SeqConfig? = null,
+        maxFloor: Int? = null,
+        roomCountPerFloor: Int? = null,
+        tags: List<String> = emptyList(),
+        tagColors: Map<String, Int> = emptyMap()
     ) {
 
-        cancelPendingDiscreteScan()
+        // 使用数据管理中心添加模板（离散/线性已合并，内部一律 LINEAR）
+        val template = dataManager.addTemplate(name, TemplateMode.LINEAR)
 
-        // 使用数据管理中心添加模板
+        // 新建时直接带入参数：序号模板=录入配置；房间号模板=楼层数/每层房间数（房间默认全选）；
+        // 标签两种模式都带入（序号模式也按 标签→序号 轮询录入）
+        var configured = template
+        if (markMode == MarkMode.SEQ) {
+            val cfg = seqConfig ?: SeqConfig()
+            configured = configured.copy(
+                markMode = MarkMode.SEQ,
+                seq = cfg,
+                nextSeq = cfg.start,
+                seqTagCursor = 0
+            )
+        } else {
+            val f = (maxFloor ?: template.maxFloor).coerceAtLeast(1)
+            val r = (roomCountPerFloor ?: template.roomCountPerFloor).coerceIn(1, 999)
+            configured = configured.copy(
+                maxFloor = f,
+                roomCountPerFloor = r,
+                selectedRooms = buildAllRoomCodes(f, r)
+            )
+        }
+        if (tags.isNotEmpty()) {
+            // 新建时带入的标签配色（与模板编辑器同一调色板；未指定的按序号循环配色）
+            configured = configured.copy(
+                tags = tags.distinct(),
+                tagColors = tagColors.filterKeys { it in tags.distinct() }
+            )
+        }
+        if (configured != template) {
+            dataManager.updateTemplate(configured)
+        }
 
-        val template = dataManager.addTemplate(name, mode)
 
-        
 
         // 同步ViewModel的状态
 
@@ -430,18 +531,18 @@ class MainViewModel @Inject constructor(
 
         
 
-        // ✅ 切换模板时默认回到 1 层（避免上一模板的楼层残留）
+        // ✅ 新建模板默认展示所有楼层（避免上一模板的楼层筛选残留）
 
-        scanSelectedFloor = 1
+        scanSelectedFloor = 0
 
-        
+
 
         val t = activeTemplate
 
         if (t != null) {
 
             clampSelectedFloor(scanSelectedFloor, t.maxFloor)
-            restoreLinearCursor(t)
+            restoreScanCursor(t)
 
         }
 
@@ -469,7 +570,7 @@ class MainViewModel @Inject constructor(
 
             // 清空游标缓存（避免残留）
 
-            cursorByTemplateFloor.remove(id)
+            scanCursorByTemplate.remove(id)
 
         }
 
@@ -551,10 +652,6 @@ class MainViewModel @Inject constructor(
 
     fun updateTemplate(updated: TemplateModel) {
 
-        if (pendingDiscreteTemplateId == updated.id) {
-            cancelPendingDiscreteScan()
-        }
-
         // 使用数据管理中心更新模板
 
         dataManager.updateTemplate(updated)
@@ -574,7 +671,7 @@ class MainViewModel @Inject constructor(
         if (activeTemplateId == updated.id) {
 
             clampSelectedFloor(scanSelectedFloor, updated.maxFloor)
-            restoreLinearCursor(updated)
+            restoreScanCursor(updated)
 
         }
 
@@ -643,13 +740,49 @@ class MainViewModel @Inject constructor(
             return
         }
 
+        // floor <= 0：清空整个模板（楼层筛选为"所有楼层"时的清空语义）
+        if (floor <= 0) {
+            val deletedScans = template.scans.map {
+                it.copy(templateId = template.id, templateName = template.name)
+            }
+            if (deletedScans.isEmpty()) {
+                showToast("模板暂无扫描数据")
+                return
+            }
+            dataManager.clearTemplateScans(id)
+            activeTemplateId = dataManager.activeTemplateId
+            activeTemplate = dataManager.activeTemplate
+            activeTemplate?.let { restoreScanCursor(it) }
+            getAllScans()
+
+            if (uploadEnabled && serverUrl.isNotEmpty()) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    deletedScans.forEach { scanData ->
+                        networkUseCases.uploadScanData(
+                            scanData = scanData,
+                            serverUrl = serverUrl,
+                            action = "delete",
+                            onSuccess = {
+                                Log.d(TAG, "同步清空模板数据成功: ${scanData.id}")
+                            },
+                            onError = { error ->
+                                Log.e(TAG, "同步清空模板数据失败: ${scanData.id}, $error")
+                            }
+                        )
+                    }
+                }
+            }
+            showToast("已清空模板全部 ${deletedScans.size} 条扫描数据")
+            return
+        }
+
         val validFloor = floor.coerceIn(1, template.maxFloor.coerceAtLeast(1))
         val deletedScans = dataManager.clearTemplateFloorScans(id, validFloor)
 
         activeTemplateId = dataManager.activeTemplateId
         activeTemplate = dataManager.activeTemplate
         if (activeTemplateId == id) {
-            rebuildCursorAfterDelete(validFloor)
+            activeTemplate?.let { restoreScanCursor(it) }
         }
         getAllScans()
 
@@ -880,7 +1013,6 @@ class MainViewModel @Inject constructor(
 
     fun onWorkModeChange(mode: WorkMode) {
         if (workMode == mode) return
-        cancelPendingDiscreteScan()
         workMode = mode
         persistSettings()
         scheduleCameraSleep()
@@ -1244,11 +1376,125 @@ class MainViewModel @Inject constructor(
 
     var currentRoom by mutableStateOf("")
 
-    var pendingDiscreteScanCode by mutableStateOf<String?>(null)
-        private set
-    private var pendingDiscreteTemplateId: String? = null
-    fun preferredDiscreteFloor(template: TemplateModel): Int {
-        return template.lastSelectedFloor.coerceIn(1, max(1, template.maxFloor))
+    var currentTag by mutableStateOf("")
+
+    /** 表头徽标：下一个录入标记（序号模式=前缀+序号+后缀[+标签]，房间号模式=房间+标签） */
+    val nextScanMark: String?
+        get() {
+            val t = activeTemplate ?: return null
+            return if (t.markMode == MarkMode.SEQ) {
+                // 自动补零：位数按"录入这一条后的总条数"推断
+                val mark = formatSeqValue(t.seq, t.nextSeq, totalForAuto = t.scans.size + 1)
+                val tag = seqTagOf(t)
+                if (tag.isNotBlank()) "$mark·$tag" else mark
+            } else {
+                nextScanPosition?.let { p -> p.room + if (p.tag.isNotBlank()) "·${p.tag}" else "" }
+            }
+        }
+
+    val isSeqMarkMode: Boolean
+        get() = activeTemplate?.markMode == MarkMode.SEQ
+
+    /**
+     * 序号模式：修改下次录入的序号值与标签。
+     * tagCursor：null=不动；-1=后续固定无标签；>=0=下次用该下标的标签（此后继续轮询）
+     */
+    fun setNextSeq(value: Int, tagCursor: Int? = null) {
+        val t = activeTemplate ?: return
+        if (t.markMode != MarkMode.SEQ) return
+        val newCursor = when {
+            tagCursor == null -> t.seqTagCursor
+            tagCursor < 0 -> -1
+            else -> tagCursor % max(1, t.tags.size)
+        }
+        dataManager.updateTemplate(t.copy(nextSeq = value, seqTagCursor = newCursor))
+        activeTemplate = dataManager.activeTemplate
+    }
+
+    /** 添加模板标签（立即生效并持久化） */
+    fun addTemplateTag(name: String) {
+        val t = activeTemplate ?: return
+        val tag = name.trim()
+        if (tag.isBlank() || tag in t.tags) return
+        dataManager.updateTemplate(t.copy(tags = t.tags + tag))
+        activeTemplate = dataManager.activeTemplate
+    }
+
+    /** 删除模板标签（只删配置，已有扫码记录保持原标记） */
+    fun removeTemplateTag(name: String) {
+        val t = activeTemplate ?: return
+        val removedIdx = t.tags.indexOf(name)
+        if (removedIdx < 0) return
+        val colors = t.tagColors.toMutableMap()
+        colors.remove(name)
+        // 序号标签游标下标随列表缩短对齐，尽量仍指向原来的下一个标签
+        var cursor = t.seqTagCursor
+        if (cursor >= 0) {
+            val newSize = t.tags.size - 1
+            cursor = when {
+                removedIdx < cursor -> cursor - 1
+                removedIdx == cursor -> cursor % max(1, newSize)
+                else -> cursor
+            }
+        }
+        dataManager.updateTemplate(
+            t.copy(tags = t.tags.filterNot { it == name }, tagColors = colors, seqTagCursor = cursor)
+        )
+        activeTemplate = dataManager.activeTemplate
+    }
+
+    /** 改标签名/颜色：改名会同步到已有扫码记录（含 history 落盘），颜色存调色板色号 */
+    fun updateTemplateTag(oldName: String, newName: String, colorIndex: Int) {
+        val t = activeTemplate ?: return
+        val name = newName.trim()
+        if (oldName !in t.tags || name.isBlank() || (name != oldName && name in t.tags)) return
+        val newTags = t.tags.map { if (it == oldName) name else it }
+        val newColors = t.tagColors.toMutableMap()
+        newColors.remove(oldName)
+        if (colorIndex >= 0) newColors[name] = colorIndex
+        val newScans = if (name == oldName) t.scans else t.scans.map {
+            if (it.tag == oldName) it.copy(tag = name) else it
+        }
+        val newLastTag = if (t.lastSelectedTag == oldName) name else t.lastSelectedTag
+        dataManager.updateTemplate(
+            t.copy(
+                tags = newTags,
+                tagColors = newColors,
+                scans = newScans,
+                lastSelectedTag = newLastTag
+            ),
+            syncScanResults = true
+        )
+        activeTemplate = dataManager.activeTemplate
+        getAllScans()
+    }
+
+    /**
+     * 自动补零重算：位数=当前总条数的位数（10条→2位、100条→3位），
+     * 重写该模板全部序号记录的标记(room)。无法解析出数字的标记（用户手改过）跳过。
+     */
+    private fun rewriteAutoPaddedSeqMarks(templateId: String) {
+        val t = dataManager.templates.firstOrNull { it.id == templateId } ?: return
+        if (t.markMode != MarkMode.SEQ || !t.seq.autoPad || t.seq.chineseUpper) return
+        val width = maxOf(1, t.scans.size).toString().length
+        val fixed = t.seq.copy(padWidth = width, autoPad = false)
+        var changed = false
+        val newScans = t.scans.map { s ->
+            val core = s.room.removePrefix(t.seq.prefix).removeSuffix(t.seq.suffix)
+            val n = core.toIntOrNull() ?: return@map s
+            val newRoom = formatSeqValue(fixed, n)
+            if (newRoom != s.room) {
+                changed = true
+                s.copy(room = newRoom)
+            } else {
+                s
+            }
+        }
+        if (changed) {
+            dataManager.updateTemplate(t.copy(scans = newScans), syncScanResults = true)
+            activeTemplate = dataManager.activeTemplate
+            getAllScans()
+        }
     }
 
 
@@ -1263,16 +1509,6 @@ class MainViewModel @Inject constructor(
 
         clampSelectedFloor(floor, maxF)
 
-        val template = activeTemplate
-        if (
-            template?.mode == TemplateMode.DISCRETE &&
-            template.lastSelectedFloor != scanSelectedFloor
-        ) {
-            val updated = template.copy(lastSelectedFloor = scanSelectedFloor)
-            dataManager.updateTemplate(updated)
-            activeTemplate = dataManager.activeTemplate
-        }
-
     }
 
 
@@ -1281,188 +1517,65 @@ class MainViewModel @Inject constructor(
 
         val maxF = max(1, maxFloor)
 
-        scanSelectedFloor = floor.coerceIn(1, maxF)
+        // 0 = 所有楼层（仅影响列表筛选，不影响扫码录入楼层）
+        scanSelectedFloor = floor.coerceIn(0, maxF)
 
     }
 
 
 
-    private fun floorOfRoomCode(code: String): Int? {
+    /** 表头"下一个房号"徽标：当前模板的下一录入位置（楼层+房间+标签） */
+    val nextScanPosition: ScanPosition?
+        get() = activeTemplate?.let { t ->
+            peekScanPosition(t, scanCursorByTemplate[t.id] ?: ScanCursor())
+        }
 
-        // 约定：房间号最后两位为房间序号（01~99），前面为楼层号
-
-        if (code.length < 3) return null
-
-        val floorPart = code.dropLast(2)
-
-        return floorPart.toIntOrNull()
-
+    /** 从地点选择器设置游标（表头房号徽标点击后调用），下次扫码从该房间开始录入 */
+    fun setScanCursorFromSelection(floor: Int, room: String, tag: String) {
+        val t = activeTemplate ?: return
+        if (floorsWithRooms(t).isEmpty()) return
+        scanCursorByTemplate[t.id] = cursorFromSelection(t, floor, room, tag)
     }
 
-
-
-    private fun roomsForFloor(t: TemplateModel, floor: Int): List<String> {
-
-        return t.selectedRooms.filter { floorOfRoomCode(it) == floor }.sorted()
-
-    }
-
-
-
-    private fun peekRoom(t: TemplateModel, floor: Int): String? {
-
-        val rooms = roomsForFloor(t, floor)
-
-        if (rooms.isEmpty()) return null
-
-
-
-        val map = cursorByTemplateFloor.getOrPut(t.id) { HashMap() }
-
-        val idx = map[floor] ?: 0
-
-        return rooms[idx % rooms.size]
-
-    }
-
-    private fun parseFloorNumber(floorStr: String): Int? {
-
-        // "3层" / "3" / "3F" 都能取到 3
-
-        return Regex("\\d+").find(floorStr)?.value?.toIntOrNull()
-
-    }
-
-    private fun restoreLinearCursor(template: TemplateModel) {
-        if (template.mode != TemplateMode.LINEAR) {
-            cursorByTemplateFloor.remove(template.id)
+    /** 由模板当前扫码记录恢复游标（初始化/切换模板/增删数据后调用） */
+    private fun restoreScanCursor(template: TemplateModel) {
+        if (floorsWithRooms(template).isEmpty()) {
+            scanCursorByTemplate.remove(template.id)
             return
         }
+        scanCursorByTemplate[template.id] = restoredScanCursor(template)
+    }
 
-        val floorCursors = cursorByTemplateFloor.getOrPut(template.id) { HashMap() }
-        floorCursors.clear()
-        for (floor in 1..template.maxFloor.coerceAtLeast(1)) {
-            if (roomsForFloor(template, floor).isNotEmpty()) {
-                floorCursors[floor] = nextLinearRoomIndex(template, floor)
-            }
+
+
+    /** 扫码前按游标预填字段（不推进游标），返回 模板+下一录入位置；无房间配置时位置为 null */
+    private fun applyTemplateForNextScan(): Pair<TemplateModel, ScanPosition>? {
+        val t = activeTemplate ?: run {
+            // 无模板：清掉上个模板游标残留的字段，否则扫码记录会带上旧房号/标签
+            currentFloor = ""
+            currentRoom = ""
+            currentTag = ""
+            return null
         }
-    }
-
-    private fun rebuildCursorAfterDelete(floor: Int) {
-
-        val t = dataManager.activeTemplate ?: activeTemplate ?: return
-        val map = cursorByTemplateFloor.getOrPut(t.id) { HashMap() }
-
-        if (roomsForFloor(t, floor).isEmpty()) {
-            map.remove(floor)
-        } else {
-            map[floor] = nextLinearRoomIndex(t, floor)
-        }
-
-    }
-
-
-
-    private fun advanceRoomCursor(t: TemplateModel, floor: Int) {
-
-        val rooms = roomsForFloor(t, floor)
-
-        if (rooms.isEmpty()) return
-
-
-
-        val map = cursorByTemplateFloor.getOrPut(t.id) { HashMap() }
-
-        val idx = map[floor] ?: 0
-
-        map[floor] = (idx + 1) % rooms.size
-
-    }
-
-
-
-    private fun findNextFloorWithRooms(t: TemplateModel, fromFloor: Int): Int? {
-
-        val maxF = max(1, t.maxFloor)
-
-        // 从下一层开始找，循环一圈
-
-        for (step in 1..maxF) {
-
-            val nf = ((fromFloor - 1 + step) % maxF) + 1
-
-            if (roomsForFloor(t, nf).isNotEmpty()) return nf
-
-        }
-
-        return null
-
-    }
-
-
-
-    /** 推进游标，返回：是否“刚好用完本层一轮”(即下次会回到本层第一个房间) */
-
-    private fun advanceRoomCursorAndCheckWrapped(t: TemplateModel, floor: Int): Boolean {
-
-        val rooms = roomsForFloor(t, floor)
-
-        if (rooms.isEmpty()) return false
-
-
-
-        val map = cursorByTemplateFloor.getOrPut(t.id) { HashMap() }
-
-        val idx = map[floor] ?: 0
-
-        val nextIdx = idx + 1
-
-        map[floor] = nextIdx % rooms.size
-
-
-
-        // 如果 nextIdx 刚好是 rooms.size 的倍数，说明本层一轮用完
-
-        return (nextIdx % rooms.size) == 0
-
-    }
-
-
-
-    private fun applyTemplateForNextScan(showToast: (String) -> Unit): Triple<TemplateModel, Int, String?>? {
-
-        val t = activeTemplate ?: return null
-
-
-
-        val f = scanSelectedFloor.coerceIn(1, max(1, t.maxFloor))
-
-        val room = peekRoom(t, f)
-
-
-
-        if (room == null) {
-
-            showToast("模板「${t.name}」${f}层未选择房间号")
-
-        }
-
-
+        val pos = peekScanPosition(t, scanCursorByTemplate[t.id] ?: ScanCursor())
 
         currentOperator = t.operator
-
         currentCampus = t.campus
-
         currentBuilding = t.building
 
-        currentFloor = "${f}层"
+        if (pos != null) {
+            currentFloor = "${pos.floor}层"
+            currentRoom = pos.room
+            currentTag = pos.tag
+        } else {
+            // 楼层未配置房间号：不阻断、不弹提示，扫到的内容以空房间直接进扫码历史列表
+            val f = if (scanSelectedFloor in 1..max(1, t.maxFloor)) scanSelectedFloor else 1
+            currentFloor = "${f}层"
+            currentRoom = ""
+            currentTag = ""
+        }
 
-        currentRoom = room ?: currentRoom
-
-
-
-        return Triple(t, f, room)
-
+        return pos?.let { t to it }
     }
 
 
@@ -1502,88 +1615,6 @@ class MainViewModel @Inject constructor(
 
 
     // ===================== 扫码入口 =====================
-
-    fun cancelPendingDiscreteScan() {
-        pendingDiscreteScanCode = null
-        pendingDiscreteTemplateId = null
-    }
-
-    fun confirmDiscreteScan(
-        floor: Int,
-        room: String,
-        tag: String,
-        copyToClipboard: (String) -> Unit,
-        showToast: (String) -> Unit
-    ) {
-        val code = pendingDiscreteScanCode ?: return
-        val template = activeTemplate
-
-        if (
-            template == null ||
-            template.id != pendingDiscreteTemplateId ||
-            template.mode != TemplateMode.DISCRETE
-        ) {
-            cancelPendingDiscreteScan()
-            showToast("当前离散模板已发生变化，请重新扫码")
-            return
-        }
-
-        val validFloor = floor.coerceIn(1, max(1, template.maxFloor))
-        val isValidRoom = room in template.selectedRooms &&
-                floorOfRoomCode(room) == validFloor
-        if (!isValidRoom) {
-            showToast("请选择有效的楼层和房间号")
-            return
-        }
-
-        currentOperator = template.operator
-        currentCampus = template.campus
-        currentBuilding = template.building
-        currentFloor = "${validFloor}层"
-        currentRoom = room
-        clampSelectedFloor(validFloor, template.maxFloor)
-        val validTag = tag.takeIf { it in template.tags } ?: ""
-        if (template.lastSelectedFloor != validFloor || template.lastSelectedTag != validTag) {
-            val updated = template.copy(
-                lastSelectedFloor = validFloor,
-                lastSelectedTag = validTag
-            )
-            dataManager.updateTemplate(updated)
-            activeTemplate = dataManager.activeTemplate
-        }
-        cancelPendingDiscreteScan()
-
-        try {
-            val scanData = dataManager.addScan(
-                text = code,
-                templateId = template.id,
-                templateName = template.name,
-                operator = currentOperator,
-                campus = currentCampus,
-                building = currentBuilding,
-                floor = currentFloor,
-                room = currentRoom,
-                tag = validTag,
-                allowDuplicate = duplicateScanEnabled
-            )
-
-            if (scanData != null) {
-                appendScanToActiveTemplate(scanData)
-
-                if (clipboardEnabled) {
-                    copyToClipboard(code)
-                    showToast("已复制: $code")
-                }
-                if (uploadEnabled && serverUrl.isNotEmpty()) {
-                    uploadData(scanData, showToast)
-                }
-                getAllScans()
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "离散模板扫码处理异常: ${e.message}", e)
-            showToast("处理扫码数据失败：${e.message ?: "未知错误"}")
-        }
-    }
 
     fun onBarcodeScanned(
 
@@ -1625,92 +1656,119 @@ class MainViewModel @Inject constructor(
 
                 else -> {
 
-                    val selectedTemplate = activeTemplate
-                    if (selectedTemplate?.mode == TemplateMode.DISCRETE) {
-                        if (pendingDiscreteScanCode != null) {
-                            return
-                        }
+                    // ===== 序号模式：序号标记写入 room 字段，独立递增（正/倒序），与扫码顺序无关；
+                    // 配置了标签时按 标签→序号 轮询：01甲→01乙→02甲…，标签轮完一圈序号才推进一位 =====
+                    val seqTemplate = activeTemplate
+                    if (seqTemplate?.markMode == MarkMode.SEQ) {
+                        val value = seqTemplate.nextSeq
+                        val tagNow = seqTagOf(seqTemplate)
+                        currentOperator = seqTemplate.operator
+                        currentCampus = seqTemplate.campus
+                        currentBuilding = seqTemplate.building
+                        currentFloor = ""
+                        currentRoom = formatSeqValue(
+                            seqTemplate.seq, value,
+                            totalForAuto = seqTemplate.scans.size + 1
+                        )
+                        currentTag = tagNow
 
-                        val availableRooms = selectedTemplate.selectedRooms.filter {
-                            floorOfRoomCode(it)?.let { floor ->
-                                floor in 1..max(1, selectedTemplate.maxFloor)
-                            } == true
-                        }
-                        if (availableRooms.isEmpty()) {
-                            showToast("模板「${selectedTemplate.name}」未配置可选房间号")
-                            return
-                        }
+                        val seqScanData = dataManager.addScan(
+                            text = code,
+                            templateId = seqTemplate.id,
+                            templateName = seqTemplate.name,
+                            operator = currentOperator,
+                            campus = currentCampus,
+                            building = currentBuilding,
+                            floor = currentFloor,
+                            room = currentRoom,
+                            tag = tagNow,
+                            allowDuplicate = duplicateScanEnabled
+                        )
 
-                        pendingDiscreteTemplateId = selectedTemplate.id
-                        pendingDiscreteScanCode = code
+                        if (seqScanData != null) {
+                            // 写入成功才推进（避免重复码被拒时跳号/跳标签）：
+                            // 无标签或固定"无标签"→ 每次推进序号；有标签 → 轮完一圈才推进序号
+                            val tags = seqTemplate.tags
+                            val cursor = seqTemplate.seqTagCursor
+                            val advanceSeq: Boolean
+                            val newCursor: Int
+                            if (tags.isEmpty() || cursor < 0) {
+                                advanceSeq = true
+                                newCursor = cursor
+                            } else {
+                                newCursor = (cursor + 1) % tags.size
+                                advanceSeq = newCursor == 0
+                            }
+                            val step = if (seqTemplate.seq.descending) -1 else 1
+                            // 先持久化新游标再追加扫码，两者落在同一份模板快照里
+                            dataManager.updateTemplate(
+                                seqTemplate.copy(
+                                    nextSeq = if (advanceSeq) value + step else value,
+                                    seqTagCursor = newCursor
+                                )
+                            )
+                            appendScanToActiveTemplate(seqScanData)
+
+                            // 序号记录无楼层概念：楼层筛选切回"所有楼层"，保证新纪录立刻可见
+                            if (scanSelectedFloor != 0) {
+                                clampSelectedFloor(0, seqTemplate.maxFloor)
+                            }
+
+                            if (clipboardEnabled) {
+                                copyToClipboard(code)
+                                showToast("已复制: $code")
+                            }
+                            if (uploadEnabled && serverUrl.isNotEmpty()) {
+                                uploadData(seqScanData, showToast)
+                            }
+                            // 更新扫描结果StateFlow，触发UI更新（无条件，保证扫码实时进列表）
+                            getAllScans()
+
+                            // 自动补零：总条数跨位（9→10、99→100…）时重算本模板全部序号标记
+                            if (seqTemplate.seq.autoPad) {
+                                rewriteAutoPaddedSeqMarks(seqTemplate.id)
+                            }
+                        }
                         return
                     }
 
-                    // 扫描前：先按模板预填字段（不推进游标）
+                    // ===== 房间号模式：按 楼层→房间→标签 游标自动推进 =====
 
-                    val applied = applyTemplateForNextScan(showToast)
+                    // 扫描前：先按模板游标预填字段（不推进游标）
+                    val applied = applyTemplateForNextScan()
 
-
+                    // 楼层未配置房间号不再拦截：扫到的内容以空房间直接进列表
+                    // （游标推进由下方 applied != null 分支保证）
 
                     val activeTemplate = this.activeTemplate
 
                     val scanData = dataManager.addScan(
-
                         text = code,
-
                         templateId = activeTemplate?.id ?: "",
-
                         templateName = activeTemplate?.name ?: "",
-
                         operator = currentOperator,
-
                         campus = currentCampus,
-
                         building = currentBuilding,
-
                         floor = currentFloor,
-
                         room = currentRoom,
-
+                        tag = currentTag,
                         allowDuplicate = duplicateScanEnabled
-
                     )
-
-
 
                     if (scanData != null) {
 
-                        // 关键：只有真正写入成功才推进游标，避免跳号
-
-                        applied?.let { (t, f, room) ->
-
-                            if (room != null) {
-
-                                val wrapped = advanceRoomCursorAndCheckWrapped(t, f)
-
-
-
-                                // ✅ 本层用完：自动切到下一层
-
-                                if (wrapped) {
-
-                                    val nextFloor = findNextFloorWithRooms(t, f)
-
-                                    if (nextFloor != null && nextFloor != f) {
-
-                                        // 直接更新选中楼层，UI 会跟着变
-
-                                        clampSelectedFloor(nextFloor, t.maxFloor)
-
-                                    }
-
-                                }
-
+                        // 关键：只有真正写入成功才推进游标，避免跳号；
+                        // 游标按 楼层→房间→标签 推进（标签最快），一轮用完自动进入下一房间/楼层
+                        applied?.let { (t, pos) ->
+                            scanCursorByTemplate[t.id] = advanceScanCursor(
+                                t,
+                                scanCursorByTemplate[t.id] ?: cursorFromSelection(t, pos.floor, pos.room, pos.tag)
+                            )
+                            // 楼层筛选选中具体楼层时跟随本次录入楼层，保证新纪录立刻可见
+                            if (scanSelectedFloor != 0 && scanSelectedFloor != pos.floor) {
+                                clampSelectedFloor(pos.floor, t.maxFloor)
                             }
-
                         }
-
-
 
                         // 只有有模板时才写入模板离线扫码列表
 
@@ -1738,11 +1796,10 @@ class MainViewModel @Inject constructor(
 
                         }
 
-                        // 更新扫描结果StateFlow，触发UI更新
-
+                        // 更新扫描结果StateFlow，触发UI更新。
+                        // 必须无条件执行：无模板路径不经过 appendScanToActiveTemplate，
+                        // 只靠这里的刷新，扫码内容才能实时进列表
                         getAllScans()
-
-
 
                     }
 
@@ -1806,9 +1863,6 @@ class MainViewModel @Inject constructor(
     private fun uploadData(scanData: ScanData, showToast: (String) -> Unit) {
 
         viewModelScope.launch(Dispatchers.IO) {
-            val resultId = dataManager.getAllScans()
-                .firstOrNull { it.scanData.id == scanData.id }
-                ?.id
 
             networkUseCases.uploadScanData(
 
@@ -1820,7 +1874,8 @@ class MainViewModel @Inject constructor(
 
                 onSuccess = {
 
-                    resultId?.let(scanUseCases.markScanAsUploaded::invoke)
+                    // 按扫码数据 id 直接标记已上传，免去一次全列表拷贝查询
+                    scanUseCases.markScanAsUploadedByDataId(scanData.id)
                     // 切换到主线程显示Toast
 
                     viewModelScope.launch(Dispatchers.Main) {
@@ -2056,17 +2111,16 @@ class MainViewModel @Inject constructor(
 
         val deleted = dataManager.deleteScan(id)
 
+        // 删除后按剩余最近一条记录恢复游标（表头"下一个房号"跟随变化）
+        dataManager.activeTemplate?.let { restoreScanCursor(it) }
 
-
-        val floor = deleted?.let { parseFloorNumber(it.scanData.floor) }
-
-        if (floor != null) {
-
-            rebuildCursorAfterDelete(floor)
-
+        // 自动补零：删除后总条数降位（100→99…）时同步收紧全部序号标记
+        dataManager.activeTemplate?.let {
+            if (it.markMode == MarkMode.SEQ && it.seq.autoPad) {
+                rewriteAutoPaddedSeqMarks(it.id)
+            }
         }
 
-        
 
         // 同步ViewModel的状态
 

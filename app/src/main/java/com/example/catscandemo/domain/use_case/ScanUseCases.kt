@@ -15,9 +15,11 @@ class ScanUseCases(
     val getAllScans: GetAllScansUseCase,
     val getPendingScans: GetPendingScansUseCase,
     val markScanAsUploaded: MarkScanAsUploadedUseCase,
+    val markScanAsUploadedByDataId: MarkScanAsUploadedByDataIdUseCase,
     val addScanToTemplate: AddScanToTemplateUseCase,
     val clearAllScans: ClearAllScansUseCase,
     val replaceAll: ReplaceAllScansUseCase,
+    val saveTemplateScans: SaveTemplateScansUseCase,
     private val scanRepository: ScanRepository
 ) {
     fun setCurrentTemplateId(templateId: String?) {
@@ -44,6 +46,18 @@ class ReplaceAllScansUseCase(
 ) {
     operator fun invoke(scans: List<ScanResult>) {
         scanRepository.replaceAll(scans)
+    }
+}
+
+/**
+ * 把指定模板的扫码列表直接持久化到它的 history 文件（不影响当前激活列表）。
+ * 单一数据源下非激活模板的删除/清空必须走这里，否则重启后会复活。
+ */
+class SaveTemplateScansUseCase(
+    private val scanRepository: ScanRepository
+) {
+    operator fun invoke(templateId: String, scans: List<ScanResult>) {
+        scanRepository.saveTemplateScans(templateId, scans)
     }
 }
 
@@ -136,13 +150,24 @@ class GetPendingScansUseCase(
 }
 
 /**
- * 鏍囪鎵弿鏁版嵁涓哄凡涓婁紶鐨?Use Case
+ * 标记扫码数据为已上传的 Use Case（按结果序号 id）
  */
 class MarkScanAsUploadedUseCase(
     private val scanRepository: ScanRepository
 ) {
     operator fun invoke(id: Long) {
         scanRepository.markScanAsUploaded(id)
+    }
+}
+
+/**
+ * 标记扫码数据为已上传的 Use Case（按 ScanData.id，免去调用方先全量查询换 id）
+ */
+class MarkScanAsUploadedByDataIdUseCase(
+    private val scanRepository: ScanRepository
+) {
+    operator fun invoke(dataId: String) {
+        scanRepository.markScanAsUploadedByDataId(dataId)
     }
 }
 
@@ -187,7 +212,9 @@ interface ScanRepository {
     fun getAllScans(): List<ScanResult>
     fun getPendingScans(): List<ScanResult>
     fun markScanAsUploaded(id: Long)
+    fun markScanAsUploadedByDataId(dataId: String)
     fun replaceAll(scans: List<ScanResult>)
+    fun saveTemplateScans(templateId: String, scans: List<ScanResult>)
     fun clearAllScans()
 }
 

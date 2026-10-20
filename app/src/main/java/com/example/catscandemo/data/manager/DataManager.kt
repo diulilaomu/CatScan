@@ -11,11 +11,6 @@ import com.example.catscandemo.domain.model.TemplateMode
 import com.example.catscandemo.domain.model.TemplateModel
 import com.example.catscandemo.domain.use_case.ScanUseCases
 import com.example.catscandemo.domain.use_case.TemplateUseCases
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 /**
  * 数据管理中心
@@ -31,9 +26,6 @@ class DataManager(
     val templates = mutableStateListOf<TemplateModel>()
     var activeTemplateId by mutableStateOf<String?>(null)
     var activeTemplate by mutableStateOf<TemplateModel?>(null)
-
-    // 协程作用域
-    private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     /**
      * 初始化数据
@@ -52,6 +44,11 @@ class DataManager(
         activeTemplateId = activeId
         activeTemplate = activeId?.let { templateUseCases.getTemplateById(it) }
 
+        // 关键时序：必须先把仓库指到激活模板，再做模板 -> 结果列表的同步。
+        // 否则 replaceAll 会把激活模板的扫码整表写进仓库当前指向的 no_template 文件，
+        // 造成“无模板列表里出现模板数据、重启仍在”的污染。
+        activeId?.let { scanUseCases.setCurrentTemplateId(it) }
+
         // 同步模板中的扫描数据到结果列表
         syncTemplateScansToResults()
 
@@ -67,6 +64,8 @@ class DataManager(
     private fun syncTemplateScansToResults() {
         // 确保当前模板ID已设置
         if (activeTemplateId != null) {
+            // 防御：仓库必须指向激活模板，replaceAll 的落盘目标是仓库当前模板的文件
+            scanUseCases.setCurrentTemplateId(activeTemplateId!!)
             // 加载当前模板
             val currentTemplate = templateUseCases.getTemplateById(activeTemplateId!!)
             if (currentTemplate != null) {
@@ -101,6 +100,19 @@ class DataManager(
                 }
                 scanUseCases.replaceAll.invoke(scanResults)
             }
+        }
+    }
+
+    /**
+     * 模板 scans -> ScanResult 列表（与 syncTemplateScansToResults 相同的稳定 hash id 规则），
+     * 供非激活模板的显式落盘使用
+     */
+    private fun scanResultsFromTemplate(scans: List<ScanData>): List<ScanResult> {
+        val usedIds = HashSet<Long>()
+        return scans.mapIndexed { index, scanData ->
+            var id = scanData.id.hashCode().toLong()
+            while (!usedIds.add(id)) id++
+            ScanResult(id = id, index = index + 1, scanData = scanData, uploaded = scanData.uploaded)
         }
     }
 
@@ -143,6 +155,8 @@ class DataManager(
 
             // 清空识别结果（全部）
             scanUseCases.clearAllScans.invoke()
+            // 仓库仍指向已删除模板的文件，对齐到新的激活模板（无模板则为 no_template）
+            scanUseCases.setCurrentTemplateId(activeTemplateId)
         } else {
             // 删的不是当前模板：只删除该模板的识别结果
             val allScans = scanUseCases.getAllScans.invoke()
@@ -213,7 +227,7 @@ class DataManager(
      */
     fun clearTemplateScans(id: String) {
         templateUseCases.clearTemplateScans(id)
-        
+
         // 同时清空扫描结果中该模板的所有数据
         val allScans = scanUseCases.getAllScans.invoke()
         val scansToClear = allScans.filter { it.scanData.templateId == id }
@@ -227,13 +241,16 @@ class DataManager(
             templates.removeAt(idx)
             templates.add(idx, updatedTemplate)
 
-            // 如果是当前激活的模板，也更新activeTemplate
+            // 如果是当前激活模板，也更新activeTemplate
             if (activeTemplateId == id) {
                 activeTemplate = updatedTemplate
             }
         }
 
         saveTemplates()
+        // 单一数据源：扫码记录只在 history 文件，清空必须显式落盘
+        // （上面仓库的逐条删除只覆盖当前激活模板的列表）
+        scanUseCases.saveTemplateScans(id, emptyList())
     }
 
     /**
@@ -252,6 +269,12 @@ class DataManager(
             template.copy(scans = template.scans.filterNot { it.id in deletedIds }),
             syncScanResults = true
         )
+        // 非激活模板：上面的 sync 只会落盘激活模板，这里显式写入该模板的 history 文件
+        if (id != activeTemplateId) {
+            templates.firstOrNull { it.id == id }?.let { updated ->
+                scanUseCases.saveTemplateScans(id, scanResultsFromTemplate(updated.scans))
+            }
+        }
         return deletedScans
     }
 
@@ -286,9 +309,15 @@ class DataManager(
             templates.removeAt(idx)
             templates.add(idx, updatedTemplate)
 
-            // 如果是当前激活的模板，也更新activeTemplate
+            // 如果是当前激活模板，也更新activeTemplate
             if (activeTemplateId == id) {
                 activeTemplate = updatedTemplate
+            }
+
+            // 单一数据源：非激活模板的删除不会经过仓库列表，必须显式落盘，
+            // 否则重启后水合会把已删的记录从 history 文件捞回来
+            if (id != activeTemplateId) {
+                scanUseCases.saveTemplateScans(id, scanResultsFromTemplate(updatedTemplate.scans))
             }
         }
 
@@ -352,6 +381,11 @@ class DataManager(
                 if (activeTemplateId == templateId) {
                     activeTemplate = updatedTemplate
                 }
+
+                // 非激活模板的镜像删除不经过仓库，显式落盘防止重启复活
+                if (templateId != activeTemplateId) {
+                    scanUseCases.saveTemplateScans(templateId, scanResultsFromTemplate(updatedTemplate.scans))
+                }
             }
 
             saveTemplates()
@@ -393,6 +427,11 @@ class DataManager(
                 if (activeTemplateId == templateId) {
                     activeTemplate = updatedTemplate
                 }
+
+                // 非激活模板的镜像更新不经过仓库，显式落盘防止重启后回退
+                if (templateId != activeTemplateId) {
+                    scanUseCases.saveTemplateScans(templateId, scanResultsFromTemplate(updatedTemplate.scans))
+                }
             }
         }
 
@@ -410,52 +449,21 @@ class DataManager(
      */
     fun clearAllScans() {
         scanUseCases.clearAllScans.invoke()
-        
+
         // 清空所有模板的扫描数据 - 使用map创建更新后的列表避免并发修改问题
         val updatedTemplates = templates.map { template ->
             template.copy(scans = emptyList())
         }
         templates.clear()
         templates.addAll(updatedTemplates)
-        
+
         // 更新当前激活模板的引用
         activeTemplate = activeTemplate?.copy(scans = emptyList())
-        
+
         saveTemplates()
-    }
-
-    /**
-     * 批量操作：添加多个扫描数据
-     */
-    fun addMultipleScans(scanDataList: List<ScanData>) {
-        coroutineScope.launch {
-            withContext(Dispatchers.IO) {
-                scanDataList.forEach {scanData ->
-                    try {
-                        addScanToActiveTemplate(scanData)
-                    } catch (e: Exception) {
-                        android.util.Log.w("DataManager", "批量添加失败: ${e.message}")
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * 批量操作：删除多个扫描数据
-     */
-    fun deleteMultipleScans(ids: List<Long>) {
-        coroutineScope.launch {
-            withContext(Dispatchers.IO) {
-                ids.forEach {id ->
-                    try {
-                        deleteScan(id)
-                    } catch (e: Exception) {
-                        android.util.Log.w("DataManager", "批量删除失败: ${e.message}")
-                    }
-                }
-            }
-        }
+        // 仓库的 clear 只落盘当前指向的文件，其余模板的 history 必须逐个清掉，
+        // 否则重启水合后“清空”会复活
+        templates.forEach { scanUseCases.saveTemplateScans(it.id, emptyList()) }
     }
 
     /**

@@ -2,8 +2,10 @@ package com.example.catscandemo.ui.main
 
 import android.content.Context
 import android.util.Log
+import com.example.catscandemo.domain.model.MarkMode
 import com.example.catscandemo.domain.model.ScanData
 import com.example.catscandemo.domain.model.ScanResult
+import com.example.catscandemo.domain.model.SeqConfig
 import com.example.catscandemo.domain.model.TemplateMode
 import com.example.catscandemo.domain.model.TemplateModel
 import org.json.JSONArray
@@ -80,11 +82,47 @@ object TemplateStorage {
                     add(templateFromJson(arr.getJSONObject(i)))
                 }
             }
-            Loaded(list, activeId)
+
+            // 单一数据源：扫码记录只落在 scan_history_{id}.json，templates.json 只存模板配置。
+            // 旧版内嵌在 templates.json 里的 scans 以内嵌为准回写 history 文件
+            // （与旧运行时 syncTemplateScansToResults 覆盖 history 的语义一致），
+            // 随后重存一次剥离后的模板文件，避免每次扫码全量重序列化所有模板的所有记录。
+            var migrated = false
+            val hydrated = list.map { t ->
+                if (t.scans.isNotEmpty()) {
+                    seedHistoryFromEmbedded(context, t)
+                    migrated = true
+                    t
+                } else if (t.id.isBlank()) {
+                    // 空白 id 会映射到 no_template 文件，绝不能当成该模板的历史来水合
+                    t
+                } else {
+                    t.copy(scans = ScanHistoryStorage.load(context, t.id).items.map { it.scanData })
+                }
+            }
+            if (migrated) {
+                save(context, hydrated, activeId)
+            }
+            Loaded(hydrated, activeId)
         } catch (e: Exception) {
             Log.w("TemplateStorage", "模板文件解析失败: ${e.message}")
             backupCorruptedFile(file)
             Loaded(emptyList(), null)
+        }
+    }
+
+    /** 旧格式迁移：把内嵌的扫码记录写入对应模板的 history 文件 */
+    private fun seedHistoryFromEmbedded(context: Context, template: TemplateModel) {
+        try {
+            val usedIds = HashSet<Long>()
+            val items = template.scans.mapIndexed { index, scanData ->
+                var id = scanData.id.hashCode().toLong()
+                while (!usedIds.add(id)) id++
+                ScanResult(id = id, index = index + 1, scanData = scanData, uploaded = scanData.uploaded)
+            }
+            ScanHistoryStorage.save(context, template.id, items)
+        } catch (e: Exception) {
+            Log.w("TemplateStorage", "内嵌扫码记录回写历史文件失败: ${template.id}, ${e.message}")
         }
     }
 
@@ -109,6 +147,23 @@ object TemplateStorage {
         obj.put("maxFloor", t.maxFloor)
         obj.put("roomCountPerFloor", t.roomCountPerFloor)
         obj.put("mode", t.mode.name)
+        obj.put("markMode", t.markMode.name)
+        obj.put("nextSeq", t.nextSeq)
+        obj.put("seqTagCursor", t.seqTagCursor)
+
+        val seqObj = JSONObject()
+        seqObj.put("prefix", t.seq.prefix)
+        seqObj.put("suffix", t.seq.suffix)
+        seqObj.put("chineseUpper", t.seq.chineseUpper)
+        seqObj.put("start", t.seq.start)
+        seqObj.put("descending", t.seq.descending)
+        seqObj.put("padWidth", t.seq.padWidth)
+        seqObj.put("autoPad", t.seq.autoPad)
+        obj.put("seq", seqObj)
+
+        val colorsObj = JSONObject()
+        t.tagColors.forEach { (tag, idx) -> colorsObj.put(tag, idx) }
+        obj.put("tagColors", colorsObj)
         obj.put("lastSelectedFloor", t.lastSelectedFloor)
         obj.put("lastSelectedTag", t.lastSelectedTag)
 
@@ -120,9 +175,8 @@ object TemplateStorage {
         t.selectedRooms.forEach { rooms.put(it) }
         obj.put("selectedRooms", rooms)
 
-        val scans = JSONArray()
-        t.scans.forEach { scans.put(scanToJson(it)) }
-        obj.put("scans", scans)
+        // 扫码记录不写入模板文件：单一数据源在 scan_history_{id}.json，
+        // 模板文件保持小体积，扫码时无需全量重序列化
         return obj
     }
 
@@ -132,7 +186,7 @@ object TemplateStorage {
             for (i in 0 until roomsArr.length()) add(roomsArr.getString(i))
         }
         val maxFloor = obj.optInt("maxFloor", 1).coerceAtLeast(1)
-        val roomCountPerFloor = obj.optInt("roomCountPerFloor", 1).coerceIn(1, 99)
+        val roomCountPerFloor = obj.optInt("roomCountPerFloor", 1).coerceIn(1, 999)
         val validRooms = rooms.filter { code ->
             if (code.length < 3) {
                 false
@@ -146,20 +200,39 @@ object TemplateStorage {
             }
         }.distinct()
 
-        // 标签：最多 4 个、每个最多 4 个字符，超出部分丢弃
+        // 标签：数量与单标签长度均不限（旧版 4 个/4 字限制已放开），去空白去重
         val tagsArr = obj.optJSONArray("tags") ?: JSONArray()
         val tags = buildList {
             for (i in 0 until tagsArr.length()) add(tagsArr.getString(i))
         }.map { it.trim() }
-            .filter { it.isNotBlank() && it.length <= 4 }
+            .filter { it.isNotBlank() }
             .distinct()
-            .take(4)
 
         val scansArr = obj.optJSONArray("scans") ?: JSONArray()
         val scans = buildList {
             for (i in 0 until scansArr.length()) add(scanFromJson(scansArr.getJSONObject(i)))
         }
 
+
+        // 序号模式配置（markMode/seq/nextSeq/seqTagCursor），旧文件缺省为房间号模式
+        val seqObj = obj.optJSONObject("seq")
+        val seqConfig = SeqConfig(
+            prefix = seqObj?.optString("prefix") ?: "",
+            suffix = seqObj?.optString("suffix") ?: "",
+            chineseUpper = seqObj?.optBoolean("chineseUpper") ?: false,
+            start = seqObj?.optInt("start") ?: 1,
+            descending = seqObj?.optBoolean("descending") ?: false,
+            padWidth = seqObj?.optInt("padWidth", 2) ?: 2,
+            autoPad = seqObj?.optBoolean("autoPad") ?: false
+        )
+
+        // 标签自定义颜色：{标签名: 调色板色号}，只保留仍存在的标签
+        val colorsObj = obj.optJSONObject("tagColors")
+        val tagColors = buildMap {
+            colorsObj?.keys()?.forEach { key ->
+                colorsObj.optInt(key).let { if (key in tags) put(key, it) }
+            }
+        }
 
         return TemplateModel(
             id = obj.optString("id", ""),
@@ -172,31 +245,21 @@ object TemplateStorage {
             mode = runCatching {
                 TemplateMode.valueOf(obj.optString("mode", TemplateMode.LINEAR.name))
             }.getOrDefault(TemplateMode.LINEAR),
+            markMode = runCatching {
+                MarkMode.valueOf(obj.optString("markMode", MarkMode.ROOM.name))
+            }.getOrDefault(MarkMode.ROOM),
+            seq = seqConfig,
+            nextSeq = obj.optInt("nextSeq", seqConfig.start),
+            seqTagCursor = obj.optInt("seqTagCursor", 0),
             lastSelectedFloor = obj.optInt("lastSelectedFloor", 1)
                 .coerceIn(1, maxFloor),
             lastSelectedTag = obj.optString("lastSelectedTag", "")
                 .takeIf { it in tags } ?: "",
             tags = tags,
+            tagColors = tagColors,
             selectedRooms = validRooms,
             scans = scans
         )
-    }
-
-    private fun scanToJson(s: ScanData): JSONObject {
-        val obj = JSONObject()
-        obj.put("id", s.id)
-        obj.put("text", s.text)
-        obj.put("timestamp", s.timestamp)
-        obj.put("operator", s.operator)
-        obj.put("campus", s.campus)
-        obj.put("building", s.building)
-        obj.put("floor", s.floor)
-        obj.put("room", s.room)
-        obj.put("tag", s.tag)
-        obj.put("templateId", s.templateId)
-        obj.put("templateName", s.templateName)
-        obj.put("uploaded", s.uploaded)
-        return obj
     }
 
     private fun scanFromJson(obj: JSONObject): ScanData {

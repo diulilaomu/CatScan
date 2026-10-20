@@ -75,7 +75,14 @@ class DefaultScanRepository(
     private fun initializeLocked() {
         if (!initialized) {
             val loaded = ScanHistoryStorage.load(context, currentTemplateId)
-            scanResults = loaded.items.toMutableList()
+            // 无模板历史里只应保留 templateId 为空的记录：历史上一个启动时序问题
+            // 曾把激活模板的扫码整表写进 no_template 文件，加载时把这类污染数据滤掉，
+            // 下次保存即完成文件层面的清理
+            scanResults = if (currentTemplateId == null) {
+                loaded.items.filter { it.scanData.templateId.isBlank() }.toMutableList()
+            } else {
+                loaded.items.toMutableList()
+            }
             // 恢复自增序号，避免新扫描 id/index 重复
             // id 可能是稳定 hash（含负值），自增起点从非负最大值之后开始
             val maxId = scanResults.maxOfOrNull { it.id } ?: 0L
@@ -179,6 +186,21 @@ class DefaultScanRepository(
         }
     }
 
+    override fun markScanAsUploadedByDataId(dataId: String) {
+        synchronized(stateLock) {
+            val index = scanResults.indexOfFirst { it.scanData.id == dataId }
+            if (index != -1) {
+                val current = scanResults[index]
+                val updatedResult = current.copy(
+                    scanData = current.scanData.copy(uploaded = true),
+                    uploaded = true
+                )
+                scanResults[index] = updatedResult
+                saveScanResultsLocked()
+            }
+        }
+    }
+
     override fun replaceAll(scans: List<ScanResult>) {
         synchronized(stateLock) {
             scanResults = scans.toMutableList()
@@ -202,6 +224,20 @@ class DefaultScanRepository(
             nextIndex = 1
             saveScanResultsLocked()
         }
+    }
+
+    /**
+     * 把指定模板的扫码列表直接写入它的 history 文件，不经过、也不影响
+     * 当前内存中的激活模板列表。单一数据源下，非激活模板的删除/清空
+     * 不再有 templates.json 内嵌副本兜底，必须显式走这里落盘。
+     */
+    override fun saveTemplateScans(templateId: String, scans: List<ScanResult>) {
+        if (templateId.isBlank()) return
+        val request = SaveRequest(templateId, scans.toList())
+        synchronized(pendingSaveLock) {
+            pendingSaves[templateId] = request
+        }
+        saveSignals.trySend(Unit)
     }
 
     private fun saveScanResultsLocked() {

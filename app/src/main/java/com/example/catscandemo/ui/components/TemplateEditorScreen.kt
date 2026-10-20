@@ -1,247 +1,145 @@
 package com.example.catscandemo.ui.components
 
-
-
-import androidx.compose.foundation.background
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.*
-
-import androidx.compose.foundation.BorderStroke
-
-import androidx.compose.foundation.lazy.LazyColumn
-
-import androidx.compose.foundation.lazy.LazyRow
-
-import androidx.compose.foundation.lazy.items
-
-import androidx.compose.foundation.lazy.grid.GridCells
-
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-
-import androidx.compose.foundation.lazy.grid.items as gridItems
-import androidx.compose.foundation.relocation.BringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewRequester
-
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-
-import androidx.compose.foundation.text.KeyboardOptions
-
-import androidx.compose.material.icons.Icons
-
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-
-import androidx.compose.material.icons.filled.Add
-
-import androidx.compose.material.icons.filled.Close
-
-import androidx.compose.material.icons.filled.Delete
-
-import androidx.compose.material.icons.filled.Edit
-
-import androidx.compose.material.icons.filled.CheckBox
-
-import androidx.compose.material.icons.filled.CheckBoxOutlineBlank
-
-import androidx.compose.material.icons.filled.SelectAll
-
-import androidx.compose.material3.*
-
-import androidx.compose.runtime.*
-
-import androidx.compose.runtime.saveable.rememberSaveable
-
-import androidx.compose.ui.Alignment
-
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
-
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextOverflow
-
-import androidx.compose.ui.unit.dp
-
-import com.example.catscandemo.presentation.viewmodel.MainViewModel
-
-import com.example.catscandemo.domain.model.TemplateMode
-
-import com.example.catscandemo.domain.model.TemplateModel
-
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-
 import android.content.ContentValues
-
+import android.content.Context
 import android.os.Build
-
 import android.os.Environment
-
 import android.provider.MediaStore
-
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items as gridItems
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
-
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import com.example.catscandemo.domain.model.MarkMode
+import com.example.catscandemo.domain.model.SeqConfig
+import com.example.catscandemo.domain.model.TemplateModel
+import com.example.catscandemo.domain.model.formatSeqValue
+import com.example.catscandemo.presentation.viewmodel.MainViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.json.JSONArray
-
 import org.json.JSONObject
-
-import java.text.SimpleDateFormat
-
 import java.io.File
-
+import java.text.SimpleDateFormat
 import java.util.Date
-
 import java.util.Locale
-
-
 
 private enum class DrawerPage { MANAGER, EDITOR, ROOMS }
 
-@Composable
-private fun TemplateModeSelector(
-    selectedMode: TemplateMode,
-    onModeSelected: (TemplateMode) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(modifier = modifier) {
-        Text(
-            text = "模板类型",
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Spacer(Modifier.height(6.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            FilterChip(
-                selected = selectedMode == TemplateMode.DISCRETE,
-                onClick = { onModeSelected(TemplateMode.DISCRETE) },
-                label = {
-                    Text(
-                        text = "离散模板",
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                    )
-                },
-                modifier = Modifier.weight(1f)
-            )
-            FilterChip(
-                selected = selectedMode == TemplateMode.LINEAR,
-                onClick = { onModeSelected(TemplateMode.LINEAR) },
-                label = {
-                    Text(
-                        text = "线性模板",
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                    )
-                },
-                modifier = Modifier.weight(1f)
-            )
-        }
-    }
-}
 
 @Composable
-
 fun TemplateEditorNavigator(
-
     viewModel: MainViewModel,
-
     onClose: () -> Unit,
-
     modifier: Modifier = Modifier
-
 ) {
-
     var page by rememberSaveable { mutableStateOf(DrawerPage.MANAGER) }
-
     var editingId by rememberSaveable { mutableStateOf<String?>(null) }
 
-
-
     val templates = viewModel.templates
-
     val activeId = viewModel.activeTemplateId
-
-
 
     val editingTemplate = templates.firstOrNull { it.id == editingId }
 
-    val activeTemplate = templates.firstOrNull { it.id == activeId }
-
-
-
     when (page) {
-
         DrawerPage.MANAGER -> {
-
             TemplateManagerPage(
-
                 templates = templates,
-
                 activeId = activeId,
-
                 onSelect = { id -> viewModel.setActiveTemplate(id) },
-
-                onAdd = { name, mode -> viewModel.addTemplate(name, mode) },
-
-                onDelete = { id -> viewModel.deleteTemplate(id) },
-
-                onOpen = { id ->
-
-                    editingId = id
-
-                    page = DrawerPage.EDITOR
-
+                onAdd = { name, markMode, seqConfig, maxFloor, roomCount, tags, tagColors ->
+                    viewModel.addTemplate(
+                        name, markMode, seqConfig, maxFloor, roomCount, tags, tagColors
+                    )
                 },
-
+                onDelete = { id -> viewModel.deleteTemplate(id) },
+                onOpen = { id ->
+                    editingId = id
+                    page = DrawerPage.EDITOR
+                },
                 onClose = onClose,
-
                 modifier = modifier
-
             )
-
         }
 
-
-
         DrawerPage.EDITOR -> {
-
             val t = editingTemplate ?: run {
-
                 page = DrawerPage.MANAGER
-
                 return
-
             }
-
             val context = LocalContext.current
-
             val showToast = { msg: String ->
-
                 android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
-
             }
-
-            
 
             TemplateEditorSheet(
-
                 viewModel = viewModel,
-
                 template = t,
-
                 isActive = (t.id == activeId),
-
                 onSetActive = { viewModel.setActiveTemplate(t.id) },
-
                 onSave = { updated -> viewModel.updateTemplate(updated) },
-
-                onDeleteScan = { ts -> viewModel.deleteTemplateScan(t.id, ts) },
-
                 onClearScans = {
                     viewModel.clearTemplateFloorScans(
                         id = t.id,
@@ -249,208 +147,101 @@ fun TemplateEditorNavigator(
                         showToast = showToast
                     )
                 },
-
                 onUploadTemplateData = { templateData, toastCallback -> viewModel.uploadTemplateData(templateData, toastCallback) },
-
                 onBack = { page = DrawerPage.MANAGER },
-
                 onEditRooms = { page = DrawerPage.ROOMS },
-
                 onClose = onClose,
-
                 modifier = modifier
-
             )
-
-
-
         }
-
-
 
         DrawerPage.ROOMS -> {
-
             val t = editingTemplate ?: run {
-
                 page = DrawerPage.EDITOR
-
                 return
-
             }
-
             RoomPickerPage(
-
                 templateId = t.id,
-
                 maxFloor = t.maxFloor,
-
                 roomCountPerFloor = t.roomCountPerFloor,
-
                 initialSelected = t.selectedRooms,
-
                 onBack = { page = DrawerPage.EDITOR },
-
                 onApply = { rooms ->
-
                     viewModel.updateTemplate(t.copy(selectedRooms = rooms))
-
                     page = DrawerPage.EDITOR
-
                 },
-
                 modifier = modifier
-
             )
-
         }
-
     }
-
 }
 
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-
+/** 模板管理页：常驻勾选框（选中后底部变红色删除）+ 单一导出按钮（点击再选格式），紧凑列表 */
 @Composable
-
 private fun TemplateManagerPage(
-
     templates: List<TemplateModel>,
-
     activeId: String?,
-
     onSelect: (String) -> Unit,
-
-    onAdd: (String, TemplateMode) -> Unit,
-
+    onAdd: (String, MarkMode, SeqConfig?, Int?, Int?, List<String>, Map<String, Int>) -> Unit,
     onDelete: (String) -> Unit,
-
     onOpen: (String) -> Unit,
-
     onClose: () -> Unit,
-
     modifier: Modifier = Modifier
-
 ) {
-
     var showAdd by remember { mutableStateOf(false) }
-
-    var showDeleteId by remember { mutableStateOf<String?>(null) }
-
     var newName by remember { mutableStateOf("") }
-    var newMode by remember { mutableStateOf(TemplateMode.LINEAR) }
+    val addState = remember { NewTemplateParamsState() }
 
-    var isBatchMode by remember { mutableStateOf(false) }
-
+    // 勾选框长期展示：勾选即进入"待删除"选择；导出只在未勾选时可用
     var selectedTemplateIds by remember { mutableStateOf<Set<String>>(emptySet()) }
+    var showExportFormat by remember { mutableStateOf(false) }
+    var showBatchDeleteConfirm by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
 
-
-
     fun saveTextToDownloads(fileName: String, mime: String, content: String): Boolean {
         // 统一走共享导出（遵循设置里的自定义导出目录）
-        return com.example.catscandemo.ui.components.saveTextToDownloads(
+        return saveTextToDownloads(
             context, fileName, mime, content
         )
     }
 
-
-
-    fun floorFromRoomCode(code: String): String {
-
-        // 约定：最后两位为房间序号（01~99），前面为楼层号
-
-        return if (code.length >= 3) {
-
-            code.dropLast(2).toIntOrNull()?.let { "${it}层" } ?: ""
-
-        } else ""
-
-    }
-
-
-
     fun buildExportTxt(selectedTemplates: List<TemplateModel> = templates): String {
-
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-
-
 
         // 扫码内容等字段来自外部，含制表符/换行会破坏 TXT 列结构，统一替换为空格
         fun esc(v: String) = v.replace("\t", " ").replace("\n", " ").replace("\r", " ")
 
         val header = "序号\t模板名称\t楼层\t房间号\t标签\t时间\t扫码内容"
-
         val lines = ArrayList<String>()
-
         lines.add(header)
 
-
-
         var seq = 1
-
-
-
         selectedTemplates.forEach { t ->
-
-            // 按 scan 明细导出
-
             if (t.scans.isEmpty()) {
-
-                // 如果你希望“没有扫码也导出一行”，取消注释下面这行即可：
-
                 lines.add("${seq++}\t${esc(t.name)}\t\t\t\t\t")
-
             } else {
-
                 t.scans.forEach { s ->
-
                     val time = sdf.format(Date(s.timestamp))
-
                     lines.add(
-
                         "${seq++}\t${esc(t.name)}\t${esc(s.floor)}\t${esc(s.room)}\t${esc(s.tag)}\t$time\t${esc(s.text)}"
-
                     )
-
                 }
-
             }
-
         }
-
-
-
         return lines.joinToString("\n")
-
     }
 
-
-
-
-
     fun buildExportJson(selectedTemplates: List<TemplateModel> = templates): String {
-
         val root = JSONObject()
-
         root.put("activeTemplateId", activeId ?: "")
 
-
-
         val arr = JSONArray()
-
         selectedTemplates.forEach { t ->
-
             val obj = JSONObject()
-
             obj.put("id", t.id)
-
             obj.put("name", t.name)
-
             obj.put("maxFloor", t.maxFloor)
-
             obj.put("roomCountPerFloor", t.roomCountPerFloor)
             obj.put("mode", t.mode.name)
             obj.put("lastSelectedFloor", t.lastSelectedFloor)
@@ -460,58 +251,31 @@ private fun TemplateManagerPage(
             t.tags.forEach { tags.put(it) }
             obj.put("tags", tags)
 
-
-
             val rooms = JSONArray()
-
             t.selectedRooms.forEach { rooms.put(it) }
-
             obj.put("selectedRooms", rooms)
 
-
-
             val scans = JSONArray()
-
             t.scans.forEach { s ->
-
                 val so = JSONObject()
-
                 so.put("text", s.text)
-
                 so.put("timestamp", s.timestamp)
-
                 so.put("floor", s.floor)
-
                 so.put("room", s.room)
-
                 so.put("tag", s.tag)
-
                 scans.put(so)
-
             }
-
             obj.put("scans", scans)
 
-
-
             arr.put(obj)
-
         }
-
         root.put("templates", arr)
 
-
-
         return root.toString(2) // 带缩进，便于阅读
-
     }
 
-
-
     fun toast(msg: String) {
-
         android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
-
     }
 
     // 默认模板名：猫猫1栋，重名则猫猫2栋，以此类推
@@ -523,1542 +287,761 @@ private fun TemplateManagerPage(
     }
 
     fun safeFileNamePart(s: String): String {
-
         return s.trim()
-
             .ifBlank { "未命名" }
-
             .replace(Regex("""[\\/:*?"<>|]"""), "_")
-
             .replace(Regex("""\s+"""), "_")
-
     }
 
-
-
-    fun exportBaseName(selectedCount: Int = 0): String {
-
+    fun exportBaseName(): String {
         val sdf = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
-
         val time = sdf.format(Date())
-
-        return if (selectedCount > 0 && selectedCount < templates.size) {
-
-            "批量导出_${selectedCount}个模板_$time"
-
-        } else {
-
-            val t = templates.firstOrNull { it.id == activeId }
-
-            val name = safeFileNamePart(t?.name ?: "模板")
-
-            "${name}_$time"
-
-        }
-
+        val t = templates.firstOrNull { it.id == activeId }
+        val name = safeFileNamePart(t?.name ?: "模板")
+        return "${name}_$time"
     }
 
+    fun doExportTxt() {
+        val picked = templates.filter { it.id in selectedTemplateIds }
+        if (picked.isNotEmpty()) {
+            // 多选导出：每个勾选的模板各导出一个文件（不再只导出当前模板）
+            val time = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            var okCount = 0
+            picked.forEach { t ->
+                val fileName = "${safeFileNamePart(t.name)}_$time.txt"
+                if (saveTextToDownloads(fileName, "text/plain", buildExportTxt(listOf(t)))) okCount++
+            }
+            toast(if (okCount == picked.size) "已导出 $okCount 个模板文件" else "导出成功 $okCount/${picked.size} 个")
+            return
+        }
+        val fileName = "${exportBaseName()}.txt"
+        val ok = saveTextToDownloads(
+            fileName = fileName,
+            mime = "text/plain",
+            content = buildExportTxt()
+        )
+        toast(if (ok) "已导出：$fileName" else "导出TXT失败")
+    }
 
+    fun doExportJson() {
+        val picked = templates.filter { it.id in selectedTemplateIds }
+        if (picked.isNotEmpty()) {
+            // 多选导出：每个勾选的模板各导出一个文件
+            val time = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            var okCount = 0
+            picked.forEach { t ->
+                val fileName = "${safeFileNamePart(t.name)}_$time.json"
+                if (saveTextToDownloads(fileName, "application/json", buildExportJson(listOf(t)))) okCount++
+            }
+            toast(if (okCount == picked.size) "已导出 $okCount 个模板文件" else "导出成功 $okCount/${picked.size} 个")
+            return
+        }
+        val fileName = "${exportBaseName()}.json"
+        val ok = saveTextToDownloads(
+            fileName = fileName,
+            mime = "application/json",
+            content = buildExportJson()
+        )
+        toast(if (ok) "已导出：$fileName" else "导出JSON失败")
+    }
 
-    val selectedTemplates = templates.filter { it.id in selectedTemplateIds }
+    val selectedCount = selectedTemplateIds.size
 
-    val allSelected = templates.isNotEmpty() && selectedTemplateIds.size == templates.size
-
-
-
-    Column(modifier = modifier.padding(16.dp)) {
-
+    Column(
+        modifier = modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        // 头部：标题 + 已选计数 + 右上动作区（勾选后出现垃圾桶；软盘=导出；X=关闭）
         Row(verticalAlignment = Alignment.CenterVertically) {
-
-            Text("模板管理", style = MaterialTheme.typography.titleLarge)
-
-            Spacer(Modifier.weight(1f))
-
-            if (isBatchMode) {
-
+            Text("模板管理", style = MaterialTheme.typography.titleMedium)
+            if (selectedCount > 0) {
+                Spacer(Modifier.width(8.dp))
                 Text(
-
-                    "已选 ${selectedTemplateIds.size}/${templates.size}",
-
-                    style = MaterialTheme.typography.bodyMedium
-
+                    "已选 $selectedCount",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.error
                 )
-
             }
-
-            if (!isBatchMode) {
-
-                IconButton(onClick = {
-                    newName = suggestTemplateName()
-                    showAdd = true
-                }) {
-
-                    Icon(Icons.Default.Add, contentDescription = "新增模板")
-
+            Spacer(Modifier.weight(1f))
+            if (selectedCount > 0) {
+                IconButton(
+                    onClick = { showBatchDeleteConfirm = true },
+                    modifier = Modifier.size(36.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = "删除选中模板",
+                        tint = MaterialTheme.colorScheme.error
+                    )
                 }
-
             }
-
             IconButton(
-
-                onClick = {
-
-                    isBatchMode = !isBatchMode
-
-                    if (!isBatchMode) {
-
-                        selectedTemplateIds = emptySet()
-
-                    }
-
-                }
-
+                onClick = { showExportFormat = true },
+                enabled = templates.isNotEmpty(),
+                modifier = Modifier.size(36.dp)
             ) {
-
-                Icon(
-
-                    imageVector = if (isBatchMode) Icons.Default.Close else Icons.Default.SelectAll,
-
-                    contentDescription = if (isBatchMode) "取消批量选择" else "批量选择"
-
-                )
-
+                Icon(Icons.Default.Save, contentDescription = "导出")
             }
-
-            IconButton(onClick = onClose) {
-
+            IconButton(onClick = onClose, modifier = Modifier.size(36.dp)) {
                 Icon(Icons.Default.Close, contentDescription = "关闭")
-
             }
-
         }
 
-
-
-        Spacer(Modifier.height(12.dp))
-
-
-
-// ✅ 中间内容占满剩余空间
-
+        // 模板列表：紧凑行（勾选框 + 名称 + 当前徽标 + 类型tag + 编辑笔），
+        // 尾部固定一项"+ 新建模板"（样式与模板行一致，替代右上角加号）
         Box(modifier = Modifier.weight(1f, fill = true)) {
-
-            if (templates.isEmpty()) {
-
-                Text("暂无模板，点击右上角 + 新增。")
-
-            } else {
-
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-
-                    items(templates, key = { it.id }) { t ->
-
-                        val isActive = (t.id == activeId)
-
-                        val isChecked = t.id in selectedTemplateIds
-
-                        Card(
-
-                            onClick = {
-
-                                if (isBatchMode) {
-
-                                    selectedTemplateIds = if (isChecked) {
-
-                                        selectedTemplateIds - t.id
-
-                                    } else {
-
-                                        selectedTemplateIds + t.id
-
-                                    }
-
-                                } else {
-
-                                    onSelect(t.id)
-
-                                }
-
-                            },
-
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = if (isActive) {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                items(templates, key = { it.id }) { t ->
+                    val isActive = (t.id == activeId)
+                    val isChecked = t.id in selectedTemplateIds
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                color = if (isActive) {
                                     MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.72f)
                                 } else {
                                     MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.62f)
-                                }
+                                },
+                                shape = RoundedCornerShape(10.dp)
                             )
-
-                        ) {
-
-                            Column(
-
-                                modifier = Modifier
-
-                                    .fillMaxWidth()
-
-                                    .padding(horizontal = 14.dp, vertical = 12.dp)
-
-                            ) {
-
-                                if (isBatchMode) {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        IconButton(
-                                            onClick = {
-                                                selectedTemplateIds = if (isChecked) {
-                                                    selectedTemplateIds - t.id
-                                                } else {
-                                                    selectedTemplateIds + t.id
-                                                }
-                                            }
-                                        ) {
-                                            Icon(
-                                                imageVector = if (isChecked) {
-                                                    Icons.Default.CheckBox
-                                                } else {
-                                                    Icons.Default.CheckBoxOutlineBlank
-                                                },
-                                                contentDescription = if (isChecked) "取消选择" else "选择"
-                                            )
-                                        }
-
-                                        Text(
-                                            text = t.name,
-                                            modifier = Modifier.weight(1f),
-                                            style = MaterialTheme.typography.titleMedium
-                                        )
-                                    }
+                            .clickable { onSelect(t.id) }
+                            .padding(start = 6.dp, end = 2.dp, top = 4.dp, bottom = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        CompactCheckbox(
+                            checked = isChecked,
+                            onToggle = {
+                                selectedTemplateIds = if (isChecked) {
+                                    selectedTemplateIds - t.id
                                 } else {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text = t.name,
-                                            modifier = Modifier.weight(1f),
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                            style = MaterialTheme.typography.titleMedium
-                                        )
-
-                                        // “当前”徽标固定占位，保证所有行的笔/垃圾桶位置一致
-                                        Box(
-                                            modifier = Modifier.width(52.dp),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            if (isActive) {
-                                                Surface(
-                                                    shape = RoundedCornerShape(16.dp),
-                                                    color = MaterialTheme.colorScheme.primary
-                                                ) {
-                                                    Text(
-                                                        text = "当前",
-                                                        modifier = Modifier.padding(
-                                                            horizontal = 8.dp,
-                                                            vertical = 4.dp
-                                                        ),
-                                                        style = MaterialTheme.typography.labelMedium,
-                                                        color = MaterialTheme.colorScheme.onPrimary
-                                                    )
-                                                }
-                                            }
-                                        }
-
-                                        IconButton(
-                                            onClick = { onOpen(t.id) },
-                                            modifier = Modifier.size(40.dp)
-                                        ) {
-                                            Icon(
-                                                Icons.Default.Edit,
-                                                contentDescription = "查看/编辑",
-                                                modifier = Modifier.size(22.dp)
-                                            )
-                                        }
-
-                                        IconButton(
-                                            onClick = { showDeleteId = t.id },
-                                            modifier = Modifier.size(40.dp)
-                                        ) {
-                                            Icon(
-                                                Icons.Default.Delete,
-                                                contentDescription = "删除",
-                                                modifier = Modifier.size(22.dp)
-                                            )
-                                        }
-                                    }
+                                    selectedTemplateIds + t.id
                                 }
-
                             }
+                        )
 
+                        // 名称+当前徽标打包占满左侧（内容左对齐）；
+                        // 类型tag+笔不受名称长度影响，始终贴右
+                        Row(
+                            modifier = Modifier.weight(1f),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Text(
+                                text = t.name.ifBlank { "未命名模板" },
+                                modifier = Modifier.weight(1f, fill = false),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            if (isActive) {
+                                Surface(
+                                    shape = RoundedCornerShape(10.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                ) {
+                                    Text(
+                                        text = "当前",
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                }
+                            }
                         }
 
+                        TemplateTypeTag(markMode = t.markMode)
+
+                        IconButton(
+                            onClick = { onOpen(t.id) },
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = "查看/编辑",
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
                     }
-
                 }
 
+                // 尾部固定项：+ 新建模板（样式与模板行一致）
+                item(key = "__add_template__") {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(38.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .clickable {
+                                newName = suggestTemplateName()
+                                showAdd = true
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "＋ 新建模板",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
             }
-
         }
-
-
-
-        Spacer(Modifier.height(12.dp))
-
-
-
-        // 底部操作栏（始终显示）
-
-        Row(
-
-            modifier = Modifier.fillMaxWidth(),
-
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-
-            verticalAlignment = Alignment.CenterVertically
-
-        ) {
-
-            if (isBatchMode) {
-
-                // 批量选择模式：导出TXT - 导出JSON
-
-                Button(
-
-                    onClick = {
-
-                        if (selectedTemplateIds.isEmpty()) {
-
-                            toast("请至少选择一个模板")
-
-                            return@Button
-
-                        }
-
-                        val fileName = "${exportBaseName(selectedTemplateIds.size)}.txt"
-
-                        val ok = saveTextToDownloads(
-
-                            fileName = fileName,
-
-                            mime = "text/plain",
-
-                            content = buildExportTxt(selectedTemplates)
-
-                        )
-
-                        toast(if (ok) "已导出 ${selectedTemplateIds.size} 个模板：$fileName" else "导出TXT失败")
-
-                        isBatchMode = false
-
-                        selectedTemplateIds = emptySet()
-
-                    },
-
-                    enabled = selectedTemplateIds.isNotEmpty(),
-
-                    modifier = Modifier.weight(1f)
-
-                ) { 
-                    Text(
-
-                        text = "导出TXT",
-
-                        style = MaterialTheme.typography.labelSmall
-
-                    )
-
-                }
-
-            } else {
-
-                // 普通模式：导出TXT
-
-                Button(
-
-                    onClick = {
-
-                        val fileName = "${exportBaseName()}.txt"
-
-                        val ok = saveTextToDownloads(
-
-                            fileName = fileName,
-
-                            mime = "text/plain",
-
-                            content = buildExportTxt()
-
-                        )
-
-                        toast(if (ok) "已导出：$fileName" else "导出TXT失败")
-
-                    },
-
-                    enabled = templates.isNotEmpty(),
-
-                    modifier = Modifier.weight(1f)
-
-                ) { 
-                    Text(
-
-                        text = "导出TXT",
-
-                        style = MaterialTheme.typography.labelSmall
-
-                    )
-
-                }
-
-            }
-
-            if (isBatchMode) {
-
-                // 批量选择模式：导出JSON
-
-                Button(
-
-                    onClick = {
-
-                        if (selectedTemplateIds.isEmpty()) {
-
-                            toast("请至少选择一个模板")
-
-                            return@Button
-
-                        }
-
-                        val fileName = "${exportBaseName(selectedTemplateIds.size)}.json"
-
-                        val ok = saveTextToDownloads(
-
-                            fileName = fileName,
-
-                            mime = "application/json",
-
-                            content = buildExportJson(selectedTemplates)
-
-                        )
-
-                        toast(if (ok) "已导出 ${selectedTemplateIds.size} 个模板：$fileName" else "导出JSON失败")
-
-                        isBatchMode = false
-
-                        selectedTemplateIds = emptySet()
-
-                    },
-
-                    enabled = selectedTemplateIds.isNotEmpty(),
-
-                    modifier = Modifier.weight(1f)
-
-                ) { 
-                    Text(
-
-                        text = "导出JSON",
-
-                        style = MaterialTheme.typography.labelSmall
-
-                    )
-
-                }
-
-            } else {
-
-                // 普通模式：导出JSON
-
-                Button(
-
-                    onClick = {
-
-                        val fileName = "${exportBaseName()}.json"
-
-                        val ok = saveTextToDownloads(
-
-                            fileName = fileName,
-
-                            mime = "application/json",
-
-                            content = buildExportJson()
-
-                        )
-
-                        toast(if (ok) "已导出：$fileName" else "导出JSON失败")
-
-                    },
-
-                    enabled = templates.isNotEmpty(),
-
-                    modifier = Modifier.weight(1f)
-
-                ) { 
-                    Text(
-
-                        text = "导出JSON",
-
-                        style = MaterialTheme.typography.labelSmall
-
-                    )
-
-                }
-
-            }
-
-        }
-
-
-
     }
 
-
-
+    // 新增模板：默认房间号模板，参数区默认展开（与编辑器/主页新建一致）
     if (showAdd) {
-
         AlertDialog(
-
             onDismissRequest = { showAdd = false },
-
             confirmButton = {
-
                 TextButton(
-
                     onClick = {
-
                         onAdd(
                             newName.trim().ifBlank { suggestTemplateName() },
-                            newMode
+                            addState.markMode,
+                            addState.buildSeqConfig(),
+                            addState.floorText.toIntOrNull(),
+                            addState.roomCountText.toIntOrNull(),
+                            addState.tags,
+                            addState.tagColors
                         )
-
                         newName = ""
-                        newMode = TemplateMode.LINEAR
-
                         showAdd = false
-
                     }
-
                 ) { Text("创建") }
-
             },
-
             dismissButton = {
-
                 TextButton(onClick = { showAdd = false }) { Text("取消") }
-
             },
-
             title = { Text("新增模板") },
-
             text = {
-
-                Column {
-                    OutlinedTextField(
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    LabeledCompactField(
+                        label = "模板名称",
                         value = newName,
                         onValueChange = { newName = it },
-                        label = { Text("模板名称") },
-                        singleLine = true,
+                        placeholder = "默认 ${suggestTemplateName()}",
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(Modifier.height(12.dp))
-                    TemplateModeSelector(
-                        selectedMode = newMode,
-                        onModeSelected = { newMode = it },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    NewTemplateFields(state = addState)
                 }
-
             }
-
         )
-
     }
 
-
-
-    showDeleteId?.let { id ->
-
+    // 导出格式选择（导出合并为单按钮后，格式在此选择）
+    if (showExportFormat) {
         AlertDialog(
-
-            onDismissRequest = { showDeleteId = null },
-
-            confirmButton = {
-
-                TextButton(
-
-                    onClick = {
-
-                        onDelete(id)
-
-                        showDeleteId = null
-
-                    }
-
-                ) { Text("删除") }
-
+            onDismissRequest = { showExportFormat = false },
+            title = { Text("选择导出格式") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Button(
+                        onClick = {
+                            showExportFormat = false
+                            doExportTxt()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(40.dp),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+                    ) { Text("TXT（表格）") }
+                    Button(
+                        onClick = {
+                            showExportFormat = false
+                            doExportJson()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(40.dp),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+                    ) { Text("JSON（完整）") }
+                }
             },
-
+            confirmButton = {},
             dismissButton = {
-
-                TextButton(onClick = { showDeleteId = null }) { Text("取消") }
-
-            },
-
-            title = { Text("删除模板") },
-
-            text = { Text("确认删除该模板？该模板的离线扫码数据也会一并删除。") }
-
+                TextButton(onClick = { showExportFormat = false }) { Text("取消") }
+            }
         )
-
     }
 
-
-
+    // 批量删除二次确认（垃圾桶已从列表行移除，删除统一走底部红色按钮）
+    if (showBatchDeleteConfirm) {
+        AlertDialog(
+            onDismissRequest = { showBatchDeleteConfirm = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val ids = selectedTemplateIds
+                        selectedTemplateIds = emptySet()
+                        showBatchDeleteConfirm = false
+                        ids.forEach { onDelete(it) }
+                    }
+                ) {
+                    Text("删除", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showBatchDeleteConfirm = false }) { Text("取消") }
+            },
+            title = { Text("删除 ${selectedCount} 个模板") },
+            text = { Text("确认删除选中的 ${selectedCount} 个模板？它们的离线扫码数据也会一并删除，且不可恢复。") }
+        )
+    }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
-
+/** 紧凑勾选框：22dp 方框，点击勾选/取消（替代 48dp 默认 Checkbox 以压缩行高） */
 @Composable
-
-fun TemplateEditorSheet(
-
-    viewModel: MainViewModel,
-
-    template: TemplateModel,
-
-    isActive: Boolean,
-
-    onSetActive: () -> Unit,
-
-    onSave: (TemplateModel) -> Unit,
-
-    onDeleteScan: (String) -> Unit,
-
-    onClearScans: () -> Unit,
-
-    onUploadTemplateData: (TemplateModel, (String) -> Unit) -> Unit,
-
-    onBack: () -> Unit,
-
-    onEditRooms: () -> Unit,
-
-    onClose: () -> Unit,
-
-    modifier: Modifier = Modifier
-
+private fun CompactCheckbox(
+    checked: Boolean,
+    onToggle: () -> Unit
 ) {
-
-    var name by rememberSaveable(template.id) { mutableStateOf(template.name) }
-    var templateMode by rememberSaveable(template.id) { mutableStateOf(template.mode) }
-
-    var floorText by rememberSaveable(template.id) { mutableStateOf(template.maxFloor.toString()) }
-
-    var roomValue by rememberSaveable(template.id, stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue(template.roomCountPerFloor.toString()))
+    Box(
+        modifier = Modifier
+            .size(22.dp)
+            .background(
+                color = if (checked) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    Color.Transparent
+                },
+                shape = RoundedCornerShape(4.dp)
+            )
+            .border(
+                width = 1.5.dp,
+                color = if (checked) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.outline
+                },
+                shape = RoundedCornerShape(4.dp)
+            )
+            .clickable(onClick = onToggle),
+        contentAlignment = Alignment.Center
+    ) {
+        if (checked) {
+            Icon(
+                imageVector = Icons.Filled.Check,
+                contentDescription = if (checked) "取消选择" else "选择",
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(15.dp)
+            )
+        }
     }
-    var countInputsEdited by remember(template.id) { mutableStateOf(false) }
-    val roomBringIntoViewRequester = remember(template.id) { BringIntoViewRequester() }
-    val roomBringIntoViewScope = rememberCoroutineScope()
+}
 
-    // 离散模板标签：最多 4 个、每个最多 4 个字
-    var tagsState by rememberSaveable(template.id) { mutableStateOf(template.tags) }
-    var showTagEditor by remember(template.id) { mutableStateOf(false) }
-    var tagInput by remember(template.id) { mutableStateOf("") }
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    androidx.compose.foundation.ExperimentalFoundationApi::class,
+    androidx.compose.foundation.layout.ExperimentalLayoutApi::class
+)
+@Composable
+fun TemplateEditorSheet(
+    viewModel: MainViewModel,
+    template: TemplateModel,
+    isActive: Boolean,
+    onSetActive: () -> Unit,
+    onSave: (TemplateModel) -> Unit,
+    onClearScans: () -> Unit,
+    onUploadTemplateData: (TemplateModel, (String) -> Unit) -> Unit,
+    onBack: () -> Unit,
+    onEditRooms: () -> Unit,
+    onClose: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var name by rememberSaveable(template.id) { mutableStateOf(template.name) }
+
+    // 参数区与"新建模板"共用同一套界面/状态（NewTemplateFields），
+    // 编辑器从模板载入；切换模式不改动已有扫码记录
+    val paramsState = remember(template.id) {
+        NewTemplateParamsState().apply { loadFrom(template) }
+    }
 
     fun roomSuffix(r: Int): String = if (r in 1..9) "0$r" else "$r"
 
-
-
     fun buildAllRooms(maxFloor: Int, roomCount: Int): List<String> {
-
         val mf = maxFloor.coerceAtLeast(1)
-
-        val rc = roomCount.coerceIn(1, 99)
-
+        val rc = roomCount.coerceIn(1, 999)
         return (1..mf).flatMap { f ->
-
             (1..rc).map { r -> "$f${roomSuffix(r)}" }
-
         }
-
     }
 
-
-
-    /**
-
-     * 仅在“楼层数量/房间数量”输入完成后自动保存：
-
-     * - 自动计算全量房间号
-
-     * - selectedRooms：保留有效项；若为空则默认全选
-
-     */
-
-    val latestTemplate by rememberUpdatedState(template)
-    val latestOnSave by rememberUpdatedState(onSave)
-    val latestTags by rememberUpdatedState(tagsState)
-
-    LaunchedEffect(floorText, roomValue.text, countInputsEdited) {
-        if (!countInputsEdited) return@LaunchedEffect
-
-        delay(450) // 认为用户停止输入
-        val f = floorText.toIntOrNull()?.takeIf { it > 0 } ?: return@LaunchedEffect
-        val r = roomValue.text.toIntOrNull()?.takeIf { it in 1..99 } ?: return@LaunchedEffect
-        val allRooms = withContext(Dispatchers.Default) { buildAllRooms(f, r) }
-        val currentTemplate = latestTemplate
-
-        // 与手动保存行为一致：保留仍然有效的已选房间；
-        // 只有全部失效（比如把楼层数改小了）时才回落为全选
-        val allRoomSet = allRooms.toHashSet()
-        val keptRooms = currentTemplate.selectedRooms.filter { it in allRoomSet }
-        val selectedRooms = keptRooms.ifEmpty { allRooms }
-
-        latestOnSave(
-            currentTemplate.copy(
-                maxFloor = f,
-                roomCountPerFloor = r,
-                lastSelectedFloor = currentTemplate.lastSelectedFloor.coerceIn(1, f),
-                tags = latestTags,
-                selectedRooms = selectedRooms
-            )
+    // 自动保存：任何参数/名称改动停顿 500ms 后落盘（无保存按钮）。
+    // 标签由参数区内 tagsSlot 的 TemplateTagsEditor 自己即时持久化，
+    // 因此这里的 copy 不触碰 tags/tagColors/scans。
+    fun buildUpdated(): TemplateModel? {
+        val f = (paramsState.floorText.toIntOrNull() ?: template.maxFloor).coerceAtLeast(1)
+        val r = (paramsState.roomCountText.toIntOrNull() ?: template.roomCountPerFloor)
+            .coerceIn(1, 999)
+        // 只有楼层数/房间数变化时才重建全选房间，避免改名等无关自动保存抹掉精细勾选
+        val selectedRooms =
+            if (paramsState.markMode == MarkMode.ROOM &&
+                (f != template.maxFloor || r != template.roomCountPerFloor)
+            ) {
+                buildAllRooms(f, r)
+            } else {
+                template.selectedRooms
+            }
+        // 起始值不在参数区暴露（改起点点主页表头徽标）：保留模板当前 start/nextSeq
+        val newSeq = paramsState.buildSeqConfig().copy(start = template.seq.start)
+        val candidate = template.copy(
+            name = name.trim().ifBlank { "未命名模板" },
+            maxFloor = f,
+            roomCountPerFloor = r,
+            markMode = paramsState.markMode,
+            seq = newSeq,
+            nextSeq = template.nextSeq,
+            lastSelectedFloor = template.lastSelectedFloor.coerceIn(1, f),
+            selectedRooms = selectedRooms
         )
-        countInputsEdited = false
+        return if (candidate == template) null else candidate
     }
 
-
-
-    fun parsePositiveInt(text: String, default: Int): Int =
-
-        text.toIntOrNull()?.takeIf { it > 0 } ?: default
-
-
-
-    val df = remember { java.text.SimpleDateFormat("MM-dd HH:mm", java.util.Locale.getDefault()) }
-
-
+    LaunchedEffect(
+        name, paramsState.markMode,
+        paramsState.seqPrefix, paramsState.seqSuffix,
+        paramsState.seqChineseUpper, paramsState.seqDescending,
+        paramsState.seqPad, paramsState.seqPadWidth,
+        paramsState.floorText, paramsState.roomCountText
+    ) {
+        if (buildUpdated() != null) {
+            delay(500)
+            buildUpdated()?.let(onSave)
+        }
+    }
 
     Column(modifier = modifier.fillMaxSize()) {
-
+        // 头部：返回 + 标题 + 设为当前 + 关闭（紧凑单行）
         Row(
-
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
-
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically
-
         ) {
-
-            IconButton(onClick = onBack) {
-
+            IconButton(onClick = onBack, modifier = Modifier.size(36.dp)) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
-
             }
-
-            Text("模板编辑", style = MaterialTheme.typography.titleLarge)
-
+            Text("模板编辑", style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.weight(1f))
-
             if (!isActive) {
-
                 TextButton(onClick = onSetActive) { Text("设为当前") }
-
             } else {
-
-                AssistChip(onClick = {}, label = { Text("当前模板") })
-
+                Text(
+                    text = "当前模板",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(horizontal = 6.dp)
+                )
             }
-
-            IconButton(onClick = onClose) {
-
+            IconButton(onClick = onClose, modifier = Modifier.size(36.dp)) {
                 Icon(Icons.Default.Close, contentDescription = "关闭")
-
             }
-
-        }
-
-
-
-        if (showTagEditor) {
-
-            AlertDialog(
-
-                onDismissRequest = { showTagEditor = false },
-
-                title = { Text("添加标签") },
-
-                text = {
-
-                    OutlinedTextField(
-
-                        value = tagInput,
-
-                        onValueChange = { tagInput = it.take(4) },
-
-                        label = { Text("标签名（最多4个字）") },
-
-                        singleLine = true
-
-                    )
-
-                },
-
-                confirmButton = {
-
-                    TextButton(onClick = {
-
-                        val newTag = tagInput.trim()
-
-                        if (newTag.isNotBlank() && newTag.length <= 4 && newTag !in tagsState && tagsState.size < 4) {
-
-                            tagsState = tagsState + newTag
-
-                        }
-
-                        showTagEditor = false
-
-                    }) { Text("确定") }
-
-                },
-
-                dismissButton = {
-
-                    TextButton(onClick = { showTagEditor = false }) { Text("取消") }
-
-                }
-
-            )
-
         }
 
         // 关键：用 LazyColumn 承载所有内容，避免 verticalScroll + LazyColumn 嵌套崩溃
-
         LazyColumn(
-
             modifier = Modifier
-
                 .fillMaxSize()
-
-                .padding(horizontal = 16.dp),
-
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-
-            contentPadding = PaddingValues(bottom = 16.dp)
-
+                .padding(horizontal = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(top = 4.dp, bottom = 12.dp)
         ) {
-
             item {
-
-                OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("模板名称") }, modifier = Modifier.fillMaxWidth())
-
-            }
-
-            item {
-                TemplateModeSelector(
-                    selectedMode = templateMode,
-                    onModeSelected = { templateMode = it },
+                LabeledCompactField(
+                    label = "模板名称",
+                    value = name,
+                    onValueChange = { name = it },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
 
+            // 参数区：与主页"新建模板"完全同一套界面与逻辑；
+            // 标签管理纳入参数设置（viewModel 持久化版，与新建时的位置/交互一致）
             item {
-
-                OutlinedTextField(
-
-                    value = floorText,
-
-                    onValueChange = {
-
-                        floorText = it.filter(Char::isDigit)
-
-                        countInputsEdited = true
-
-                    },
-
-                    label = { Text("楼层数量（最大楼层数）") },
-
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-
-                    modifier = Modifier.fillMaxWidth()
-
+                NewTemplateFields(
+                    state = paramsState,
+                    tagsSlot = {
+                        TemplateTagsEditor(
+                            tags = template.tags,
+                            tagColors = template.tagColors,
+                            onAdd = { viewModel.addTemplateTag(it) },
+                            onUpdate = { old, new, colorIdx ->
+                                viewModel.updateTemplateTag(old, new, colorIdx)
+                            },
+                            onRemove = { viewModel.removeTemplateTag(it) }
+                        )
+                    }
                 )
-
             }
 
+            // 房间号模式：已选房间入口（精细勾选房间）
+            if (paramsState.markMode == MarkMode.ROOM) {
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            "已选房间：${template.selectedRooms.size}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        TextButton(onClick = onEditRooms) { Text("编辑房间号") }
+                    }
+                }
+            }
+
+            // 底部操作：清空（低频功能：低调底色+红字，不做整块红底，带二次确认）。
+            // 保存已改为修改后自动保存
             item {
-
-                OutlinedTextField(
-
-                    value = roomValue,
-
-                    onValueChange = { candidate ->
-                        // 保留选区和光标，不再把每次按键立即转成 Int 再写回文本框。
-                        if (candidate.text.length <= 2 && candidate.text.all { it in '0'..'9' }) {
-                            roomValue = candidate
-                            countInputsEdited = true
-                        }
-
-                    },
-
-                    label = { Text("房间数量（每层房间数）") },
-
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-
+                var showClearConfirm by remember { mutableStateOf(false) }
+                val clearAll = viewModel.scanSelectedFloor == 0
+                val darkTheme = MaterialTheme.colorScheme.surface.luminance() < 0.5f
+                Button(
+                    onClick = { showClearConfirm = true },
+                    colors = ButtonDefaults.buttonColors(
+                        // 常规按钮同族的中性底：日间浅灰蓝 / 夜间深灰，仅文字标红
+                        containerColor = if (darkTheme) Color(0xFF3A424C) else Color(0xFFDDE5ED),
+                        contentColor = MaterialTheme.colorScheme.error
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .bringIntoViewRequester(roomBringIntoViewRequester)
-                        .onFocusChanged { focusState ->
-                            if (focusState.isFocused) {
-                                roomBringIntoViewScope.launch {
-                                    // 等输入法完成首轮布局后，再按缩短后的抽屉高度滚动。
-                                    delay(250)
-                                    roomBringIntoViewRequester.bringIntoView()
-                                }
-                            }
-                        }
-
-                )
-
-            }
-
-
-
-            item {
-
-                Row(
-
-                    modifier = Modifier.fillMaxWidth(),
-
-                    horizontalArrangement = Arrangement.SpaceBetween,
-
-                    verticalAlignment = Alignment.CenterVertically
-
+                        .height(40.dp),
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
                 ) {
-
-                    Text("已选房间：${template.selectedRooms.size}")
-
-                    TextButton(onClick = onEditRooms) { Text("编辑房间号") }
-
+                    Text(
+                        if (clearAll) "清空全部数据" else "清空当前楼层",
+                        maxLines = 1
+                    )
                 }
 
-            }
-
-
-
-            if (templateMode == TemplateMode.DISCRETE) {
-
-                item {
-
-                    Column(modifier = Modifier.fillMaxWidth()) {
-
-                        Row(
-
-                            modifier = Modifier.fillMaxWidth(),
-
-                            verticalAlignment = Alignment.CenterVertically
-
-                        ) {
-
-                            Text("标签(${tagsState.size}/4)", style = MaterialTheme.typography.labelLarge)
-
-                            Spacer(Modifier.weight(1f))
-
-                            if (tagsState.size < 4) {
-
-                                TextButton(onClick = {
-
-                                    tagInput = ""
-
-                                    showTagEditor = true
-
-                                }) { Text("添加") }
-
-                            }
-
-                        }
-
-                        if (tagsState.isEmpty()) {
-
-                            Text("未设置标签，扫码选房时将统一高亮", style = MaterialTheme.typography.bodySmall)
-
-                        } else {
-
-                            LazyRow(
-
-                                modifier = Modifier.fillMaxWidth(),
-
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-
-                            ) {
-
-                                items(tagsState) { tag ->
-
-                                    val tagIndex = tagsState.indexOf(tag)
-
-                                    InputChip(
-
-                                        selected = false,
-
-                                        onClick = { tagsState = tagsState.filterNot { it == tag } },
-
-                                        label = { Text(tag) },
-
-                                        leadingIcon = {
-
-                                            Box(
-
-                                                Modifier
-
-                                                    .size(10.dp)
-
-                                                    .background(tagContainerColor(tagIndex), CircleShape)
-
-                                            )
-
-                                        },
-
-                                        trailingIcon = {
-
-                                            Icon(Icons.Default.Close, contentDescription = "删除标签")
-
-                                        }
-
-                                    )
-
+                if (showClearConfirm) {
+                    AlertDialog(
+                        onDismissRequest = { showClearConfirm = false },
+                        title = { Text(if (clearAll) "清空全部数据" else "清空当前楼层") },
+                        text = {
+                            Text(
+                                if (clearAll) {
+                                    "确认清空该模板的全部扫码数据？此操作不可撤回。"
+                                } else {
+                                    "确认清空该模板 ${viewModel.scanSelectedFloor} 层的扫码数据？此操作不可撤回。"
                                 }
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-
-
-            item {
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-
-                    OutlinedButton(
-                        onClick = onClearScans,
-                        modifier = Modifier.weight(1f)
-                    ) { Text("清空当前楼层") }
-
-                    Button(
-
-                        onClick = {
-
-                            val f = parsePositiveInt(floorText, 1).coerceAtLeast(1)
-
-                            val r = parsePositiveInt(roomValue.text, 1).coerceIn(1, 99)
-                            val selectedRooms = if (
-                                templateMode == TemplateMode.DISCRETE &&
-                                template.selectedRooms.isEmpty()
-                            ) {
-                                buildAllRooms(f, r)
-                            } else {
-                                template.selectedRooms
-                            }
-
-                            onSave(
-
-                                template.copy(
-
-                                    name = name.trim().ifBlank { "未命名模板" },
-
-                                    maxFloor = f,
-
-                                    roomCountPerFloor = r,
-
-                                    mode = templateMode,
-
-                                    lastSelectedFloor = template.lastSelectedFloor.coerceIn(1, f),
-
-                                    tags = tagsState,
-
-                                    selectedRooms = selectedRooms
-
-                                )
-
                             )
-
-                            // ✅ 保存后自动返回（回到模板管理列表）
-
-                            onBack()
-
                         },
-                        modifier = Modifier.weight(1f)
-
-                    ) { Text("保存模板") }
-
-
-
-                }
-
-            }
-
-
-
-            item {
-
-                Spacer(Modifier.height(8.dp))
-
-                Text("模板内已扫描数据（离线）", style = MaterialTheme.typography.titleMedium)
-
-            }
-
-            
-
-            // 上传模板数据按钮
-
-            item {
-
-                if (template.scans.isNotEmpty()) {
-
-                    val context = LocalContext.current
-
-                    val showToast = { msg: String ->
-
-                        android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
-
-                    }
-
-                    
-
-                    Button(
-
-                        onClick = { onUploadTemplateData(template, showToast) },
-
-                        modifier = Modifier.fillMaxWidth(),
-
-                        enabled = viewModel.uploadEnabled && viewModel.serverUrl.isNotEmpty()
-
-                    ) {
-
-                        Text(
-
-                            if (viewModel.uploadEnabled && viewModel.serverUrl.isNotEmpty()) {
-
-                                "上传模板数据到电脑"
-
-                            } else {
-
-                                "请先连接电脑"
-
-                            }
-
-                        )
-
-                    }
-
-                    Spacer(Modifier.height(16.dp))
-
-                }
-
-            }
-
-
-
-            if (template.scans.isEmpty()) {
-
-                item { Text("暂无扫码数据。") }
-
-            } else {
-
-                items(template.scans, key = { "${it.timestamp}_${it.id}" }) { s ->
-
-                    Card(Modifier.fillMaxWidth()) {
-
-                        Row(
-
-                            Modifier
-
-                                .fillMaxWidth()
-
-                                .padding(10.dp),
-
-                            verticalAlignment = Alignment.CenterVertically
-
-                        ) {
-
-                            Column(Modifier.weight(1f)) {
-
-                                Text(s.text, style = MaterialTheme.typography.titleSmall)
-
-                                Text(
-
-                                    "${df.format(java.util.Date(s.timestamp))} | ${s.floor} ${s.room}" +
-                                            if (s.tag.isNotBlank()) " | ${s.tag}" else "",
-
-                                    style = MaterialTheme.typography.bodySmall
-
-                                )
-
-                            }
-
-                            IconButton(onClick = { onDeleteScan(s.id) }) {
-
-                                Icon(Icons.Default.Delete, contentDescription = "删除该条")
-
-                            }
-
+                        confirmButton = {
+                            TextButton(
+                                onClick = {
+                                    showClearConfirm = false
+                                    onClearScans()
+                                }
+                            ) { Text("清空", color = MaterialTheme.colorScheme.error) }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showClearConfirm = false }) { Text("取消") }
                         }
-
-                    }
-
+                    )
                 }
-
             }
 
+            // 上传模板数据按钮（扫码明细统一在主界面历史列表查看/编辑，编辑器不再重复展示）
+            if (template.scans.isNotEmpty()) {
+                item {
+                    val context = LocalContext.current
+                    val showToast = { msg: String ->
+                        android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
+                    }
+                    Button(
+                        onClick = { onUploadTemplateData(template, showToast) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(40.dp),
+                        enabled = viewModel.uploadEnabled && viewModel.serverUrl.isNotEmpty(),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            if (viewModel.uploadEnabled && viewModel.serverUrl.isNotEmpty()) {
+                                "上传模板数据到电脑（${template.scans.size} 条）"
+                            } else {
+                                "请先连接电脑"
+                            },
+                            maxLines = 1
+                        )
+                    }
+                }
+            }
         }
-
     }
-
 }
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
-
 @Composable
-
 private fun RoomPickerPage(
-
     templateId: String,
-
     maxFloor: Int,
-
     roomCountPerFloor: Int,
-
     initialSelected: List<String>,
-
     onBack: () -> Unit,
-
     onApply: (List<String>) -> Unit,
-
     modifier: Modifier = Modifier
-
 ) {
-
     fun roomSuffix(r: Int): String = if (r in 1..9) "0$r" else "$r"
 
-
-
     var selectedFloor by rememberSaveable(templateId) { mutableStateOf(1) }
-
     if (selectedFloor > maxFloor) selectedFloor = maxFloor.coerceAtLeast(1)
 
-
-
-    // ✅ 生成所有房间号（所有楼层）
-
+    // 生成所有房间号（所有楼层）
     // 规则：1~9 -> 01~09，所以 1 层为 101~109
-
     val allRooms = remember(maxFloor, roomCountPerFloor) {
-
         val mf = maxFloor.coerceAtLeast(1)
-
-        val rc = roomCountPerFloor.coerceIn(1, 99)
-
+        val rc = roomCountPerFloor.coerceIn(1, 999)
         (1..mf).flatMap { f ->
-
             (1..rc).map { r -> "$f${roomSuffix(r)}" }
-
         }
-
     }
 
-
-
-    // ✅ 用 rememberSaveable 保存“List<String>”（可保存），避免 Set 的保存/委托问题
-
+    // 用 rememberSaveable 保存“List<String>”（可保存），避免 Set 的保存/委托问题
     val selectedRoomsState = rememberSaveable(
-
         templateId,
-
         maxFloor,
-
         roomCountPerFloor,
-
         initialSelected
-
     ) {
-
         mutableStateOf(
-
             if (initialSelected.isEmpty()) allRooms else initialSelected
-
         )
-
     }
-
-
 
     // 当前选中集合（用于 contains / 计数）
-
     val selectedSet = remember(selectedRoomsState.value) { selectedRoomsState.value.toSet() }
 
-
-
-    // ✅ 当楼层/房间数量变化时，剔除无效房间；如果是默认全选场景且被清空，则恢复全选
-
+    // 当楼层/房间数量变化时，剔除无效房间；如果是默认全选场景且被清空，则恢复全选
     LaunchedEffect(allRooms) {
-
         val filtered = selectedRoomsState.value.filter { it in allRooms }
-
         selectedRoomsState.value = if (initialSelected.isEmpty() && filtered.isEmpty()) {
-
             allRooms
-
         } else {
-
             filtered
-
         }
-
     }
-
-
-
-
-
-
 
     val floors = (1..maxFloor.coerceAtLeast(1)).toList()
-
     val roomsOfFloor = remember(selectedFloor, roomCountPerFloor) {
-
-        (1..roomCountPerFloor.coerceIn(1, 99)).map { r -> "$selectedFloor${roomSuffix(r)}" }
-
+        (1..roomCountPerFloor.coerceIn(1, 999)).map { r -> "$selectedFloor${roomSuffix(r)}" }
     }
-
     val selectedCount = roomsOfFloor.count { it in selectedSet }
 
-    // ✅ 若楼层/房间数量变化，剔除无效选中；
-
-    // 如果你希望“变化后仍保持全选”，把 intersect 改成 selectedSet = allRooms.toSet()
-
-
-
-    Column(modifier = modifier.padding(16.dp)) {
-
+    Column(
+        modifier = modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-
-            IconButton(onClick = onBack) {
-
+            IconButton(onClick = onBack, modifier = Modifier.size(36.dp)) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回")
-
             }
-
-            Text("房间号编辑", style = MaterialTheme.typography.titleLarge)
-
+            Text("房间号编辑", style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.weight(1f))
-
             TextButton(onClick = { onApply(selectedSet.toList()) }) { Text("应用") }
-
         }
 
-
-
-        Spacer(Modifier.height(10.dp))
-
-
-
-        Text("选择楼层", style = MaterialTheme.typography.titleMedium)
-
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             items(floors) { f ->
-
                 FilterChip(
-
                     selected = f == selectedFloor,
-
                     onClick = { selectedFloor = f },
-
                     label = { Text("${f}层") }
-
                 )
-
             }
-
         }
 
-
-
-        Spacer(Modifier.height(8.dp))
-
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-
-            Text("本层房间：${roomsOfFloor.size}")
-
-            Text("本层已选：$selectedCount")
-
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                "本层房间：${roomsOfFloor.size} · 已选：$selectedCount",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                TextButton(
+                    onClick = {
+                        selectedRoomsState.value = (selectedSet + roomsOfFloor).toList()
+                    },
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
+                ) { Text("全选本层") }
+                TextButton(
+                    onClick = {
+                        selectedRoomsState.value = (selectedSet - roomsOfFloor.toSet()).toList()
+                    },
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
+                ) { Text("取消本层") }
+            }
         }
-
-
-
-        Spacer(Modifier.height(8.dp))
-
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-
-            OutlinedButton(
-
-                onClick = {
-
-                    selectedRoomsState.value = (selectedSet + roomsOfFloor).toList()
-
-                },
-
-                modifier = Modifier.weight(1f)
-
-            ) { Text("全选本层") }
-
-
-
-            OutlinedButton(
-
-                onClick = {
-
-                    selectedRoomsState.value = (selectedSet - roomsOfFloor.toSet()).toList()
-
-                },
-
-                modifier = Modifier.weight(1f)
-
-            ) { Text("取消本层") }
-
-
-
-        }
-
-
-
-        Spacer(Modifier.height(10.dp))
-
-
 
         LazyVerticalGrid(
-
-            columns = GridCells.Adaptive(minSize = 86.dp),
-
+            columns = GridCells.Adaptive(minSize = 76.dp),
             modifier = Modifier
-
                 .fillMaxWidth()
-
                 .weight(1f),
-
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(bottom = 8.dp)
-
         ) {
-
             gridItems(roomsOfFloor, key = { it }) { code ->
-
                 val selected = code in selectedSet
-
                 Card(
-
                     modifier = Modifier
-
                         .fillMaxWidth()
-
-                        .height(46.dp),
-
+                        .height(40.dp),
                     colors = CardDefaults.cardColors(
-
                         containerColor = if (selected) {
-
                             MaterialTheme.colorScheme.primary
-
                         } else {
-
                             MaterialTheme.colorScheme.surface
-
                         }
-
                     ),
-
                     elevation = CardDefaults.cardElevation(
-
                         defaultElevation = 0.dp,
-
                         pressedElevation = 0.dp
-
                     ),
-
-                    border = BorderStroke(
-
+                    border = androidx.compose.foundation.BorderStroke(
                         width = 1.dp,
-
                         color = if (selected) {
-
                             MaterialTheme.colorScheme.primary
-
                         } else {
-
                             MaterialTheme.colorScheme.outlineVariant
-
                         }
-
                     ),
-
                     onClick = {
-
                         selectedRoomsState.value = if (selected) {
-
                             selectedRoomsState.value.filterNot { it == code }
-
                         } else {
-
                             selectedRoomsState.value + code
-
                         }
-
                     }
-
-
-
                 ) {
-
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-
                         Text(
-
                             code,
-
+                            style = MaterialTheme.typography.bodyMedium,
                             color = if (selected) {
-
                                 MaterialTheme.colorScheme.onPrimary
-
                             } else {
-
                                 MaterialTheme.colorScheme.onSurface
-
                             }
-
                         )
-
                     }
-
                 }
-
             }
-
         }
-
     }
-
 }
-
