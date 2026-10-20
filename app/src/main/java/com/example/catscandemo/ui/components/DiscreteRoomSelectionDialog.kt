@@ -48,7 +48,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
 import com.example.catscandemo.domain.model.ScanResult
 import com.example.catscandemo.domain.model.TemplateModel
@@ -64,7 +63,7 @@ import com.example.catscandemo.domain.model.tagColorIndexFor
  *   楼层/房间/标签任一变化即回调 onConfirm，改动自动生效，右上角 X 关闭。
  *
  * 房间按钮配色不跟随标签色：有标签数据的房间在文字下方居中显示各标签色圆点，
- * 无标签数据（或完全没录过）的房间显示黑点（暗色模式白点），一眼区分录入进度。
+ * 有数据但无标签的房间显示绿点，没录过数据的房间不显示圆点（文字垂直居中）。
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -140,9 +139,8 @@ fun DiscreteRoomSelectionDialog(
         }
     }
 
-    // 无标签数据时的黑点（暗色模式白点）：与主题表面亮度联动
-    val neutralDotColor =
-        if (MaterialTheme.colorScheme.surface.luminance() < 0.5f) Color.White else Color.Black
+    // 无标签数据的绿色圆点（有标签数据则用标签色点）
+    val untaggedDotColor = Color(0xFF4CAF50)
 
     val rooms = roomsByFloor[selectedFloor].orEmpty()
 
@@ -237,9 +235,13 @@ fun DiscreteRoomSelectionDialog(
                 ) {
                     gridItems(rooms, key = { it }) { room ->
                         val isSelected = stickySelection && selectedRoom == room
-                        // 该房间已录入的标签色圆点（按模板标签顺序稳定排列）
-                        val recordedTags = template.tags.filter { tag ->
-                            roomTagsMap[room]?.contains(tag) == true
+                        // 圆点规则：无数据=不显示（文字垂直居中）；
+                        // 有数据无标签=绿点；有标签数据=各标签色点
+                        val hasData = room in roomTagsMap
+                        val recordedTags = if (hasData) {
+                            template.tags.filter { tag -> roomTagsMap[room]?.contains(tag) == true }
+                        } else {
+                            emptyList()
                         }
                         Box(
                             modifier = Modifier
@@ -286,8 +288,7 @@ fun DiscreteRoomSelectionDialog(
                                         MaterialTheme.colorScheme.onSurfaceVariant
                                     }
                                 )
-                                // 圆点行：有标签数据=各标签色；无标签数据（或只有无标签记录）=中性点
-                                if (stickySelection) {
+                                if (stickySelection && hasData) {
                                     Spacer(Modifier.height(3.dp))
                                     Row(
                                         horizontalArrangement = Arrangement.spacedBy(3.dp),
@@ -297,7 +298,7 @@ fun DiscreteRoomSelectionDialog(
                                             Box(
                                                 Modifier
                                                     .size(5.dp)
-                                                    .background(neutralDotColor, CircleShape)
+                                                    .background(untaggedDotColor, CircleShape)
                                             )
                                         } else {
                                             recordedTags.forEach { tag ->
