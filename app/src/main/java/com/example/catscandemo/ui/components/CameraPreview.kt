@@ -22,11 +22,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import com.example.catscandemo.domain.model.CaptureKernel
 import com.example.catscandemo.utils.NativeBarcodeDetector
+import com.example.catscandemo.utils.OcrRegexMatcher
 import com.example.catscandemo.utils.RealtimeFrameCropEngine
 import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.TextRecognizer
+import com.google.mlkit.vision.text.chinese.ChineseTextRecognizerOptions
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.RejectedExecutionException
@@ -225,6 +230,10 @@ private class CameraHandle {
     // 双 client 只多一份 Java 侧开销与释放管理
     var scanner: com.google.mlkit.vision.barcode.BarcodeScanner? = null
 
+    // 文字识别内核（内置中文+拉丁模型）：client 创建开销极小，模型在首次
+    // process 时才加载；与 barcode scanner 并存，按帧读取当前内核选择用哪个
+    var textRecognizer: TextRecognizer? = null
+
     fun release() {
         released = true
         try {
@@ -239,11 +248,27 @@ private class CameraHandle {
             scanner?.close()
         } catch (_: Exception) {
         }
+        try {
+            textRecognizer?.close()
+        } catch (_: Exception) {
+        }
         cameraProvider = null
         analysis = null
         scanner = null
+        textRecognizer = null
     }
 }
+
+// ===== 文字识别内核参数 =====
+// 全帧 OCR 派发节流：内置中文模型单帧识别约几十到一百多毫秒，
+// 200ms（≈5fps）够用且显著低于相机帧率，配合在途标志不排队堆积
+private const val OCR_FRAME_INTERVAL_MS = 200L
+
+// 横线判定带宽：行中心到画面竖直中心的距离不超过画面高度的该比例才算"对准横线"
+private const val OCR_LINE_BAND_RATIO = 0.10f
+
+/** 横线带内的一行文字：距横线距离 + 原文 + 正则命中片段 */
+private class OcrNearLine(val distanceToLine: Float, val text: String, val matches: List<String>)
 
 /**
  * 组件销毁瞬间 executor 可能已 shutdown，此时提交任务会抛
@@ -272,7 +297,10 @@ fun CameraPreview(
     channel2MinAreaScore: Double = 3.5,
     channel2MinAspectScore: Double = 28.0,
     channel2MinSolidityScore: Double = 10.0,
-    channel2MinGradScore: Double = 8.0
+    channel2MinGradScore: Double = 8.0,
+    captureKernel: CaptureKernel = CaptureKernel.QR,
+    ocrRegex: String = "",
+    onOcrLiveText: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
     val mainHandler = remember { Handler(Looper.getMainLooper()) }
@@ -285,6 +313,11 @@ fun CameraPreview(
     val channel2MinAspectScoreState = rememberUpdatedState(channel2MinAspectScore.coerceIn(0.0, 100.0))
     val channel2MinSolidityScoreState = rememberUpdatedState(channel2MinSolidityScore.coerceIn(0.0, 100.0))
     val channel2MinGradScoreState = rememberUpdatedState(channel2MinGradScore.coerceIn(0.0, 100.0))
+    // 内核/正则/回调都经 rememberUpdatedState，分析器闭包逐帧读到最新值
+    val captureKernelState = rememberUpdatedState(captureKernel)
+    val ocrRegexState = rememberUpdatedState(ocrRegex)
+    val onBarcodeDetectedState = rememberUpdatedState(onBarcodeDetected)
+    val onOcrLiveTextState = rememberUpdatedState(onOcrLiveText)
 
     var channel1Barcodes by remember { mutableStateOf<List<DetectedBarcode>>(emptyList()) }
     var channel2Barcodes by remember { mutableStateOf<List<DetectedBarcode>>(emptyList()) }
@@ -293,6 +326,15 @@ fun CameraPreview(
     val frameCounter = remember { AtomicInteger(0) }
     val channel2Processing = remember { AtomicBoolean(false) }
     val lastChannel2FrameAt = remember { AtomicLong(0L) }
+
+    // OCR 内核节流：时间间隔 + 在途标志（识别完成前不派发下一帧）
+    val ocrInFlight = remember { AtomicBoolean(false) }
+    val lastOcrFrameAt = remember { AtomicLong(0L) }
+
+    // 切换采集内核时清掉稳定器状态，避免上一内核的抑制/计数串到新内核
+    LaunchedEffect(captureKernel) {
+        barcodeStabilizer.reset()
+    }
 
     // overlay 去抖：仅在主线程读写。0=通道1，1=通道2
     val lastOverlaySignatures = remember { arrayOfNulls<String>(2) }
@@ -338,6 +380,9 @@ fun CameraPreview(
                         val scanner = BarcodeScanning.getClient()
                         cameraHandle.scanner = scanner
 
+                        val textRecognizer = TextRecognition.getClient(ChineseTextRecognizerOptions.Builder().build())
+                        cameraHandle.textRecognizer = textRecognizer
+
                         val analysis = ImageAnalysis.Builder()
                             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                             .setResolutionSelector(
@@ -357,6 +402,59 @@ fun CameraPreview(
                             // imageProxy 必须有且只有一次 close：移交给 scanner 完成回调的帧由回调负责关闭，
                             // 其余情况（无 mediaImage / 跳帧 / 任何同步异常）统一在 finally 关闭。
                             // KEEP_ONLY_LATEST 下漏关一帧，后续帧不再送达，扫码会静默冻结。
+
+                            // ===== 文字识别内核：整帧 OCR + 横线带内提取；二维码两通道全部跳过 =====
+                            // 独立于下方二维码 try/finally（自带唯一的关帧路径），避免外层 finally 二次 close
+                            if (captureKernelState.value == CaptureKernel.OCR) {
+                                var ocrClaimed = false
+                                var ownedByOcr = false
+                                try {
+                                    val mediaImage = imageProxy.image
+                                    if (mediaImage != null) {
+                                        val recognizer = cameraHandle.textRecognizer
+                                        val now = android.os.SystemClock.elapsedRealtime()
+                                        if (recognizer != null &&
+                                            now - lastOcrFrameAt.get() >= OCR_FRAME_INTERVAL_MS &&
+                                            ocrInFlight.compareAndSet(false, true)
+                                        ) {
+                                            ocrClaimed = true
+                                            lastOcrFrameAt.set(now)
+                                            val rotationDegrees = imageProxy.imageInfo.rotationDegrees
+                                            val ocrImage = InputImage.fromMediaImage(mediaImage, rotationDegrees)
+                                            recognizer.process(ocrImage)
+                                                .addOnSuccessListener { result ->
+                                                    handleOcrFrameText(
+                                                        result = result,
+                                                        rotationDegrees = rotationDegrees,
+                                                        imageWidth = mediaImage.width,
+                                                        imageHeight = mediaImage.height,
+                                                        ocrRegex = ocrRegexState.value,
+                                                        barcodeStabilizer = barcodeStabilizer,
+                                                        onOcrLiveText = onOcrLiveTextState.value,
+                                                        onBarcodeDetected = onBarcodeDetectedState.value
+                                                    )
+                                                }
+                                                .addOnCompleteListener {
+                                                    ocrInFlight.set(false)
+                                                    imageProxy.close()
+                                                }
+                                            ownedByOcr = true
+                                        }
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e("CameraPreview", "OCR 帧分析异常: ${e.message}")
+                                } finally {
+                                    // 认领后未移交（recognizer 缺失/同步异常）：归还标志；没移交就自己关帧
+                                    if (ocrClaimed && !ownedByOcr) {
+                                        ocrInFlight.set(false)
+                                    }
+                                    if (!ownedByOcr) {
+                                        imageProxy.close()
+                                    }
+                                }
+                                return@setAnalyzer
+                            }
+
                             var ownedByScanner = false
                             var channel2Claimed = false
                             var channel2Dispatched = false
@@ -367,6 +465,7 @@ fun CameraPreview(
                                 val imageWidth = mediaImage.width
                                 val imageHeight = mediaImage.height
                                 val rotationDegrees = imageProxy.imageInfo.rotationDegrees
+
                                 val currentFrame = frameCounter.incrementAndGet()
 
                                 // 仅在增强通道空闲且到达采样间隔时复制帧，避免无谓的整帧拷贝
@@ -594,28 +693,82 @@ fun CameraPreview(
             modifier = Modifier.fillMaxSize()
         )
 
-        // 扫描蒙版遮罩层（显示扫描区域）
-        ScanMaskOverlay(
-            modifier = Modifier.fillMaxSize()
-        )
-
-        if (showBarcodeOverlay) {
-            // 通道1 检测框（蓝色）
-            BarcodeOverlay(
-                detectedBarcodes = channel1Barcodes,
-                modifier = Modifier.fillMaxSize(),
-                boxColor = ComposeColor.Blue,
-                cornerColor = ComposeColor.Cyan
+        if (captureKernel == CaptureKernel.QR) {
+            // 扫描蒙版遮罩层（显示扫描区域）
+            ScanMaskOverlay(
+                modifier = Modifier.fillMaxSize()
             )
 
-            // 通道2 检测框（红色）
-            BarcodeOverlay(
-                detectedBarcodes = channel2Barcodes,
-                modifier = Modifier.fillMaxSize(),
-                boxColor = ComposeColor.Red,
-                cornerColor = ComposeColor.Magenta
+            if (showBarcodeOverlay) {
+                // 通道1 检测框（蓝色）
+                BarcodeOverlay(
+                    detectedBarcodes = channel1Barcodes,
+                    modifier = Modifier.fillMaxSize(),
+                    boxColor = ComposeColor.Blue,
+                    cornerColor = ComposeColor.Cyan
+                )
+
+                // 通道2 检测框（红色）
+                BarcodeOverlay(
+                    detectedBarcodes = channel2Barcodes,
+                    modifier = Modifier.fillMaxSize(),
+                    boxColor = ComposeColor.Red,
+                    cornerColor = ComposeColor.Magenta
+                )
+            }
+        } else {
+            // 文字识别内核：识别区域从方框改为中央横线
+            OcrLineOverlay(
+                modifier = Modifier.fillMaxSize()
             )
         }
+    }
+}
+
+/**
+ * OCR 帧结果处理（ML Kit 回调默认在主线程）：
+ * 1. 取横线带（画面竖直中心 ±10%）内的文字行；
+ * 2. 离横线最近的一行原文上报为实时文字（识别区底部展示）；
+ * 3. 带内命中的行里挑最靠近横线的一行，其第一个正则命中片段经稳定器录入
+ *    （与二维码同一防重复语义：同内容触发一次，离开镜头约 1.5s 后可再触发）。
+ */
+private fun handleOcrFrameText(
+    result: com.google.mlkit.vision.text.Text,
+    rotationDegrees: Int,
+    imageWidth: Int,
+    imageHeight: Int,
+    ocrRegex: String,
+    barcodeStabilizer: BarcodeStabilizer,
+    onOcrLiveText: (String) -> Unit,
+    onBarcodeDetected: (String) -> Unit
+) {
+    val upright = rotationDegrees == 90 || rotationDegrees == 270
+    val uprightHeight = (if (upright) imageWidth else imageHeight).toFloat()
+    val lineCenterY = uprightHeight / 2f
+    val bandHalf = uprightHeight * OCR_LINE_BAND_RATIO
+
+    val nearLines = ArrayList<OcrNearLine>(8)
+    result.textBlocks.forEach { block ->
+        block.lines.forEach { line ->
+            val box = line.boundingBox ?: return@forEach
+            val text = line.text.trim()
+            if (text.isEmpty()) return@forEach
+            // ML Kit 的 boundingBox 已是转正后坐标，与条码通道同一约定
+            val centerY = (box.top + box.bottom) / 2f
+            val distance = kotlin.math.abs(centerY - lineCenterY)
+            if (distance <= bandHalf) {
+                nearLines.add(
+                    OcrNearLine(distance, text, OcrRegexMatcher.findAllMatches(text, ocrRegex))
+                )
+            }
+        }
+    }
+
+    nearLines.minByOrNull { it.distanceToLine }?.let { onOcrLiveText(it.text) }
+
+    val best = nearLines.filter { it.matches.isNotEmpty() }.minByOrNull { it.distanceToLine }
+    if (best != null) {
+        barcodeStabilizer.stabilize(best.matches.first()) { onBarcodeDetected(it) }
     }
 }
 
@@ -748,6 +901,91 @@ fun ScanMaskOverlay(
             color = cornerColor.copy(alpha = 0.7f),
             radius = 4.5f,
             center = androidx.compose.ui.geometry.Offset(scanCenterX, scanCenterY)
+        )
+    }
+}
+
+// ==================== 文字识别横线遮罩层 ====================
+
+/**
+ * OCR 内核识别区：中央横线（对准哪行录哪行）。
+ *
+ * 上下半透明压暗 + 中央亮横线；横线带宽与 OCR_LINE_BAND_RATIO 一致
+ * （画面竖直中心 ±10%），行中心落在这个带内才算"对准横线"。
+ */
+@Composable
+fun OcrLineOverlay(
+    modifier: Modifier = Modifier,
+    maskColor: ComposeColor = ComposeColor.Black.copy(alpha = 0.5f),
+    lineColor: ComposeColor = ComposeColor(0xFF2196F3)
+) {
+    androidx.compose.foundation.Canvas(modifier = modifier) {
+        val canvasWidth = size.width
+        val canvasHeight = size.height
+        val centerY = canvasHeight / 2f
+        val bandHalf = canvasHeight * OCR_LINE_BAND_RATIO
+        val bandTop = centerY - bandHalf
+        val bandBottom = centerY + bandHalf
+
+        // 上/下遮罩（横线带保持透亮）
+        drawRect(
+            color = maskColor,
+            topLeft = androidx.compose.ui.geometry.Offset(0f, 0f),
+            size = androidx.compose.ui.geometry.Size(canvasWidth, bandTop)
+        )
+        drawRect(
+            color = maskColor,
+            topLeft = androidx.compose.ui.geometry.Offset(0f, bandBottom),
+            size = androidx.compose.ui.geometry.Size(canvasWidth, canvasHeight - bandBottom)
+        )
+
+        // 横线带上下边缘细线（提示有效判定范围）
+        drawLine(
+            color = ComposeColor.White.copy(alpha = 0.35f),
+            start = androidx.compose.ui.geometry.Offset(canvasWidth * 0.08f, bandTop),
+            end = androidx.compose.ui.geometry.Offset(canvasWidth * 0.92f, bandTop),
+            strokeWidth = 1.2f
+        )
+        drawLine(
+            color = ComposeColor.White.copy(alpha = 0.35f),
+            start = androidx.compose.ui.geometry.Offset(canvasWidth * 0.08f, bandBottom),
+            end = androidx.compose.ui.geometry.Offset(canvasWidth * 0.92f, bandBottom),
+            strokeWidth = 1.2f
+        )
+
+        // 中央亮横线（主体）
+        drawLine(
+            color = ComposeColor.White.copy(alpha = 0.95f),
+            start = androidx.compose.ui.geometry.Offset(canvasWidth * 0.10f, centerY),
+            end = androidx.compose.ui.geometry.Offset(canvasWidth * 0.90f, centerY),
+            strokeWidth = 3f
+        )
+
+        // 横线两端强调角标（与二维码遮罩同一视觉语言）
+        val tick = 10f
+        drawLine(
+            color = lineColor.copy(alpha = 0.9f),
+            start = androidx.compose.ui.geometry.Offset(canvasWidth * 0.10f, centerY),
+            end = androidx.compose.ui.geometry.Offset(canvasWidth * 0.10f, centerY - tick),
+            strokeWidth = 3.4f
+        )
+        drawLine(
+            color = lineColor.copy(alpha = 0.9f),
+            start = androidx.compose.ui.geometry.Offset(canvasWidth * 0.10f, centerY),
+            end = androidx.compose.ui.geometry.Offset(canvasWidth * 0.10f + tick, centerY),
+            strokeWidth = 3.4f
+        )
+        drawLine(
+            color = lineColor.copy(alpha = 0.9f),
+            start = androidx.compose.ui.geometry.Offset(canvasWidth * 0.90f, centerY),
+            end = androidx.compose.ui.geometry.Offset(canvasWidth * 0.90f, centerY + tick),
+            strokeWidth = 3.4f
+        )
+        drawLine(
+            color = lineColor.copy(alpha = 0.9f),
+            start = androidx.compose.ui.geometry.Offset(canvasWidth * 0.90f, centerY),
+            end = androidx.compose.ui.geometry.Offset(canvasWidth * 0.90f - tick, centerY),
+            strokeWidth = 3.4f
         )
     }
 }

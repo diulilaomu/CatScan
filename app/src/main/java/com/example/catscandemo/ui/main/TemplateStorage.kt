@@ -8,6 +8,7 @@ import com.example.catscandemo.domain.model.ScanResult
 import com.example.catscandemo.domain.model.SeqConfig
 import com.example.catscandemo.domain.model.TemplateMode
 import com.example.catscandemo.domain.model.TemplateModel
+import com.example.catscandemo.utils.OcrRegexTemplates
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -395,6 +396,10 @@ object ScanHistoryStorage {
 object SettingsStorage {
     private const val FILE_NAME = "settings.json"
 
+    // 文字识别默认规则：8~15 位纯数字（模板参数与正则弹窗的默认值保持同源）
+    private val DEFAULT_OCR_REGEX = OcrRegexTemplates.digits(8, 15)
+    private val DEFAULT_OCR_TEMPLATE_PARAMS = """{"digitsMin":"8","digitsMax":"15"}"""
+
     data class Settings(
         // 自动复制按模式独立：文本默认关、模板默认开（旧单键迁移到模板模式值）
         val clipboardEnabledText: Boolean = false,
@@ -414,7 +419,14 @@ object SettingsStorage {
         val themeMode: String = "SYSTEM",
         val exportTreeUri: String = "",
         // 摄像头开关状态（默认开启），退出后下次启动保持
-        val cameraEnabled: Boolean = true
+        val cameraEnabled: Boolean = true,
+        // 采集内核：QR（二维码，默认）/ OCR（文字识别），用户切换后保持
+        val captureKernel: String = "QR",
+        // 文字识别正则（空 = 不限，横线附近整行文字直接录入）；默认 8~15 位纯数字
+        val ocrRegex: String = DEFAULT_OCR_REGEX,
+        // 正则弹窗最后使用的内置模板及其参数（JSON），重新打开时回填
+        val ocrTemplateId: String = OcrRegexTemplates.ID_DIGITS,
+        val ocrTemplateParams: String = DEFAULT_OCR_TEMPLATE_PARAMS
     )
 
     fun load(context: Context): Settings {
@@ -456,7 +468,12 @@ object SettingsStorage {
                 },
                 themeMode = root.optString("themeMode", "SYSTEM"),
                 exportTreeUri = root.optString("exportTreeUri", ""),
-                cameraEnabled = root.optBoolean("cameraEnabled", true)
+                cameraEnabled = root.optBoolean("cameraEnabled", true),
+                captureKernel = root.optString("captureKernel", "QR")
+                    .ifBlank { "QR" },
+                ocrRegex = root.optString("ocrRegex", DEFAULT_OCR_REGEX),
+                ocrTemplateId = root.optString("ocrTemplateId", OcrRegexTemplates.ID_DIGITS),
+                ocrTemplateParams = root.optString("ocrTemplateParams", DEFAULT_OCR_TEMPLATE_PARAMS)
             )
         } catch (e: Exception) {
             Log.w("SettingsStorage", "设置解析失败: ${e.message}")
@@ -485,6 +502,10 @@ object SettingsStorage {
             root.put("themeMode", settings.themeMode)
             root.put("exportTreeUri", settings.exportTreeUri)
             root.put("cameraEnabled", settings.cameraEnabled)
+            root.put("captureKernel", settings.captureKernel)
+            root.put("ocrRegex", settings.ocrRegex)
+            root.put("ocrTemplateId", settings.ocrTemplateId)
+            root.put("ocrTemplateParams", settings.ocrTemplateParams)
 
             writeTextAtomically(File(context.filesDir, FILE_NAME), root.toString())
         } catch (e: Exception) {

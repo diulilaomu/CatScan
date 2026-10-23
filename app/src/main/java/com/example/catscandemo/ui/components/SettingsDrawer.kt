@@ -4,8 +4,10 @@ import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
@@ -44,10 +47,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.catscandemo.domain.model.CaptureKernel
 import com.example.catscandemo.domain.model.WorkMode
 import com.example.catscandemo.presentation.viewmodel.MainViewModel
 import kotlin.math.roundToInt
@@ -149,19 +154,44 @@ fun SettingsDrawer(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
         )
 
-        // 署名：点击跳转 GitHub 仓库
+        // 署名：点击跳转 GitHub 仓库；有新版本时仅此位置变为更新提示（红点+版本号），其余界面不做任何提示
         val uriHandler = LocalUriHandler.current
-        Text(
-            text = "Wenhe x Rnzhy 2025.11.1 CatScan MIT",
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.primary,
+        val updateHintVersion = viewModel.updateHintVersion
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { uriHandler.openUri("https://github.com/diulilaomu/CatScan") }
+                .clickable {
+                    uriHandler.openUri(
+                        if (updateHintVersion == null) "https://github.com/diulilaomu/CatScan"
+                        else "https://github.com/diulilaomu/CatScan/releases/latest"
+                    )
+                }
                 .padding(vertical = 8.dp),
-            textAlign = TextAlign.Center,
-            maxLines = 1
-        )
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (updateHintVersion == null) {
+                Text(
+                    text = "Wenhe x Rnzhy 2025.11.1 CatScan MIT",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    maxLines = 1
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .padding(end = 5.dp)
+                        .size(8.dp)
+                        .background(Color.Red, CircleShape)
+                )
+                Text(
+                    text = "发现新版本 $updateHintVersion · 点击查看",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    maxLines = 1
+                )
+            }
+        }
     }
 }
 
@@ -215,25 +245,72 @@ private fun MainSettingsPage(
 
         Spacer(Modifier.height(8.dp))
 
-        // 工作模式切换
+        // 采集内核切换：二维码 / 文字识别（决定上方识别区怎么采集，与录入模式正交）
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            WorkMode.entries.forEach { mode ->
-                val selected = viewModel.workMode == mode
-                FilterChip(
-                    selected = selected,
-                    onClick = { viewModel.onWorkModeChange(mode) },
-                    modifier = Modifier.weight(1f),
-                    label = {
-                        Text(
-                            text = if (mode == WorkMode.TEMPLATE) "模板模式" else "文本模式",
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                )
+            Text(
+                text = "采集内核：",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(Modifier.width(4.dp))
+            Row(
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                CaptureKernel.entries.forEach { kernel ->
+                    FilterChip(
+                        selected = viewModel.captureKernel == kernel,
+                        onClick = { viewModel.onCaptureKernelChange(kernel) },
+                        modifier = Modifier.weight(1f),
+                        label = {
+                            Text(
+                                text = if (kernel == CaptureKernel.QR) "二维码" else "文字识别",
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center,
+                                maxLines = 1
+                            )
+                        }
+                    )
+                }
+            }
+        }
+
+        Spacer(Modifier.height(8.dp))
+
+        // 录入模式切换：模板 / 文本（决定下方录入区录到哪）
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "录入模式：",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(Modifier.width(4.dp))
+            Row(
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                WorkMode.entries.forEach { mode ->
+                    val selected = viewModel.workMode == mode
+                    FilterChip(
+                        selected = selected,
+                        onClick = { viewModel.onWorkModeChange(mode) },
+                        modifier = Modifier.weight(1f),
+                        label = {
+                            Text(
+                                text = if (mode == WorkMode.TEMPLATE) "模板模式" else "文本模式",
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center,
+                                maxLines = 1
+                            )
+                        }
+                    )
+                }
             }
         }
 

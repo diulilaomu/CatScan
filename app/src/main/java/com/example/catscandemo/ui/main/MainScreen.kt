@@ -43,6 +43,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Keyboard
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Rule
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SwapHoriz
@@ -69,6 +70,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.example.catscandemo.domain.model.CaptureKernel
 import com.example.catscandemo.domain.model.MarkMode
 import com.example.catscandemo.domain.model.WorkMode
 import com.example.catscandemo.domain.model.formatSeqValue
@@ -83,6 +85,8 @@ import com.example.catscandemo.ui.components.DiscreteRoomSelectionDialog
 import com.example.catscandemo.ui.components.LineNumberTextEditor
 import com.example.catscandemo.ui.components.NewTemplateFields
 import com.example.catscandemo.ui.components.NewTemplateParamsState
+import com.example.catscandemo.ui.components.OcrImageResultDialog
+import com.example.catscandemo.ui.components.OcrRegexDialog
 import com.example.catscandemo.ui.components.ResultItemController
 import com.example.catscandemo.ui.components.SettingsDrawer
 import com.example.catscandemo.ui.components.TemplateEditorRightDrawer
@@ -90,7 +94,9 @@ import com.example.catscandemo.ui.components.TemplateTypeDot
 import com.example.catscandemo.ui.components.TemplateTypeTag
 import com.example.catscandemo.ui.components.TextDocsManagerDrawer
 import com.example.catscandemo.ui.components.TextFindState
+import com.example.catscandemo.ui.components.TextScanIcon
 import com.example.catscandemo.utils.AutoRequestCameraPermission
+import com.example.catscandemo.utils.ocrRuleLabel
 import kotlinx.coroutines.launch
 
 private val FLOOR_NUMBER_REGEX = Regex("\\d+")
@@ -110,6 +116,8 @@ fun MainScreen(viewModel: MainViewModel) {
         viewModel.initHistoryStore(context.applicationContext)
         viewModel.initSettingsStore(context.applicationContext)
         viewModel.initTextDocsStore(context.applicationContext)
+        // 每日一次核对 GitHub 最新 release，有新版仅设置抽屉署名位提示
+        viewModel.checkForAppUpdate(context.applicationContext)
         // 启动被动发现 PC：每 1 秒扫描，发现后弹窗
         viewModel.startPassivePcDiscovery(context.applicationContext)
         // 加载初始扫描数据并更新StateFlow
@@ -179,6 +187,17 @@ fun MainScreen(viewModel: MainViewModel) {
     }
 
     val isTextMode = viewModel.workMode == WorkMode.TEXT
+
+    // 采集内核（二维码/文字识别）：图标、遮罩、左下按钮、顶栏 tag 都随它切换
+    val isOcrKernel = viewModel.captureKernel == CaptureKernel.OCR
+    var showOcrRegexDialog by remember { mutableStateOf(false) }
+    // OCR 横线处的实时文字：识别区底部展示（正则不命中时即"识别到的文字"）
+    var ocrLiveText by remember { mutableStateOf("") }
+    LaunchedEffect(viewModel.cameraEnabled, viewModel.captureKernel) {
+        if (!viewModel.cameraEnabled || viewModel.captureKernel != CaptureKernel.OCR) {
+            ocrLiveText = ""
+        }
+    }
 
     // 模板模式表头弹窗：清空二次确认 / 快速新建模板 / 修改下次录入房号或序号
     var showClearConfirm by remember { mutableStateOf(false) }
@@ -390,7 +409,8 @@ fun MainScreen(viewModel: MainViewModel) {
                             IconButton(onClick = { viewModel.onToggleCameraEnabled() }) {
                                 val slashColor = MaterialTheme.colorScheme.onSurfaceVariant
                                 Icon(
-                                    imageVector = Icons.Filled.QrCodeScanner,
+                                    // 文字识别内核下扫码图标换成"A"字形图标，禁用斜杠画法不变
+                                    imageVector = if (isOcrKernel) TextScanIcon else Icons.Filled.QrCodeScanner,
                                     contentDescription = if (viewModel.cameraEnabled) {
                                         "关闭摄像头"
                                     } else {
@@ -499,7 +519,10 @@ fun MainScreen(viewModel: MainViewModel) {
                                     channel2MinAreaScore = viewModel.channel2MinAreaScore,
                                     channel2MinAspectScore = viewModel.channel2MinAspectScore,
                                     channel2MinSolidityScore = viewModel.channel2MinSolidityScore,
-                                    channel2MinGradScore = viewModel.channel2MinGradScore
+                                    channel2MinGradScore = viewModel.channel2MinGradScore,
+                                    captureKernel = viewModel.captureKernel,
+                                    ocrRegex = viewModel.ocrRegex,
+                                    onOcrLiveText = { ocrLiveText = it }
                                 )
                             }
                         } else {
@@ -511,7 +534,7 @@ fun MainScreen(viewModel: MainViewModel) {
                                 modifier = Modifier.clickable { viewModel.reopenCameraWithMinHeight() }
                             ) {
                                 Icon(
-                                    imageVector = Icons.Filled.QrCodeScanner,
+                                    imageVector = if (isOcrKernel) TextScanIcon else Icons.Filled.QrCodeScanner,
                                     contentDescription = "开启摄像头",
                                     tint = Color(0xFF8E8A8E),
                                     modifier = Modifier
@@ -566,6 +589,102 @@ fun MainScreen(viewModel: MainViewModel) {
                                 active = viewModel.isFlashOn,
                                 onClick = { viewModel.onToggleFlash() }
                             )
+                        }
+
+                        // 采集内核 tag：识别区左上角，点击在 二维码/文字识别 间切换；
+                        // 实时文字超长时压在文字上层（zIndex 更高）
+                        Surface(
+                            shape = RoundedCornerShape(50),
+                            color = MaterialTheme.colorScheme.secondaryContainer,
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(start = 10.dp, top = 10.dp)
+                                .zIndex(2f)
+                                .clickable {
+                                    viewModel.onCaptureKernelChange(
+                                        if (isOcrKernel) CaptureKernel.QR else CaptureKernel.OCR
+                                    )
+                                }
+                        ) {
+                            Text(
+                                text = if (isOcrKernel) "文字识别" else "二维码",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                            )
+                        }
+
+                        // 文字识别内核：左下角正则入口 + 顶部实时文字（点击复制）+ 底部生效规则
+                        if (isOcrKernel) {
+                            CameraSquareButton(
+                                icon = Icons.Filled.Rule,
+                                contentDescription = "识别规则（正则）",
+                                onClick = { showOcrRegexDialog = true },
+                                active = viewModel.ocrRegex.isNotBlank(),
+                                modifier = Modifier
+                                    .align(Alignment.BottomStart)
+                                    .padding(start = 12.dp, bottom = 12.dp)
+                            )
+
+                            // 顶部实时文字：短文本居中胶囊；超长时向两侧展开，从 tag 下层穿过
+                            if (ocrLiveText.isNotBlank()) {
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.TopCenter)
+                                        .fillMaxWidth()
+                                        .zIndex(1f)
+                                        .padding(top = 10.dp, start = 8.dp, end = 8.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Surface(
+                                        color = Color(0xFF000000).copy(alpha = 0.55f),
+                                        shape = RoundedCornerShape(8.dp),
+                                        modifier = Modifier.clickable {
+                                            copyToClipboard(ocrLiveText)
+                                            showToast("已复制: $ocrLiveText")
+                                        }
+                                    ) {
+                                        Text(
+                                            text = ocrLiveText,
+                                            color = Color.White,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                                        )
+                                    }
+                                }
+                            }
+
+                            // 底部当前生效的识别规则：内置模板显示中文描述（如"11~12位纯数字"），自定义显示正则原文
+                            val ruleLabel = remember(
+                                viewModel.ocrRegex,
+                                viewModel.ocrTemplateId,
+                                viewModel.ocrTemplateParams
+                            ) {
+                                ocrRuleLabel(
+                                    viewModel.ocrRegex,
+                                    viewModel.ocrTemplateId,
+                                    viewModel.ocrTemplateParams
+                                )
+                            }
+                            Surface(
+                                color = Color(0xFF000000).copy(alpha = 0.45f),
+                                shape = RoundedCornerShape(6.dp),
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    // 两侧避开左下/右下的按钮区
+                                    .padding(start = 96.dp, end = 96.dp, bottom = 20.dp)
+                            ) {
+                                Text(
+                                    text = ruleLabel,
+                                    color = Color.White.copy(alpha = 0.9f),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                                )
+                            }
                         }
                     }
                     }
@@ -758,6 +877,32 @@ fun MainScreen(viewModel: MainViewModel) {
                 viewModel = viewModel
             )
         }
+    }
+
+    // 文字识别内核：正则编辑弹窗（确定=应用并持久化，取消=关闭不生效）
+    if (showOcrRegexDialog) {
+        OcrRegexDialog(
+            initialRegex = viewModel.ocrRegex,
+            initialTemplateId = viewModel.ocrTemplateId,
+            initialTemplateParams = viewModel.ocrTemplateParams,
+            onConfirm = { regex, templateId, templateParams ->
+                viewModel.setOcrRegex(regex, templateId, templateParams)
+                showOcrRegexDialog = false
+            },
+            onDismiss = { showOcrRegexDialog = false }
+        )
+    }
+
+    // 文字识别内核：相册识别结果弹窗（命中片段高亮，点选录入，可连续点选）
+    if (viewModel.showOcrImageDialog) {
+        OcrImageResultDialog(
+            lines = viewModel.ocrImageLines,
+            ocrRegex = viewModel.ocrRegex,
+            onPickText = { text ->
+                viewModel.onBarcodeScanned(text, copyToClipboard, showToast)
+            },
+            onDismiss = { viewModel.showOcrImageDialog = false }
+        )
     }
 
     // 房间号模式：表头徽标修改下次录入起点（楼层→房间→标签；改动即时生效，X 关闭）

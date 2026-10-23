@@ -36,9 +36,13 @@ import com.example.catscandemo.data.network.DiscoveredServer
 
 import com.example.catscandemo.data.network.NetworkDiscovery
 
+import com.example.catscandemo.data.network.UpdateChecker
+
 import androidx.compose.ui.text.TextRange
 
 import androidx.compose.ui.text.input.TextFieldValue
+
+import com.example.catscandemo.domain.model.CaptureKernel
 
 import com.example.catscandemo.domain.model.MarkMode
 
@@ -68,7 +72,13 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 
 import com.google.mlkit.vision.common.InputImage
 
+import com.google.mlkit.vision.text.TextRecognition
+
+import com.google.mlkit.vision.text.chinese.ChineseTextRecognizerOptions
+
 import dagger.hilt.android.lifecycle.HiltViewModel
+
+import java.time.LocalDate
 
 import kotlinx.coroutines.Dispatchers
 
@@ -316,7 +326,56 @@ class MainViewModel @Inject constructor(
         themeMode = settings.themeMode
         exportTreeUri = settings.exportTreeUri
         cameraEnabled = settings.cameraEnabled
+        captureKernel = runCatching { CaptureKernel.valueOf(settings.captureKernel) }
+            .getOrDefault(CaptureKernel.QR)
+        ocrRegex = settings.ocrRegex
+        ocrTemplateId = settings.ocrTemplateId
+        ocrTemplateParams = settings.ocrTemplateParams
         scheduleCameraSleep()
+    }
+
+    // --- 每日更新检查（GitHub Release）：有新版本时仅设置抽屉署名位变为更新提示 ---
+
+    /** 非空 = GitHub 上有比本地新的版本 tag，设置抽屉底部署名行替换为更新提示 */
+    var updateHintVersion by mutableStateOf<String?>(null)
+
+    private var updateCheckStarted = false
+
+    /**
+     * 启动时调用：先用最近一次检查结果恢复提示，再按"每天最多一次"拉取 GitHub
+     * 最新 release 比对。请求失败静默（不记当天），下次启动自然重试。
+     */
+    fun checkForAppUpdate(context: Context) {
+        if (updateCheckStarted) return
+        updateCheckStarted = true
+        val appCtx = context.applicationContext
+        if (appContext == null) {
+            appContext = appCtx
+        }
+        val prefs = appCtx.getSharedPreferences("update_check", Context.MODE_PRIVATE)
+        val currentVersion = currentVersionName(appCtx)
+        fun refreshHint(latest: String?) {
+            updateHintVersion = latest?.takeIf { UpdateChecker.isNewerVersion(it, currentVersion) }
+        }
+        // 恢复上次结果：装上新版后本地版本已追上，比对后提示自动消失
+        refreshHint(prefs.getString("latest_version", null))
+        val today = LocalDate.now().toEpochDay()
+        if (prefs.getLong("last_check_day", -1L) == today) return
+        viewModelScope.launch(Dispatchers.IO) {
+            val latest = UpdateChecker.fetchLatestReleaseTag() ?: return@launch
+            prefs.edit()
+                .putLong("last_check_day", today)
+                .putString("latest_version", latest)
+                .apply()
+            refreshHint(latest)
+        }
+    }
+
+    private fun currentVersionName(context: Context): String {
+        return runCatching {
+            @Suppress("DEPRECATION")
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        }.getOrNull() ?: ""
     }
 
     /** 集中持久化设置，供 ViewModel 内部各 setter 与设置界面调用 */
@@ -341,7 +400,11 @@ class MainViewModel @Inject constructor(
                     cameraSleepEnabled = cameraSleepEnabled,
                     themeMode = themeMode,
                     exportTreeUri = exportTreeUri,
-                    cameraEnabled = cameraEnabled
+                    cameraEnabled = cameraEnabled,
+                    captureKernel = captureKernel.name,
+                    ocrRegex = ocrRegex,
+                    ocrTemplateId = ocrTemplateId,
+                    ocrTemplateParams = ocrTemplateParams
                 )
             )
         }
@@ -1093,6 +1156,41 @@ class MainViewModel @Inject constructor(
         persistSettings()
         scheduleCameraSleep()
     }
+
+    // ===== 采集内核（二维码 / 文字识别），与工作模式正交 =====
+
+    var captureKernel by mutableStateOf(CaptureKernel.QR)
+        private set
+
+    fun onCaptureKernelChange(kernel: CaptureKernel) {
+        if (captureKernel == kernel) return
+        captureKernel = kernel
+        persistSettings()
+    }
+
+    /** 文字识别正则（空 = 任意整行直接录入），由正则弹窗"确定"写入 */
+    var ocrRegex by mutableStateOf("")
+        private set
+
+    /** 正则弹窗回填用：上次选择的内置模板 id 与参数 JSON */
+    var ocrTemplateId by mutableStateOf("")
+        private set
+
+    var ocrTemplateParams by mutableStateOf("")
+        private set
+
+    fun setOcrRegex(regex: String, templateId: String, templateParams: String) {
+        ocrRegex = regex.trim()
+        ocrTemplateId = templateId
+        ocrTemplateParams = templateParams
+        persistSettings()
+    }
+
+    // 相册文字识别结果弹窗：识别出的文字行 + 命中状态（命中与否由弹窗按 ocrRegex 现算）
+    var showOcrImageDialog by mutableStateOf(false)
+
+    var ocrImageLines by mutableStateOf<List<String>>(emptyList())
+        private set
 
     // 扫描区/数据区分割比例（扫描区高度占比），拖动拉杆调节
     var splitRatio by mutableStateOf(0.45f)
@@ -1987,6 +2085,12 @@ class MainViewModel @Inject constructor(
 
     ) {
 
+        // 文字识别内核：相册图片走 OCR，识别出的文字行交由结果弹窗点选录入
+        if (captureKernel == CaptureKernel.OCR) {
+            onImagePickedOcr(uri, context, showToast)
+            return
+        }
+
         // 使用默认扫描器，自动检测所有条码格式
         val scanner = BarcodeScanning.getClient()
 
@@ -2021,6 +2125,46 @@ class MainViewModel @Inject constructor(
                     Log.e("CatScan", "Barcode scan failed, uri=$uri", e)
                     showToast("识别失败")
                     scanner.close()
+                }
+        }
+    }
+
+    
+
+    /** 文字识别内核的相册入口：识别整图文字行，弹窗展示后由用户点选录入 */
+    private fun onImagePickedOcr(uri: Uri, context: Context, showToast: (String) -> Unit) {
+        val recognizer = TextRecognition.getClient(ChineseTextRecognizerOptions.Builder().build())
+        viewModelScope.launch(Dispatchers.IO) {
+            val image = try {
+                InputImage.fromFilePath(context, uri)
+            } catch (e: Exception) {
+                Log.e("CatScan", "OCR InputImage.fromFilePath failed, uri=$uri", e)
+                launch(Dispatchers.Main) {
+                    showToast("图片读取失败：${e.message ?: e.javaClass.simpleName}")
+                    recognizer.close()
+                }
+                return@launch
+            }
+
+            recognizer.process(image)
+                .addOnSuccessListener { result ->
+                    // 按块→行展开：行是最小可点选单位，块内多行不该挤成一条
+                    val lines = result.textBlocks
+                        .flatMap { block -> block.lines }
+                        .map { line -> line.text.trim() }
+                        .filter { it.isNotEmpty() }
+                    if (lines.isEmpty()) {
+                        showToast("未识别到文字")
+                    } else {
+                        ocrImageLines = lines
+                        showOcrImageDialog = true
+                    }
+                    recognizer.close()
+                }
+                .addOnFailureListener { e ->
+                    Log.e("CatScan", "OCR image process failed", e)
+                    showToast("识别失败")
+                    recognizer.close()
                 }
         }
     }
