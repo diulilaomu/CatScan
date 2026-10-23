@@ -1,6 +1,6 @@
 # CatScan
 
-CatScan 是一套 Android + Windows 的局域网扫码采集工具。Android 端负责扫码、模板、文档和历史数据，Windows 端接收实时镜像，可用于检索、导出和自动输入。
+CatScan 是一套 Android + Windows 的局域网扫码采集工具。Android 端除双通道二维码扫描外，还内置**中文文字识别（OCR）内核**——摄像头对准文字行直接提取编号，或从相册选图后用 Big Bang 涂抹选词自由摘录片段；配合模板游标与文档编辑器完成采集，Windows 端接收实时镜像，可用于检索、导出和自动输入。
 
 ## 截图
 
