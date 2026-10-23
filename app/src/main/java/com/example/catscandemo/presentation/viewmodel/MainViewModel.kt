@@ -1238,7 +1238,8 @@ class MainViewModel @Inject constructor(
     }
 
     /**
-     * 应用快扫预设：切到 TEMPLATE 工作模式 + 无模板 + 自动复制开 + 摄像头开启。
+     * 应用快扫预设：切到 TEMPLATE 工作模式 + 无模板 + 自动复制开 + 摄像头开启 +
+     * 采集内核切回二维码（磁贴入口就是扫码，OCR 内核下次用正则弹窗切回即可）。
      * 存储未就绪（冷启动极早调用）时保留请求直接返回，等 MainScreen 的
      * LaunchedEffect(Unit) 初始化完再调；就绪后调用则幂等消费。
      * 必须在 initTemplateStore 之后执行 clearActiveTemplate，
@@ -1253,6 +1254,9 @@ class MainViewModel @Inject constructor(
         quickScanPending = false
         if (workMode != WorkMode.TEMPLATE) {
             onWorkModeChange(WorkMode.TEMPLATE)
+        }
+        if (captureKernel != CaptureKernel.QR) {
+            onCaptureKernelChange(CaptureKernel.QR)
         }
         if (activeTemplateId != null) {
             clearActiveTemplate()

@@ -20,7 +20,7 @@ class QuickScanTileService : TileService() {
 
     override fun onStartListening() {
         qsTile?.let { tile ->
-            tile.icon = Icon.createWithResource(this, R.mipmap.n_ic_logo)
+            tile.icon = Icon.createWithResource(this, R.mipmap.ic_quick_scan_tile)
             tile.label = getString(R.string.quick_scan_tile_label)
             tile.state = Tile.STATE_INACTIVE
             tile.updateTile()
@@ -43,12 +43,13 @@ class QuickScanTileService : TileService() {
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        // 锁屏上点击：unlockAndRun 解锁成功后回调发送；未锁屏直接发送
+        // startActivityAndCollapse 是磁贴拉起界面的规范入口：系统收起控制中心后
+        // 再显示 Activity；锁屏上先 unlockAndRun 解锁。直接 pending.send() 不会收起面板。
         val km = getSystemService(KeyguardManager::class.java)
         if (km?.isKeyguardLocked == true) {
-            unlockAndRun { runCatching { pending.send() } }
+            unlockAndRun { runCatching { startActivityAndCollapse(pending) } }
         } else {
-            runCatching { pending.send() }
+            runCatching { startActivityAndCollapse(pending) }
         }
         if (tile != null) {
             tile.state = Tile.STATE_INACTIVE
