@@ -242,4 +242,57 @@ class OcrRegexMatcherTest {
             )
         )
     }
+
+    // ===== findAllMatchRanges（Big Bang 涂抹选词的命中区段） =====
+
+    @Test
+    fun `区段与findAllMatches一致`() {
+        val r = OcrRegexTemplates.digits(4, 4)
+        assertEquals(listOf(0..3, 5..8), OcrRegexMatcher.findAllMatchRanges("1105-0402", r))
+    }
+
+    @Test
+    fun `区段基于trim后坐标`() {
+        val r = OcrRegexTemplates.digits(4, 4)
+        assertEquals(listOf(2..5), OcrRegexMatcher.findAllMatchRanges("  ab1234cd", r))
+    }
+
+    @Test
+    fun `空正则返回整行区段`() {
+        assertEquals(listOf(0..2), OcrRegexMatcher.findAllMatchRanges("abc", ""))
+    }
+
+    @Test
+    fun `非法正则返回整行区段而不是崩溃`() {
+        assertEquals(listOf(0..2), OcrRegexMatcher.findAllMatchRanges("abc", "([0-9"))
+    }
+
+    @Test
+    fun `无命中返回空区段列表`() {
+        assertTrue(OcrRegexMatcher.findAllMatchRanges("abc", OcrRegexTemplates.digits(4, 4)).isEmpty())
+    }
+
+    @Test
+    fun `空白行返回空`() {
+        assertTrue(OcrRegexMatcher.findAllMatchRanges("   ", "").isEmpty())
+    }
+
+    @Test
+    fun `lookaround边界不产生重叠区段`() {
+        // 14 位数字串配 4 位模板：lookaround 保证 12 位里不截取前 4 位，整串不命中
+        val r = OcrRegexTemplates.digits(4, 4)
+        assertTrue(OcrRegexMatcher.findAllMatchRanges("123456781234", r).isEmpty())
+    }
+
+    @Test
+    fun `相接命中合并成一个区段`() {
+        // "1234" 配裸 2 位模板命中 "12"(0..1) 与 "34"(2..3)，相接 → 合并 0..3
+        assertEquals(listOf(0..3), OcrRegexMatcher.findAllMatchRanges("1234", "\\d\\d"))
+    }
+
+    @Test
+    fun `重叠命中合并成一个区段`() {
+        // "abcd" 配 "a|abc" 类多分支命中 (0..0) 与 (0..2) → 合并 0..2
+        assertEquals(listOf(0..2), OcrRegexMatcher.findAllMatchRanges("abcd", "abc|a"))
+    }
 }

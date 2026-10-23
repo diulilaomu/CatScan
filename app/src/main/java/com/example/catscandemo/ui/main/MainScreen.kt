@@ -85,7 +85,7 @@ import com.example.catscandemo.ui.components.DiscreteRoomSelectionDialog
 import com.example.catscandemo.ui.components.LineNumberTextEditor
 import com.example.catscandemo.ui.components.NewTemplateFields
 import com.example.catscandemo.ui.components.NewTemplateParamsState
-import com.example.catscandemo.ui.components.OcrImageResultDialog
+import com.example.catscandemo.ui.components.OcrBangDialog
 import com.example.catscandemo.ui.components.OcrRegexDialog
 import com.example.catscandemo.ui.components.ResultItemController
 import com.example.catscandemo.ui.components.SettingsDrawer
@@ -893,15 +893,16 @@ fun MainScreen(viewModel: MainViewModel) {
         )
     }
 
-    // 文字识别内核：相册识别结果弹窗（命中片段高亮，点选录入，可连续点选）
+    // 文字识别内核：相册识别结果 Big Bang 涂抹选词界面（点块/涂抹多选→插入缓存→确定逐条录入）
     if (viewModel.showOcrImageDialog) {
-        OcrImageResultDialog(
+        OcrBangDialog(
             lines = viewModel.ocrImageLines,
             ocrRegex = viewModel.ocrRegex,
-            onPickText = { text ->
-                viewModel.onBarcodeScanned(text, copyToClipboard, showToast)
+            onConfirm = { texts ->
+                viewModel.onOcrBangConfirm(texts, copyToClipboard, showToast)
+                viewModel.showOcrImageDialog = false
             },
-            onDismiss = { viewModel.showOcrImageDialog = false }
+            onCancel = { viewModel.showOcrImageDialog = false }
         )
     }
 

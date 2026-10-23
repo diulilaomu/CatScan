@@ -33,6 +33,35 @@ object OcrRegexMatcher {
             .distinct()
             .toList()
     }
+
+    /**
+     * 提取所有命中区段（trim 后坐标），按起点排序并合并重叠/相接的区段。
+     * 正则为空或非法 → 整段一个区段；无命中 → 空列表。
+     * 注意坐标基于 trim 后的文字，与 [findAllMatches] 的语义一致。
+     */
+    fun findAllMatchRanges(text: String, regex: String): List<IntRange> {
+        val trimmed = text.trim()
+        if (trimmed.isEmpty()) return emptyList()
+        val compiled = compileOrNull(regex) ?: return listOf(trimmed.indices)
+        val sorted = compiled.findAll(trimmed)
+            .map { it.range }
+            .filter { !it.isEmpty() }
+            .sortedWith(compareBy({ it.first }, { it.last }))
+            .toList()
+        // 合并重叠或相接的区段（相接合并避免命中碎片之间夹出零散空隙块）
+        val merged = mutableListOf<IntRange>()
+        for (range in sorted) {
+            val last = merged.lastOrNull()
+            if (last != null && range.first <= last.last + 1) {
+                if (range.last > last.last) {
+                    merged[merged.size - 1] = last.first..range.last
+                }
+            } else {
+                merged.add(range)
+            }
+        }
+        return merged
+    }
 }
 
 /**

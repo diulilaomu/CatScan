@@ -1790,6 +1790,24 @@ class MainViewModel @Inject constructor(
 
     // ===================== 扫码入口 =====================
 
+    /**
+     * Big Bang 涂抹选词界面的确定入口：按缓存顺序逐条复用扫码录入链路
+     * （模板模式=游标推进/查重/上传 PC/列表刷新；文本模式=逐条插入文档光标处）。
+     */
+    fun onOcrBangConfirm(
+        texts: List<String>,
+        copyToClipboard: (String) -> Unit,
+        showToast: (String) -> Unit
+    ) {
+        var accepted = 0
+        texts.forEach { text ->
+            val before = scanResults.value.size
+            onBarcodeScanned(text, copyToClipboard, showToast)
+            if (scanResults.value.size > before || workMode == WorkMode.TEXT) accepted++
+        }
+        showToast(if (accepted == texts.size) "已录入 $accepted 条" else "已录入 $accepted/${texts.size} 条（重复项已跳过）")
+    }
+
     fun onBarcodeScanned(
 
         code: String,
