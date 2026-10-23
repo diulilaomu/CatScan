@@ -507,7 +507,7 @@ fun MainScreen(viewModel: MainViewModel) {
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        if (viewModel.cameraEnabled) {
+                        if (viewModel.cameraEnabled && !viewModel.ocrBangSuppressCamera) {
                             AutoRequestCameraPermission {
                                 CameraPreview(
                                     onBarcodeDetected = { code ->
@@ -893,8 +893,13 @@ fun MainScreen(viewModel: MainViewModel) {
         )
     }
 
-    // 文字识别内核：相册识别结果 Big Bang 涂抹选词界面（点块/涂抹多选→插入缓存→确定逐条录入）
+    // 文字识别内核：相册识别结果 Big Bang 涂抹选词界面（点块/涂抹多选→插入缓存→确定逐条录入）。
+    // 弹窗期间临时挂起相机预览省电（不改用户保存的摄像头开关），关闭即恢复
     if (viewModel.showOcrImageDialog) {
+        DisposableEffect(Unit) {
+            viewModel.ocrBangSuppressCamera = true
+            onDispose { viewModel.ocrBangSuppressCamera = false }
+        }
         OcrBangDialog(
             lines = viewModel.ocrImageLines,
             ocrRegex = viewModel.ocrRegex,

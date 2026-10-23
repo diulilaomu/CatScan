@@ -1231,6 +1231,13 @@ class MainViewModel @Inject constructor(
     var cameraEnabled by mutableStateOf(true)
         private set
 
+    /**
+     * Big Bang 选词弹窗期间的相机临时抑制位（不持久化）：
+     * 相册识别结果弹出时置 true 暂停预览省电，弹窗关闭恢复；
+     * 与 cameraEnabled 独立，不污染用户保存的开关状态。
+     */
+    var ocrBangSuppressCamera by mutableStateOf(false)
+
     fun onToggleCameraEnabled() {
         // 关闭前记住当前展开高度，重新打开时恢复
         if (cameraEnabled && splitRatio > 0.05f) {

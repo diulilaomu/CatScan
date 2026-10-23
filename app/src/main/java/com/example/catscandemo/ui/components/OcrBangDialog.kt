@@ -408,8 +408,10 @@ private fun BangScrollbar(
     val thumbHeightPx = ((viewportHeightPx.toFloat() * viewportHeightPx / contentHeightPx)
         .roundToInt()).coerceAtLeast(40)
     val trackHeightPx = (viewportHeightPx - thumbHeightPx).coerceAtLeast(1)
+    // 滑块顶部对齐 + 偏移，偏移钳制在轨道内，滚到底也不越过上半区下边界
     val thumbY = if (scrollState.maxValue > 0) {
         (scrollState.value.toFloat() / scrollState.maxValue * trackHeightPx).roundToInt()
+            .coerceIn(0, trackHeightPx)
     } else 0
     Box(
         modifier = modifier
@@ -427,7 +429,7 @@ private fun BangScrollbar(
                     }
                 }
             },
-        contentAlignment = Alignment.CenterEnd
+        contentAlignment = Alignment.TopEnd
     ) {
         Box(
             Modifier
