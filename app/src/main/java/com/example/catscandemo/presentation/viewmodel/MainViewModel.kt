@@ -1227,6 +1227,45 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    // ===== 快扫入口（控制中心磁贴）=====
+
+    /** 磁贴/外部入口已请求快扫预设，等存储就绪后由 applyQuickScanIfPending 消费 */
+    private var quickScanPending = false
+
+    /** 磁贴点击时调用：先记请求，无论进程是否已启动都会在入口就绪后套用预设 */
+    fun requestQuickScan() {
+        quickScanPending = true
+    }
+
+    /**
+     * 应用快扫预设：切到 TEMPLATE 工作模式 + 无模板 + 自动复制开 + 摄像头开启。
+     * 存储未就绪（冷启动极早调用）时保留请求直接返回，等 MainScreen 的
+     * LaunchedEffect(Unit) 初始化完再调；就绪后调用则幂等消费。
+     * 必须在 initTemplateStore 之后执行 clearActiveTemplate，
+     * 否则空仓库会把 templates.json 覆盖成空。
+     * workMode 切 TEMPLATE 而不是留在 TEXT：模板模式的自动复制默认开、
+     * 无模板桶的录入路径与模板列表互不干扰，且镜头休眠只作用于文本模式，
+     * 扫码场景不该被一分钟休眠掐断。
+     */
+    fun applyQuickScanIfPending() {
+        if (!quickScanPending) return
+        if (!storeReady || !settingsReady) return
+        quickScanPending = false
+        if (workMode != WorkMode.TEMPLATE) {
+            onWorkModeChange(WorkMode.TEMPLATE)
+        }
+        if (activeTemplateId != null) {
+            clearActiveTemplate()
+        }
+        if (!_clipboardEnabledTemplate.value) {
+            onClipboardEnabledChange(true)
+        }
+        if (!cameraEnabled) {
+            onToggleCameraEnabled()
+        }
+    }
+
+
     // 摄像头开关（扫码图标）：关闭后不绑定相机以省电；状态持久化，下次启动保持
     var cameraEnabled by mutableStateOf(true)
         private set

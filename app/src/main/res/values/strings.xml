@@ -1,3 +1,4 @@
 ﻿<resources>
     <string name="app_name">CatScanDemo</string>
+    <string name="quick_scan_tile_label">猫头枪扫码</string>
 </resources>

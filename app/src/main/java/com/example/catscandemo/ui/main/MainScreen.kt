@@ -122,6 +122,27 @@ fun MainScreen(viewModel: MainViewModel) {
         viewModel.startPassivePcDiscovery(context.applicationContext)
         // 加载初始扫描数据并更新StateFlow
         viewModel.getAllScans()
+        // 快扫预设（控制中心磁贴）：存储全部就绪后套用，避免 clearActiveTemplate 覆盖空模板仓库
+        // （冷启动首次 ON_RESUME 早于本副作用注册，必须在这里消费，不能只靠 ON_RESUME 观察者）
+        if ((context as? MainActivity)?.pollQuickScanRequested() == true) {
+            viewModel.requestQuickScan()
+            viewModel.applyQuickScanIfPending()
+        }
+    }
+
+    // 已在运行时从磁贴再次点击：onNewIntent 已记请求，回来前台即套用
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    androidx.compose.runtime.DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                if ((context as? MainActivity)?.pollQuickScanRequested() == true) {
+                    viewModel.requestQuickScan()
+                    viewModel.applyQuickScanIfPending()
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     val latestContext by rememberUpdatedState(context)

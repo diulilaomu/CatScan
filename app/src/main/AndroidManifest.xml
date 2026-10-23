@@ -21,6 +21,7 @@
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"
+            android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.CatScanDemo">
             <intent-filter>
@@ -29,6 +30,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 控制中心快捷扫码磁贴：点击拉起 MainActivity 并应用快扫预设 -->
+        <service
+            android:name=".ui.main.QuickScanTileService"
+            android:exported="true"
+            android:icon="@mipmap/n_ic_logo"
+            android:label="@string/quick_scan_tile_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

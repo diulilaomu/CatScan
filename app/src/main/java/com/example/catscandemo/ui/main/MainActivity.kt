@@ -1,5 +1,6 @@
 package com.example.catscandemo.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -65,6 +66,7 @@ private val CatScanDarkColors = darkColorScheme(
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        consumeQuickScanIntent(intent)
         setContent {
             val viewModel: MainViewModel = hiltViewModel()
             val darkTheme = when (viewModel.themeMode) {
@@ -81,4 +83,26 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        // 已在运行时磁贴再次点击走 here（launchMode singleTask），同样记下快扫请求
+        consumeQuickScanIntent(intent)
+    }
+
+    /** 控制中心磁贴入口：只记请求，预设等 MainScreen 初始化完存储后套用 */
+    private fun consumeQuickScanIntent(intent: Intent?) {
+        if (intent?.getBooleanExtra(QuickScanTileService.EXTRA_QUICK_SCAN, false) == true) {
+            quickScanRequested = true
+        }
+    }
+
+    /** MainScreen 初始化完成后回调取走请求；进程已启动时立即生效，冷启动等存储就绪 */
+    fun pollQuickScanRequested(): Boolean {
+        val requested = quickScanRequested
+        quickScanRequested = false
+        return requested
+    }
+
+    private var quickScanRequested = false
 }
