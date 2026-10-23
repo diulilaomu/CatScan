@@ -53,6 +53,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -67,9 +68,11 @@ import com.example.catscandemo.utils.OcrWordTokenizer.OcrToken
 /**
  * 图片识别结果的 Big Bang 涂抹选词界面（锤子 Big Bang 式交互）
  *
- * 上半区：识别文字按行拆成词块铺开——正则命中块底色高亮；单击切换选中，
- * 手指涂抹（按住划过）只加选；空隙处按下可正常滚动列表。
- * 两半区中间右对齐"插入(N)"：选中块按阅读顺序拼成一行进缓存列表，随后清空全部选中。
+ * 悬浮窗居中（3/4 屏高 × 4/5 屏宽）。无视图片原文换行：各行词块按阅读顺序
+ * 铺成一面连续的词块墙，只在碰到窗口边缘才换行——正则命中块高亮。
+ * 手势：单击块=切换选中；按住涂抹跟随按下瞬间起点块的状态——起点未选中
+ * 则路径上全部加选，起点已选中则路径上全部取消；空隙处按下可正常滚动。
+ * 中间右对齐"插入(N)"：选中块按阅读顺序拼成一行进缓存列表，随后清空全部选中。
  * 下半区：本次会话的缓存行，单击文本框直接弹输入法编辑，右侧垃圾桶删除。
  * 右下角确定=逐条走现有录入链路（模板模式推进游标/查重/上传，文本模式插入文档光标处）；
  * 缓存为空时确定禁用。取消/返回=整次会话丢弃。
@@ -82,13 +85,13 @@ fun OcrBangDialog(
     onConfirm: (List<String>) -> Unit,
     onCancel: () -> Unit
 ) {
-    // 会话数据：单张图生命周期，换图（lines 变化）即整体重置
-    val rowTokens = remember(lines, ocrRegex) {
-        lines.mapNotNull { raw ->
+    // 会话数据：单张图生命周期，换图（lines 变化）即整体重置。
+    // 不按行分段，全部行平铺成一个词块序列（下标即阅读顺序）
+    val allTokens = remember(lines, ocrRegex) {
+        lines.flatMap { raw ->
             val line = raw.trim()
-            if (line.isEmpty()) return@mapNotNull null
-            val ranges = OcrRegexMatcher.findAllMatchRanges(line, ocrRegex)
-            OcrWordTokenizer.split(line, ranges)
+            if (line.isEmpty()) emptyList()
+            else OcrWordTokenizer.split(line, OcrRegexMatcher.findAllMatchRanges(line, ocrRegex))
         }
     }
     val hitCount = remember(lines, ocrRegex) {
@@ -98,24 +101,30 @@ fun OcrBangDialog(
     val cachedItems = remember(lines) { mutableStateListOf<BangCachedItem>() }
     var nextItemId by remember(lines) { mutableStateOf(0L) }
 
-    // 词块选中集合（key = "行:块"）与词块屏幕坐标表（涂抹命中测试用）
-    val selected = remember(lines) { mutableStateListOf<String>() }
-    val tokenRects = remember(lines) { mutableStateMapOf<String, Rect>() }
+    // 词块选中集合（下标）与词块屏幕坐标表（涂抹命中测试用）
+    val selected = remember(lines) { mutableStateListOf<Int>() }
+    val tokenRects = remember(lines) { mutableStateMapOf<Int, Rect>() }
     var containerRootOffset by remember { mutableStateOf(Offset.Zero) }
 
-    fun hitTest(rootPos: Offset): String? {
-        for ((id, rect) in tokenRects) {
-            if (rect.contains(rootPos)) return id
+    fun hitTest(rootPos: Offset): Int? {
+        for ((idx, rect) in tokenRects) {
+            if (rect.contains(rootPos)) return idx
         }
         return null
     }
 
+    fun applyTo(idx: Int, add: Boolean) {
+        if (add) {
+            if (idx !in selected) selected.add(idx)
+        } else {
+            selected.remove(idx)
+        }
+    }
+
     fun insertSelected() {
         val sb = StringBuilder()
-        rowTokens.forEachIndexed { rowIdx, tokens ->
-            tokens.forEachIndexed { tokenIdx, token ->
-                if ("$rowIdx:$tokenIdx" in selected) sb.append(token.text)
-            }
+        for (idx in allTokens.indices) {
+            if (idx in selected) sb.append(allTokens[idx].text)
         }
         val text = sb.toString()
         if (text.isNotBlank()) {
@@ -132,12 +141,18 @@ fun OcrBangDialog(
         )
     }
 
+    // 悬浮窗尺寸：4/5 屏宽 × 3/4 屏高，Dialog 默认居中
+    val configuration = LocalConfiguration.current
+    val dialogWidth = configuration.screenWidthDp.dp * 0.8f
+    val dialogHeight = configuration.screenHeightDp.dp * 0.75f
+
     Dialog(
         onDismissRequest = onCancel,
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Surface(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.size(dialogWidth, dialogHeight),
+            shape = MaterialTheme.shapes.large,
             color = MaterialTheme.colorScheme.background
         ) {
             Column(Modifier.fillMaxSize().padding(16.dp)) {
@@ -157,7 +172,7 @@ fun OcrBangDialog(
                     }
                 }
                 Text(
-                    text = "共 ${rowTokens.size} 行 · 命中 $hitCount 处 · 已缓存 ${cachedItems.size} 条",
+                    text = "共 ${allTokens.size} 块 · 命中 $hitCount 处 · 已缓存 ${cachedItems.size} 条",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -171,12 +186,14 @@ fun OcrBangDialog(
                         .fillMaxWidth()
                         .verticalScroll(scrollState)
                         .onGloballyPositioned { containerRootOffset = it.positionInRoot() }
-                        .pointerInput(rowTokens) {
+                        .pointerInput(allTokens) {
                             val touchSlop = viewConfiguration.touchSlop
                             awaitEachGesture {
                                 val down = awaitFirstDown(requireUnconsumed = false)
                                 val downRoot = down.position + containerRootOffset
                                 val hitId = hitTest(downRoot) ?: return@awaitEachGesture
+                                // 涂抹语义在按下瞬间定格：起点未选中=加选模式，已选中=取消模式
+                                val dragAdd = hitId !in selected
                                 down.consume()
                                 var smeared = false
                                 var lastRoot = downRoot
@@ -185,11 +202,8 @@ fun OcrBangDialog(
                                     val change = event.changes.firstOrNull { it.id == down.id }
                                         ?: break
                                     if (!change.pressed) {
-                                        // 未拖动=单击切换；拖动过=涂抹已沿途加选
-                                        if (!smeared) {
-                                            if (hitId in selected) selected.remove(hitId)
-                                            else selected.add(hitId)
-                                        }
+                                        // 未拖动=单击按起点状态加/取消（即切换）；拖动过沿途已处理
+                                        if (!smeared) applyTo(hitId, dragAdd)
                                         break
                                     }
                                     val posRoot = change.position + containerRootOffset
@@ -197,7 +211,7 @@ fun OcrBangDialog(
                                         (change.position - down.position).getDistance() > touchSlop
                                     ) {
                                         smeared = true
-                                        if (hitId !in selected) selected.add(hitId)
+                                        applyTo(hitId, dragAdd)
                                     }
                                     if (smeared) {
                                         // 快速划动事件间距大，沿路径插值补采避免漏块
@@ -206,7 +220,7 @@ fun OcrBangDialog(
                                             .coerceIn(1, 80)
                                         for (i in 1..steps) {
                                             val p = lastRoot + delta * (i.toFloat() / steps)
-                                            hitTest(p)?.let { if (it !in selected) selected.add(it) }
+                                            hitTest(p)?.let { applyTo(it, dragAdd) }
                                         }
                                     }
                                     lastRoot = posRoot
@@ -216,7 +230,7 @@ fun OcrBangDialog(
                             }
                         }
                 ) {
-                    if (rowTokens.isEmpty()) {
+                    if (allTokens.isEmpty()) {
                         Text(
                             text = "未识别到文字",
                             style = MaterialTheme.typography.bodyMedium,
@@ -224,23 +238,18 @@ fun OcrBangDialog(
                             modifier = Modifier.padding(16.dp)
                         )
                     } else {
-                        Column(Modifier.fillMaxWidth().padding(4.dp)) {
-                            rowTokens.forEachIndexed { rowIdx, tokens ->
-                                FlowRow(
-                                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                                    modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)
-                                ) {
-                                    tokens.forEachIndexed { tokenIdx, token ->
-                                        BangToken(
-                                            token = token,
-                                            selected = "$rowIdx:$tokenIdx" in selected,
-                                            onRegisterRect = { rect ->
-                                                tokenRects["$rowIdx:$tokenIdx"] = rect
-                                            }
-                                        )
-                                    }
-                                }
+                        // 无视原文换行，全部词块铺进同一个 FlowRow，只在窗口边缘换行
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                            modifier = Modifier.fillMaxWidth().padding(4.dp)
+                        ) {
+                            allTokens.forEachIndexed { idx, token ->
+                                BangToken(
+                                    token = token,
+                                    selected = idx in selected,
+                                    onRegisterRect = { rect -> tokenRects[idx] = rect }
+                                )
                             }
                         }
                     }
@@ -313,7 +322,7 @@ private class BangCachedItem(id: Long, initialText: String) {
     val id: Long = id
 }
 
-/** 上半区单个词块：未选中=正则命中高亮/普通透明，选中=主色实底反白 */
+/** 词块：未选中=正则命中高亮/普通透明，选中=主色实底反白 */
 @Composable
 private fun BangToken(
     token: OcrToken,
