@@ -671,10 +671,12 @@ fun MainScreen(viewModel: MainViewModel) {
                             Surface(
                                 color = Color(0xFF000000).copy(alpha = 0.45f),
                                 shape = RoundedCornerShape(6.dp),
+                                // 点击直接进规则编辑器（与左下角正则按钮同效）
                                 modifier = Modifier
                                     .align(Alignment.BottomCenter)
                                     // 两侧避开左下/右下的按钮区
                                     .padding(start = 96.dp, end = 96.dp, bottom = 20.dp)
+                                    .clickable { showOcrRegexDialog = true }
                             ) {
                                 Text(
                                     text = ruleLabel,
