@@ -122,12 +122,11 @@ fun MainScreen(viewModel: MainViewModel) {
         viewModel.startPassivePcDiscovery(context.applicationContext)
         // 加载初始扫描数据并更新StateFlow
         viewModel.getAllScans()
-        // 快扫预设（控制中心磁贴）：存储全部就绪后套用，避免 clearActiveTemplate 覆盖空模板仓库
-        // （冷启动首次 ON_RESUME 早于本副作用注册，必须在这里消费，不能只靠 ON_RESUME 观察者）
-        if ((context as? MainActivity)?.pollQuickScanRequested() == true) {
-            viewModel.requestQuickScan()
-            viewModel.applyQuickScanIfPending()
-        }
+        // 快扫预设（控制中心磁贴）：存储全部就绪后套用，避免 clearActiveTemplate 覆盖空模板仓库。
+        // 必须无条件调用：冷启动时 ON_RESUME 观察者先于本副作用执行，已把 Activity 的请求
+        // 标记取走暂存进 ViewModel（存储未就绪被守卫挡住），在这里才能二次触达；
+        // 无请求时该函数幂等立即返回。
+        viewModel.applyQuickScanIfPending()
     }
 
     // 已在运行时从磁贴再次点击：onNewIntent 已记请求，回来前台即套用

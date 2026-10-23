@@ -302,6 +302,10 @@ class MainViewModel @Inject constructor(
         }
         loadSavedSettings()
 
+        // 快扫预设兜底：磁贴请求可能早于进程内任何初始化到达（冷启动直拉），
+        // 存储一就绪立刻套用，不依赖 UI 层副作用时序
+        applyQuickScanIfPending()
+
     }
 
     private fun loadSavedSettings() {
