@@ -55,6 +55,9 @@ import androidx.compose.ui.unit.dp
 import com.example.catscandemo.domain.model.CaptureKernel
 import com.example.catscandemo.domain.model.WorkMode
 import com.example.catscandemo.presentation.viewmodel.MainViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.math.roundToInt
 
 private enum class SettingsPage { MAIN, NETWORK, SCAN_PARAMS }
@@ -156,6 +159,14 @@ fun SettingsDrawer(
 
         // 署名：点击跳转 GitHub 仓库；有新版本时仅此位置变为更新提示（红点+版本号），其余界面不做任何提示
         val uriHandler = LocalUriHandler.current
+        // 署名日期取当前版本的安装/更新时间（即拿到该版本的日子），随每次升级自动前进
+        val context = LocalContext.current
+        val versionDate = remember {
+            runCatching {
+                val info = context.packageManager.getPackageInfo(context.packageName, 0)
+                SimpleDateFormat("yyyy.M.d", Locale.getDefault()).format(Date(info.lastUpdateTime))
+            }.getOrDefault("2025.11.1")
+        }
         val updateHintVersion = viewModel.updateHintVersion
         Row(
             modifier = Modifier
@@ -172,7 +183,7 @@ fun SettingsDrawer(
         ) {
             if (updateHintVersion == null) {
                 Text(
-                    text = "Wenhe x Rnzhy 2025.11.1 CatScan MIT",
+                    text = "Wenhe x Rnzhy $versionDate CatScan MIT",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary,
                     maxLines = 1
@@ -364,53 +375,56 @@ private fun MainSettingsPage(
 
         Spacer(Modifier.height(8.dp))
 
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onScanParamsClick),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-        ) {
-            Row(
+        // 扫描参数（通道 1 帧间隔、通道 2 检测阈值）只对二维码内核有意义，文字识别内核下隐藏入口
+        if (viewModel.captureKernel == CaptureKernel.QR) {
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .clickable(onClick = onScanParamsClick),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp, vertical = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.QrCodeScanner,
-                        contentDescription = "扫描参数",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Column {
-                        Text(
-                            text = "扫描参数",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.QrCodeScanner,
+                            contentDescription = "扫描参数",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(24.dp)
                         )
-                        Text(
-                            text = "通道 1 帧间隔、通道 2 检测阈值",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        Column {
+                            Text(
+                                text = "扫描参数",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = "通道 1 帧间隔、通道 2 检测阈值",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = "进入扫描参数",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "进入扫描参数",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(20.dp)
-                )
             }
-        }
 
-        Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(8.dp))
+        }
 
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
