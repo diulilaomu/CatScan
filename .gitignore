@@ -35,3 +35,4 @@ winClient/web/js.7z
 # 本地测试素材与工具配置
 testing/
 .zcodeignore
+.zcode/
