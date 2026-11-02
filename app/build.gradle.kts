@@ -51,8 +51,8 @@ android {
         applicationId = "com.example.catscandemo"
         minSdk = 26
         targetSdk = 36
-        versionCode = 50
-        versionName = "4.3.3"
+        versionCode = 51
+        versionName = "4.3.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

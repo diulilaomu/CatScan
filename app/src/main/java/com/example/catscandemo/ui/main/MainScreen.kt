@@ -1087,10 +1087,12 @@ fun MainScreen(viewModel: MainViewModel) {
 
     // 清空按钮二次确认
     if (showClearConfirm) {
-        val scopeText = if (viewModel.scanSelectedFloor == 0) {
-            "当前模板的全部"
-        } else {
-            "当前模板 ${viewModel.scanSelectedFloor} 层的"
+        // 无模板是伪模板（数据在独立桶），没有楼层维度：文案不能说"当前模板 N 层"
+        val isNoTemplate = viewModel.activeTemplate == null
+        val scopeText = when {
+            isNoTemplate -> "无模板的全部"
+            viewModel.scanSelectedFloor == 0 -> "当前模板的全部"
+            else -> "当前模板 ${viewModel.scanSelectedFloor} 层的"
         }
         AlertDialog(
             onDismissRequest = { showClearConfirm = false },

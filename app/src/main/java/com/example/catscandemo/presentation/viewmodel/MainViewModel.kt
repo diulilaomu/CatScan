@@ -2566,8 +2566,21 @@ class MainViewModel @Inject constructor(
 
     fun clearAllScans(showToast: (String) -> Unit) {
         val template = activeTemplate
+        // 无模板模式：无模板是伪模板，数据在独立桶（scan_history_no_template.json），
+        // 走 clearNoTemplateScans 而不是拦截；楼层筛选对它无意义，整桶清空
         if (template == null) {
-            showToast("请先选择模板")
+            val deletedScans = scanResults.value.map {
+                it.scanData.copy(templateId = "", templateName = "")
+            }
+            if (deletedScans.isEmpty()) {
+                showToast("暂无扫描数据")
+                return
+            }
+            dataManager.scanUseCases.clearNoTemplateScans()
+            noTemplateTemplate = null
+            getAllScans()
+            syncDeletedScansToPc(deletedScans, "无模板")
+            showToast("已清空全部 ${deletedScans.size} 条扫描数据")
             return
         }
 
@@ -2577,6 +2590,29 @@ class MainViewModel @Inject constructor(
             showToast = showToast
         )
 
+    }
+
+    /** 清空后把删除动作同步到 PC（开关关闭或未配对时静默跳过） */
+    private fun syncDeletedScansToPc(
+        deletedScans: List<com.example.catscandemo.domain.model.ScanData>,
+        logLabel: String
+    ) {
+        if (!uploadEnabled || serverUrl.isEmpty()) return
+        viewModelScope.launch(Dispatchers.IO) {
+            deletedScans.forEach { scanData ->
+                networkUseCases.uploadScanData(
+                    scanData = scanData,
+                    serverUrl = serverUrl,
+                    action = "delete",
+                    onSuccess = {
+                        Log.d(TAG, "同步清空${logLabel}数据成功: ${scanData.id}")
+                    },
+                    onError = { error ->
+                        Log.e(TAG, "同步清空${logLabel}数据失败: ${scanData.id}, $error")
+                    }
+                )
+            }
+        }
     }
 
     
