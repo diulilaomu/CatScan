@@ -8,6 +8,7 @@ import com.example.catscandemo.domain.model.ScanResult
 import com.example.catscandemo.domain.model.SeqConfig
 import com.example.catscandemo.domain.model.TemplateMode
 import com.example.catscandemo.domain.model.TemplateModel
+import com.example.catscandemo.utils.OcrCharMode
 import com.example.catscandemo.utils.OcrRegexTemplates
 import org.json.JSONArray
 import org.json.JSONObject
@@ -426,7 +427,9 @@ object SettingsStorage {
         val ocrRegex: String = DEFAULT_OCR_REGEX,
         // 正则弹窗最后使用的内置模板及其参数（JSON），重新打开时回填
         val ocrTemplateId: String = OcrRegexTemplates.ID_DIGITS,
-        val ocrTemplateParams: String = DEFAULT_OCR_TEMPLATE_PARAMS
+        val ocrTemplateParams: String = DEFAULT_OCR_TEMPLATE_PARAMS,
+        // 识别结果字符偏好：DIGITS（数字优先，默认）/ LETTERS（字母优先）/ OFF（不纠正）
+        val ocrCharMode: String = OcrCharMode.DIGITS.name
     )
 
     fun load(context: Context): Settings {
@@ -473,7 +476,8 @@ object SettingsStorage {
                     .ifBlank { "QR" },
                 ocrRegex = root.optString("ocrRegex", DEFAULT_OCR_REGEX),
                 ocrTemplateId = root.optString("ocrTemplateId", OcrRegexTemplates.ID_DIGITS),
-                ocrTemplateParams = root.optString("ocrTemplateParams", DEFAULT_OCR_TEMPLATE_PARAMS)
+                ocrTemplateParams = root.optString("ocrTemplateParams", DEFAULT_OCR_TEMPLATE_PARAMS),
+                ocrCharMode = OcrCharMode.fromName(root.optString("ocrCharMode", null)).name
             )
         } catch (e: Exception) {
             Log.w("SettingsStorage", "设置解析失败: ${e.message}")
@@ -506,6 +510,7 @@ object SettingsStorage {
             root.put("ocrRegex", settings.ocrRegex)
             root.put("ocrTemplateId", settings.ocrTemplateId)
             root.put("ocrTemplateParams", settings.ocrTemplateParams)
+            root.put("ocrCharMode", settings.ocrCharMode)
 
             writeTextAtomically(File(context.filesDir, FILE_NAME), root.toString())
         } catch (e: Exception) {

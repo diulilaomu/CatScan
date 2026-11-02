@@ -64,6 +64,9 @@ import com.example.catscandemo.domain.model.seqTagOf
 
 import com.example.catscandemo.domain.use_case.*
 
+import com.example.catscandemo.utils.OcrCharCorrector
+import com.example.catscandemo.utils.OcrCharMode
+
 import com.example.catscandemo.ui.main.TextDoc
 
 import com.example.catscandemo.ui.main.TextDocsStorage
@@ -335,6 +338,7 @@ class MainViewModel @Inject constructor(
         ocrRegex = settings.ocrRegex
         ocrTemplateId = settings.ocrTemplateId
         ocrTemplateParams = settings.ocrTemplateParams
+        ocrCharMode = OcrCharMode.fromName(settings.ocrCharMode)
         scheduleCameraSleep()
     }
 
@@ -408,7 +412,8 @@ class MainViewModel @Inject constructor(
                     captureKernel = captureKernel.name,
                     ocrRegex = ocrRegex,
                     ocrTemplateId = ocrTemplateId,
-                    ocrTemplateParams = ocrTemplateParams
+                    ocrTemplateParams = ocrTemplateParams,
+                    ocrCharMode = ocrCharMode.name
                 )
             )
         }
@@ -1182,6 +1187,20 @@ class MainViewModel @Inject constructor(
 
     var ocrTemplateParams by mutableStateOf("")
         private set
+
+    /**
+     * 识别结果字符偏好（默认数字优先）。
+     * ML Kit 模型无权重参数，这里在识别结果上做形近字符确定性纠正：
+     * 数字优先时把紧邻数字的 O/S/I/l/B/Z 还原成 0/5/1/1/8/2。
+     */
+    var ocrCharMode by mutableStateOf(OcrCharMode.DIGITS)
+        private set
+
+    fun onOcrCharModeChange(mode: OcrCharMode) {
+        if (ocrCharMode == mode) return
+        ocrCharMode = mode
+        persistSettings()
+    }
 
     fun setOcrRegex(regex: String, templateId: String, templateParams: String) {
         ocrRegex = regex.trim()
@@ -2221,10 +2240,15 @@ class MainViewModel @Inject constructor(
             recognizer.process(image)
                 .addOnSuccessListener { result ->
                     // 按块→行展开：行是最小可点选单位，块内多行不该挤成一条
-                    val lines = result.textBlocks
-                        .flatMap { block -> block.lines }
-                        .map { line -> line.text.trim() }
-                        .filter { it.isNotEmpty() }
+                    // 行文本先按字符偏好纠正（数字优先时 O→0、S→5），后续正则与选词都基于纠正后文本
+                    val lines = OcrCharCorrector.correctAllForOcr(
+                        result.textBlocks
+                            .flatMap { block -> block.lines }
+                            .map { line -> line.text.trim() }
+                            .filter { it.isNotEmpty() },
+                        ocrCharMode,
+                        ocrRegex
+                    )
                     if (lines.isEmpty()) {
                         showToast("未识别到文字")
                     } else {

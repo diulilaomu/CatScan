@@ -23,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -39,7 +40,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.catscandemo.utils.OcrCharMode
 import com.example.catscandemo.utils.OcrRegexMatcher
 import com.example.catscandemo.utils.OcrRegexTemplates
 import org.json.JSONObject
@@ -58,7 +61,8 @@ fun OcrRegexDialog(
     initialRegex: String,
     initialTemplateId: String,
     initialTemplateParams: String,
-    onConfirm: (regex: String, templateId: String, templateParams: String) -> Unit,
+    initialCharMode: OcrCharMode,
+    onConfirm: (regex: String, templateId: String, templateParams: String, charMode: OcrCharMode) -> Unit,
     onDismiss: () -> Unit
 ) {
     val initialParams = remember(initialTemplateParams) {
@@ -68,6 +72,9 @@ fun OcrRegexDialog(
     var regexText by remember { mutableStateOf(initialRegex) }
     // 当前展开的模板（重开时展开上次使用的）
     var expandedId by remember { mutableStateOf<String?>(initialTemplateId.takeIf { it.isNotBlank() }) }
+    // 识别字符偏好：默认折叠，点标题行展开
+    var charModeExpanded by remember { mutableStateOf(false) }
+    var charMode by remember { mutableStateOf(initialCharMode) }
 
     var digitsMin by remember { mutableStateOf(initialParams.optString("digitsMin", "8")) }
     var digitsMax by remember { mutableStateOf(initialParams.optString("digitsMax", "15")) }
@@ -131,7 +138,7 @@ fun OcrRegexDialog(
             put("prefixMin", prefixMin)
             put("prefixMax", prefixMax)
         }.toString()
-        onConfirm(trimmedRegex, expandedId.orEmpty(), paramsJson)
+        onConfirm(trimmedRegex, expandedId.orEmpty(), paramsJson, charMode)
     }
 
     AlertDialog(
@@ -143,6 +150,15 @@ fun OcrRegexDialog(
                     .heightIn(max = 460.dp)
                     .verticalScroll(rememberScrollState())
             ) {
+                // 识别字符偏好（默认折叠）：ML Kit 模型无权重参数，这里改的是识别结果的形近字符映射
+                OcrCharModeSection(
+                    expanded = charModeExpanded,
+                    onToggle = { charModeExpanded = !charModeExpanded },
+                    mode = charMode,
+                    onModeChange = { charMode = it }
+                )
+
+                Spacer(Modifier.height(8.dp))
                 CompactTextField(
                     value = regexText,
                     onValueChange = { regexText = it },
@@ -332,6 +348,109 @@ fun OcrRegexDialog(
             TextButton(onClick = onDismiss) { Text("取消") }
         }
     )
+}
+
+/**
+ * 识别字符偏好折叠区：标题行右侧显示当前模式，展开后为三档 FilterChip。
+ *
+ * 复用 [RegexTemplateItem] 的展开动画（AnimatedVisibility 一次性布局 + 逐帧裁剪），
+ * 折叠态零成本，展开态不逐帧重测输入区。
+ */
+@Composable
+private fun OcrCharModeSection(
+    expanded: Boolean,
+    onToggle: () -> Unit,
+    mode: OcrCharMode,
+    onModeChange: (OcrCharMode) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onToggle)
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "识别字符偏好",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = mode.label(),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            val arrowRotation by animateFloatAsState(
+                targetValue = if (expanded) 180f else 0f,
+                animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing),
+                label = "charModeArrowRotation"
+            )
+            Icon(
+                imageVector = Icons.Filled.ArrowDropDown,
+                contentDescription = if (expanded) "收起" else "展开",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.graphicsLayer { rotationZ = arrowRotation }
+            )
+        }
+        AnimatedVisibility(
+            visible = expanded,
+            enter = expandVertically(
+                animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing)
+            ) + fadeIn(
+                animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing)
+            ),
+            exit = shrinkVertically(
+                animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing)
+            ) + fadeOut(animationSpec = tween(durationMillis = 150))
+        ) {
+            Column(modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OcrCharMode.entries.forEach { candidate ->
+                        FilterChip(
+                            selected = mode == candidate,
+                            onClick = { onModeChange(candidate) },
+                            modifier = Modifier.weight(1f),
+                            label = {
+                                Text(
+                                    text = candidate.label(),
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 1
+                                )
+                            }
+                        )
+                    }
+                }
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    text = mode.hint(),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+    }
+}
+
+/** 模式短标签（chip 与折叠标题右侧共用） */
+private fun OcrCharMode.label(): String = when (this) {
+    OcrCharMode.DIGITS -> "数字优先"
+    OcrCharMode.LETTERS -> "字母优先"
+    OcrCharMode.OFF -> "不纠正"
+}
+
+/** 模式说明：讲清"纠正的是什么"以及"什么情况下不纠正" */
+private fun OcrCharMode.hint(): String = when (this) {
+    OcrCharMode.DIGITS ->
+        "数字为主的串里，紧邻数字的 O/o→0、S/s→5、I/l→1、B→8、Z→2 会被还原成数字；" +
+            "字母为主的串（如 CODE2024、DR 前缀）保持原样"
+    OcrCharMode.LETTERS ->
+        "字母为主的串里，紧邻字母的 0→O、1→I、5→S、8→B、2→Z 会被还原成字母；" +
+            "数字为主的串保持原样"
+    OcrCharMode.OFF -> "完全保留模型原文，不做任何形近字符替换"
 }
 
 /**

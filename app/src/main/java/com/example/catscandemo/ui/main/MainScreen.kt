@@ -542,6 +542,7 @@ fun MainScreen(viewModel: MainViewModel) {
                                     channel2MinGradScore = viewModel.channel2MinGradScore,
                                     captureKernel = viewModel.captureKernel,
                                     ocrRegex = viewModel.ocrRegex,
+                                    ocrCharMode = viewModel.ocrCharMode,
                                     onOcrLiveText = { ocrLiveText = it }
                                 )
                             }
@@ -907,8 +908,10 @@ fun MainScreen(viewModel: MainViewModel) {
             initialRegex = viewModel.ocrRegex,
             initialTemplateId = viewModel.ocrTemplateId,
             initialTemplateParams = viewModel.ocrTemplateParams,
-            onConfirm = { regex, templateId, templateParams ->
+            initialCharMode = viewModel.ocrCharMode,
+            onConfirm = { regex, templateId, templateParams, charMode ->
                 viewModel.setOcrRegex(regex, templateId, templateParams)
+                viewModel.onOcrCharModeChange(charMode)
                 showOcrRegexDialog = false
             },
             onDismiss = { showOcrRegexDialog = false }

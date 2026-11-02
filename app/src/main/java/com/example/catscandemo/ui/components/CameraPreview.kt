@@ -24,6 +24,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.example.catscandemo.domain.model.CaptureKernel
 import com.example.catscandemo.utils.NativeBarcodeDetector
+import com.example.catscandemo.utils.OcrCharCorrector
+import com.example.catscandemo.utils.OcrCharMode
 import com.example.catscandemo.utils.OcrRegexMatcher
 import com.example.catscandemo.utils.RealtimeFrameCropEngine
 import com.google.android.gms.tasks.Tasks
@@ -300,6 +302,7 @@ fun CameraPreview(
     channel2MinGradScore: Double = 8.0,
     captureKernel: CaptureKernel = CaptureKernel.QR,
     ocrRegex: String = "",
+    ocrCharMode: OcrCharMode = OcrCharMode.DIGITS,
     onOcrLiveText: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -316,6 +319,7 @@ fun CameraPreview(
     // 内核/正则/回调都经 rememberUpdatedState，分析器闭包逐帧读到最新值
     val captureKernelState = rememberUpdatedState(captureKernel)
     val ocrRegexState = rememberUpdatedState(ocrRegex)
+    val ocrCharModeState = rememberUpdatedState(ocrCharMode)
     val onBarcodeDetectedState = rememberUpdatedState(onBarcodeDetected)
     val onOcrLiveTextState = rememberUpdatedState(onOcrLiveText)
 
@@ -429,6 +433,7 @@ fun CameraPreview(
                                                         imageWidth = mediaImage.width,
                                                         imageHeight = mediaImage.height,
                                                         ocrRegex = ocrRegexState.value,
+                                                        ocrCharMode = ocrCharModeState.value,
                                                         barcodeStabilizer = barcodeStabilizer,
                                                         onOcrLiveText = onOcrLiveTextState.value,
                                                         onBarcodeDetected = onBarcodeDetectedState.value
@@ -738,6 +743,7 @@ private fun handleOcrFrameText(
     imageWidth: Int,
     imageHeight: Int,
     ocrRegex: String,
+    ocrCharMode: OcrCharMode,
     barcodeStabilizer: BarcodeStabilizer,
     onOcrLiveText: (String) -> Unit,
     onBarcodeDetected: (String) -> Unit
@@ -751,7 +757,9 @@ private fun handleOcrFrameText(
     result.textBlocks.forEach { block ->
         block.lines.forEach { line ->
             val box = line.boundingBox ?: return@forEach
-            val text = line.text.trim()
+            // 字符偏好纠正为等长逐字符映射，行文本长度与正则下标不受影响；
+            // 原文已命中正则时保留原文（用户指定的字母前缀不被改坏）
+            val text = OcrCharCorrector.correctForOcr(line.text.trim(), ocrCharMode, ocrRegex)
             if (text.isEmpty()) return@forEach
             // ML Kit 的 boundingBox 已是转正后坐标，与条码通道同一约定
             val centerY = (box.top + box.bottom) / 2f
