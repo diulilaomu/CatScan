@@ -69,7 +69,8 @@ fun TemplateEditorRightDrawer(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(drawerWidth)
-                    .windowInsetsPadding(WindowInsets.safeDrawing), // 閬垮紑鐘舵€佹爮/鍒樻捣/鎵嬪娍鏍?                tonalElevation = 6.dp,
+                    .windowInsetsPadding(WindowInsets.safeDrawing), // 避开状态栏/刘海/手势栏
+                tonalElevation = 6.dp,
                 shape = MaterialTheme.shapes.large
             ) {
                 TemplateEditorNavigator(

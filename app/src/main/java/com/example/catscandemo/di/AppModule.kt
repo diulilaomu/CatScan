@@ -18,17 +18,17 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 /**
- * Hilt 妯″潡
- * 鎻愪緵搴旂敤鎵€闇€鐨勪緷璧栭」
+ * Hilt 模块
+ * 提供应用所需的依赖项
  */
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    // ==================== Repository 鎻愪緵 ====================
+    // ==================== Repository 提供 ====================
 
     /**
-     * 鎻愪緵妯℃澘浠撳簱瀹炰緥
+     * 提供模板仓库实例
      */
     @Provides
     @Singleton
@@ -39,7 +39,7 @@ object AppModule {
     }
 
     /**
-     * 鎻愪緵鎵弿鏁版嵁浠撳簱瀹炰緥
+     * 提供扫描数据仓库实例
      */
     @Provides
     @Singleton
@@ -50,7 +50,7 @@ object AppModule {
     }
 
     /**
-     * 鎻愪緵缃戠粶浠撳簱瀹炰緥
+     * 提供网络仓库实例
      */
     @Provides
     @Singleton
@@ -62,7 +62,7 @@ object AppModule {
     }
 
     /**
-     * 鎻愪緵 CatScanClient 瀹炰緥
+     * 提供 CatScanClient 实例
      */
     @Provides
     @Singleton
@@ -71,7 +71,7 @@ object AppModule {
     }
 
     /**
-     * 鎻愪緵 NetworkDiscovery 瀹炰緥
+     * 提供 NetworkDiscovery 实例
      */
     @Provides
     @Singleton
@@ -81,10 +81,10 @@ object AppModule {
         return NetworkDiscovery(context)
     }
 
-    // ==================== Use Case 鎻愪緵 ====================
+    // ==================== Use Case 提供 ====================
 
     /**
-     * 鎻愪緵妯℃澘鐩稿叧鐨?Use Case 瀹炰緥
+     * 提供模板相关的 Use Case 实例
      */
     @Provides
     @Singleton
@@ -117,7 +117,7 @@ object AppModule {
     }
 
     /**
-     * 鎻愪緵鎵弿鐩稿叧鐨?Use Case 瀹炰緥
+     * 提供扫描相关的 Use Case 实例
      */
     @Provides
     @Singleton
@@ -157,7 +157,7 @@ object AppModule {
     }
 
     /**
-     * 鎻愪緵缃戠粶鐩稿叧鐨?Use Case 瀹炰緥
+     * 提供网络相关的 Use Case 实例
      */
     @Provides
     @Singleton
@@ -188,7 +188,7 @@ object AppModule {
     }
 
     /**
-     * 鎻愪緵 UpdateTemplateUseCase 瀹炰緥
+     * 提供 UpdateTemplateUseCase 实例
      */
     @Provides
     @Singleton

@@ -5,7 +5,7 @@ import com.example.catscandemo.domain.model.ScanResult
 import com.example.catscandemo.domain.model.TemplateModel
 
 /**
- * 鎵弿鏁版嵁绠＄悊鐩稿叧鐨?Use Case
+ * 扫描数据管理相关的 Use Case
  */
 class ScanUseCases(
     val addScan: AddScanUseCase,
@@ -33,7 +33,7 @@ class ScanUseCases(
 }
 
 /**
- * 娓呯┖鎵€鏈夋壂鎻忔暟鎹殑 Use Case
+ * 清空所有扫描数据的 Use Case
  */
 class ClearAllScansUseCase(
     private val scanRepository: ScanRepository
@@ -44,7 +44,7 @@ class ClearAllScansUseCase(
 }
 
 /**
- * 鏇挎崲鎵€鏈夋壂鎻忔暟鎹殑 Use Case
+ * 替换所有扫描数据的 Use Case
  */
 class ReplaceAllScansUseCase(
     private val scanRepository: ScanRepository
@@ -67,7 +67,7 @@ class SaveTemplateScansUseCase(
 }
 
 /**
- * 娣诲姞鎵弿鏁版嵁鐨?Use Case
+ * 添加扫描数据的 Use Case
  */
 class AddScanUseCase(
     private val scanRepository: ScanRepository
@@ -100,7 +100,7 @@ class AddScanUseCase(
 }
 
 /**
- * 鍒犻櫎鎵弿鏁版嵁鐨?Use Case
+ * 删除扫描数据的 Use Case
  */
 class DeleteScanUseCase(
     private val scanRepository: ScanRepository
@@ -111,7 +111,7 @@ class DeleteScanUseCase(
 }
 
 /**
- * 鏇存柊鎵弿鏁版嵁鐨?Use Case
+ * 更新扫描数据的 Use Case
  */
 class UpdateScanUseCase(
     private val scanRepository: ScanRepository
@@ -122,7 +122,7 @@ class UpdateScanUseCase(
 }
 
 /**
- * 鏍规嵁 ID 鑾峰彇鎵弿鏁版嵁鐨?Use Case
+ * 根据 ID 获取扫描数据的 Use Case
  */
 class GetScanByIdUseCase(
     private val scanRepository: ScanRepository
@@ -133,7 +133,7 @@ class GetScanByIdUseCase(
 }
 
 /**
- * 鑾峰彇鎵€鏈夋壂鎻忔暟鎹殑 Use Case
+ * 获取所有扫描数据的 Use Case
  */
 class GetAllScansUseCase(
     private val scanRepository: ScanRepository
@@ -144,7 +144,7 @@ class GetAllScansUseCase(
 }
 
 /**
- * 鑾峰彇鏈笂浼犳壂鎻忔暟鎹殑 Use Case
+ * 获取未上传扫描数据的 Use Case
  */
 class GetPendingScansUseCase(
     private val scanRepository: ScanRepository
@@ -177,7 +177,7 @@ class MarkScanAsUploadedByDataIdUseCase(
 }
 
 /**
- * 鍚戞ā鏉挎坊鍔犳壂鎻忔暟鎹殑 Use Case
+ * 向模板添加扫描数据的 Use Case
  */
 class AddScanToTemplateUseCase(
     private val templateRepository: TemplateRepository,
@@ -193,7 +193,7 @@ class AddScanToTemplateUseCase(
 }
 
 /**
- * 鎵弿鏁版嵁浠撳簱鎺ュ彛
+ * 扫描数据仓库接口
  */
 interface ScanRepository {
     fun setCurrentTemplateId(templateId: String?)

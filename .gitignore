@@ -36,3 +36,8 @@ winClient/web/js.7z
 testing/
 .zcodeignore
 .zcode/
+
+# 本地运行数据（从设备拉取的测试模板/扫码历史，不入库）
+/scan_history.json
+/templates.json
+/scan_history_*.json
